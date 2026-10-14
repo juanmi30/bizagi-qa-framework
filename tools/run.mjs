@@ -6,6 +6,7 @@
 //   npm test -- demo --escenario "radicador"
 //   npm test -- demo --fuente grabados --list
 import { spawnSync } from 'node:child_process';
+import { createRequire } from 'node:module';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { config as loadEnv } from 'dotenv';
@@ -97,13 +98,14 @@ if (escenario) {
 }
 if (grep && !yaTieneGrep) passthrough.push('--grep', grep);
 
-// En Windows se lanza con shell (npx es un .cmd) y el shell vuelve a partir los argumentos por espacios: un
-// `--grep "dos palabras"` se convertía en un grep "dos" + un filtro de archivo "palabras" y podía seleccionar pruebas
-// REALES (incidente 2026-10-13: se ejecutó una vertical E2E). Se entrecomillan los argumentos con espacios o símbolos.
-const enShell = process.platform === 'win32';
-const citar = (a) => (enShell && /[\s"&|<>^()]/.test(a) ? `"${a.replace(/"/g, '\\"')}"` : a);
+// Se invoca el CLI de Playwright DIRECTAMENTE con este mismo Node y sin shell: los argumentos llegan literales.
+// Antes era `npx` con shell en Windows (npx es un .cmd): cmd.exe partía `--grep "dos palabras"` (incidente 2026-10-13,
+// se ejecutó una vertical E2E real) y expandía `%VARIABLE%` aunque se entrecomillara (auditoría de Work, PR #1).
+// BIZAGI_RUNNER_CLI: SOLO para pruebas del runner (un receptor sintético que registra los argumentos que recibe).
+const require = createRequire(import.meta.url);
+const cli = process.env.BIZAGI_RUNNER_CLI || require.resolve('@playwright/test/cli');
 
-const result = spawnSync('npx', ['playwright', 'test', ...passthrough.map(citar)], {
+const result = spawnSync(process.execPath, [cli, 'test', ...passthrough], {
   stdio: 'inherit',
   env: {
     ...process.env,
@@ -112,6 +114,7 @@ const result = spawnSync('npx', ['playwright', 'test', ...passthrough.map(citar)
     FUENTE_ESCENARIO: fuente,
     COMO_GRABACION: como,
   },
-  shell: enShell,
+  shell: false,
 });
+if (result.error) console.error(`No se pudo iniciar Playwright: ${result.error.message}`);
 process.exit(result.status ?? 1);

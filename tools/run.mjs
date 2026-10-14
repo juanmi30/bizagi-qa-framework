@@ -97,7 +97,13 @@ if (escenario) {
 }
 if (grep && !yaTieneGrep) passthrough.push('--grep', grep);
 
-const result = spawnSync('npx', ['playwright', 'test', ...passthrough], {
+// En Windows se lanza con shell (npx es un .cmd) y el shell vuelve a partir los argumentos por espacios: un
+// `--grep "dos palabras"` se convertía en un grep "dos" + un filtro de archivo "palabras" y podía seleccionar pruebas
+// REALES (incidente 2026-10-13: se ejecutó una vertical E2E). Se entrecomillan los argumentos con espacios o símbolos.
+const enShell = process.platform === 'win32';
+const citar = (a) => (enShell && /[\s"&|<>^()]/.test(a) ? `"${a.replace(/"/g, '\\"')}"` : a);
+
+const result = spawnSync('npx', ['playwright', 'test', ...passthrough.map(citar)], {
   stdio: 'inherit',
   env: {
     ...process.env,
@@ -106,6 +112,6 @@ const result = spawnSync('npx', ['playwright', 'test', ...passthrough], {
     FUENTE_ESCENARIO: fuente,
     COMO_GRABACION: como,
   },
-  shell: process.platform === 'win32',
+  shell: enShell,
 });
 process.exit(result.status ?? 1);

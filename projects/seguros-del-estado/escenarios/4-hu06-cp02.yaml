@@ -67,7 +67,7 @@ pasos:
   - matriz: [11]
     hacer: verificar
     verificar:
-      - solo_lectura: [Número de Caso, Creador del Caso, Fecha de Creación, Línea, Ramo, Movimiento, Tipo Radicación, Sucursal, Descripción Solicitud Masiva]
+      - solo_lectura: [Número de Caso, Creador del Caso, Fecha de Creación, Línea, Ramo, Tipo de Solicitud, Tipo Radicación, Sucursal, Descripción Solicitud Masiva]
       - valor: { campo: Tipo Radicación, igual: "${dato:INI-AUTOS-MASIVO.tipo_radicacion}" }
       - visible: Información a Consultar
 

@@ -57,7 +57,7 @@ pasos:
   - matriz: [11]
     hacer: verificar
     verificar:
-      - solo_lectura: [Número de Caso, Línea, Ramo, Movimiento, Sucursal, Tipo Radicación]
+      - solo_lectura: [Número de Caso, Línea, Ramo, Tipo de Solicitud, Sucursal, Tipo Radicación]
 
   - matriz: [12]
     hacer: tabla_abrir_fila

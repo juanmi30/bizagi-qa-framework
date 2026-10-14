@@ -13,6 +13,8 @@
 # este escenario oficial, UI-04). Observado además en QA: la ejecución oficial falla en P9 (secuencia de documentos,
 # control de cambios pendiente); en la variante, P19–P26 quedan bloqueados por UI-10 y P27 falla por BUG-04.
 # Máximo hoy: REAL_PASS_PARCIAL.
+# Recalibrado 2026-10-14 (caso 571, solo lectura): el Encabezado de Estructurar muestra "Tipo de Solicitud" (antes
+# "Movimiento"); la etiqueta Observaciones ya no muestra "Observaciónes" (BUG-04 no reproducido).
 id: HU06-CP01
 titulo: Masivo Generales — Worker AI, Estructurar información (analista) y edición de Detalle Polizas Asociadas
 etiquetas: [hu06, vertical, masivo, generales, cp01]
@@ -45,6 +47,10 @@ pasos:
       # La marca de obligatorio de Bizagi solo se ve con el campo vacío: se verifica ANTES de diligenciarlo.
       - obligatorio: [Sucursal]
 
+  # Presentación (reunión QA 2026-10-14): ortografía (norma RAE/DLE), etiquetas aprobadas y expectativas pendientes de definición.
+  - incluir: presentacion-inicio
+    con: { p_matriz: [4] }
+
   - matriz: [5]
     hacer: diligenciar
     campos:
@@ -57,6 +63,14 @@ pasos:
     verificar:
       - visible: Descripción de la Solicitud (Masiva/Múltiple)
       - visible: Documentos Anexos
+
+  # Presentación de los elementos de Masivo (texto aprobado de la matriz P6 + norma ortográfica), sin detener el recorrido.
+  - matriz: [6]
+    hacer: verificar
+    no_bloqueante: true
+    verificar:
+      - expectativa: INI-MASIVO-ELEMENTOS
+      - expectativa: INI-ORTOGRAFIA
 
   - matriz: [7]
     hacer: verificar
@@ -102,10 +116,14 @@ pasos:
     actividad: Estructurar información
     maximo_minutos: 5
 
+  # Presentación de Estructurar información (P1: el objetivo incluye "la visualización" de la actividad). No bloqueante.
+  - incluir: presentacion-estructurar
+    con: { p_matriz: [1] }
+
   - matriz: [14]
     hacer: verificar
     verificar:
-      - solo_lectura: [Número de Caso, Creador del Caso, Fecha de Creación, Línea, Ramo, Movimiento]
+      - solo_lectura: [Número de Caso, Creador del Caso, Fecha de Creación, Línea, Ramo, Tipo de Solicitud]
       - valor: { campo: Línea, igual: "${dato:INI-GENERALES-MASIVO.linea}" }
 
   - matriz: [15]
@@ -225,4 +243,4 @@ pasos:
   - matriz: [29]
     hacer: verificar
     verificar:
-      - solo_lectura: [Línea, Ramo, Movimiento, Sucursal, Tipo Radicación]
+      - solo_lectura: [Línea, Ramo, Tipo de Solicitud, Sucursal, Tipo Radicación]

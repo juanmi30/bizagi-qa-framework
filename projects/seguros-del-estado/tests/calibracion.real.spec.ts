@@ -5,7 +5,11 @@ import { cargarEscenario, DIR_ESCENARIOS, type EscenarioSde, type PasoSde } from
 import { crearContexto, ejecutarEscenario } from '../sde/ejecutor';
 import { crearCapacidadesUi, VIEWPORT_SDE, type UiEntorno } from '../sde/capacidades';
 import { registrarCasoCreado } from '../sde/registro';
-import { esperarCarga } from '../sde/ui';
+import { esperarCarga, inventarioCampos, textosVisibles } from '../sde/ui';
+import { cargarPresentacion } from '../sde/presentacion';
+import { aplicarReglasOrtograficas } from '../../../shared/utils/ValidacionesPresentacion';
+import { DIR_SALIDA } from '../sde/registro';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { generarUnico } from '../../../shared/runner/scenarioLoader';
 import { exclusividadEjecucionReal } from '../sde/verticales';
 
@@ -66,7 +70,10 @@ test('calibración Estructurar información sobre caso propio @calibracion', asy
       P([2], 'iniciar_sesion', { actor: 'analista' }),
       ...crear,
       P([13], 'abrir_caso', { actor: 'analista', actividad: 'Estructurar información', maximo_minutos: 1 }),
-      P([14], 'verificar', { verificar: [{ solo_lectura: ['Número de Caso', 'Creador del Caso', 'Fecha de Creación', 'Línea', 'Ramo', 'Movimiento'] }] }),
+      // Presentación (reunión QA 2026-10-14), primero: no depende de las etiquetas calibradas antes. No bloqueantes.
+      P([1], 'verificar', { no_bloqueante: true, verificar: [{ expectativa: 'EST-ORTOGRAFIA' }] }),
+      P([27], 'verificar', { no_bloqueante: true, verificar: [{ expectativa: 'EST-ETIQUETA-OBSERVACIONES' }] }),
+      P([14], 'verificar', { verificar: [{ solo_lectura: ['Número de Caso', 'Creador del Caso', 'Fecha de Creación', 'Línea', 'Ramo', 'Tipo de Solicitud'] }] }),
       P([15], 'verificar', { verificar: [{ solo_lectura: ['Tipo Radicación', 'Sucursal'] }, { valor: { campo: 'Tipo Radicación', igual: 'Masiva' } }] }),
       P([16], 'verificar', { verificar: [{ visible: 'Información a Consultar' }, { solo_lectura: ['Descripción Solicitud Masiva'] }] }),
       // Solo estructura de la grilla (las filas dependen de la narrativa real). NO se abre ni cancela el pop-up:
@@ -75,11 +82,12 @@ test('calibración Estructurar información sobre caso propio @calibracion', asy
       // Modo DESTRUCTIVO: abre el pop-up de la fila 1, vuelca su estructura y termina (el caso queda inutilizable, BUG-03).
       ...(edicion ? pasosEdicion : popup ? [P([18], 'tabla_abrir_fila', { tabla: 'Detalle Polizas Asociadas', fila: 1, formulario: 'detalle-polizas-modificacion-generales' })] : [
         P([28], 'verificar', { verificar: [{ visible: 'Documentos de la solicitud' }, { visible: 'Seguimiento/Trazabilidad' }] }),
-        P([29], 'verificar', { verificar: [{ solo_lectura: ['Línea', 'Ramo', 'Movimiento', 'Sucursal', 'Tipo Radicación'] }] }),
-        // UI-04: navegación real de pestañas (solo lectura; calibrada en el caso 426). Antes del P27, que falla por BUG-04.
+        P([29], 'verificar', { verificar: [{ solo_lectura: ['Línea', 'Ramo', 'Tipo de Solicitud', 'Sucursal', 'Tipo Radicación'] }] }),
+        // UI-04: navegación real de pestañas (solo lectura; calibrada en los casos 426 y 571).
+        // Observaciones ANTES de las pestañas: al abrir Seguimiento el campo deja de verse (caso 571, 2026-10-14).
+        P([27], 'verificar', { verificar: [{ editable: ['Observaciones'] }] }),
         P([28], 'abrir_pestana', { pestana: 'Documentos de la solicitud' }),
         P([28], 'abrir_pestana', { pestana: 'Seguimiento/Trazabilidad', contiene: ['Estructurar información'] }),
-        P([27], 'verificar', { verificar: [{ editable: ['Observaciones'] }] }), // matriz: "Observaciones" (la UI muestra "Observaciónes")
       ]),
     ],
   };
@@ -91,10 +99,28 @@ test('calibración Estructurar información sobre caso propio @calibracion', asy
     soloLectura: !nuevo, // con un número de caso existente la calibración NO puede crear casos (red + capability)
   };
   const { capacidades, verificar } = crearCapacidadesUi(ui);
+  // Inventario de presentación de Estructurar al abrir la actividad (propuesta para QA; sin valores del caso).
+  let presentacion: Record<string, unknown> | null = null;
   const r = await ejecutarEscenario(esc, {
-    capacidades, verificar,
+    capacidades: { ...capacidades, abrir_caso: async (p, c) => {
+      const salida = await capacidades.abrir_caso(p, c);
+      if (!presentacion && ui.actual) {
+        const pg = ui.paginas.get(ui.actual)!;
+        const cat = cargarPresentacion();
+        const textos = await textosVisibles(pg);
+        presentacion = { actividad: 'Estructurar información', caso: c.numeroCaso, fecha: new Date().toISOString(),
+          nota: 'Inventario OBSERVADO en QA (solo lectura). Propuesta para aprobación de QA; no es una expectativa aprobada.',
+          campos: await inventarioCampos(pg), hallazgos_ortograficos: aplicarReglasOrtograficas(textos, cat.reglas_ortograficas, cat.conocidos), textos_revisados: textos };
+      }
+      return salida;
+    } }, verificar,
     evidencia: async (n) => { const f = await page.screenshot({ fullPage: true }).catch(() => null); if (f) await testInfo.attach(n, { body: f, contentType: 'image/png' }); return n; },
   }, ctx);
+  if (presentacion) {
+    mkdirSync(DIR_SALIDA, { recursive: true });
+    writeFileSync(`${DIR_SALIDA}/PRESENTACION_ESTRUCTURAR_${Date.now()}.json`, JSON.stringify(presentacion, null, 2) + '\n', 'utf8');
+    console.log(`PRESENTACION-ESTRUCTURAR ${JSON.stringify(presentacion)}`);
+  }
   // Estructura de las pestañas (solo etiquetas, roles y clases; sin datos del caso) para calibrar SdeObjects.pestana.
   const pestanas = await page.evaluate((nombres) => [...document.querySelectorAll('body *')]
     .filter((e) => nombres.includes(((e as HTMLElement).innerText ?? '').trim()) && e.children.length <= 2)

@@ -42,9 +42,9 @@ pasos:
       - etiquetas: [Línea, Ramo, Tipo de Solicitud, Sucursal, Tipo de Radicación, Forma de Consulta Unitaria, Placa]
       - obligatorio: [Placa]
 
-  - matriz: [6]
-    hacer: no_automatizado
-    razon: Ortografía/capitalización global sin glosario de referencia; se verifican las etiquetas exactas (hallazgos en OBS).
+  # Presentación (reunión QA 2026-10-14): ortografía (norma RAE/DLE), etiquetas aprobadas y expectativas pendientes de definición.
+  - incluir: presentacion-inicio
+    con: { p_matriz: [6] }
 
   - matriz: [7]
     hacer: diligenciar
@@ -94,9 +94,9 @@ pasos:
     hacer: no_automatizado
     razon: Tabla de documentos de Completar información — nombre y tipos parametrizados sin especificar (DOCS-OBLIGATORIOS).
 
-  - matriz: [19]
-    hacer: no_automatizado
-    razon: Nomenclatura completa sin glosario de referencia; se cubren las etiquetas exactas citadas en la matriz.
+  # Presentación de Completar información (UI-09: nunca observada; listo para cuando SISE responda).
+  - incluir: presentacion-completar
+    con: { p_matriz: [19] }
 
   - incluir: cierre-completar
     con: { actor: intermediario, p_botones: [20], p_confirmar: [21], p_accion: [21, 22] }

@@ -59,7 +59,7 @@ pasos:
   - matriz: [11]
     hacer: verificar
     verificar:
-      - solo_lectura: [Línea, Ramo, Movimiento, Sucursal, Tipo Radicación]
+      - solo_lectura: [Línea, Ramo, Tipo de Solicitud, Sucursal, Tipo Radicación]
       - valor: { campo: Línea, igual: "${dato:INI-CUMPL-MASIVO-SIN-RCE.linea}" }
 
   - matriz: [12]

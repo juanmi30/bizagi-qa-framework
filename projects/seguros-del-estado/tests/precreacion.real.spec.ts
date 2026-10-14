@@ -7,13 +7,19 @@ import { crearContexto, ejecutarEscenario } from '../sde/ejecutor';
 import { crearCapacidadesUi, VIEWPORT_SDE, type UiEntorno } from '../sde/capacidades';
 import { guardarReporte, DIR_SALIDA } from '../sde/registro';
 import { SdeObjects } from '../baseObjects/sde.objects';
-import { esperarCarga, normaliza, unicoVisible } from '../sde/ui';
+import { esperarCarga, inventarioCampos, normaliza, textosVisibles, unicoVisible } from '../sde/ui';
+import { cargarPresentacion } from '../sde/presentacion';
+import { aplicarReglasOrtograficas } from '../../../shared/utils/ValidacionesPresentacion';
 
 /**
  * PRE-CREACIÓN EN SOLO LECTURA (calibración del formulario de inicio con el actor REAL de cada escenario).
  * Ejecuta los pasos de cada escenario HASTA ANTES de "Crear". Garantías: ui.soloLectura = true → la red aborta cualquier
  * CREATENEWCASE y "pulsar Crear" falla antes del clic. Los pasos que necesitan datos de QA ausentes quedan BLOCKED.
  * Reportes: PRECREACION_<CP>_*.json (NO cuentan como ejecución del CP). Corre con SDE_PRECREACION=<CP,CP,...|todos>.
+ * Se detiene también ANTES de cualquier carga de archivo (adjuntar / adjuntar_en_grilla): un diagnóstico no sube documentos.
+ * Además vuelca PRESENTACION_<CP>_*.json: inventario OBSERVADO del formulario (etiquetas en orden de lectura, grupo,
+ * obligatoriedad con el campo vacío, solo lectura) y hallazgos ortográficos. Es una PROPUESTA para que QA apruebe orden y
+ * obligatoriedad (expectativas pendientes de definición); no es una expectativa ni un resultado del CP.
  */
 test.use({ viewport: VIEWPORT_SDE, trace: 'off' }); // trace off: iniciar_sesion teclea la clave
 
@@ -23,7 +29,7 @@ const escenarios = listarEscenarios().map((r) => cargarEscenario(r, registro))
   .filter((e) => pedido.includes('todos') ? e.id.startsWith('HU03') : pedido.includes(e.id));
 
 function hastaCrear(e: EscenarioSde): EscenarioSde {
-  const i = e.pasos.findIndex((p) => p.hacer === 'pulsar' && (p.capturar_numero_caso || p.boton === 'Crear'));
+  const i = e.pasos.findIndex((p) => (p.hacer === 'pulsar' && (p.capturar_numero_caso || p.boton === 'Crear')) || ['adjuntar', 'adjuntar_en_grilla'].includes(p.hacer));
   // Solo CFG-PROCESO en preflight: los datos de negocio se exigen por paso (si faltan, ese paso queda BLOCKED).
   return { ...e, datasets: ['CFG-PROCESO'], pasos: i >= 0 ? e.pasos.slice(0, i) : e.pasos };
 }
@@ -53,6 +59,21 @@ test.describe('Pre-creación HU03 en solo lectura @precreacion', () => {
         const pg = ui.actual ? ui.paginas.get(ui.actual)! : page;
         const grillas = await pg.locator(`${SdeObjects.dialogoInicio} ${SdeObjects.grilla}`).filter({ visible: true }).locator(SdeObjects.grillaTitulo).allInnerTexts().catch(() => []);
         console.log(`  GRILLAS ${JSON.stringify(grillas.map(normaliza))}`);
+        // Inventario observado (propuesta para QA): sin valores diligenciados, solo presentación.
+        const dialogo = pg.locator(SdeObjects.dialogoInicio);
+        const cat = cargarPresentacion();
+        const textos = await textosVisibles(dialogo);
+        const presentacion = {
+          cp: e.id, actor: esc.actores.join(','), fecha: new Date().toISOString(),
+          nota: 'Inventario OBSERVADO en QA (solo lectura, antes de Crear). Propuesta para aprobación de QA; no es una expectativa aprobada.',
+          estado_formulario: `tras los pasos ${esc.pasos.filter((p) => r.pasos[esc.pasos.indexOf(p)]?.estado !== 'NOT_RUN').map((p) => p.matriz.join('+')).join(', ')}`,
+          campos: await inventarioCampos(dialogo),
+          hallazgos_ortograficos: aplicarReglasOrtograficas(textos, cat.reglas_ortograficas, cat.conocidos),
+          textos_revisados: textos,
+        };
+        mkdirSync(DIR_SALIDA, { recursive: true });
+        writeFileSync(resolve(DIR_SALIDA, `PRESENTACION_${e.id}_${Date.now()}.json`), JSON.stringify(presentacion, null, 2) + '\n', 'utf8');
+        console.log(`  PRESENTACION ${JSON.stringify({ campos: presentacion.campos.map((c) => `${c.etiqueta}${c.obligatorio ? ' [oblig.]' : ''}${c.soloLectura ? ' [s/l]' : ''}`), hallazgos: presentacion.hallazgos_ortograficos })}`);
       } finally {
         for (const c of ui.contextos) await c.close().catch(() => undefined);
       }

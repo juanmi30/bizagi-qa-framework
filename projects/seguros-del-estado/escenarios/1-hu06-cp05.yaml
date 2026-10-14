@@ -61,11 +61,9 @@ pasos:
     verificar:
       - etiquetas: [Línea, Ramo, Tipo de Solicitud, Sucursal, Tipo de Radicación, Forma de Consulta Unitaria]
 
-  - matriz: [6]
-    hacer: no_automatizado
-    razon: >-
-      Ortografía/capitalización de TODOS los textos visibles: la matriz no trae glosario. Se verifican las etiquetas reales;
-      las inconsistencias observadas en QA se reportan como hallazgos (OBS-01..04 en docs/REPORTE-FASE1B.md).
+  # Presentación (reunión QA 2026-10-14): ortografía (norma RAE/DLE), etiquetas aprobadas y expectativas pendientes de definición.
+  - incluir: presentacion-inicio
+    con: { p_matriz: [6] }
 
   - matriz: [7]
     hacer: diligenciar

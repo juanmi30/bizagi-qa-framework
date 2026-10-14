@@ -58,11 +58,13 @@ pasos:
       - obligatorio: [Número de Póliza]
       - editable: [Número de Póliza]
 
+  # Presentación (reunión QA 2026-10-14): ortografía (norma RAE/DLE), etiquetas aprobadas y expectativas pendientes de definición.
+  - incluir: presentacion-inicio
+    con: { p_matriz: [6] }
+
   - matriz: [6]
     hacer: no_automatizado
-    razon: >-
-      La matriz no detalla tipo de dato/longitud por campo (Requirement 231442); se verifican etiquetas reales,
-      obligatoriedad y editabilidad del criterio. Nomenclatura: ver OBS en REPORTE-FASE1B.
+    razon: La matriz no especifica tipo de dato ni longitud por campo (Requirement 231442 no disponible); no hay criterio verificable.
 
   - matriz: [7]
     hacer: diligenciar
@@ -137,9 +139,9 @@ pasos:
     hacer: no_automatizado
     razon: Tabla de documentos de Completar información — nombre y tipos parametrizados sin especificar (DOCS-OBLIGATORIOS).
 
-  - matriz: [18]
-    hacer: no_automatizado
-    razon: Nomenclatura completa sin glosario de referencia; se cubren las etiquetas exactas citadas en la matriz.
+  # Presentación de Completar información (UI-09: nunca observada; listo para cuando SISE responda).
+  - incluir: presentacion-completar
+    con: { p_matriz: [18] }
 
   - matriz: [19]
     hacer: verificar

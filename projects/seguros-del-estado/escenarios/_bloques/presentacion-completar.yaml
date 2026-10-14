@@ -1,0 +1,11 @@
+# Bloque de PRESENTACIÓN de "Completar información de solicitud" (HU03; reunión QA 2026-10-14). Ver presentacion-inicio.yaml.
+# La actividad nunca se ha observado (UI-09): el bloque queda listo para cuando SISE y alertas respondan.
+descripcion: Ortografía y nomenclatura de Completar información de solicitud.
+parametros: [p_matriz]
+pasos:
+  - matriz: "${param:p_matriz}"
+    hacer: verificar
+    no_bloqueante: true
+    verificar:
+      - expectativa: COM-ORTOGRAFIA
+      - expectativa: COM-NOMENCLATURA

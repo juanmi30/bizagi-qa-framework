@@ -1,0 +1,12 @@
+# Bloque de PRESENTACIÓN de "Estructurar información" (HU06; reunión QA 2026-10-14). Ver presentacion-inicio.yaml.
+# Detecta en una sola pasada los errores de la norma ortográfica de la pantalla (p. ej. BUG-04 "Observaciónes",
+# OBS-04 "Detalle Polizas Asociadas") sin detener el recorrido.
+descripcion: Ortografía y nomenclatura de Estructurar información (la etiqueta Observaciones se verifica en estructurar-secciones, P27).
+parametros: [p_matriz]
+pasos:
+  - matriz: "${param:p_matriz}"
+    hacer: verificar
+    no_bloqueante: true
+    verificar:
+      - expectativa: EST-ORTOGRAFIA
+      - expectativa: EST-NOMENCLATURA-ENCABEZADO

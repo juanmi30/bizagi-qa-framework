@@ -1,6 +1,6 @@
 # Estado actual del framework
 
-**Actualizado: 2026-10-14, por Claude Code (correcciones de la auditoría de Work sobre el PR #1).** Repositorio: `juanmi30/bizagi-qa-framework` (privado). `main` = línea base auditada `551b84e`. Esta página describe la rama `fix/sde-confiabilidad-resultados` (PR en borrador, sin fusionar); checkpoints `docs/orquestacion/checkpoints/2026-10-13-confiabilidad-sde.md` y `2026-10-14-correcciones-auditoria-pr1.md`. Todo dato de esta página se verificó en esta sesión, salvo lo marcado como *no auditado*.
+**Actualizado: 2026-10-14, por Claude Code (correcciones de la auditoría de Work sobre el PR #1).** Repositorio: `juanmi30/bizagi-qa-framework` (privado). `main` = `2e12b6a`: merge del PR #1 (confiabilidad SDE más las correcciones de Work), aprobado por Work con observaciones y fusionado el 2026-10-14. La rama `fix/sde-confiabilidad-resultados` se conserva hasta confirmar la integración; checkpoints `docs/orquestacion/checkpoints/2026-10-13-confiabilidad-sde.md` y `2026-10-14-correcciones-auditoria-pr1.md`. Todo dato de esta página se verificó en esta sesión, salvo lo marcado como *no auditado*.
 
 ## Verificaciones técnicas de esta fecha (rama de confiabilidad)
 
@@ -52,6 +52,11 @@
 - **P0 (D-27):** bloqueo sin carreras. Se publica de forma atómica por enlace, se recupera solo un huérfano demostrable y todo lo demás falla cerrado. Recuperación manual en `RECUPERACION-BLOQUEOS.md`; alcance: un mismo equipo.
 - **P1 (D-28):** una certificación solo es satisfactoria con todos los CP en REAL_PASS. REAL_PASS + BLOCKED termina ahora con código distinto de cero. Diagnóstico, precreación y exploración solo aplican con `SDE_TIPO_EJECUCION` explícito.
 - **P2 (D-29):** el runner ya no pasa por un shell, así que los argumentos llegan literales y `%VARIABLE%` no se expande.
+
+**Deuda no bloqueante (auditoría final de Work, PR #1):**
+- P-08: `SDE_TIPO_EJECUCION` persiste en la sesión.
+- P-09: el veredicto global no aparece en los tableros que solo leen JUnit.
+- P-10: falta un estado final explícito en `veredicto-e2e.json`.
 
 **Decisiones pendientes:** control de cambios de documentos, BUG-05/BUG-06, FUNC-10 (actor de HU06), ticket de BUG-03, datos SISE y mapeo de UI-10. Ver `DECISIONES.md`.
 

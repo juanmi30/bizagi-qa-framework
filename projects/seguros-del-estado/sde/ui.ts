@@ -224,7 +224,11 @@ async function elegirEnCombo(page: Page, cont: Locator, ref: string, valor: stri
   // Abrir una lista es idempotente: si el combo se re-renderizó (cascadas Línea → Ramo) se reabre.
   while (!(await opcion.first().waitFor({ state: 'visible', timeout: 4_000 }).then(() => true).catch(() => false))) {
     if (Date.now() > limite) {
-      const vistas = await page.locator(SdeObjects.opcionesDe(lista)).filter({ visible: true }).allInnerTexts();
+      // Cada clic abre o cierra la lista: si quedó cerrada, se abre una vez más para informar las opciones REALES
+      // (el 2026-10-14 se informó "ninguna" cuando la lista mostraba los ramos con otro formato, "48 - …").
+      const todas = page.locator(SdeObjects.opcionesDe(lista)).filter({ visible: true });
+      if ((await todas.count()) === 0) { await combo.click(); await todas.first().waitFor({ state: 'visible', timeout: 4_000 }).catch(() => undefined); }
+      const vistas = await todas.allInnerTexts();
       throw new Error(`"${ref}": la opción "${valor}" no está en la lista (visibles: ${vistas.map(normaliza).join(' | ') || 'ninguna'}).`);
     }
     await combo.click();
@@ -278,6 +282,43 @@ export async function teclear(ambito: Ambito, ref: string, valor: string): Promi
   await ctl.press('Tab');
   await esperarCarga(page);
   return valorMostrado(await infoCampo(await campo(ambito, ref), ref));
+}
+
+/** Un campo visible del formulario, en orden de lectura (orden del documento), con su presentación. Sin valores. */
+/** conValor: el campo muestra un valor (sin revelarlo); con valor, la marca de obligatorio de Bizagi ya no es concluyente. */
+export interface CampoInventario { etiqueta: string; grupo: string; obligatorio: boolean; soloLectura: boolean; conValor: boolean; controles: string[] }
+
+/**
+ * Inventario de los campos VISIBLES del ámbito en orden de lectura: etiqueta, grupo, obligatoriedad (marca de Bizagi:
+ * solo visible con el campo vacío) y solo lectura. Lo usan la verificación "orden" y las propuestas de expectativas.
+ */
+export async function inventarioCampos(ambito: Ambito): Promise<CampoInventario[]> {
+  await esperarCarga(paginaDe(ambito));
+  const etiquetas = ambito.locator(SdeObjects.etiquetaCampo).filter({ visible: true });
+  const out: CampoInventario[] = [];
+  for (let i = 0, n = await etiquetas.count(); i < n; i++) {
+    const lbl = etiquetas.nth(i);
+    const texto = normaliza(await lbl.innerText());
+    const cont = lbl.locator(SdeObjects.contenedorDeEtiqueta);
+    if (!texto || (await cont.count()) !== 1) continue;
+    const info = await infoCampo(cont, texto);
+    const grupo = await cont.evaluate((el, s) => {
+      const g = el.closest(s.grupo);
+      const h = g ? [...g.children].find((c) => c.matches(s.titulo)) : null;
+      return h ? (h as HTMLElement).innerText : '';
+    }, { grupo: SdeObjects.grupo, titulo: SdeObjects.grupoTitulo });
+    out.push({ etiqueta: texto, grupo: normaliza(grupo), obligatorio: esObligatorio(info, texto), soloLectura: estaSoloLectura(info), conValor: valorMostrado(info) !== '', controles: [...new Set(info.controles.map((c) => c.tipo || c.tag))] });
+  }
+  return out;
+}
+
+/** Textos de presentación visibles del ámbito (SdeObjects.textosPresentacion + botones), sin repetir. Nunca valores. */
+export async function textosVisibles(ambito: Ambito): Promise<string[]> {
+  await esperarCarga(paginaDe(ambito));
+  const textos: string[] = [];
+  for (const sel of SdeObjects.textosPresentacion) textos.push(...await ambito.locator(sel).filter({ visible: true }).allInnerTexts());
+  textos.push(...await botonesVisibles(ambito).catch(() => [])); // sin zona de botones visible no hay botones que revisar
+  return [...new Set(textos.map(normaliza).filter(Boolean))];
 }
 
 /** Adjunta un archivo en el control de carga del campo y confirma que el nombre aparece. */

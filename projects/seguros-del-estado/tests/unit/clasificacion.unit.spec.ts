@@ -110,9 +110,10 @@ test.describe('Métricas de cobertura (implementada / ejecutada / aprobada) @uni
   });
 
   test('implementación (H2): un paso UI + integración/no automatizado es MIXTO y no cuenta como completo; CP05 es PARCIAL', () => {
-    // 9 pasos menos "Objetivo" = 8. P6 (verificar + no_automatizado) y P9 (verificar_ruta + integración) son MIXTOS.
+    // 9 pasos menos "Objetivo" = 8. P6 (verificar + expectativas de presentación PENDIENTES) y P9 (verificar_ruta + integración) son MIXTOS.
     expect(nivelImplementacion(m, esc)).toEqual({ nivel: 'PARCIAL', pasos: { total: 8, ui: 6, mixto: 2, integracion: 0, no_automatizado: 0, sin_cubrir: 0 } });
-    const soloUi = { ...esc, pasos: esc.pasos.filter((p) => !['integracion', 'no_automatizado'].includes(p.hacer)) };
+    // Control: sin lo declarativo (integración, no automatizado y pasos que citan expectativas de presentación) queda COMPLETA.
+    const soloUi = { ...esc, pasos: esc.pasos.filter((p) => !['integracion', 'no_automatizado'].includes(p.hacer) && !(p.verificar ?? []).some((v) => 'expectativa' in v)) };
     expect(nivelImplementacion(m, soloUi).nivel).toBe('COMPLETA');
     expect(nivelImplementacion(casoMatriz('HU06-CP02'), undefined).nivel).toBe('NO_IMPLEMENTADA');
     const sinPaso8 = { ...esc, pasos: esc.pasos.filter((p) => !p.matriz.includes(8)) };

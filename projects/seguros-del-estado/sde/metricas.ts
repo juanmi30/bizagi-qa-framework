@@ -2,7 +2,8 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { CasoMatriz } from './matriz';
 import type { CasoManifest } from './manifest';
-import type { EscenarioSde } from './escenario';
+import type { EscenarioSde, PasoSde } from './escenario';
+import { cargarPresentacion } from './presentacion';
 import type { EstadoCp, ReporteCp } from './modelo';
 
 /**
@@ -59,11 +60,18 @@ export function inventarioReportes(dir: string, dirVersionado: string | null): {
 
 export type CoberturaPaso = 'ui' | 'mixto' | 'integracion' | 'no_automatizado' | 'sin_cubrir';
 
+/** Expectativas de presentación aprobadas citadas por un paso (las pendientes no verifican nada). */
+const esAprobada = (v: object): boolean => !('expectativa' in v) || cargarPresentacion().expectativas[(v as { expectativa: string }).expectativa]?.estado === 'aprobada';
+/** Un paso que cita una expectativa PENDIENTE de definición declara algo no verificado (como no_automatizado). */
+const citaPendiente = (x: PasoSde): boolean => (x.verificar ?? []).some((v) => !esAprobada(v));
+/** El paso verifica algo por UI: no es declarativo y, si solo verifica, al menos una verificación es aplicable. */
+const verificaPorUi = (x: PasoSde): boolean => !DECLARATIVAS.has(x.hacer) && (x.hacer !== 'verificar' || (x.verificar ?? []).some(esAprobada));
+
 /** Cómo cubre el escenario un paso de la matriz (misma regla para la métrica y para los pendientes). */
 export function coberturaPaso(n: number, esc: EscenarioSde | undefined): CoberturaPaso {
   const cubren = esc?.pasos.filter((x) => x.matriz.includes(n)) ?? [];
-  const conUi = cubren.some((x) => !DECLARATIVAS.has(x.hacer));
-  const conDeclarativa = cubren.some((x) => DECLARATIVAS.has(x.hacer));
+  const conUi = cubren.some(verificaPorUi);
+  const conDeclarativa = cubren.some((x) => DECLARATIVAS.has(x.hacer) || citaPendiente(x));
   if (conUi && conDeclarativa) return 'mixto';
   if (conUi) return 'ui';
   if (cubren.some((x) => x.hacer === 'integracion')) return 'integracion';

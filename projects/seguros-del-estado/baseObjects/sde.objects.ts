@@ -46,6 +46,8 @@ export const SdeObjects = {
   // --- Formularios [VERIFICADO en el formulario de inicio] ---
   /** Contenedor de UN campo: div.ui-bizagi-render[data-render-xpath] (etiqueta en span.ui-bizagi-label > label). */
   contenedorCampo: '[class~="ui-bizagi-render"]',
+  /** Contenedor del campo al que pertenece una etiqueta (ancestro más cercano equivalente a contenedorCampo). */
+  contenedorDeEtiqueta: 'xpath=ancestor::*[contains(concat(" ", normalize-space(@class), " "), " ui-bizagi-render ")][1]',
   /** Grupo/sección con título (ej. "Tipo de Consulta", "Informacion a Consultar"). */
   grupo: '.bzg-form-group',
   grupoTitulo: 'h3.ui-bizagi-container-group-header',
@@ -100,6 +102,11 @@ export const SdeObjects = {
   pestanaActivaClase: /(^|\s)(ui-tabs-active|ui-state-active|active)(\s|$)/,
   /** Mensajes de validación junto al campo o en el centro de notificaciones. */
   mensajeValidacion: '.ui-bizagi-notifications-container, #NotificationCenter, .ui-bizagi-validation-message, [role="alert"]',
+  /**
+   * Textos de PRESENTACIÓN que revisa la verificación "ortografia": etiquetas de campo, opciones de radio, títulos de grupo,
+   * títulos y columnas de grillas y pestañas. Los botones se toman de areaBotones. Nunca valores diligenciados. [VERIFICADO: etiquetas, grupos, grillas]
+   */
+  textosPresentacion: ['.ui-bizagi-label label', '[class~="ui-bizagi-render"] label[for]', 'h3.ui-bizagi-container-group-header', '.bz-rn-grid-header-title', 'thead th label', '[role="tab"]'],
   /** Notificación de Bizagi ("Debe revisar lo siguiente:"). Se registra como hallazgo, no se oculta. */
   notificacion: '.ui-bizagi-notifications-container, #NotificationCenter',
 };

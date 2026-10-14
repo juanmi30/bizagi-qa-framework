@@ -1,6 +1,7 @@
 import { casoMatriz } from './matriz';
 import { estadoActor, estadoDataset, resolverTexto, DatoFaltanteError, type Registro, type Entorno } from './datos';
 import type { EscenarioSde, PasoSde, Verificacion } from './escenario';
+import { cargarPresentacion, type CatalogoPresentacion } from './presentacion';
 import { peorEstado, type CausaPaso, type EstadoPaso, type EstadoCp, type ReporteCp, type ResultadoPaso, type ResultadoPasoMatriz } from './modelo';
 
 /**
@@ -47,7 +48,7 @@ export function causaDeExcepcion(e: unknown): CausaPaso {
   if (/net::ERR_|ECONNREFUSED|ECONNRESET|ENOTFOUND|EAI_AGAIN|ETIMEDOUT|page\.goto: Timeout|navigating to .* waiting until/i.test(m)) return 'AMBIENTE';
   if (nombre === 'CalibracionError' || nombre === 'BarreraPopupError' || /^\[calibrar /.test(m)) return 'AUTOMATIZACION';
   if (/No se encontró visible|Se esperaba exactamente 1|Ambigüedad|locator\.|Timeout \d+ms exceeded|intercepts pointer|no está dentro de/.test(m)) return 'AUTOMATIZACION';
-  if (/MODO SOLO LECTURA/.test(m)) return 'AUTOMATIZACION';
+  if (/MODO SOLO LECTURA|^NO VERIFICABLE:/.test(m)) return 'AUTOMATIZACION';
   if (/Bizagi rechazó|no ofrece ninguna opción|ruta NO esperada|no quedó marcada|el formulario muestra .* tras diligenciar|se confirmó sin los campos obligatorios|no muestra "/.test(m)) return 'PRODUCTO_POR_CONFIRMAR';
   return 'NO_CLASIFICADO';
 }
@@ -74,6 +75,8 @@ export interface Dependencias {
   verificar: Verificador;
   evidencia: (nombre: string) => Promise<string | undefined>;
   ahora?: () => Date;
+  /** Catálogo de expectativas de presentación (por defecto data/expectativas-presentacion.yaml). */
+  presentacion?: CatalogoPresentacion;
 }
 
 /** Capabilities que no tocan la UI: declaran honestamente lo que no se puede comprobar. */
@@ -245,14 +248,29 @@ export async function ejecutarEscenario(esc: EscenarioSde, deps: Dependencias, c
       const salida = (await cap(paso, ctx)) ?? {};
       const notas: string[] = salida.detalle ? [salida.detalle] : [];
       let ok = true;
+      const pendientes: string[] = [];
       for (const v of paso.verificar ?? []) {
+        // Expectativa del catálogo de presentación: aprobada → se verifican sus verificaciones (citando la fuente);
+        // pendiente de definición → no se verifica y el paso no puede quedar verde.
+        if ('expectativa' in v) {
+          const id = v.expectativa;
+          const e = (deps.presentacion ?? cargarPresentacion()).expectativas[id];
+          if (!e) throw new Error(`expectativa "${id}" no existe en el catálogo de presentación`);
+          if (e.estado !== 'aprobada') { pendientes.push(id); notas.push(`… ${id} PENDIENTE DE DEFINICIÓN (${e.responsable}): ${e.pendiente}`); continue; }
+          for (const sub of e.verificar as Verificacion[]) {
+            const res = await deps.verificar(sub, ctx);
+            notas.push(`${res.ok ? '✔' : '✘'} [${id} · fuente: ${e.fuente}] ${res.detalle}`);
+            if (!res.ok) ok = false;
+          }
+          continue;
+        }
         const res = await deps.verificar(v, ctx);
         notas.push(`${res.ok ? '✔' : '✘'} ${res.detalle}`);
         if (!res.ok) ok = false;
       }
-      r.estado = ok ? (salida.estado ?? 'PASS') : 'FAIL';
+      r.estado = !ok ? 'FAIL' : pendientes.length ? 'NOT_AUTOMATED' : (salida.estado ?? 'PASS');
       // Verificación no cumplida = comportamiento observado distinto al esperado (por confirmar, nunca "defecto" directo).
-      r.causa = !ok ? 'PRODUCTO_POR_CONFIRMAR' : (salida.causa ?? CAUSA_DE_ESTADO[r.estado]);
+      r.causa = !ok ? 'PRODUCTO_POR_CONFIRMAR' : pendientes.length ? 'NO_AUTOMATIZADO' : (salida.causa ?? CAUSA_DE_ESTADO[r.estado]);
       r.detalle = notas.join(' | ');
     } catch (e) {
       r.causa = causaDeExcepcion(e);
@@ -262,8 +280,12 @@ export async function ejecutarEscenario(esc: EscenarioSde, deps: Dependencias, c
     r.ms = Date.now() - t0;
     r.detalle = sanitizar(r.detalle, ctx.secretos);
     r.evidencia = await deps.evidencia(`${esc.id}_p${String(i + 1).padStart(2, '0')}_${paso.hacer}`).catch(() => undefined);
+    // Paso de verificación NO BLOQUEANTE con una diferencia observada: solo miró la pantalla (no la cambió), así que el
+    // estado de la UI sigue siendo confiable. Queda FAIL (y el CP también) y el recorrido continúa.
+    const sigue = paso.hacer === 'verificar' && paso.no_bloqueante === true && r.estado === 'FAIL' && r.causa === 'PRODUCTO_POR_CONFIRMAR';
+    if (sigue) r.detalle += ' | No bloqueante: el recorrido continúa (el CP queda FAIL).';
     // Un FAIL (o un dato o ambiente que faltaba a mitad de un paso) detiene: el estado de la UI ya no es confiable.
-    if (r.estado === 'FAIL' || r.estado === 'BLOCKED') {
+    if (!sigue && (r.estado === 'FAIL' || r.estado === 'BLOCKED')) {
       // Si lo que falló fue el intento de cerrar el pop-up con "Guardar", ya no hay nada más que hacer: se detiene
       // (caso 430, 2026-10-13: seguir intentando pasos con el pop-up abierto no lo salva).
       const cierreFallido = paso.hacer === 'dialogo_confirmar' && paso.espera === 'cierra';

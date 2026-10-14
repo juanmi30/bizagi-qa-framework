@@ -1,0 +1,43 @@
+SDE-CEL — Validaciones de presentación y recorridos accesibles (2026-10-14, fase feat/sde-validaciones-funcionales).
+Ejecuciones reales de Claude Code en esta fase: precreaciones de SOLO LECTURA (ningún caso), un diagnóstico de listas
+(solo lectura) y UNA calibración autorizada por Juan Miguel (caso 571), luego releída en solo lectura. Traza apagada,
+--workers=1, sin pop-ups. Ninguna vertical E2E oficial ejecutada. Reportes locales: test-results/seguros-del-estado/sde/.
+
+== 0. Ejecución previa del día (de Juan Miguel, 14:51): HU06-CP05 vertical
+FAIL en P3 (NO_CLASIFICADO, no atribuible al producto): "Ramo": la opción "AUTOMÓVILES LIVIANOS INDIVIDUAL" no está en
+la lista. Sin caso creado. Reporte versionado: HU06-CP05_20261014-145128.json.
+
+== 1. Cambio de parametrización en QA (P-14, a confirmar con Daniel)
+Diagnóstico de listas (intermediario, solo lectura): Ramo se muestra como "<código> - <nombre>"
+(13/10 14:32: "AUTOMÓVILES LIVIANOS INDIVIDUAL"; 14/10 18:01: "48 - AUTOMÓVILES LIVIANOS INDIVIDUAL"); igual Sucursal
+("11 - BOGOTA"). La selección exacta (principio del framework) falló por eso. Se ajustaron SOLO los datos locales (.env):
+SDE_RUTA_RAMO, SDE_AUTOS_RAMO, SDE_GEN_RAMO, SDE_SUCURSAL. No es un defecto del producto.
+Corrección de diagnóstico: el error del combo informaba "visibles: ninguna" porque la lista quedaba cerrada; ahora la
+reabre y lista las opciones reales.
+
+== 2. Formulario de inicio — precreación de solo lectura (red: CREATENEWCASE abortado; se detiene antes de Crear y de cargas)
+HU06-CP05 (analista):     P2–P7 PASS; P6 presentación: ortografía 16 textos sin hallazgos, etiquetas aprobadas OK;
+                          orden/obligatoriedad/capitalización/etiqueta de tipo de solicitud PENDIENTES (NOT_AUTOMATED).
+HU06-CP01 (analista):     P2–P9 PASS (hasta antes de adjuntar); P4 y P6 presentación: 11 textos sin hallazgos;
+                          Descripción de la Solicitud (Masiva/Múltiple) y Documentos Anexos con el texto de la matriz;
+                          texto de ayuda exacto "Masivo: Solicitud asociada a más de una póliza.".
+HU03-CP01/02/03 (intermediario): P2–P6 PASS + presentación sin hallazgos · P7 BLOCKED (placa/póliza de QA ausentes).
+HU03-CP04/05 (intermediario):    P2–P6 PASS (obligatorio Tipo/Número de Documento del Tomador) · P7 BLOCKED (tomador).
+HU03-CP06/07/08 (intermediario): P2–P3 PASS · P4 BLOCKED (ramo Cumplimiento con/sin RCE sin definir).
+
+Nomenclatura observada en el inicio:
+- OBS-01 NO reproducido: el grupo ahora es "Información a Consultar" (con tilde).
+- OBS-03 NO reproducido: la etiqueta es "Ramo" (sin espacio antes de ":").
+- OBS-12 NUEVO (por confirmar): con Tipo de Radicación Individual, "Ramo" y "Sucursal" aparecen VISIBLES y EDITABLES dos
+  veces: en "Información de la Solicitud" y en "Información a Consultar".
+- Opción "Número de póliza" (radio) vs campo "Número de Póliza" (FUNC-07, ya registrado).
+
+== 3. Estructurar información — caso 571 (creado con autorización; Masiva Generales/Modificación, texto sintético)
+Creación: CREATENEWCASE 571; ruta a "Estructurar información" en minutos (Worker AI: INTEGRATION_NOT_VERIFIED; la grilla
+mostró 1 fila). Lectura en solo lectura (3 pasadas, sin pop-ups, sin Guardar ni Siguiente):
+P13–P17 PASS · P27 PASS (Observaciones editable) · P28 PASS (pestañas) · P29 PASS (datos maestros solo lectura).
+P1 presentación: ortografía sobre 29 textos → 1 hallazgo: "Detalle Polizas Asociadas" (OBS-04, ya registrado).
+- BUG-04 NO reproducido: la etiqueta es "Observaciones". Confirmar con QA si se corrigió para cerrarlo.
+- Encabezado: "Tipo de Solicitud" (antes "Movimiento"); escenarios HU06 recalibrados.
+- Observaciones deja de verse al abrir la pestaña Seguimiento: el bloque la verifica antes de las pestañas.
+Caso 571 queda en Estructurar información (CLEANUP_NOT_APPLICABLE), registrado en historico-casos.json.

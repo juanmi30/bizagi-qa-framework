@@ -1,17 +1,17 @@
 # Estado actual del framework
 
-**Actualizado: 2026-10-14, por Claude Code (correcciones de la auditoría de Work sobre el PR #1).** Repositorio: `juanmi30/bizagi-qa-framework` (privado). `main` = `2e12b6a`: merge del PR #1 (confiabilidad SDE más las correcciones de Work), aprobado por Work con observaciones y fusionado el 2026-10-14. La rama `fix/sde-confiabilidad-resultados` se conserva hasta confirmar la integración; checkpoints `docs/orquestacion/checkpoints/2026-10-13-confiabilidad-sde.md` y `2026-10-14-correcciones-auditoria-pr1.md`. Todo dato de esta página se verificó en esta sesión, salvo lo marcado como *no auditado*.
+**Actualizado: 2026-10-14 (noche), por Claude Code — fase de validaciones funcionales tras la reunión QA del 14/10.** Repositorio: `juanmi30/bizagi-qa-framework` (privado). `main` = `f40bde7` (merge del PR #1 + deuda P-08..P-10). Esta página describe la rama `feat/sde-validaciones-funcionales` (PR en borrador, sin fusionar); checkpoint `docs/orquestacion/checkpoints/2026-10-14-validaciones-funcionales.md`. Matriz de oportunidades: `projects/seguros-del-estado/docs/MATRIZ-OPORTUNIDADES-2026-10-14.md`. Todo dato de esta página se verificó en esta sesión, salvo lo marcado como *no auditado*.
 
-## Verificaciones técnicas de esta fecha (rama de confiabilidad)
+## Verificaciones técnicas de esta fecha (rama de validaciones funcionales)
 
 | Control | Resultado |
 |---|---|
 | `npx tsc --noEmit` | Sin errores |
-| SDE `@unit` | **155/155**: 112 de la línea base, 18 de H1/H4/H6/H7 y 25 de las correcciones de Work (P0 bloqueo, P1 veredicto y P2 runner) |
+| SDE `@unit` | **175/175**: 155 anteriores + 20 de esta fase (validaciones de presentación, P-06 y diagnóstico del combo) |
 | Demo (regresión) | 48 aprobadas / 4 fallidas: los mismos 4 fallos históricos de plantilla sin URL real |
-| Colsubsidio | `lifecycle-casos.unit`, `contrato-create-case`, `login-navegacion.unit` y `afi-soporte.unit`: **53/53** (el histórico usa el bloqueo nuevo) |
+| Colsubsidio | `lifecycle-casos.unit`, `contrato-create-case`, `login-navegacion.unit` y `afi-soporte.unit`: **53/53** |
 | CONPRE | Sin cambios; `--list` 6 pruebas en 3 archivos (no se ejecuta porque hace login real) |
-| E2E | Correcciones de Work: **ninguna**. Fase anterior: **1 ejecución real ACCIDENTAL** (incidente), en la que HU06-CP05 creó el caso **434**; ningún pop-up abierto. Ver «Incidente» abajo |
+| Ejecuciones reales | Vertical E2E oficial: **ninguna** de Claude Code. Juan Miguel ejecutó HU06-CP05 a las 14:51 (FAIL en P3 por el formato nuevo del Ramo, sin caso). Claude Code: precreaciones de **solo lectura** (10 CP, ningún caso), diagnóstico de listas y **1 caso autorizado (571)** de calibración de Estructurar, releído en solo lectura. Sin pop-ups |
 | Escaneo de credenciales y PII | Diff de la rama revisado (ver checkpoint) |
 
 **Historial de ejecuciones:** las métricas de abajo salen de `test-results/` (local) y de `docs/evidencia/` (versionada). En un equipo recién clonado solo existe la segunda y da el mismo resultado (ejecutada 2/17, aprobada 0/17; prueba `portabilidad.unit`).
@@ -27,10 +27,10 @@
 
 | CP | Estado real | Última ejecución | Detalle |
 |---|---|---|---|
-| HU06-CP05 | REAL_PASS_PARCIAL | Caso 434 (2026-10-13, ejecución **accidental**, mismo resultado); antes 427 y 425 | **6 de 8 pasos PASS** (P2–P5, P7, P8). P6 mixto (ortografía sin glosario) y P9 integración no verificable (Worker AI). **Corrección:** antes se informó "7/9". Radicó CE_Analista (actor de HU06 sin definir, FUNC-10) |
-| HU06-CP01 (oficial) | FAIL | 2026-10-13, sin caso | P2–P8 PASS; P9 FAIL con la secuencia de documentos de la matriz (control de cambios propuesto). **Pendientes estructurales para REAL_PASS: P12 y P17** (Worker AI sin traza) **y P28** (contenido de las pestañas declarado no automatizado en el escenario oficial, UI-04). Máximo alcanzable hoy: REAL_PASS_PARCIAL |
+| HU06-CP05 | FAIL (no atribuible al producto) | 2026-10-14 14:51 (Juan Miguel), sin caso: P3 falló porque el Ramo ahora se muestra "48 - …" (P-14). Antes: REAL_PASS_PARCIAL (caso 434) | Precreación del 14/10 tras ajustar los datos: P2–P5 y P7 PASS; P6 con presentación evaluada (sin hallazgos ortográficos) y expectativas pendientes. Máximo alcanzable: REAL_PASS_PARCIAL (P6 y P9) |
+| HU06-CP01 (oficial) | FAIL | 2026-10-13, sin caso | P2–P8 PASS; P9 FAIL (secuencia de documentos, control de cambios). Hoy: precreación P2–P9 PASS sin cargar documentos; Estructurar verificado en el caso 571 (P13–P17, P27–P29 PASS; P1 ortografía: OBS-04). **Pendientes para REAL_PASS: P4** (capitalización y orden sin fuente, D-33), **P12, P17** (Worker AI) **y P28** (UI-04). Máximo: REAL_PASS_PARCIAL |
 | HU06-CP01 (variante, no cuenta) | Diagnóstico | Caso 429 | Pasos observados en QA sumando todas las fuentes: P2–P11, P13–P16, P18, P22, P28 y P29 (**18 de 29**). P12 y P17 son integración no verificable (Worker AI); P19–P26 bloqueados por UI-10; P27 falla por BUG-04 |
-| HU03-CP01 a CP05 | BLOCKED (datos) | Pre-creación 2026-10-13, sin crear casos | P2–P6 verificados con el intermediario habilitado INT-013403; P7 necesita datos SISE |
+| HU03-CP01 a CP05 | BLOCKED (datos) | Precreación 2026-10-14, sin crear casos | P2–P5 PASS y P6 con presentación evaluada (sin hallazgos) con INT-013403; P7 necesita datos de QA; Completar información depende de SISE |
 | HU03-CP06 a CP08 | BLOCKED (datos) | Pre-creación | P2–P3; falta saber qué ramos de Cumplimiento tienen la propiedad RCE |
 | HU03-CP09 a CP12 | Sin escenario | — | Pospuestos hasta calibrar "Completar información" |
 
@@ -39,7 +39,9 @@
 - **UI-09:** "Completar información de solicitud" nunca se ha observado.
 - **UI-10:** etiquetas reales del pop-up "Detalle Polizas Asociadas" desconocidas. La barrera H3 impide abrirlo.
 - **BUG-03** (ya reportado por QA, ticket pendiente de registrar): salir del pop-up sin "Guardar" destruye el caso. Casos 342, 350, 426 y 430 inutilizables.
-- **BUG-04** ("Observaciónes"): hace fallar P27 en todo HU06.
+- **BUG-04** ("Observaciónes"): **no reproducido** el 14/10 (caso 571 muestra "Observaciones"); QA debe confirmar si se corrigió.
+- **OBS-04** ("Detalle Polizas Asociadas" sin tilde): reproducido el 14/10 por la verificación de ortografía. **OBS-01** y **OBS-03** no se reproducen en el inicio. **OBS-12** (nuevo, por confirmar): Ramo y Sucursal duplicados en el inicio Individual.
+- **P-14 / ENV-04:** Ramo y Sucursal se muestran ahora como "<código> - <nombre>" (cambio entre el 13 y el 14/10); datos locales ajustados.
 - **BUG-05** (refresco de la grilla de documentos) y **BUG-06** (Crear acepta un tipo documental distinto del obligatorio): por confirmar.
 - **ENV-03:** resuelto para la cuenta INT-013403 (rol CE_Intermediarios); `intermediario_alerta` sigue sin rol.
 - **Datos:** ninguna póliza, placa ni tomador real; no hay fuente autorizada en el portal.
@@ -58,9 +60,12 @@
 - P-09: el veredicto global no aparece en los tableros que solo leen JUnit.
 - P-10: falta un estado final explícito en `veredicto-e2e.json`.
 
-**Decisiones pendientes:** control de cambios de documentos, BUG-05/BUG-06, FUNC-10 (actor de HU06), ticket de BUG-03, datos SISE y mapeo de UI-10. Ver `DECISIONES.md`.
+**Validaciones de presentación (esta fase, D-30 a D-35):** catálogo `data/expectativas-presentacion.yaml` con fuente por expectativa; ortografía por norma RAE/DLE en inicio, Estructurar y Completar; orden, obligatoriedad y capitalización **pendientes de definición** (P-11), nunca verdes. P-06 implementada: las verticales reales exigen `SDE_E2E=1`.
+
+**Decisiones pendientes:** P-11 (fuente de orden/obligatoriedad/capitalización), P-12 (masivos con Iván), P-13 (integraciones caídas), P-14 (formato de Ramo/Sucursal), control de cambios de documentos, BUG-05/BUG-06, FUNC-10 (actor de HU06), ticket de BUG-03, datos SISE y mapeo de UI-10. Ver `DECISIONES.md`.
 
 **Prioridades:**
+0. QA aprueba (o corrige) la propuesta de orden y obligatoriedad (`docs/evidencia/2026-10-14_inventario-presentacion.json`): con eso las expectativas pendientes pasan a verificarse.
 1. Cuando QA confirme que SISE y alertas volvieron y entregue la póliza Autos de la clave de INT-013403: E2E de HU03-CP02 y calibración de UI-09.
 2. Mapeo de UI-10 (captura o definición de QA) y una corrida controlada de HU06-CP01 P18–P26.
 3. Evidencia técnica del Worker AI para P9 de CP05 y P12/P17 de CP01, y automatizar el contenido de las pestañas (P28 de CP01, UI-04) en el escenario oficial. **Mientras falte, ni CP01 ni CP05 pueden pasar de REAL_PASS_PARCIAL** (H7; la trazabilidad muestra el «máximo alcanzable» de cada CP).

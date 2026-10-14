@@ -1,0 +1,1119 @@
+{
+  "fecha": "2026-10-14",
+  "origen": "Precreación de solo lectura (formulario de inicio, ningún caso creado) y calibración de solo lectura de Estructurar información (caso 571).",
+  "nota": "Inventario OBSERVADO en QA. Es una PROPUESTA para que QA apruebe orden, obligatoriedad y nomenclatura (P-11); no es una expectativa aprobada. obligatorio=true solo es concluyente con conValor=false (Bizagi quita la marca al diligenciar). Sin valores diligenciados.",
+  "formularios": [
+    {
+      "cp": null,
+      "actividad": "Estructurar información",
+      "actor": "analista",
+      "caso": "571",
+      "estado_formulario": "al abrir la actividad",
+      "campos": [
+        {
+          "etiqueta": "Número de Caso",
+          "grupo": "Encabezado",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": true,
+          "controles": []
+        },
+        {
+          "etiqueta": "Creador del Caso",
+          "grupo": "Encabezado",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": true,
+          "controles": []
+        },
+        {
+          "etiqueta": "Fecha de Creación",
+          "grupo": "Encabezado",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": true,
+          "controles": []
+        },
+        {
+          "etiqueta": "Línea",
+          "grupo": "Encabezado",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": true,
+          "controles": []
+        },
+        {
+          "etiqueta": "Ramo",
+          "grupo": "Encabezado",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": true,
+          "controles": []
+        },
+        {
+          "etiqueta": "Tipo de Solicitud",
+          "grupo": "Encabezado",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": true,
+          "controles": []
+        },
+        {
+          "etiqueta": "Estructurar información",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Tipo Radicación",
+          "grupo": "Tipo de Consulta",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": true,
+          "controles": []
+        },
+        {
+          "etiqueta": "Sucursal",
+          "grupo": "Tipo de Consulta",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": true,
+          "controles": []
+        },
+        {
+          "etiqueta": "Descripción Solicitud Masiva",
+          "grupo": "Información a Consultar",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": true,
+          "controles": []
+        },
+        {
+          "etiqueta": "Completa la información de la solicitud de acuerdo a la descripción del solicitante en la siguiente tabla",
+          "grupo": "Información a Consultar",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Observaciones",
+          "grupo": "Tipo de Consulta",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "textarea"
+          ]
+        }
+      ],
+      "hallazgos_ortograficos": [
+        {
+          "regla": "ORT-TERMINO-POLIZA",
+          "texto": "Detalle Polizas Asociadas",
+          "fragmento": "Polizas",
+          "descripcion": "\"Póliza\" y \"Pólizas\" son esdrújulas y llevan tilde.",
+          "correcto": "Póliza / Pólizas",
+          "conocido": "OBS-04"
+        }
+      ],
+      "textos_revisados": [
+        "Número de Caso",
+        "Creador del Caso",
+        "Fecha de Creación",
+        "Línea",
+        "Ramo",
+        "Tipo de Solicitud",
+        "Estructurar información",
+        "Tipo Radicación",
+        "Sucursal",
+        "Descripción Solicitud Masiva",
+        "Completa la información de la solicitud de acuerdo a la descripción del solicitante en la siguiente tabla",
+        "Observaciones",
+        "Encabezado",
+        "Tipo de Consulta",
+        "Información a Consultar",
+        "Detalle Polizas Asociadas",
+        "Forma Consulta",
+        "Tipo documento del Tomador",
+        "Número de Documento Tomador",
+        "Placa",
+        "Número Póliza",
+        "¿Requiere modificar RCE?",
+        "Ramo RCE",
+        "Número Póliza RCE",
+        "Información de Radicación",
+        "Documentos de la solicitud",
+        "Seguimiento/Trazabilidad",
+        "Guardar",
+        "Siguiente"
+      ]
+    },
+    {
+      "cp": "HU03-CP01",
+      "actividad": "Formulario de inicio",
+      "actor": "intermediario",
+      "caso": null,
+      "estado_formulario": "tras los pasos 2, 3, 4, 5, 6, 6, 7",
+      "campos": [
+        {
+          "etiqueta": "Radicación",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Línea",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Tipo de Solicitud",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": true,
+          "controles": []
+        },
+        {
+          "etiqueta": "Ramo",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Sucursal",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Tipo de Radicación",
+          "grupo": "Tipo de Consulta",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "radio"
+          ]
+        },
+        {
+          "etiqueta": "Individual: Solicitud asociada a una única póliza. Masivo: Solicitud asociada a más de una póliza.",
+          "grupo": "Tipo de Consulta",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Forma de Consulta Unitaria",
+          "grupo": "Tipo de Consulta",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "radio"
+          ]
+        },
+        {
+          "etiqueta": "Placa",
+          "grupo": "Información a Consultar",
+          "obligatorio": true,
+          "soloLectura": false,
+          "conValor": false,
+          "controles": [
+            "text"
+          ]
+        }
+      ],
+      "hallazgos_ortograficos": [],
+      "textos_revisados": [
+        "Radicación",
+        "Línea",
+        "Tipo de Solicitud",
+        "Ramo",
+        "Sucursal",
+        "Tipo de Radicación",
+        "Individual: Solicitud asociada a una única póliza. Masivo: Solicitud asociada a más de una póliza.",
+        "Forma de Consulta Unitaria",
+        "Placa",
+        "Individual",
+        "Masiva",
+        "Número de póliza",
+        "Información de la Solicitud",
+        "Tipo de Consulta",
+        "Información a Consultar",
+        "Crear"
+      ]
+    },
+    {
+      "cp": "HU03-CP02",
+      "actividad": "Formulario de inicio",
+      "actor": "intermediario",
+      "caso": null,
+      "estado_formulario": "tras los pasos 2, 2+3, 4, 5, 6, 6, 6, 7",
+      "campos": [
+        {
+          "etiqueta": "Radicación",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Línea",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Tipo de Solicitud",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": true,
+          "controles": []
+        },
+        {
+          "etiqueta": "Ramo",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Sucursal",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Tipo de Radicación",
+          "grupo": "Tipo de Consulta",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "radio"
+          ]
+        },
+        {
+          "etiqueta": "Individual: Solicitud asociada a una única póliza. Masivo: Solicitud asociada a más de una póliza.",
+          "grupo": "Tipo de Consulta",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Forma de Consulta Unitaria",
+          "grupo": "Tipo de Consulta",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "radio"
+          ]
+        },
+        {
+          "etiqueta": "Sucursal",
+          "grupo": "Información a Consultar",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Ramo",
+          "grupo": "Información a Consultar",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Número de Póliza",
+          "grupo": "Información a Consultar",
+          "obligatorio": true,
+          "soloLectura": false,
+          "conValor": false,
+          "controles": [
+            "text"
+          ]
+        }
+      ],
+      "hallazgos_ortograficos": [],
+      "textos_revisados": [
+        "Radicación",
+        "Línea",
+        "Tipo de Solicitud",
+        "Ramo",
+        "Sucursal",
+        "Tipo de Radicación",
+        "Individual: Solicitud asociada a una única póliza. Masivo: Solicitud asociada a más de una póliza.",
+        "Forma de Consulta Unitaria",
+        "Número de Póliza",
+        "Individual",
+        "Masiva",
+        "Número de póliza",
+        "Placa",
+        "Información de la Solicitud",
+        "Tipo de Consulta",
+        "Información a Consultar",
+        "Crear"
+      ]
+    },
+    {
+      "cp": "HU03-CP03",
+      "actividad": "Formulario de inicio",
+      "actor": "intermediario",
+      "caso": null,
+      "estado_formulario": "tras los pasos 2, 3, 4, 5, 6, 6, 6, 7",
+      "campos": [
+        {
+          "etiqueta": "Radicación",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Línea",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Tipo de Solicitud",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Ramo",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Sucursal",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Tipo de Radicación",
+          "grupo": "Tipo de Consulta",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "radio"
+          ]
+        },
+        {
+          "etiqueta": "Individual: Solicitud asociada a una única póliza. Masivo: Solicitud asociada a más de una póliza.",
+          "grupo": "Tipo de Consulta",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Sucursal",
+          "grupo": "Información a Consultar",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Ramo",
+          "grupo": "Información a Consultar",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Número de Póliza",
+          "grupo": "Información a Consultar",
+          "obligatorio": true,
+          "soloLectura": false,
+          "conValor": false,
+          "controles": [
+            "text"
+          ]
+        }
+      ],
+      "hallazgos_ortograficos": [],
+      "textos_revisados": [
+        "Radicación",
+        "Línea",
+        "Tipo de Solicitud",
+        "Ramo",
+        "Sucursal",
+        "Tipo de Radicación",
+        "Individual: Solicitud asociada a una única póliza. Masivo: Solicitud asociada a más de una póliza.",
+        "Número de Póliza",
+        "Individual",
+        "Masiva",
+        "Información de la Solicitud",
+        "Tipo de Consulta",
+        "Información a Consultar",
+        "Crear"
+      ]
+    },
+    {
+      "cp": "HU03-CP04",
+      "actividad": "Formulario de inicio",
+      "actor": "intermediario",
+      "caso": null,
+      "estado_formulario": "tras los pasos 2, 3, 4, 5+6, 6, 6, 7",
+      "campos": [
+        {
+          "etiqueta": "Radicación",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Línea",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Tipo de Solicitud",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Ramo",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Sucursal",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Tipo de Radicación",
+          "grupo": "Tipo de Consulta",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "radio"
+          ]
+        },
+        {
+          "etiqueta": "Individual: Solicitud asociada a una única póliza. Masivo: Solicitud asociada a más de una póliza.",
+          "grupo": "Tipo de Consulta",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Tipo de Documento del Tomador",
+          "grupo": "Información a Consultar",
+          "obligatorio": true,
+          "soloLectura": false,
+          "conValor": false,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Número de Documento del Tomador",
+          "grupo": "Información a Consultar",
+          "obligatorio": true,
+          "soloLectura": false,
+          "conValor": false,
+          "controles": [
+            "text"
+          ]
+        }
+      ],
+      "hallazgos_ortograficos": [],
+      "textos_revisados": [
+        "Radicación",
+        "Línea",
+        "Tipo de Solicitud",
+        "Ramo",
+        "Sucursal",
+        "Tipo de Radicación",
+        "Individual: Solicitud asociada a una única póliza. Masivo: Solicitud asociada a más de una póliza.",
+        "Tipo de Documento del Tomador",
+        "Número de Documento del Tomador",
+        "Individual",
+        "Masiva",
+        "Información de la Solicitud",
+        "Tipo de Consulta",
+        "Información a Consultar",
+        "Crear"
+      ]
+    },
+    {
+      "cp": "HU03-CP05",
+      "actividad": "Formulario de inicio",
+      "actor": "intermediario",
+      "caso": null,
+      "estado_formulario": "tras los pasos 2, 3, 4, 5+6, 6, 6, 7",
+      "campos": [
+        {
+          "etiqueta": "Radicación",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Línea",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Tipo de Solicitud",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Ramo",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Sucursal",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Tipo de Radicación",
+          "grupo": "Tipo de Consulta",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "radio"
+          ]
+        },
+        {
+          "etiqueta": "Individual: Solicitud asociada a una única póliza. Masivo: Solicitud asociada a más de una póliza.",
+          "grupo": "Tipo de Consulta",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Tipo de Documento del Tomador",
+          "grupo": "Información a Consultar",
+          "obligatorio": true,
+          "soloLectura": false,
+          "conValor": false,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Número de Documento del Tomador",
+          "grupo": "Información a Consultar",
+          "obligatorio": true,
+          "soloLectura": false,
+          "conValor": false,
+          "controles": [
+            "text"
+          ]
+        }
+      ],
+      "hallazgos_ortograficos": [],
+      "textos_revisados": [
+        "Radicación",
+        "Línea",
+        "Tipo de Solicitud",
+        "Ramo",
+        "Sucursal",
+        "Tipo de Radicación",
+        "Individual: Solicitud asociada a una única póliza. Masivo: Solicitud asociada a más de una póliza.",
+        "Tipo de Documento del Tomador",
+        "Número de Documento del Tomador",
+        "Individual",
+        "Masiva",
+        "Información de la Solicitud",
+        "Tipo de Consulta",
+        "Información a Consultar",
+        "Crear"
+      ]
+    },
+    {
+      "cp": "HU03-CP06",
+      "actividad": "Formulario de inicio",
+      "actor": "intermediario",
+      "caso": null,
+      "estado_formulario": "tras los pasos 2, 3, 4",
+      "campos": [
+        {
+          "etiqueta": "Radicación",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Línea",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Ramo",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": true,
+          "soloLectura": false,
+          "conValor": false,
+          "controles": [
+            "text"
+          ]
+        }
+      ],
+      "hallazgos_ortograficos": [],
+      "textos_revisados": [
+        "Radicación",
+        "Línea",
+        "Ramo",
+        "Información de la Solicitud",
+        "Crear"
+      ]
+    },
+    {
+      "cp": "HU03-CP07",
+      "actividad": "Formulario de inicio",
+      "actor": "intermediario",
+      "caso": null,
+      "estado_formulario": "tras los pasos 2, 3, 4",
+      "campos": [
+        {
+          "etiqueta": "Radicación",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Línea",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Ramo",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": true,
+          "soloLectura": false,
+          "conValor": false,
+          "controles": [
+            "text"
+          ]
+        }
+      ],
+      "hallazgos_ortograficos": [],
+      "textos_revisados": [
+        "Radicación",
+        "Línea",
+        "Ramo",
+        "Información de la Solicitud",
+        "Crear"
+      ]
+    },
+    {
+      "cp": "HU03-CP08",
+      "actividad": "Formulario de inicio",
+      "actor": "intermediario",
+      "caso": null,
+      "estado_formulario": "tras los pasos 2, 3, 4",
+      "campos": [
+        {
+          "etiqueta": "Radicación",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Línea",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Ramo",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": true,
+          "soloLectura": false,
+          "conValor": false,
+          "controles": [
+            "text"
+          ]
+        }
+      ],
+      "hallazgos_ortograficos": [],
+      "textos_revisados": [
+        "Radicación",
+        "Línea",
+        "Ramo",
+        "Información de la Solicitud",
+        "Crear"
+      ]
+    },
+    {
+      "cp": "HU06-CP01",
+      "actividad": "Formulario de inicio",
+      "actor": "analista",
+      "caso": null,
+      "estado_formulario": "tras los pasos 2, 2+3, 3, 4+5, 4, 5, 6, 6, 7, 8, 9",
+      "campos": [
+        {
+          "etiqueta": "Radicación",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Línea",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Tipo de Solicitud",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Ramo",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Sucursal",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Tipo de Radicación",
+          "grupo": "Tipo de Consulta",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "radio"
+          ]
+        },
+        {
+          "etiqueta": "Individual: Solicitud asociada a una única póliza. Masivo: Solicitud asociada a más de una póliza.",
+          "grupo": "Tipo de Consulta",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Descripción de la Solicitud (Masiva/Múltiple)",
+          "grupo": "Información a Consultar",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "textarea"
+          ]
+        }
+      ],
+      "hallazgos_ortograficos": [],
+      "textos_revisados": [
+        "Radicación",
+        "Línea",
+        "Tipo de Solicitud",
+        "Ramo",
+        "Sucursal",
+        "Tipo de Radicación",
+        "Individual: Solicitud asociada a una única póliza. Masivo: Solicitud asociada a más de una póliza.",
+        "Descripción de la Solicitud (Masiva/Múltiple)",
+        "Individual",
+        "Masiva",
+        "Información de la Solicitud",
+        "Tipo de Consulta",
+        "Información a Consultar",
+        "Documentos Anexos",
+        "Crear"
+      ]
+    },
+    {
+      "cp": "HU06-CP05",
+      "actividad": "Formulario de inicio",
+      "actor": "analista",
+      "caso": null,
+      "estado_formulario": "tras los pasos 2, 2+3, 3, 4, 5, 6, 6, 7",
+      "campos": [
+        {
+          "etiqueta": "Radicación",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Línea",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Tipo de Solicitud",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": true,
+          "controles": []
+        },
+        {
+          "etiqueta": "Ramo",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Sucursal",
+          "grupo": "Información de la Solicitud",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Tipo de Radicación",
+          "grupo": "Tipo de Consulta",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "radio"
+          ]
+        },
+        {
+          "etiqueta": "Individual: Solicitud asociada a una única póliza. Masivo: Solicitud asociada a más de una póliza.",
+          "grupo": "Tipo de Consulta",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Forma de Consulta Unitaria",
+          "grupo": "Tipo de Consulta",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "radio"
+          ]
+        },
+        {
+          "etiqueta": "Sucursal",
+          "grupo": "Información a Consultar",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Ramo",
+          "grupo": "Información a Consultar",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Número de Póliza",
+          "grupo": "Información a Consultar",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        }
+      ],
+      "hallazgos_ortograficos": [],
+      "textos_revisados": [
+        "Radicación",
+        "Línea",
+        "Tipo de Solicitud",
+        "Ramo",
+        "Sucursal",
+        "Tipo de Radicación",
+        "Individual: Solicitud asociada a una única póliza. Masivo: Solicitud asociada a más de una póliza.",
+        "Forma de Consulta Unitaria",
+        "Número de Póliza",
+        "Individual",
+        "Masiva",
+        "Número de póliza",
+        "Placa",
+        "Información de la Solicitud",
+        "Tipo de Consulta",
+        "Información a Consultar",
+        "Crear"
+      ]
+    }
+  ]
+}

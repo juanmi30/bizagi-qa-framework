@@ -1,0 +1,216 @@
+{
+  "cp": "HU06-CP05",
+  "escenario": "1-hu06-cp05.yaml",
+  "inicio": "2026-10-14T19:51:28.776Z",
+  "unico": "20261014-145128",
+  "cleanup": {
+    "politica": "CLEANUP_NOT_APPLICABLE",
+    "razon": "La radicación queda en el flujo de consulta unitaria como evidencia; desistir no es reversible y no es parte del CP."
+  },
+  "fin": "2026-10-14T19:52:31.705Z",
+  "estado": "FAIL",
+  "motivo": "Al menos un paso de la matriz falló (causa: NO_CLASIFICADO) — NO atribuible al producto (automatización, ambiente o excepción sin clasificar): revisar antes de reportar.",
+  "numero_caso": null,
+  "actividades_observadas": [],
+  "pasos": [
+    {
+      "indice": 1,
+      "hacer": "iniciar_sesion",
+      "matriz": [
+        2
+      ],
+      "estado": "PASS",
+      "detalle": "Sesión real iniciada como \"analista\".",
+      "ms": 7028,
+      "evidencia": "HU06-CP05_p01_iniciar_sesion"
+    },
+    {
+      "indice": 2,
+      "hacer": "nuevo_caso",
+      "matriz": [
+        2,
+        3
+      ],
+      "estado": "PASS",
+      "detalle": "Formulario de inicio de \"Gestión Solicitudes Centro Expedición\" abierto (ruta: App > Processes > Centro de Expedición) | ✔ etiquetas exactas presentes (1)",
+      "ms": 4995,
+      "evidencia": "HU06-CP05_p02_nuevo_caso"
+    },
+    {
+      "indice": 3,
+      "hacer": "diligenciar",
+      "matriz": [
+        3
+      ],
+      "estado": "FAIL",
+      "detalle": "\"Ramo\": la opción \"AUTOMÓVILES LIVIANOS INDIVIDUAL\" no está en la lista (visibles: ninguna).",
+      "causa": "NO_CLASIFICADO",
+      "ms": 50785,
+      "evidencia": "HU06-CP05_p03_diligenciar"
+    },
+    {
+      "indice": 4,
+      "hacer": "diligenciar",
+      "matriz": [
+        4
+      ],
+      "estado": "NOT_RUN",
+      "detalle": "No ejecutado: un paso previo falló."
+    },
+    {
+      "indice": 5,
+      "hacer": "diligenciar",
+      "matriz": [
+        5
+      ],
+      "estado": "NOT_RUN",
+      "detalle": "No ejecutado: un paso previo falló."
+    },
+    {
+      "indice": 6,
+      "hacer": "verificar",
+      "matriz": [
+        6
+      ],
+      "estado": "NOT_RUN",
+      "detalle": "No ejecutado: un paso previo falló."
+    },
+    {
+      "indice": 7,
+      "hacer": "no_automatizado",
+      "matriz": [
+        6
+      ],
+      "estado": "NOT_RUN",
+      "detalle": "No ejecutado: un paso previo falló."
+    },
+    {
+      "indice": 8,
+      "hacer": "diligenciar",
+      "matriz": [
+        7
+      ],
+      "estado": "NOT_RUN",
+      "detalle": "No ejecutado: un paso previo falló."
+    },
+    {
+      "indice": 9,
+      "hacer": "pulsar",
+      "matriz": [
+        7
+      ],
+      "estado": "NOT_RUN",
+      "detalle": "No ejecutado: un paso previo falló."
+    },
+    {
+      "indice": 10,
+      "hacer": "verificar_ruta",
+      "matriz": [
+        8,
+        9
+      ],
+      "estado": "NOT_RUN",
+      "detalle": "No ejecutado: un paso previo falló."
+    },
+    {
+      "indice": 11,
+      "hacer": "integracion",
+      "matriz": [
+        9
+      ],
+      "estado": "NOT_RUN",
+      "detalle": "No ejecutado: un paso previo falló."
+    }
+  ],
+  "matriz": [
+    {
+      "n": 1,
+      "accion": "Objetivo:",
+      "esperado": "Validar que una solicitud con Tipo de Radicación Individual tome la transición correspondiente en la compuerta ¿Masivo? y continúe por el flujo regular, sin ingresar a Estructurar Información.",
+      "estado": "FAIL",
+      "cubierto_por": []
+    },
+    {
+      "n": 2,
+      "accion": "Ingresar al ambiente Bizagi mediante la URL: https://test-aiprocesos-sde.bizagi.com/",
+      "esperado": "El ambiente de pruebas se encuentra disponible y permite iniciar una nueva Radicación.",
+      "estado": "PASS",
+      "cubierto_por": [
+        1,
+        2
+      ]
+    },
+    {
+      "n": 3,
+      "accion": "Crear un nuevo caso y seleccionar una combinación válida de Línea, Ramo y Tipo de Solicitud.",
+      "esperado": "El formulario presenta la configuración correspondiente a los valores seleccionados.",
+      "estado": "FAIL",
+      "cubierto_por": [
+        2,
+        3
+      ]
+    },
+    {
+      "n": 4,
+      "accion": "Seleccionar una Sucursal válida.",
+      "esperado": "La Sucursal queda registrada correctamente.",
+      "estado": "NOT_RUN",
+      "cubierto_por": [
+        4
+      ]
+    },
+    {
+      "n": 5,
+      "accion": "Seleccionar Tipo de Radicación = Individual.",
+      "esperado": "El formulario cambia a la modalidad Individual y no presenta los elementos exclusivos de la modalidad Masivo que no correspondan a esta ruta.",
+      "estado": "NOT_RUN",
+      "cubierto_por": [
+        5
+      ]
+    },
+    {
+      "n": 6,
+      "accion": "Validar el formulario de inicio.",
+      "esperado": "Los campos, etiquetas, opciones y textos visibles presentan correcta ortografía y capitalización.",
+      "estado": "NOT_RUN",
+      "cubierto_por": [
+        6,
+        7
+      ]
+    },
+    {
+      "n": 7,
+      "accion": "Diligenciar la información requerida para la radicación Individual y crear el caso.",
+      "esperado": "El caso es creado con Tipo de Radicación = Individual.",
+      "estado": "NOT_RUN",
+      "cubierto_por": [
+        8,
+        9
+      ]
+    },
+    {
+      "n": 8,
+      "accion": "Validar la compuerta ¿Masivo?.",
+      "esperado": "La compuerta identifica el valor Individual y selecciona la transición correspondiente al flujo regular.",
+      "estado": "NOT_RUN",
+      "cubierto_por": [
+        10
+      ]
+    },
+    {
+      "n": 9,
+      "accion": "Validar la actividad posterior a la compuerta.",
+      "esperado": "El caso continúa por el camino regular hacia el flujo de consulta unitaria y no es enviado al Worker AI ni a Estructurar Información.",
+      "estado": "NOT_RUN",
+      "cubierto_por": [
+        10,
+        11
+      ]
+    }
+  ],
+  "bloqueos": [],
+  "causas": [
+    "NO_CLASIFICADO"
+  ],
+  "atribucion": "NO_ATRIBUIBLE_AL_PRODUCTO"
+}

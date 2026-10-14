@@ -57,19 +57,42 @@ export function inventarioReportes(dir: string, dirVersionado: string | null): {
   return { local: existsSync(dir) ? contar(dir) : null, versionado: dirVersionado && existsSync(dirVersionado) ? contar(dirVersionado) : 0 };
 }
 
+export type CoberturaPaso = 'ui' | 'mixto' | 'integracion' | 'no_automatizado' | 'sin_cubrir';
+
+/** Cómo cubre el escenario un paso de la matriz (misma regla para la métrica y para los pendientes). */
+export function coberturaPaso(n: number, esc: EscenarioSde | undefined): CoberturaPaso {
+  const cubren = esc?.pasos.filter((x) => x.matriz.includes(n)) ?? [];
+  const conUi = cubren.some((x) => !DECLARATIVAS.has(x.hacer));
+  const conDeclarativa = cubren.some((x) => DECLARATIVAS.has(x.hacer));
+  if (conUi && conDeclarativa) return 'mixto';
+  if (conUi) return 'ui';
+  if (cubren.some((x) => x.hacer === 'integracion')) return 'integracion';
+  if (cubren.length) return 'no_automatizado';
+  return 'sin_cubrir';
+}
+
+/**
+ * H7: pasos de la matriz que impiden REAL_PASS AUNQUE todo lo automatizado pase (integración sin traza, partes no
+ * automatizadas o sin cubrir). Es estructural: sale del escenario, no de una ejecución; no incluye fallos observados.
+ */
+export function pendientesParaRealPass(m: CasoMatriz, esc: EscenarioSde | undefined): { n: number; cobertura: Exclude<CoberturaPaso, 'ui'> }[] {
+  return m.pasos.filter((p) => !esObjetivo(p.accion))
+    .map((p) => ({ n: p.n, cobertura: coberturaPaso(p.n, esc) }))
+    .filter((p): p is { n: number; cobertura: Exclude<CoberturaPaso, 'ui'> } => p.cobertura !== 'ui');
+}
+
+/** Mejor resultado que el escenario puede dar hoy: nunca se promete REAL_PASS con pendientes. */
+export function maximoAlcanzable(m: CasoMatriz, esc: EscenarioSde | undefined): 'REAL_PASS' | 'REAL_PASS_PARCIAL' | 'SIN_ESCENARIO' {
+  if (!esc) return 'SIN_ESCENARIO';
+  return pendientesParaRealPass(m, esc).length ? 'REAL_PASS_PARCIAL' : 'REAL_PASS';
+}
+
 export function nivelImplementacion(m: CasoMatriz, esc: EscenarioSde | undefined): { nivel: NivelImplementacion; pasos: CoberturaCp['pasos'] } {
   const pasos = { total: 0, ui: 0, mixto: 0, integracion: 0, no_automatizado: 0, sin_cubrir: 0 };
   for (const p of m.pasos) {
     if (esObjetivo(p.accion)) continue;
     pasos.total++;
-    const cubren = esc?.pasos.filter((x) => x.matriz.includes(p.n)) ?? [];
-    const conUi = cubren.some((x) => !DECLARATIVAS.has(x.hacer));
-    const conDeclarativa = cubren.some((x) => DECLARATIVAS.has(x.hacer));
-    if (conUi && conDeclarativa) pasos.mixto++;
-    else if (conUi) pasos.ui++;
-    else if (cubren.some((x) => x.hacer === 'integracion')) pasos.integracion++;
-    else if (cubren.length) pasos.no_automatizado++;
-    else pasos.sin_cubrir++;
+    pasos[coberturaPaso(p.n, esc)]++;
   }
   // COMPLETA solo si TODOS los pasos se verifican únicamente por UI (sin integración pendiente ni partes no automatizadas).
   const nivel: NivelImplementacion = !esc ? 'NO_IMPLEMENTADA' : pasos.ui === pasos.total ? 'COMPLETA' : 'PARCIAL';

@@ -8,6 +8,11 @@
 # actividad Estructurar información SÍ corresponde al analista según la matriz.
 # Etiquetas: se usan las REALES de la UI donde la matriz usa nombres informales (ver OBS en REPORTE-FASE1B); donde la UI
 # tiene un error ortográfico frente a la matriz ("Observaciónes") se asierta el texto de la matriz para detectarlo.
+# PENDIENTES PARA REAL_PASS (H7; estructurales, ver "Máximo alcanzable" en docs/TRAZABILIDAD-17-CP.md): P12 y P17
+# (Worker AI sin traza, INT-02) y P28 (contenido de las pestañas Documentos/Seguimiento declarado no_automatizado en
+# este escenario oficial, UI-04). Observado además en QA: la ejecución oficial falla en P9 (secuencia de documentos,
+# control de cambios pendiente); en la variante, P19–P26 quedan bloqueados por UI-10 y P27 falla por BUG-04.
+# Máximo hoy: REAL_PASS_PARCIAL.
 id: HU06-CP01
 titulo: Masivo Generales — Worker AI, Estructurar información (analista) y edición de Detalle Polizas Asociadas
 etiquetas: [hu06, vertical, masivo, generales, cp01]

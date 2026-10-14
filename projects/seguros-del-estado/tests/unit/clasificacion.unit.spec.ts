@@ -32,7 +32,7 @@ test.describe('Clasificación ambiente vs producto @unit', () => {
     expect(r.pasos[1]).toMatchObject({ estado: 'BLOCKED', detalle: expect.stringMatching(/^ENTORNO: .*ENV-03/) });
     expect(r.pasos.slice(2).every((p) => p.estado === 'NOT_RUN')).toBe(true);
     expect(r.estado).toBe('BLOCKED'); // los NOT_RUN son consecuencia del bloqueo: no es un FAIL de producto
-    expect(r.motivo).toMatch(/BLOCKED por datos o ambiente: .*P2.*no se ejecutaron/);
+    expect(r.motivo).toMatch(/BLOCKED \(causa: AMBIENTE\): .*P2.*no se ejecutaron/); // H4: nombra la causa real
   });
 
   test('un error genérico sigue siendo FAIL (no se disfraza de bloqueo)', async () => {

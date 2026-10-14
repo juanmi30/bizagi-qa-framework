@@ -34,12 +34,17 @@ export class EntornoError extends Error {
   }
 }
 
-/** Clasifica la causa de una EXCEPCIÓN de capability por su tipo y mensaje (conservador: ante la duda, NO_CLASIFICADO). */
+/**
+ * Clasifica la causa de una EXCEPCIÓN de capability por su tipo y mensaje (conservador: ante la duda, NO_CLASIFICADO).
+ * Un timeout o una excepción desconocida NUNCA se clasifica como producto.
+ */
 export function causaDeExcepcion(e: unknown): CausaPaso {
   if (e instanceof DatoFaltanteError) return 'DATO';
   if (e instanceof EntornoError) return 'AMBIENTE';
   const m = (e as Error)?.message ?? '';
   const nombre = (e as Error)?.name ?? '';
+  // Red o portal que no responde: el ambiente impide ejecutar (no es el producto ni la automatización).
+  if (/net::ERR_|ECONNREFUSED|ECONNRESET|ENOTFOUND|EAI_AGAIN|ETIMEDOUT|page\.goto: Timeout|navigating to .* waiting until/i.test(m)) return 'AMBIENTE';
   if (nombre === 'CalibracionError' || nombre === 'BarreraPopupError' || /^\[calibrar /.test(m)) return 'AUTOMATIZACION';
   if (/No se encontró visible|Se esperaba exactamente 1|Ambigüedad|locator\.|Timeout \d+ms exceeded|intercepts pointer|no está dentro de/.test(m)) return 'AUTOMATIZACION';
   if (/MODO SOLO LECTURA/.test(m)) return 'AUTOMATIZACION';
@@ -47,11 +52,20 @@ export function causaDeExcepcion(e: unknown): CausaPaso {
   return 'NO_CLASIFICADO';
 }
 
+// Un BLOCKED devuelto por una capability sin causa explícita NO se presume dato faltante: queda NO_CLASIFICADO.
 const CAUSA_DE_ESTADO: Partial<Record<EstadoPaso, CausaPaso>> = {
-  INTEGRATION_NOT_VERIFIED: 'INTEGRACION_NO_VERIFICADA', NOT_AUTOMATED: 'NO_AUTOMATIZADO', BLOCKED: 'DATO',
+  INTEGRATION_NOT_VERIFIED: 'INTEGRACION_NO_VERIFICADA', NOT_AUTOMATED: 'NO_AUTOMATIZADO', BLOCKED: 'NO_CLASIFICADO',
 };
 
-export interface SalidaCapacidad { estado?: EstadoPaso; detalle?: string }
+/** Causa de un bloqueo previo a ejecutar, por su prefijo (preflight y bloqueo de concurrencia). */
+export function causaDeBloqueo(bloqueo: string): CausaPaso {
+  if (/^(ENVIRONMENT|CREDENCIALES)\b/.test(bloqueo)) return 'CONFIGURACION';
+  if (/^TEST_DATA\b/.test(bloqueo)) return 'DATO';
+  if (/^CONCURRENCIA\b/.test(bloqueo)) return 'CONCURRENCIA';
+  return 'NO_CLASIFICADO';
+}
+
+export interface SalidaCapacidad { estado?: EstadoPaso; detalle?: string; causa?: CausaPaso }
 export type Capacidad = (paso: PasoSde, ctx: ContextoEjecucion) => Promise<SalidaCapacidad | void>;
 export type Verificador = (v: Verificacion, ctx: ContextoEjecucion) => Promise<{ ok: boolean; detalle: string }>;
 
@@ -130,36 +144,68 @@ function agregarMatriz(cp: string, pasos: ResultadoPaso[], estadoGlobal?: Estado
   return filas;
 }
 
-function clasificar(matriz: ResultadoPasoMatriz[], ctx: ContextoEjecucion, pasos: ResultadoPaso[] = []): { estado: EstadoCp; motivo: string } {
+/** Causas distintas de los pasos ejecutados que no quedaron verdes (en orden de aparición). */
+function causasDe(pasos: ResultadoPaso[], filtro: (p: ResultadoPaso) => boolean = () => true): CausaPaso[] {
+  return [...new Set(pasos.filter((p) => p.causa && filtro(p)).map((p) => p.causa!))];
+}
+
+function clasificar(matriz: ResultadoPasoMatriz[], ctx: ContextoEjecucion, pasos: ResultadoPaso[] = []): { estado: EstadoCp; motivo: string; atribucion: ReporteCp['atribucion'] } {
   const estados = matriz.map((m) => m.estado);
   if (estados.includes('FAIL')) {
     const causas = [...new Set(pasos.filter((p) => p.estado === 'FAIL').map((p) => p.causa ?? 'NO_CLASIFICADO'))];
-    const soloAutomatizacion = causas.every((c) => c === 'AUTOMATIZACION');
+    // Solo una verificación observada distinta de lo esperado (o una respuesta explícita de Bizagi) apunta al producto.
+    const producto = causas.includes('PRODUCTO_POR_CONFIRMAR');
     return {
       estado: 'FAIL',
-      motivo: `Al menos un paso de la matriz falló (causa: ${causas.join(', ')})` +
-        (soloAutomatizacion ? ' — falla de AUTOMATIZACIÓN/calibración, NO atribuible al producto.' : '.'),
+      atribucion: producto ? 'PRODUCTO_POR_CONFIRMAR' : 'NO_ATRIBUIBLE_AL_PRODUCTO',
+      motivo: `Al menos un paso de la matriz falló (causa: ${causas.join(', ')})` + (producto
+        ? ' — comportamiento observado distinto al esperado: posible defecto, POR CONFIRMAR funcionalmente.'
+        : causas.every((c) => c === 'AUTOMATIZACION')
+          ? ' — falla de AUTOMATIZACIÓN/calibración, NO atribuible al producto.'
+          : ' — NO atribuible al producto (automatización, ambiente o excepción sin clasificar): revisar antes de reportar.'),
     };
   }
-  // Sin FAIL, los NOT_RUN son consecuencia de un bloqueo (dato o ambiente a mitad de la corrida): el CP queda BLOCKED.
+  // Sin FAIL, los NOT_RUN son consecuencia de un bloqueo a mitad de la corrida: el CP queda BLOCKED.
   if (estados.includes('BLOCKED')) {
     const b = matriz.filter((m) => m.estado === 'BLOCKED').map((m) => `P${m.n}`);
+    const causas = causasDe(pasos, (p) => p.estado === 'BLOCKED');
     return {
       estado: 'BLOCKED',
-      motivo: `Ejecutado contra QA${ctx.numeroCaso ? ` (caso ${ctx.numeroCaso})` : ''} sin fallos, pero ${b.length} paso(s) de la matriz quedaron BLOCKED por datos o ambiente: ${b.join(', ')}` +
+      atribucion: 'NO_APLICA',
+      motivo: `Ejecutado contra QA${ctx.numeroCaso ? ` (caso ${ctx.numeroCaso})` : ''} sin fallos, pero ${b.length} paso(s) de la matriz quedaron BLOCKED (causa: ${causas.join(', ') || 'NO_CLASIFICADO'}): ${b.join(', ')}` +
         (estados.includes('NOT_RUN') ? ' (los pasos siguientes no se ejecutaron).' : '.'),
     };
   }
-  if (estados.includes('NOT_RUN')) return { estado: 'FAIL', motivo: 'Ejecución incompleta (pasos sin correr).' };
+  if (estados.includes('NOT_RUN')) return { estado: 'FAIL', atribucion: 'NO_ATRIBUIBLE_AL_PRODUCTO', motivo: 'Ejecución incompleta (pasos sin correr).' };
   if (ctx.sesiones.size === 0 || !ctx.numeroCaso) {
-    return { estado: 'FAIL', motivo: 'Sin sesión real o sin número de caso real: no puede considerarse E2E.' };
+    return { estado: 'FAIL', atribucion: 'NO_ATRIBUIBLE_AL_PRODUCTO', motivo: 'Sin sesión real o sin número de caso real: no puede considerarse E2E.' };
   }
   const pendientes = matriz.filter((m) => !['PASS', 'UI_PASS'].includes(m.estado));
-  if (pendientes.length === 0) return { estado: 'REAL_PASS', motivo: 'Todos los pasos de la matriz verificados en QA.' };
+  if (pendientes.length === 0) return { estado: 'REAL_PASS', atribucion: 'NO_APLICA', motivo: 'Todos los pasos de la matriz verificados en QA.' };
   return {
     estado: 'REAL_PASS_PARCIAL',
+    atribucion: 'NO_APLICA',
     motivo: `Sesión y caso reales, sin fallos; ${pendientes.length} paso(s) de la matriz no verificados directamente: ` +
       pendientes.map((m) => `P${m.n}=${m.estado}`).join(', '),
+  };
+}
+
+/**
+ * Reporte de un escenario que NO se ejecutó porque faltan prerrequisitos (preflight) u otra ejecución real está en curso.
+ * Cada paso queda BLOCKED con la causa del bloqueo (configuración > concurrencia > dato), nunca FAIL ni verde.
+ */
+export function reporteBloqueado(esc: EscenarioSde, ctx: ContextoEjecucion, bloqueos: string[], ahora: () => Date = () => new Date()): ReporteCp {
+  const causas = [...new Set(bloqueos.map(causaDeBloqueo))];
+  const causaPaso = (['CONFIGURACION', 'CONCURRENCIA', 'DATO'] as CausaPaso[]).find((c) => causas.includes(c)) ?? 'NO_CLASIFICADO';
+  const pasos: ResultadoPaso[] = esc.pasos.map((p, i) => ({
+    indice: i + 1, hacer: p.hacer, matriz: p.matriz, estado: 'BLOCKED', causa: causaPaso, detalle: 'No ejecutado: faltan prerrequisitos.',
+  }));
+  const momento = ahora().toISOString();
+  return {
+    cp: esc.id, escenario: esc.archivo, inicio: momento, fin: momento, unico: ctx.unico, cleanup: esc.cleanup,
+    estado: 'BLOCKED', motivo: `No ejecutado (causa: ${causas.join(', ')}; no es un resultado del producto). Ver bloqueos.`,
+    numero_caso: null, actividades_observadas: [], pasos, matriz: agregarMatriz(esc.id, pasos, 'BLOCKED'), bloqueos,
+    causas, atribucion: 'NO_APLICA',
   };
 }
 
@@ -171,13 +217,7 @@ export async function ejecutarEscenario(esc: EscenarioSde, deps: Dependencias, c
   };
 
   const bloqueos = preflight(esc, ctx.registro, ctx.env);
-  if (bloqueos.length) {
-    const pasos: ResultadoPaso[] = esc.pasos.map((p, i) => ({ indice: i + 1, hacer: p.hacer, matriz: p.matriz, estado: 'BLOCKED', detalle: 'No ejecutado: faltan prerrequisitos.' }));
-    return {
-      ...base, fin: ahora().toISOString(), estado: 'BLOCKED', motivo: 'Prerrequisitos faltantes (ver bloqueos).',
-      numero_caso: null, actividades_observadas: [], pasos, matriz: agregarMatriz(esc.id, pasos, 'BLOCKED'), bloqueos,
-    };
-  }
+  if (bloqueos.length) return reporteBloqueado(esc, ctx, bloqueos, ahora);
 
   const resultados: ResultadoPaso[] = [];
   let detenido = false;
@@ -212,7 +252,7 @@ export async function ejecutarEscenario(esc: EscenarioSde, deps: Dependencias, c
       }
       r.estado = ok ? (salida.estado ?? 'PASS') : 'FAIL';
       // Verificación no cumplida = comportamiento observado distinto al esperado (por confirmar, nunca "defecto" directo).
-      r.causa = !ok ? 'PRODUCTO_POR_CONFIRMAR' : CAUSA_DE_ESTADO[r.estado];
+      r.causa = !ok ? 'PRODUCTO_POR_CONFIRMAR' : (salida.causa ?? CAUSA_DE_ESTADO[r.estado]);
       r.detalle = notas.join(' | ');
     } catch (e) {
       r.causa = causaDeExcepcion(e);
@@ -238,9 +278,10 @@ export async function ejecutarEscenario(esc: EscenarioSde, deps: Dependencias, c
   }
 
   const matriz = agregarMatriz(esc.id, resultados);
-  const { estado, motivo } = clasificar(matriz, ctx, resultados);
+  const { estado, motivo, atribucion } = clasificar(matriz, ctx, resultados);
   return {
     ...base, fin: ahora().toISOString(), estado, motivo, numero_caso: ctx.numeroCaso,
     actividades_observadas: [...ctx.actividades], pasos: resultados, matriz, bloqueos: [],
+    causas: causasDe(resultados), atribucion,
   };
 }

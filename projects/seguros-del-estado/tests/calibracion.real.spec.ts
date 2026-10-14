@@ -7,6 +7,7 @@ import { crearCapacidadesUi, VIEWPORT_SDE, type UiEntorno } from '../sde/capacid
 import { registrarCasoCreado } from '../sde/registro';
 import { esperarCarga } from '../sde/ui';
 import { generarUnico } from '../../../shared/runner/scenarioLoader';
+import { exclusividadEjecucionReal } from '../sde/verticales';
 
 /**
  * CALIBRACIÓN REAL de "Estructurar información" sobre un caso PROPIO ya existente (SDE_CALIBRAR_CASO=<n>), o sobre uno
@@ -22,6 +23,7 @@ import { generarUnico } from '../../../shared/runner/scenarioLoader';
  * - NO es un resultado del CP: el reporte se imprime y adjunta como calibración.
  */
 test.use({ viewport: VIEWPORT_SDE, trace: 'off' }); // trace off: registraría la clave tecleada
+exclusividadEjecucionReal('calibración Estructurar información'); // H6: puede crear casos: nunca en paralelo con otra ejecución real
 
 const P = (matriz: number[], hacer: string, extra: Record<string, unknown> = {}): PasoSde => ({ matriz, hacer, ...extra });
 

@@ -38,7 +38,9 @@ export function peorEstado(estados: EstadoPaso[]): EstadoPaso {
 export type CausaPaso =
   | 'PRODUCTO_POR_CONFIRMAR'     // se observó un comportamiento distinto al esperado
   | 'AUTOMATIZACION'             // selector/etiqueta/calibración: la automatización no encontró o no pudo operar el control
-  | 'AMBIENTE'                   // DNS, permisos, servicio caído
+  | 'AMBIENTE'                   // DNS, red, permisos, servicio caído
+  | 'CONFIGURACION'              // .env local incompleto (URL del portal, credenciales de un actor)
+  | 'CONCURRENCIA'               // otra ejecución real de SDE en curso (bloqueo entre procesos)
   | 'DATO'                       // dato de prueba faltante
   | 'INTEGRACION_NO_VERIFICADA'  // SISE / Worker AI / compuerta sin traza
   | 'NO_AUTOMATIZADO'            // paso sin criterio objetivo automatizable
@@ -77,4 +79,12 @@ export interface ReporteCp {
   matriz: ResultadoPasoMatriz[];
   bloqueos: string[];      // nombres de variables / datasets faltantes (nunca valores)
   cleanup: { politica: string; razon: string };
+  /** Causas de todo lo que no quedó verde (pasos y bloqueos previos), sin repetir. Ausente en reportes anteriores a H4. */
+  causas?: CausaPaso[];
+  /**
+   * A quién se atribuye un FAIL: PRODUCTO_POR_CONFIRMAR solo si algún paso falló por un comportamiento OBSERVADO distinto
+   * al esperado; NO_ATRIBUIBLE_AL_PRODUCTO si todas las fallas son de automatización, ambiente o excepciones sin clasificar.
+   * NO_APLICA para estados que no son FAIL.
+   */
+  atribucion?: 'PRODUCTO_POR_CONFIRMAR' | 'NO_ATRIBUIBLE_AL_PRODUCTO' | 'NO_APLICA';
 }

@@ -18,6 +18,9 @@ export const DIR_SALIDA = resolve(__dirname, '..', '..', '..', 'test-results', '
  */
 export const DIR_EVIDENCIA_VERSIONADA = resolve(__dirname, '..', 'docs', 'evidencia');
 
+/** Bloqueo exclusivo de las ejecuciones reales de SDE (H6): una a la vez, aunque se pase --workers o se abran dos terminales. */
+export const RUTA_BLOQUEO_EJECUCION_REAL = resolve(DIR_SALIDA, '..', '.ejecucion-real.lock');
+
 export async function registrarCasoCreado(
   entrada: { cp: string; numero: string; actor: string; unico: string; cleanup: string },
   directorioBase = resolve(__dirname, '..', '..', '..'),

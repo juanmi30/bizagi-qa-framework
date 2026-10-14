@@ -4,7 +4,7 @@ import { cargarManifest } from './manifest';
 import { cargarRegistro, estadoActor, estadoDataset, type Entorno } from './datos';
 import { cargarEscenario, DIR_ESCENARIOS, type EscenarioSde } from './escenario';
 import { DIR_EVIDENCIA_VERSIONADA, DIR_SALIDA } from './registro';
-import { coberturaCp, inventarioReportes, leerReportes, totales, type CoberturaCp } from './metricas';
+import { coberturaCp, inventarioReportes, leerReportes, maximoAlcanzable, pendientesParaRealPass, totales, type CoberturaCp } from './metricas';
 
 /**
  * Genera docs/TRAZABILIDAD-17-CP.md desde las fuentes (matriz literal, manifest, escenarios y el
@@ -86,6 +86,11 @@ export function generarTrazabilidad(env: Entorno = process.env, dirReportes = DI
     out.push(`- **Familia:** ${c.familia} · **Fase:** ${c.fase} · **Prioridad:** ${c.prioridad}`);
     out.push(`- **Escenario:** ${c.escenario ? `\`escenarios/${c.escenario}\`` : 'sin escenario (PREPARADO: no se crea un stub)'}`);
     out.push(`- **Brechas:** ${c.brechas.map((b) => `${b} (${man.brechas[b]?.tipo ?? '?'})`).join(', ')}`);
+    // H7: lo que impide REAL_PASS aunque todo lo automatizado pase (estructural; los fallos observados van en "Estado").
+    const pend = pendientesParaRealPass(m, esc);
+    out.push(`- **Máximo alcanzable hoy:** ${maximoAlcanzable(m, esc)}` + (esc && pend.length
+      ? ` — pendientes para REAL_PASS: ${pend.map((p) => `P${p.n} (${p.cobertura.replace('_', ' ')})`).join(', ')}`
+      : ''));
     const intento = cob.get(c.id)!.ultimoIntento?.reporte;
     out.push(`- **Estado:** ${rep ? `${rep.estado} — ${rep.motivo}` : intento ? `${intento.estado} (no ejecutado) — ${intento.motivo} ${intento.bloqueos.join('; ')}` : c.estado}`);
     out.push('', '| Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |', '|---|---|---|---|---|');

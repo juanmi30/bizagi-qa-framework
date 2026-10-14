@@ -1,4 +1,5 @@
 import { mkdir, readFile, rename, unlink, writeFile } from 'node:fs/promises';
+import { BloqueoOcupadoError, conBloqueo } from './BloqueoArchivo';
 import { randomUUID } from 'node:crypto';
 import { resolve } from 'node:path';
 
@@ -87,8 +88,8 @@ const pausa = (ms: number) => new Promise(r => setTimeout(r, ms));
  * test-results/<proyecto>/historico-casos.json
  *
  * Escritura atómica (temporal en el mismo directorio + rename): una
- * interrupción nunca deja el JSON truncado. No hay bloqueo entre procesos:
- * las pruebas reales que lo usan corren con workers=1.
+ * interrupción nunca deja el JSON truncado. Registrar y marcar como depurado
+ * son exclusivos entre procesos (BloqueoArchivo): no dependen de workers=1.
  */
 export class HistorialCasos {
   private readonly proyecto: string;
@@ -223,19 +224,21 @@ export class HistorialCasos {
       estadoDepuracion: PENDIENTE,
     };
 
-    const casos = await this.listar();
+    return this.exclusivo(async () => {
+      const casos = await this.listar();
 
-    if (casos.some(caso => caso.numeroCaso === numeroCaso)) {
-      throw new Error(
-        `El caso ${numeroCaso} ya existe en el histórico del proyecto ` +
-        `"${this.proyecto}"; no se registra una segunda entrada.`,
-      );
-    }
+      if (casos.some(caso => caso.numeroCaso === numeroCaso)) {
+        throw new Error(
+          `El caso ${numeroCaso} ya existe en el histórico del proyecto ` +
+          `"${this.proyecto}"; no se registra una segunda entrada.`,
+        );
+      }
 
-    casos.push(registro);
-    await this.guardar(casos, numeroCaso);
+      casos.push(registro);
+      await this.guardar(casos, numeroCaso);
 
-    return registro;
+      return registro;
+    });
   }
 
   /**
@@ -246,6 +249,10 @@ export class HistorialCasos {
     numeroCaso: string,
   ): Promise<CasoHistorico> {
     const numero = numeroCaso.trim();
+    return this.exclusivo(() => this.marcarDepuradoSinBloqueo(numero));
+  }
+
+  private async marcarDepuradoSinBloqueo(numero: string): Promise<CasoHistorico> {
     const casos = await this.listar();
     const indices = casos.flatMap((caso, i) =>
       caso.numeroCaso === numero ? [i] : []);
@@ -275,6 +282,21 @@ export class HistorialCasos {
     await this.guardar(casos, numero);
 
     return actualizado;
+  }
+
+  /**
+   * Lectura-modificación-escritura exclusiva entre procesos (archivo .lock junto al histórico). Sin esto, dos procesos
+   * que registran a la vez leen la misma lista y el último en guardar borra el caso del otro.
+   */
+  private exclusivo<T>(fn: () => Promise<T>): Promise<T> {
+    return conBloqueo(`${this.rutaArchivo}.lock`, fn, {
+      esperaMs: 30_000, caducidadMs: 120_000, descripcion: `histórico de casos de ${this.proyecto}`,
+    }).catch((e: unknown) => {
+      if (e instanceof BloqueoOcupadoError) {
+        throw new Error(`El histórico de casos de "${this.proyecto}" está bloqueado por otro proceso desde hace más de 30 s. ${e.message}`);
+      }
+      throw e;
+    });
   }
 
   /** Temporal en el mismo directorio + rename: el archivo previo sobrevive a cualquier fallo. */

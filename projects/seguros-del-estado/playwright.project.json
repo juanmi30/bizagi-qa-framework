@@ -1,4 +1,5 @@
 {
   "workers": 1,
-  "fullyParallel": false
+  "fullyParallel": false,
+  "reporters": ["sde/veredicto.ts"]
 }

@@ -7,6 +7,7 @@ import { crearCapacidadesUi, VIEWPORT_SDE, type UiEntorno } from '../sde/capacid
 import { SdeObjects } from '../baseObjects/sde.objects';
 import { DIR_SALIDA, registrarCasoCreado } from '../sde/registro';
 import { esperarCarga, normaliza, regexExacto, unicoVisible } from '../sde/ui';
+import { exclusividadEjecucionReal } from '../sde/verticales';
 
 /**
  * DIAGNÓSTICO BUG-01 (secuencia de documentos) — SOLO el formulario de inicio, NUNCA pulsa "Crear" (sin "Crear" no
@@ -16,6 +17,7 @@ import { esperarCarga, normaliza, regexExacto, unicoVisible } from '../sde/ui';
  * volver a editarla. Salida: test-results/seguros-del-estado/sde/diagnostico-docs-<fecha>.json (sin datos sensibles).
  */
 test.use({ viewport: VIEWPORT_SDE, trace: 'off' });
+exclusividadEjecucionReal('diagnóstico BUG-01 documentos'); // H6: puede crear casos: nunca en paralelo con otra ejecución real
 
 const MOVIMIENTO = process.env.SDE_DIAG_MOVIMIENTO ?? 'Póliza Nueva';
 

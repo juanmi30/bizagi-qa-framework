@@ -1,6 +1,6 @@
 # Estado actual del framework
 
-**Actualizado: 2026-10-14 (noche), por Claude Code — fase de validaciones funcionales tras la reunión QA del 14/10.** Repositorio: `juanmi30/bizagi-qa-framework` (privado). `main` = `f40bde7` (merge del PR #1 + deuda P-08..P-10). Esta página describe la rama `feat/sde-validaciones-funcionales` (PR en borrador, sin fusionar); checkpoint `docs/orquestacion/checkpoints/2026-10-14-validaciones-funcionales.md`. Matriz de oportunidades: `projects/seguros-del-estado/docs/MATRIZ-OPORTUNIDADES-2026-10-14.md`. Todo dato de esta página se verificó en esta sesión, salvo lo marcado como *no auditado*.
+**Actualizado: 2026-10-14 (noche), por Claude Code — fase de validaciones funcionales tras la reunión QA del 14/10.** Repositorio: `juanmi30/bizagi-qa-framework` (privado). `main` = `f40bde7` (merge del PR #1 + deuda P-08..P-10). Esta página describe la rama `feat/sde-validaciones-funcionales` (PR en borrador, sin fusionar); checkpoint `docs/orquestacion/checkpoints/2026-10-14-validaciones-funcionales.md`. Migración a otro equipo (qué no viaja por Git y variables P-14): `2026-10-14-cierre-jornada.md`. Matriz de oportunidades: `projects/seguros-del-estado/docs/MATRIZ-OPORTUNIDADES-2026-10-14.md`. Todo dato de esta página se verificó en esta sesión, salvo lo marcado como *no auditado*.
 
 ## Verificaciones técnicas de esta fecha (rama de validaciones funcionales)
 

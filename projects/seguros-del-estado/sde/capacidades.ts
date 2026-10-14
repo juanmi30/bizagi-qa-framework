@@ -379,7 +379,7 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
           (productoPrimero ? '.' : ' en la secuencia de la matriz (la fila indica "Por favor guarde el registro antes de subir el archivo").'));
       }
       const tipo = p.tipo_documental ? ctx.resolver(p.tipo_documental as string) : '';
-      if (!tipo) return { estado: 'BLOCKED', detalle: `Tipos documentales disponibles: ${reales.join(' | ')}. Falta indicar cuál es el obligatorio (DOCS-OBLIGATORIOS).` };
+      if (!tipo) return { estado: 'BLOCKED', causa: 'DATO', detalle: `Tipos documentales disponibles: ${reales.join(' | ')}. Falta indicar cuál es el obligatorio (DOCS-OBLIGATORIOS).` };
       await (await unicoVisible(opciones.filter({ hasText: regexExacto(tipo) }), `el tipo documental "${tipo}"`)).click();
       await esperarCarga(page);
       // 2) Guardar la fila si sigue en edición (secuencia de la matriz) y 3) subir el archivo.

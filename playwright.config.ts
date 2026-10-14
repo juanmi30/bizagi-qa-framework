@@ -16,8 +16,10 @@ if (!project) {
 const projectDir = resolve(__dirname, 'projects', project);
 // Ajustes opcionales POR PROYECTO (projects/<p>/playwright.project.json). Sin ese archivo, todo queda como antes.
 // Ej.: SDE fuerza ejecución secuencial (casos reales e históricos compartidos) aunque se olvide --workers=1.
-const ajustesProyecto: { workers?: number; fullyParallel?: boolean } = existsSync(resolve(projectDir, 'playwright.project.json'))
+// `reporters`: reporters adicionales del proyecto (rutas relativas a projects/<p>/), p. ej. el veredicto E2E de SDE.
+const ajustesProyecto: { workers?: number; fullyParallel?: boolean; reporters?: string[] } = existsSync(resolve(projectDir, 'playwright.project.json'))
   ? JSON.parse(readFileSync(resolve(projectDir, 'playwright.project.json'), 'utf8')) : {};
+const reportersProyecto = (ajustesProyecto.reporters ?? []).map((r) => [resolve(projectDir, r)] as [string]);
 const envPath = resolve(projectDir, '.env');
 if (existsSync(envPath)) dotenv.config({ path: envPath });
 
@@ -45,6 +47,7 @@ export default defineConfig({
     ['list'],
     ['html', { outputFolder: `test-results/${project}/html-report`, open: 'never' }],
     ['junit', { outputFile: `test-results/${project}/junit/results.xml` }],
+    ...reportersProyecto,
   ],
   use: {
     baseURL: process.env.BIZAGI_BASE_URL,

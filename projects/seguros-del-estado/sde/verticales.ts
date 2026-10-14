@@ -1,10 +1,11 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type TestInfo } from '@playwright/test';
 import { generarUnico } from '../../../shared/runner/scenarioLoader';
+import { adquirirBloqueo, BloqueoOcupadoError, type Bloqueo } from '../../../shared/utils/BloqueoArchivo';
 import { cargarRegistro } from './datos';
 import { cargarEscenario, EscenarioError } from './escenario';
-import { crearContexto, ejecutarEscenario, preflight } from './ejecutor';
+import { crearContexto, ejecutarEscenario, preflight, reporteBloqueado } from './ejecutor';
 import { crearCapacidadesUi, type UiEntorno } from './capacidades';
-import { guardarReporte, registrarCasoCreado, resumenTexto } from './registro';
+import { guardarReporte, registrarCasoCreado, resumenTexto, RUTA_BLOQUEO_EJECUCION_REAL } from './registro';
 import type { ReporteCp } from './modelo';
 
 /**
@@ -19,10 +20,50 @@ import type { ReporteCp } from './modelo';
  *  FAIL → failed. Un parcial NUNCA aparece como passed.
  */
 export function resultadoPlaywright(r: ReporteCp): { accion: 'pasar' | 'fallar' | 'omitir'; mensaje: string } {
+  const causas = r.causas?.length ? ` [causa: ${r.causas.join(', ')}]` : '';
   if (r.estado === 'REAL_PASS') return { accion: 'pasar', mensaje: `${r.cp}: REAL_PASS — ${r.motivo}` };
-  if (r.estado === 'BLOCKED') return { accion: 'omitir', mensaje: `${r.cp}: BLOCKED en ejecución (no es fallo del producto) — ${r.motivo}` };
+  if (r.estado === 'BLOCKED') {
+    const momento = r.bloqueos.length ? 'antes de ejecutar' : 'en ejecución';
+    return { accion: 'omitir', mensaje: `${r.cp}: BLOCKED ${momento} (no es fallo del producto)${causas} — ${r.motivo}` };
+  }
   if (r.estado === 'REAL_PASS_PARCIAL') return { accion: 'fallar', mensaje: `${r.cp}: NO APROBADO (REAL_PASS_PARCIAL: ejecución real sin fallos, pero con pasos no verificados) — ${r.motivo}` };
-  return { accion: 'fallar', mensaje: `${r.cp}: ${r.estado} — ${r.motivo}` };
+  const atribucion = r.atribucion === 'NO_ATRIBUIBLE_AL_PRODUCTO' ? ' [NO atribuible al producto]' : r.atribucion === 'PRODUCTO_POR_CONFIRMAR' ? ' [posible defecto, por confirmar]' : '';
+  return { accion: 'fallar', mensaje: `${r.cp}: ${r.estado}${atribucion}${causas} — ${r.motivo}` };
+}
+
+/**
+ * Lleva el estado funcional del reporte a Playwright/JUnit con trazabilidad: anotaciones `resultado_funcional`,
+ * `causa` y `atribucion` (JUnit las publica como propiedades del caso) y luego passed/failed/skipped según
+ * resultadoPlaywright. Es el ÚNICO camino: preflight, concurrencia y ejecución terminan aquí.
+ */
+export function aplicarResultado(reporte: ReporteCp, testInfo: TestInfo): void {
+  testInfo.annotations.push({ type: 'resultado_funcional', description: reporte.estado });
+  for (const c of reporte.causas ?? []) testInfo.annotations.push({ type: 'causa', description: c });
+  if (reporte.atribucion && reporte.atribucion !== 'NO_APLICA') testInfo.annotations.push({ type: 'atribucion', description: reporte.atribucion });
+  for (const b of reporte.bloqueos) testInfo.annotations.push({ type: 'BLOCKED', description: b });
+  const pw = resultadoPlaywright(reporte);
+  if (pw.accion === 'omitir') test.skip(true, pw.mensaje);
+  expect(pw.accion, `${pw.mensaje}\n${resumenTexto(reporte)}`).toBe('pasar');
+}
+
+/**
+ * Para specs reales FUERA del runner que pueden crear casos (calibración, diagnósticos): toma el mismo bloqueo exclusivo
+ * antes de cada prueba y lo libera al terminar (también si falla). Si otra ejecución real está en curso, la prueba se
+ * omite con causa CONCURRENCIA (nunca corre en paralelo con otra).
+ */
+export function exclusividadEjecucionReal(descripcion: string): void {
+  let bloqueo: Bloqueo | undefined;
+  test.beforeEach(async () => {
+    try {
+      bloqueo = await adquirirBloqueo(RUTA_BLOQUEO_EJECUCION_REAL, {
+        esperaMs: Number(process.env.SDE_ESPERA_EJECUCION_REAL_SEGUNDOS ?? 0) * 1000, caducidadMs: 6 * 60 * 60_000, descripcion,
+      });
+    } catch (e) {
+      if (!(e instanceof BloqueoOcupadoError)) throw e;
+      test.skip(true, `BLOCKED (causa: CONCURRENCIA) — otra ejecución real de SDE está en curso. ${e.message}`);
+    }
+  });
+  test.afterEach(() => { bloqueo?.liberar(); bloqueo = undefined; });
 }
 
 export interface OpcionesVerticales { titulo: string; etiquetas: string[]; prefijoReporte: string; prefijoMotivo: string }
@@ -46,13 +87,29 @@ export function registrarVerticales(rutas: string[], o: OpcionesVerticales = { t
     test(`${o.titulo} ${s.id} — ${s.titulo} ${tags}`, async ({ page, browser }, testInfo) => {
       const unico = generarUnico();
       const ctx = crearContexto(registro, process.env, unico);
-      const bloqueos = preflight(s, registro, process.env);
-      if (bloqueos.length) {
-        // El ejecutor devuelve BLOCKED sin tocar la UI; el reporte deja constancia de QUÉ falta (nombres, no valores).
-        const reporte = await ejecutarEscenario(s, { capacidades: {}, verificar: async () => ({ ok: false, detalle: '' }), evidencia: async () => undefined }, ctx);
+      const bloqueados = async (bloqueos: string[]) => {
+        // BLOCKED sin tocar la UI; el reporte deja constancia de QUÉ falta (nombres, no valores) y de la causa.
+        const reporte = reporteBloqueado(s, ctx, bloqueos);
         await testInfo.attach(`${s.id}-reporte.json`, { path: guardarReporte(reporte, o.prefijoReporte), contentType: 'application/json' });
-        for (const b of bloqueos) testInfo.annotations.push({ type: 'BLOCKED', description: b });
-        test.skip(true, `BLOCKED — ${bloqueos.length} prerrequisito(s) faltante(s): ${bloqueos.join(' ; ')}`);
+        aplicarResultado(reporte, testInfo);
+      };
+      const faltantes = preflight(s, registro, process.env);
+      if (faltantes.length) return bloqueados(faltantes);
+
+      // H6: una sola ejecución real de SDE a la vez (casos reales, histórico y reportes compartidos), aunque se pase
+      // --workers>1 o se abran dos terminales. Por defecto no espera: el CP queda BLOCKED por CONCURRENCIA.
+      if (testInfo.config.workers > 1) {
+        testInfo.annotations.push({ type: 'ADVERTENCIA', description: `Se pidieron ${testInfo.config.workers} workers: las ejecuciones reales de SDE se serializan con un bloqueo; usa --workers=1.` });
+      }
+      let bloqueo: Bloqueo;
+      try {
+        bloqueo = await adquirirBloqueo(RUTA_BLOQUEO_EJECUCION_REAL, {
+          esperaMs: Number(process.env.SDE_ESPERA_EJECUCION_REAL_SEGUNDOS ?? 0) * 1000,
+          caducidadMs: 6 * 60 * 60_000, descripcion: `${o.prefijoReporte}${s.id}`,
+        });
+      } catch (e) {
+        if (!(e instanceof BloqueoOcupadoError)) throw e;
+        return bloqueados([`CONCURRENCIA: otra ejecución real de SDE está en curso — ${e.message} Ejecuta de a una (--workers=1) o define SDE_ESPERA_EJECUCION_REAL_SEGUNDOS.`]);
       }
 
       testInfo.setTimeout(30 * 60_000);
@@ -77,12 +134,10 @@ export function registrarVerticales(rutas: string[], o: OpcionesVerticales = { t
         testInfo.annotations.push({ type: reporte.estado, description: reporte.motivo });
         if (reporte.numero_caso) testInfo.annotations.push({ type: 'caso', description: reporte.numero_caso });
         console.log(resumenTexto(reporte));
-        testInfo.annotations.push({ type: 'resultado_funcional', description: reporte.estado });
-        const pw = resultadoPlaywright(reporte);
-        if (pw.accion === 'omitir') test.skip(true, pw.mensaje);
-        expect(pw.accion, `${pw.mensaje}\n${resumenTexto(reporte)}`).toBe('pasar');
+        aplicarResultado(reporte, testInfo);
       } finally {
         for (const c of ui.contextos) await c.close().catch(() => undefined);
+        bloqueo.liberar();
       }
     });
   }

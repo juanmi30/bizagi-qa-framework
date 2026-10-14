@@ -1,0 +1,296 @@
+{
+  "schemaVersion": "afi-knowledge-decisions/v1",
+  "batchId": "kr-77e24bc0b4a5942e",
+  "revisionBase": 2,
+  "decisiones": [
+    {
+      "proposalId": "prop-pantalla-ingresa-informacion-empresa",
+      "entidad": "pantalla-ui:pantalla-ingresa-informacion-empresa",
+      "hash": "eca875d47426b9f79c6d0aa66ffaced4d2befc900b1d3209b21eeab84181df4c",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-pantalla-representante-legal",
+      "entidad": "pantalla-ui:pantalla-representante-legal",
+      "hash": "1f6cd5d0094d95f956bed3a18fcfe3a9aed51559ffb74f5b7a4c3f4dcc47f752",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-pantalla-contacto-caja",
+      "entidad": "pantalla-ui:pantalla-contacto-caja",
+      "hash": "61a011942d8b28de50658bd67b1f7a21b2166332c165129cee920d9b3b0be5b4",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-pantalla-responsable-portal",
+      "entidad": "pantalla-ui:pantalla-responsable-portal",
+      "hash": "a009667311cbc9fbd3b8609491ab83db23df86ad0eced8514248eeee3af17595",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-pantalla-documentos",
+      "entidad": "pantalla-ui:pantalla-documentos",
+      "hash": "fc68baf4ebc98a961cacf3b153410e97e1a2ec5032ab2fe389db3eff45f392d5",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-campo-tipo-sociedad",
+      "entidad": "campo-ui:campo-tipo-sociedad",
+      "hash": "e6caa85de2e278be485a9a127a8e6e092cfe13e0022d9ac273dd75ece92d8bf9",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-representante-legal-tipo-identificacion",
+      "entidad": "campo-ui:representante-legal-tipo-identificacion",
+      "hash": "4222449516be1eeadcbf5bccf9a310114b16918505850c6845ad8bc62d34e278",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-representante-legal-numero-identificacion",
+      "entidad": "campo-ui:representante-legal-numero-identificacion",
+      "hash": "f1651a1d89d1d1c24e6ef498192f1a4189137ee0076bd2eaab4f22718d7e87f7",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-representante-legal-primer-nombre",
+      "entidad": "campo-ui:representante-legal-primer-nombre",
+      "hash": "d5198c5dc93b02dac59bab9135817f07dc78603cb3c30ae768db6e30d20f4e4a",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-representante-legal-segundo-nombre",
+      "entidad": "campo-ui:representante-legal-segundo-nombre",
+      "hash": "5bde313b5ee5cee1aee4be66f6ab53c5995f36699419eab35167de8cd0616d39",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-representante-legal-primer-apellido",
+      "entidad": "campo-ui:representante-legal-primer-apellido",
+      "hash": "0638cf33afab8b0f391ba92c156394cc8852a64c11ed0ce4066c1c81719f4468",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-representante-legal-segundo-apellido",
+      "entidad": "campo-ui:representante-legal-segundo-apellido",
+      "hash": "886cbba6e3e321412abbae19a5d6ede3cefa6c931fe60d69aeec434e9678e6ba",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-representante-legal-nombre-completo",
+      "entidad": "campo-ui:representante-legal-nombre-completo",
+      "hash": "a78e6177b41b4ad1ec6849737e2b229e72a74799e16e754415f6feb685eb6860",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-contacto-caja-tipo-identificacion",
+      "entidad": "campo-ui:contacto-caja-tipo-identificacion",
+      "hash": "1a9d109841bb420d3ccaa85e795920866e190c6c10b07a0482f0bffe65ad2495",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-contacto-caja-numero-identificacion",
+      "entidad": "campo-ui:contacto-caja-numero-identificacion",
+      "hash": "2311aa71c7b5e523a02f833d685dde77d06dca3bf6347b1d18925fa6adaccb2e",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-contacto-caja-primer-nombre",
+      "entidad": "campo-ui:contacto-caja-primer-nombre",
+      "hash": "2fbc0e2dba1fbf59850be1737817a92cc4013c5129bfb5e12bad8b3f256feb0a",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-contacto-caja-segundo-nombre",
+      "entidad": "campo-ui:contacto-caja-segundo-nombre",
+      "hash": "df8dd533b5c87c53a0d3e89e292ef1037c2f90b2e931cf3d6ad841e6555dcb65",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-contacto-caja-primer-apellido",
+      "entidad": "campo-ui:contacto-caja-primer-apellido",
+      "hash": "65d2698af706fd54908bbdee0cffba37568d5668bcfee8c3a44d3d56ed1e65b9",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-contacto-caja-segundo-apellido",
+      "entidad": "campo-ui:contacto-caja-segundo-apellido",
+      "hash": "b55063e7ae9665b1304ae84b50d7b194caddd488237fa7eb5f1fc8f1716ed9df",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-contacto-caja-nombre-completo",
+      "entidad": "campo-ui:contacto-caja-nombre-completo",
+      "hash": "26a595eb58b3c4e3845156c12761c1456d7c7ca5199c93224eec01647a8f5909",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-contacto-caja-correo",
+      "entidad": "campo-ui:contacto-caja-correo",
+      "hash": "f983cac39f673d0884afc43b93e503e110d8fff8ec552c585bb9a6cd3cccaba5",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-responsable-portal-tipo-identificacion",
+      "entidad": "campo-ui:responsable-portal-tipo-identificacion",
+      "hash": "909c9e350f66c544b12c98d15f9b2c2ca8a6506e972ee1658cbd64fe0cdcb7e0",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-responsable-portal-numero-identificacion",
+      "entidad": "campo-ui:responsable-portal-numero-identificacion",
+      "hash": "a9213e49db53bc686c5d5eac2b0967617325f5ecfea215169bf6bd31e1496d4f",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-responsable-portal-primer-nombre",
+      "entidad": "campo-ui:responsable-portal-primer-nombre",
+      "hash": "86ebe05928c2b34593ca604f8ccac7348941ab3d647b26cfe707aefd468e4d9b",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-responsable-portal-segundo-nombre",
+      "entidad": "campo-ui:responsable-portal-segundo-nombre",
+      "hash": "29611b50a6a8aa54433dfbe9334a357a57094b0bbe53304536a5155a43e1e9a9",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-responsable-portal-primer-apellido",
+      "entidad": "campo-ui:responsable-portal-primer-apellido",
+      "hash": "74d15953ef33b6b65a739e83ecbf9c988e2eb38bb1f8c468d9c5c7cb459d8f21",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-responsable-portal-segundo-apellido",
+      "entidad": "campo-ui:responsable-portal-segundo-apellido",
+      "hash": "5f0a15943c8b7b18b50521c7f53060dbc5e9ec0d500cd57c802e143375ca71a7",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-responsable-portal-nombre-completo",
+      "entidad": "campo-ui:responsable-portal-nombre-completo",
+      "hash": "11ca397298e771b103595520c8164a34f75594ddec3373611a9f2ae0bb3e5316",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-actividad-registrar-informacion-cliente",
+      "entidad": "actividad:actividad-registrar-informacion-cliente",
+      "hash": "ffecc16b8de112838abea2e4781a5e098ef980215a60b55c9f783364b8170e10",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-integracion-giass",
+      "entidad": "integracion:integracion-giass",
+      "hash": "6cf43434bde9110a0af6c2fd6cd5099074063f7c2e8a30862cc0288eb13188fc",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-integracion-rues",
+      "entidad": "integracion:integracion-rues",
+      "hash": "6e04434754cde6d1ac6df9b87c198a0787d531cb9301f5faf0c5f263c300e266",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-integracion-registraduria",
+      "entidad": "integracion:integracion-registraduria",
+      "hash": "2923dee4c5481811301d2e9e0bcb87ac6542f34862d0d1a609053aa2cc79a11b",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-variable-flag-registraduria",
+      "entidad": "variable:variable-flag-registraduria",
+      "hash": "c74013fe0f4bde248ab59cf8e6b784471fc34f9f397c116fd05a920026ffca99",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-notificacion-aprobacion-empleador",
+      "entidad": "notificacion:notificacion-aprobacion-empleador",
+      "hash": "9cced0e7e993cc8d94dbeede1e2ab7cabf6b0aa59491e2aa6655374442298699",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-notificacion-cierre-inactividad",
+      "entidad": "notificacion:notificacion-cierre-inactividad",
+      "hash": "67577d6e9d6f2a2d36576e8b28161c36950966203d6866310b8b52dfba5f3f45",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    },
+    {
+      "proposalId": "prop-notificacion-recordatorio-retoma",
+      "entidad": "notificacion:notificacion-recordatorio-retoma",
+      "hash": "8f8b0371118e5ad8c2cdd5b7a5c1595175f683542da74c127ba0ac87269308c7",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Entidad declarativa validada contra el diseño QA vigente."
+    }
+  ],
+  "clasificaciones": []
+}

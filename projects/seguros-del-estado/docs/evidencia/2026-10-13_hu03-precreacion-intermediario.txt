@@ -1,0 +1,36 @@
+SDE-CEL — HU03 con el intermediario habilitado INT-013403 (2026-10-13). SOLO LECTURA: ningún caso creado.
+Protección activa: modo soloLectura (la red aborta CREATENEWCASE; "pulsar Crear" falla antes del clic). Reportes locales:
+test-results/seguros-del-estado/sde/PRECREACION_<CP>_*.json (no cuentan como ejecución del CP).
+
+== Bloque 1 — Cuenta
+.env → USUARIO_intermediario = INT-013403, dominio externos; SDE_INTERMEDIARIO_CLAVE coincide con la clave del Excel de QA
+(1 fila, 1 clave). Login real 3/3; habilitación: intermediario PASS, analista (control) PASS, intermediario_alerta FAIL.
+Rol observado: CE_Intermediarios. El Plan Maestro nombra un rol "Radicador" (vinculado a "Tipo de usuario"); NO se asume
+que sean el mismo: lo único comprobado es que CE_Intermediarios permite iniciar el proceso.
+
+== Bloque 2 — Pre-creación de los escenarios HU03 con el actor real (pasos hasta antes de "Crear")
+HU03-CP02 (Autos, Número de póliza): P2–P6 PASS · P7 BLOCKED (SDE_AUTOS_POLIZA)
+HU03-CP01 (Autos, Placa):            P2–P6 PASS · P7 BLOCKED (SDE_PLACA_MULTIPOLIZA)
+HU03-CP03 (Generales, póliza):       P2–P6 PASS · P7 BLOCKED (SDE_GEN_POLIZA)
+HU03-CP04 (Generales PN, tomador):   P2–P6 PASS · P7 BLOCKED (SDE_TOMADOR_EXISTENTE_*)
+HU03-CP05 (Generales PN, tomador):   P2–P6 PASS · P7 BLOCKED (SDE_TOMADOR_INEXISTENTE_*)
+HU03-CP06/07/08 (Cumplimiento):      P2–P3 PASS · P4 BLOCKED (ramo con/sin propiedad RCE sin definir)
+(P6 incluye además un NOT_AUTOMATED: ortografía global sin glosario.)
+
+Calibraciones derivadas (corregidas en los escenarios):
+- Forma de Consulta Unitaria es un radio con opciones "Número de póliza" y "Placa"; el campo criterio es "Número de Póliza"
+  o "Placa". Como "Placa" es a la vez opción y campo, se usan las verificaciones nuevas campo_visible / campo_no_visible y un
+  desempate estricto que prefiere la etiqueta de CAMPO (span.ui-bizagi-label > label).
+- Póliza Nueva Individual: campos "Tipo de Documento del Tomador" y "Número de Documento del Tomador" (obligatorios).
+- El formulario de inicio Individual NO tiene la grilla "Documentos Anexos" (solo en Masiva).
+Listas reales para el intermediario:
+  Línea: Cumplimiento | Generales | Autos
+  Cumplimiento → Ramo: RCE DERIVADA DE CUMPLIMIENTO | CUMPLIMIENTO ENTIDAD ESTATAL | CUMPLIMIENTO PARTICULAR |
+                 CUMPLIMIENTO ENTIDAD ESTATAL ONLINE | CUMPLIMIENTO PARTICULAR ONLINE | RCE CONTRATOS RAPIE;
+                 Tipo de Solicitud (con el primer ramo): Modificación. "Tipo de Solicitud" aparece solo tras elegir Ramo.
+  Generales → Ramo: RC MEDICO PROFESIONAL INDIVIDUAL; Tipo de Solicitud: Póliza Nueva | Modificación | Renovación
+  Autos → Ramo: AUTOMÓVILES LIVIANOS INDIVIDUAL | AUTOMÓVILES PESADOS INDIVIDUAL; Tipo de Solicitud asignado (Modificación)
+
+== Bloque 3 — Fuentes de pólizas
+Bandeja del intermediario: 0 casos (Red=0, Yellow=0, Green=0). Menú: Home, Bandeja, Nuevo Caso, Buscar (sin Consultas ni
+herramientas de pólizas). → No hay fuente autorizada dentro del portal. No se consultaron ni enumeraron pólizas.

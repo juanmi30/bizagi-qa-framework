@@ -1,0 +1,163 @@
+# HU03-CP02 — Radicación Individual de Autos por Número de póliza  (Vertical 2)
+# Fuente: fuentes/20261006_SDE_CEL_V2_Casos de Prueba_HU03.xlsx, hoja CP02 (21 pasos).
+# Formulario de inicio calibrado contra el DOM real (2026-10-08). "Completar información de solicitud" NO se pudo
+# observar en un caso propio (ver bloqueos): sus etiquetas siguen la matriz y están PENDIENTES de calibrar.
+#
+# Actor: la matriz exige que RADIQUE un intermediario y que Completar información quede asignada a ese intermediario.
+# Bloqueos verificados en QA el 2026-10-08:
+#   ENV-03  los usuarios intermediarios no tienen el proceso habilitado (Rest/Processes/All sin categorías);
+#   BUG-02  los casos Individuales radicados por CE_Analista quedan detenidos en "Consultar Alertas Intermediario"
+#           (casos 336, 345–348), por lo que radicar con el analista tampoco llega a Completar información;
+#   DATA-09 falta la póliza Autos vigente del intermediario (SDE_AUTOS_POLIZA).
+# SISE y alertas: solo evidencia indirecta por UI (precarga). Sin traza/log del servicio → INTEGRATION_NOT_VERIFIED.
+id: HU03-CP02
+titulo: Individual Autos por póliza — SISE, alertas, Completar información de solicitud y paso a Análisis
+etiquetas: [hu03, vertical, individual, autos, cp02]
+actores: [intermediario]
+datasets: [CFG-PROCESO, POL-AUTOS-VIGENTE]
+cleanup:
+  politica: CLEANUP_NOT_APPLICABLE
+  razon: El caso avanza a Análisis (estado de negocio esperado); no hay acción reversible para deshacerlo.
+pasos:
+  - matriz: [2]
+    hacer: iniciar_sesion
+    actor: intermediario
+
+  - matriz: [2, 3]
+    hacer: nuevo_caso
+    proceso: "${config:SDE_PROCESO_RADICACION}"
+    categoria: "${config:SDE_PROCESO_CATEGORIA}"
+    verificar:
+      - etiquetas: [Línea]
+
+  - matriz: [4]
+    hacer: diligenciar
+    campos:
+      - { campo: Línea, valor: "${dato:POL-AUTOS-VIGENTE.linea}", tipo: lista }
+      - { campo: Ramo, valor: "${dato:POL-AUTOS-VIGENTE.ramo}", tipo: lista }
+      - { campo: Sucursal, valor: "${dato:POL-AUTOS-VIGENTE.sucursal}", tipo: lista }
+    verificar:
+      - valor: { campo: Tipo de Solicitud, igual: "${dato:POL-AUTOS-VIGENTE.movimiento}" }
+
+  - matriz: [5]
+    hacer: diligenciar
+    campos:
+      - { campo: Tipo de Radicación, valor: "${dato:POL-AUTOS-VIGENTE.tipo_radicacion}", tipo: radio }
+      - { campo: Forma de Consulta Unitaria, valor: "${dato:POL-AUTOS-VIGENTE.forma_consulta}", tipo: radio }
+    verificar:
+      # "Placa" también es una OPCIÓN del radio Forma de Consulta Unitaria: se verifica la etiqueta de CAMPO (calibrado 2026-10-13
+      # con el intermediario INT-013403, formulario de inicio real).
+      - campo_visible: Número de Póliza
+      - campo_no_visible: Placa
+      - no_visible: Descripción de la Solicitud (Masiva/Múltiple)
+
+  - matriz: [6]
+    hacer: verificar
+    verificar:
+      - etiquetas: [Línea, Ramo, Tipo de Solicitud, Sucursal, Tipo de Radicación, Forma de Consulta Unitaria, Número de Póliza]
+      - obligatorio: [Número de Póliza]
+      - editable: [Número de Póliza]
+
+  - matriz: [6]
+    hacer: no_automatizado
+    razon: >-
+      La matriz no detalla tipo de dato/longitud por campo (Requirement 231442); se verifican etiquetas reales,
+      obligatoriedad y editabilidad del criterio. Nomenclatura: ver OBS en REPORTE-FASE1B.
+
+  - matriz: [7]
+    hacer: diligenciar
+    campos:
+      - { campo: Número de Póliza, valor: "${dato:POL-AUTOS-VIGENTE.poliza}", tipo: texto }
+
+  - matriz: [8]
+    hacer: pulsar
+    boton: Crear
+    capturar_numero_caso: true
+
+  - matriz: [9]
+    hacer: verificar_ruta
+    actor: intermediario
+    llega_a: Completar información de solicitud
+    no_llega_a: [Estructurar información]
+    maximo_minutos: 8
+
+  - matriz: [10, 11]
+    hacer: integracion
+    nombre: SISE — Consultar información de la solicitud (Requirement 231437 / 231510)
+    esperado: Se envía el número de póliza registrado y SISE retorna la póliza vigente almacenada para el flujo.
+
+  - matriz: [12]
+    hacer: integracion
+    nombre: Consultar alertas intermediarios (Requirement 231440)
+    esperado: Se consulta la clave del intermediario antes de asignar Completar información.
+
+  - matriz: [13]
+    hacer: abrir_caso
+    actor: intermediario
+    actividad: Completar información de solicitud
+    verificar:
+      - valor: { campo: Línea, igual: "${dato:POL-AUTOS-VIGENTE.linea}" }
+
+  # Pasos 14–21: etiquetas de la matriz, PENDIENTES de calibrar contra el DOM de "Completar información de solicitud".
+  - matriz: [11, 14]
+    hacer: verificar
+    verificar:
+      - valor: { campo: Número de Póliza, igual: "${dato:POL-AUTOS-VIGENTE.poliza}" }
+      - solo_lectura: [Número de Póliza]
+      - visible: Tomador
+      - visible: Asegurado
+
+  - matriz: [15]
+    hacer: verificar
+    verificar:
+      - visible: Información del Vehículo
+      - solo_lectura: [Placa]
+
+  - matriz: [16]
+    hacer: diligenciar
+    campos:
+      - { campo: ¿Requiere actualizar el correo electrónico?, valor: Si, tipo: radio }
+    verificar:
+      - visible: Nuevo correo Electrónico de Facturación
+      - obligatorio: [Nuevo correo Electrónico de Facturación]
+
+  - matriz: [16]
+    hacer: diligenciar
+    campos:
+      - { campo: ¿Requiere actualizar el correo electrónico?, valor: "No", tipo: radio }
+    verificar:
+      - no_visible: Nuevo correo Electrónico de Facturación
+
+  - matriz: [17]
+    hacer: verificar
+    verificar:
+      - editable: [Comentarios]
+
+  - matriz: [17]
+    hacer: no_automatizado
+    razon: Tabla de documentos de Completar información — nombre y tipos parametrizados sin especificar (DOCS-OBLIGATORIOS).
+
+  - matriz: [18]
+    hacer: no_automatizado
+    razon: Nomenclatura completa sin glosario de referencia; se cubren las etiquetas exactas citadas en la matriz.
+
+  - matriz: [19]
+    hacer: verificar
+    verificar:
+      - botones_exactos: [Desistir Solicitud, Confirmar Radicación]
+
+  - matriz: [20]
+    hacer: pulsar
+    boton: Confirmar Radicación
+
+  - matriz: [20, 21]
+    hacer: verificar_ruta
+    actor: intermediario
+    llega_a: Análisis
+    no_llega_a: [Completar información de solicitud]
+    maximo_minutos: 5
+
+  - matriz: [20]
+    hacer: integracion
+    nombre: Compuerta Acción a tomar (Requirement 231506)
+    esperado: Registra "Continuar solicitud"; se infiere por la actividad siguiente.

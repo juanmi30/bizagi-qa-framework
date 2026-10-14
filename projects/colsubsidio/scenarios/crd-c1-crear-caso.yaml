@@ -1,0 +1,22 @@
+proceso: Gestión de Créditos
+escenario: Crear caso de crédito y llegar a Registrar Información Inicial (C1)
+etiquetas: [smoke-real, colsubsidio, crd]
+
+inicio:
+  modo: crear-caso
+  usuario: admin
+  proceso_a_crear: Gestión de Créditos
+
+pasos:
+  # Al elegir el proceso se abre el diálogo "¡Comencemos!" (pre-formulario de creación).
+  - actividad: Comencemos
+    llenar:
+      - { campo: ¿Deseas modificar la agencia para la que se está tramitando esta solicitud?, valor: "No", tipo: radio }
+      - { campo: Tipo Identificación, valor: "Cédula de Ciudadanía", tipo: lista }
+      # OJO (dato de prueba): usar una cédula VÁLIDA y SIN solicitud activa. Cada creación exitosa
+      # "consume" la cédula (queda con solicitud activa) → para re-correr, usar una cédula libre.
+      - { campo: Número Identificación, valor: "1018487734", tipo: texto }
+    accion: Crear        # crea el caso; si la cédula ya tiene solicitud activa, Bizagi lo avisa y NO avanza
+
+hazards:
+  - el_caso_avanza_a: Registrar Información Inicial

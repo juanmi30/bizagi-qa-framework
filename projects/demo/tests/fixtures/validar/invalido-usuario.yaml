@@ -1,0 +1,12 @@
+proceso: Proceso de prueba
+escenario: Usuario inexistente
+
+inicio:
+  modo: bandeja
+  usuario: usuario_fantasma
+
+pasos:
+  - actividad: Revisar solicitud
+
+hazards:
+  - el_caso_avanza_a: Finalizar

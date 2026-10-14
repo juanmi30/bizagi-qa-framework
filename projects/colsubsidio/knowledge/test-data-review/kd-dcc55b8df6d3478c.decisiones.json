@@ -1,0 +1,26 @@
+﻿{
+    "schemaVersion":  "afi-test-data-decisions/v1",
+    "batchId":  "kd-dcc55b8df6d3478c",
+    "revisionBase":  7,
+    "decisiones":  [
+                       {
+                           "proposalId":  "ps-empresa-empleador-juridico-rues-con-rep-legal",
+                           "hash":  "c1dcc3e8c19a019e743cacfb2ea8f185a9d6dda01de8e05d5c0e9401cccfaf72",
+                           "decision":  "APPROVED",
+                           "revisor":  "qa",
+                           "comentario":  "Actor principal aprobado; pendiente conseguir datos QA que cumplan la condición.",
+                           "estado":  "pendiente-provisionar"
+                       },
+                       {
+                           "proposalId":  "ps-empresa-empleador-juridico-rues-sin-rep-legal",
+                           "hash":  "0305f84ce75cfe115103a3a7546fdbe8e24a4603192213cb6c32efb9c1cdc039",
+                           "decision":  "APPROVED",
+                           "revisor":  "qa",
+                           "comentario":  "Actor principal aprobado; pendiente conseguir datos QA que cumplan la condición.",
+                           "estado":  "pendiente-provisionar"
+                       }
+                   ],
+    "compartidos":  [
+
+                    ]
+}

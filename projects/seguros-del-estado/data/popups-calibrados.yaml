@@ -1,0 +1,48 @@
+# Registro de formularios de POP-UP de grillas (H3 / BUG-03 / UI-10).
+# Abrir un pop-up que no se puede cerrar con "Guardar" deja el caso inutilizable ("Invalid scope action type": casos 342, 350,
+# 426 y 430). Por eso tabla_abrir_fila / tabla_agregar SOLO abren un formulario si aquí figura:
+#   estado: calibrado + mapeo_controles + evidencia + cierre_seguro_verificado: true
+# Excepción controlada: estado en_calibracion + variable SDE_AUTORIZO_CALIBRACION_POPUP=<número del caso en ejecución>
+# (autorización explícita, caso por caso). En cualquier otro caso el paso queda BLOCKED y NO se hace ningún clic.
+# Cambiar un estado a "calibrado" exige evidencia real (captura/definición de QA o corrida con cierre por Guardar verificado).
+
+formularios:
+  detalle-polizas-pn-generales:
+    tabla: Detalle Polizas Asociadas
+    descripcion: Edición/adición de fila en Estructurar información — Masiva Generales, Póliza Nueva (Forma Consulta Identificación de Tomador)
+    estado: sin_calibrar
+    mapeo_controles: null
+    evidencia: >-
+      Caso 430 (2026-10-13): las etiquetas de la grilla NO coinciden con el pop-up ("Tipo documento del Tomador" no existe como
+      etiqueta; "Número de Documento Tomador" aparece 2 veces). Cierre con Guardar NO verificado (el caso quedó inutilizable).
+    cierre_seguro_verificado: false
+    brecha: UI-10
+
+  detalle-polizas-modificacion-generales:
+    tabla: Detalle Polizas Asociadas
+    descripcion: Edición de fila — Masiva Generales, Modificación (Forma Consulta Número de póliza)
+    estado: sin_calibrar
+    mapeo_controles: null
+    evidencia: >-
+      Caso 426 (2026-10-13): estructura observada ("Forma Consulta" solo visualización, "Número Póliza" input maxlength 20,
+      "Digito de Verificacion del Tomador"); cierre con Guardar NO verificado (el caso quedó inutilizable).
+    cierre_seguro_verificado: false
+    brecha: UI-10
+
+  detalle-polizas-autos:
+    tabla: Detalle Polizas Asociadas
+    descripcion: Edición/adición de fila — Masiva Autos (Forma Consulta Placa)
+    estado: sin_calibrar
+    mapeo_controles: null
+    evidencia: null
+    cierre_seguro_verificado: false
+    brecha: UI-10
+
+  detalle-polizas-cumplimiento:
+    tabla: Detalle Polizas Asociadas
+    descripcion: Edición/adición de fila — Masiva Cumplimiento (Número Póliza, ¿Requiere modificar RCE?, Ramo RCE, Número Póliza RCE)
+    estado: sin_calibrar
+    mapeo_controles: null
+    evidencia: null
+    cierre_seguro_verificado: false
+    brecha: UI-10

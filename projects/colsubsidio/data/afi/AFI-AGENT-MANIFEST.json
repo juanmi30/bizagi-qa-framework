@@ -1,0 +1,4403 @@
+{
+  "schemaVersion": "afi-agent-manifest/v1",
+  "contrato": {
+    "version": 1,
+    "documento": "AFI-CASE-CONTRACT.md",
+    "estructura": [
+      "version",
+      "hu",
+      "caso",
+      "nombre",
+      "fuente?",
+      "perfil",
+      "actorRef?",
+      "participantes?[{ rol, actorRef }]",
+      "relaciones?[{ tipo, sujetos }]",
+      "preparacion { datosCaso, camposAsercion, etapas }",
+      "funcional? { caso, pasos[{ id, esperado, operaciones[], condiciones?[{ entidad { tipo, id }, expectativa }] }] } (opcional solo con e2e)",
+      "e2e? (ver contrato.e2e)"
+    ],
+    "e2e": {
+      "version": 1,
+      "seccion": "e2e (opcional en .afi.json; con e2e, funcional es opcional)",
+      "claves": [
+        "version",
+        "hoja",
+        "sujetos",
+        "relaciones",
+        "precondiciones",
+        "datos",
+        "pasos"
+      ],
+      "datos": {
+        "claves": [
+          "campo",
+          "sujeto",
+          "uso",
+          "resolucion",
+          "valor",
+          "fuenteSistema",
+          "aplicabilidad"
+        ],
+        "uso": [
+          "ASSERTION",
+          "SCENARIO",
+          "FILLER"
+        ],
+        "resolucion": [
+          "TEST_DATA",
+          "CASE_LITERAL",
+          "GENERATED",
+          "SYSTEM"
+        ],
+        "fuenteSistema": [
+          "RUES",
+          "Registraduria",
+          "Bizagi",
+          "Portal"
+        ],
+        "aplicabilidad": [
+          "\"siempre\"",
+          "{ cuando: { campo, sujeto?, operador: igual|distinto|en, valor } }",
+          "{ siPresenta: { pantalla, campo } } (solo si la regla funcional no está aprobada)"
+        ],
+        "reglas": [
+          "FILLER excluye ASSERTION y SCENARIO.",
+          "GENERATED exige uso [\"FILLER\"] y una autorización generable en la política del campo; sin ella el compilador deriva un gap.",
+          "CASE_LITERAL exige un campo público y su valor; un secreto o dato externo nunca es literal.",
+          "TEST_DATA y GENERATED nunca llevan valor: el compilador deriva los testDataRequirements.",
+          "SYSTEM no lleva valor y admite uso [] o [\"ASSERTION\"].",
+          "Obligatorio en la UI no implica obligatorio en Test Data (AFI-TEST-DATA §7)."
+        ]
+      },
+      "verificaciones": {
+        "bizagi-acceso": [
+          "rolRequerido"
+        ],
+        "parametrica-columnas": [
+          "entidad",
+          "busqueda",
+          "columnas",
+          "tiposDato"
+        ],
+        "parametrica-mensajes": [
+          "entidad",
+          "busqueda",
+          "columnaMensaje",
+          "mensajes"
+        ],
+        "portal-apertura": [],
+        "portal-caso-creado": [],
+        "pantalla": [
+          "pantalla",
+          "expectativa"
+        ],
+        "condicion": [
+          "entidad",
+          "expectativa"
+        ],
+        "accion": [
+          "accion",
+          "sujeto",
+          "pantalla",
+          "hasta",
+          "detalle"
+        ],
+        "diseno": [
+          "referencia"
+        ]
+      },
+      "expectativaPantalla": [
+        "titulo",
+        "etiquetasPresentes",
+        "etiquetasAusentes",
+        "migaContiene",
+        "camposVisiblesExactos",
+        "camposAusentes",
+        "campos",
+        "spinner",
+        "alerta"
+      ],
+      "acciones": [
+        "avanzar",
+        "consultar-persona",
+        "diligenciar-obligatorios",
+        "descargar-formulario",
+        "cargar-documentos",
+        "consultar-bizagi",
+        "aprobar-solicitud"
+      ],
+      "forma": {
+        "e2e": {
+          "version": "1 (fijo)",
+          "hoja?": "texto: hoja/caso del diseño QA (trazabilidad)",
+          "sujetos?": [
+            {
+              "rol": "kebab-case, distinto de \"principal\", único",
+              "actorRef?": "id de un actor de testData.actores",
+              "pantalla?": "id pantalla-ui donde se captura a este sujeto"
+            }
+          ],
+          "relaciones?": [
+            {
+              "tipo": "distinto-sujeto | mismo-sujeto",
+              "sujetos": "[sujeto, sujeto] (\"principal\" o un rol declarado), distintos"
+            }
+          ],
+          "precondiciones?": [
+            {
+              "sujeto": "\"principal\" o rol declarado",
+              "id": "kebab-case semántico",
+              "descripcion": "condición de negocio (máx. 200, sin selectores ni valores secretos)"
+            }
+          ],
+          "datos": [
+            {
+              "campo": "campo del modelo AFI (testData.campos) o de persona (primerNombre, segundoNombre, primerApellido, segundoApellido)",
+              "sujeto": "\"principal\" o rol declarado",
+              "uso": "lista sin repetir de ASSERTION | SCENARIO | FILLER ([] solo con SYSTEM)",
+              "resolucion": "TEST_DATA | CASE_LITERAL | GENERATED | SYSTEM",
+              "valor?": "solo CASE_LITERAL: literal público",
+              "fuenteSistema?": "solo SYSTEM: RUES | Registraduria | Bizagi | Portal",
+              "aplicabilidad": {
+                "|": [
+                  "\"siempre\"",
+                  {
+                    "cuando": {
+                      "campo": "dato declarado del mismo sujeto (o de `sujeto`)",
+                      "sujeto?": "sujeto del dato referido",
+                      "operador": "igual | distinto | en",
+                      "valor": "literal público; lista solo con \"en\""
+                    }
+                  },
+                  {
+                    "siPresenta": {
+                      "pantalla": "id pantalla-ui",
+                      "campo": "id campo-ui"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "pasos": [
+            {
+              "paso": "entero >= 1 (número del diseño; único por dispositivo)",
+              "accion": "texto LITERAL del diseño QA",
+              "esperado": "texto LITERAL del diseño QA (incluidas erratas)",
+              "dispositivo?": "desktop (por defecto) | mobile",
+              "notaFuente?": "texto documental de la fuente (p. ej. observaciones del Excel); no ejecuta ni genera gaps",
+              "fidelidad?": [
+                {
+                  "fragmento": "texto LITERAL de accion o esperado",
+                  "representacion": "aproximada | no-representable",
+                  "motivo": "por qué las verificaciones no lo expresan exactamente"
+                }
+              ],
+              "verificaciones": "[verificacion] no vacía (ver verificaciones)"
+            }
+          ]
+        },
+        "verificaciones": {
+          "bizagi-acceso": {
+            "tipo": "\"bizagi-acceso\"",
+            "rolRequerido?": "texto"
+          },
+          "parametrica-columnas": {
+            "tipo": "\"parametrica-columnas\"",
+            "entidad": "nombre visible de la paramétrica",
+            "busqueda?": "texto",
+            "columnas": "lista de textos exactos",
+            "tiposDato?": "{ columna: tipo } (texto)"
+          },
+          "parametrica-mensajes": {
+            "tipo": "\"parametrica-mensajes\"",
+            "entidad": "texto",
+            "busqueda?": "texto",
+            "columnaMensaje": "texto",
+            "mensajes": [
+              {
+                "descripcion": "texto",
+                "texto": "texto EXACTO esperado"
+              }
+            ]
+          },
+          "portal-apertura": {
+            "tipo": "\"portal-apertura\""
+          },
+          "portal-caso-creado": {
+            "tipo": "\"portal-caso-creado\""
+          },
+          "pantalla": {
+            "tipo": "\"pantalla\"",
+            "pantalla": "id pantalla-ui",
+            "expectativa": "expectativaPantalla (al menos una clave)"
+          },
+          "condicion": {
+            "tipo": "\"condicion\"",
+            "entidad": {
+              "tipo": "pantalla-ui | campo-ui | transicion-ui | actividad | ruta | integracion | variable | notificacion",
+              "id": "id Knowledge"
+            },
+            "expectativa": "expectativaCondicion (según entidad.tipo)"
+          },
+          "accion": {
+            "tipo": "\"accion\"",
+            "accion": "avanzar | consultar-persona | diligenciar-obligatorios | descargar-formulario | cargar-documentos | consultar-bizagi | aprobar-solicitud",
+            "sujeto?": "sujeto declarado",
+            "pantalla?": "id pantalla-ui donde ocurre",
+            "hasta?": "id pantalla-ui destino (avanzar)",
+            "detalle?": "texto de negocio (no estructurado: cuenta como aproximación)"
+          },
+          "diseno": {
+            "tipo": "\"diseno\"",
+            "referencia": "texto (p. ej. \"figma\")"
+          }
+        },
+        "expectativaPantalla": {
+          "titulo?": {
+            "texto": "encabezado exacto",
+            "unico?": "true"
+          },
+          "etiquetasPresentes?": "lista de textos visibles exactos",
+          "etiquetasAusentes?": "lista de textos que NO deben verse (tampoco como placeholder)",
+          "migaContiene?": "segmento exacto de la miga de pan",
+          "camposVisiblesExactos?": "lista de ids campo-ui: exactamente esos visibles",
+          "camposAusentes?": "lista de ids campo-ui",
+          "campos?": [
+            {
+              "campo": "id campo-ui",
+              "editable?": "boolean",
+              "vacio?": "boolean",
+              "precargado?": "boolean",
+              "error?": "boolean",
+              "tooltip?": "texto exacto",
+              "placeholder?": "texto | null",
+              "visible?": "boolean"
+            }
+          ],
+          "spinner?": {
+            "texto": "texto exacto"
+          },
+          "alerta?": {
+            "titulo?": "texto",
+            "mensaje": "texto exacto"
+          }
+        },
+        "expectativaCondicion": {
+          "tipo": "según entidad.tipo (ver expectativasPorEntidad)",
+          "igual?": "solo resultado (exito | error) y valor (literal público); el resto NO lleva igual"
+        }
+      },
+      "dominios": {
+        "uso": [
+          "ASSERTION",
+          "SCENARIO",
+          "FILLER"
+        ],
+        "resolucion": [
+          "TEST_DATA",
+          "CASE_LITERAL",
+          "GENERATED",
+          "SYSTEM"
+        ],
+        "fuenteSistema": [
+          "RUES",
+          "Registraduria",
+          "Bizagi",
+          "Portal"
+        ],
+        "operadorCuando": [
+          "igual",
+          "distinto",
+          "en"
+        ],
+        "dispositivo": [
+          "desktop",
+          "mobile"
+        ],
+        "relacion": [
+          "distinto-sujeto",
+          "mismo-sujeto"
+        ],
+        "representacionFidelidad": [
+          "aproximada",
+          "no-representable"
+        ],
+        "tiposVerificacion": [
+          "bizagi-acceso",
+          "parametrica-columnas",
+          "parametrica-mensajes",
+          "portal-apertura",
+          "portal-caso-creado",
+          "pantalla",
+          "condicion",
+          "accion",
+          "diseno"
+        ],
+        "acciones": [
+          "avanzar",
+          "consultar-persona",
+          "diligenciar-obligatorios",
+          "descargar-formulario",
+          "cargar-documentos",
+          "consultar-bizagi",
+          "aprobar-solicitud"
+        ],
+        "tiposEntidad": [
+          "pantalla-ui",
+          "campo-ui",
+          "transicion-ui",
+          "actividad",
+          "ruta",
+          "integracion",
+          "variable",
+          "notificacion"
+        ],
+        "expectativasPorEntidad": {
+          "pantalla-ui": [
+            "visible",
+            "no-visible"
+          ],
+          "campo-ui": [
+            "valor"
+          ],
+          "transicion-ui": [
+            "tomada",
+            "no-tomada"
+          ],
+          "actividad": [
+            "alcanzada",
+            "no-alcanzada"
+          ],
+          "ruta": [
+            "tomada",
+            "no-tomada"
+          ],
+          "integracion": [
+            "resultado",
+            "invocada",
+            "no-invocada"
+          ],
+          "variable": [
+            "valor"
+          ],
+          "notificacion": [
+            "emitida",
+            "no-emitida"
+          ]
+        },
+        "igualPorExpectativa": {
+          "resultado": [
+            "exito",
+            "error"
+          ],
+          "valor": "literal público"
+        }
+      },
+      "ejemplos": {
+        "datoCondicional": {
+          "campo": "cajaCompensacionAnterior",
+          "sujeto": "principal",
+          "uso": [
+            "SCENARIO"
+          ],
+          "resolucion": "TEST_DATA",
+          "aplicabilidad": {
+            "cuando": {
+              "campo": "afiliadoPrimeraVez",
+              "operador": "igual",
+              "valor": "No"
+            }
+          }
+        },
+        "datoSistema": {
+          "campo": "primerNombre",
+          "sujeto": "persona-ejemplo",
+          "uso": [
+            "ASSERTION"
+          ],
+          "resolucion": "SYSTEM",
+          "fuenteSistema": "Bizagi",
+          "aplicabilidad": "siempre"
+        },
+        "integracionNoInvocada": {
+          "tipo": "condicion",
+          "entidad": {
+            "tipo": "integracion",
+            "id": "integracion-ejemplo"
+          },
+          "expectativa": {
+            "tipo": "no-invocada"
+          }
+        },
+        "integracionResultado": {
+          "tipo": "condicion",
+          "entidad": {
+            "tipo": "integracion",
+            "id": "integracion-ejemplo"
+          },
+          "expectativa": {
+            "tipo": "resultado",
+            "igual": "exito"
+          }
+        },
+        "pantallaCampos": {
+          "tipo": "pantalla",
+          "pantalla": "pantalla-ejemplo",
+          "expectativa": {
+            "camposVisiblesExactos": [
+              "campo-ejemplo-a",
+              "campo-ejemplo-b"
+            ],
+            "campos": [
+              {
+                "campo": "campo-ejemplo-a",
+                "vacio": true
+              }
+            ]
+          }
+        },
+        "accionConSujeto": {
+          "tipo": "accion",
+          "accion": "consultar-persona",
+          "sujeto": "persona-ejemplo",
+          "pantalla": "pantalla-ejemplo"
+        },
+        "pasoConFidelidad": {
+          "paso": 3,
+          "accion": "Consulte la persona",
+          "esperado": "Se precargan los nombres correctamente y el campo nombre completo no es visible",
+          "verificaciones": [
+            {
+              "tipo": "pantalla",
+              "pantalla": "pantalla-ejemplo",
+              "expectativa": {
+                "camposAusentes": [
+                  "campo-ejemplo-c"
+                ]
+              }
+            }
+          ],
+          "fidelidad": [
+            {
+              "fragmento": "Se precargan los nombres correctamente",
+              "representacion": "aproximada",
+              "motivo": "se verifica la precarga, no la igualdad con el valor de la fuente"
+            }
+          ],
+          "notaFuente": "Observación del diseño conservada como trazabilidad."
+        }
+      },
+      "reglas": [
+        "Pantallas y campos por id SEMÁNTICO de Knowledge (aplicacion.entidades); nunca selectores ni ids DOM.",
+        "El archivo NO declara gaps: el compilador deriva CAPABILITY/KNOWLEDGE/OBSERVABILITY/TEST_DATA comparando con capabilities, Knowledge, proveedores y Test Data.",
+        "Textos esperados copiados EXACTAMENTE del diseño QA (incluidas sus erratas).",
+        "No declares las pantallas intermedias ni sus datos de tránsito: el compilador deriva la ruta desde Knowledge (transiciones) y los datos que exige.",
+        "Si un sujeto se captura en una pantalla que el caso no menciona, declara sujetos[].pantalla para que el compilador sepa a quién usar al atravesarla.",
+        "Lo que las verificaciones no expresan con exactitud se declara en fidelidad (aproximada | no-representable) con el fragmento literal; nunca se omite en silencio.",
+        "Una integración que NO debe invocarse: expectativa { \"tipo\": \"no-invocada\" }; nunca un valor libre en igual.",
+        "Observaciones de la fuente que no son requisitos van en notaFuente (documental)."
+      ]
+    },
+    "camposNoPublicos": [
+      "tipoAfiliado",
+      "numeroIdentificacion",
+      "correo",
+      "confirmacionCorreo",
+      "razonSocial",
+      "codigoCiiu",
+      "actividadEconomicaEmpresa",
+      "fechaInicioActividad",
+      "valorNomina",
+      "numeroTrabajadores",
+      "afiliadoPrimeraVez",
+      "cajaCompensacionAnterior",
+      "numeroCelular",
+      "numeroTelefonoFijo",
+      "fondoPensiones",
+      "actividad",
+      "ingresoMensual",
+      "nacionalidad",
+      "estadoCivil",
+      "salarioBasico"
+    ],
+    "reglaNoPublicos": "Nunca un valor literal ni una estrategia deterministic-* en datosCaso: su valor viene del actor en ejecución."
+  },
+  "perfiles": [
+    {
+      "perfil": "empresa",
+      "etiquetaTipoAportante": "Empleador",
+      "camposPorEtapa": {
+        "inicio-solicitud": [
+          "tipoAportante",
+          "tipoEmpleador",
+          "naturaleza",
+          "claseEmpleador",
+          "tipoIdentificacion",
+          "numeroIdentificacion",
+          "correo",
+          "confirmacionCorreo",
+          "recibioAyudaAsesor",
+          "autorizaDatos",
+          "autorizaIntimidad"
+        ],
+        "informacion-empresa": [
+          "razonSocial",
+          "codigoCiiu",
+          "actividadEconomicaEmpresa",
+          "fechaInicioActividad",
+          "valorNomina",
+          "numeroTrabajadores",
+          "afiliadoPrimeraVez",
+          "cajaCompensacionAnterior"
+        ],
+        "telefonos": [],
+        "informacion-adicional": [],
+        "informacion-contacto": [
+          "departamento",
+          "ciudadVivienda"
+        ],
+        "direccion": []
+      }
+    },
+    {
+      "perfil": "pensionado",
+      "etiquetaTipoAportante": "Pensionado",
+      "camposPorEtapa": {
+        "inicio-solicitud": [
+          "tipoAportante",
+          "tipoAfiliado",
+          "tipoIdentificacion",
+          "numeroIdentificacion",
+          "correo",
+          "confirmacionCorreo",
+          "autorizaDatos",
+          "autorizaIntimidad"
+        ],
+        "informacion-empresa": [],
+        "telefonos": [
+          "numeroCelular",
+          "numeroTelefonoFijo"
+        ],
+        "informacion-adicional": [],
+        "informacion-contacto": [
+          "departamento",
+          "ciudadVivienda"
+        ],
+        "direccion": []
+      }
+    },
+    {
+      "perfil": "facultativo",
+      "etiquetaTipoAportante": "Facultativo",
+      "camposPorEtapa": {
+        "inicio-solicitud": [
+          "tipoAportante",
+          "tipoAfiliado",
+          "tipoIdentificacion",
+          "numeroIdentificacion",
+          "correo",
+          "confirmacionCorreo",
+          "autorizaDatos",
+          "autorizaIntimidad"
+        ],
+        "informacion-empresa": [],
+        "telefonos": [
+          "numeroCelular",
+          "numeroTelefonoFijo"
+        ],
+        "informacion-adicional": [
+          "fondoPensiones",
+          "nacionalidad",
+          "estadoCivil",
+          "salarioBasico"
+        ],
+        "informacion-contacto": [
+          "departamento",
+          "ciudadVivienda"
+        ],
+        "direccion": []
+      }
+    },
+    {
+      "perfil": "independiente",
+      "etiquetaTipoAportante": null,
+      "camposPorEtapa": {
+        "inicio-solicitud": [
+          "tipoAportante",
+          "tipoAfiliado",
+          "tipoIdentificacion",
+          "numeroIdentificacion",
+          "correo",
+          "confirmacionCorreo",
+          "autorizaDatos",
+          "autorizaIntimidad"
+        ],
+        "informacion-empresa": [],
+        "telefonos": [
+          "numeroCelular",
+          "numeroTelefonoFijo"
+        ],
+        "informacion-adicional": [
+          "fondoPensiones",
+          "actividad",
+          "ingresoMensual"
+        ],
+        "informacion-contacto": [
+          "departamento",
+          "ciudadVivienda",
+          "localidad",
+          "barrio"
+        ],
+        "direccion": [
+          "viaPrincipal",
+          "letrasVp",
+          "sectorVp",
+          "letrasVg",
+          "numeroVp",
+          "numeroVg",
+          "numeroPredio"
+        ]
+      }
+    }
+  ],
+  "preparacion": {
+    "etapasModelo": [
+      "inicio-solicitud",
+      "informacion-empresa",
+      "telefonos",
+      "informacion-adicional",
+      "informacion-contacto",
+      "direccion"
+    ],
+    "etapasRunnerV1": [
+      "inicio-solicitud",
+      "informacion-empresa",
+      "telefonos",
+      "informacion-adicional"
+    ],
+    "etapaObligatoriaRunnerV1": "inicio-solicitud",
+    "puntoFuncional": "informacion-contacto",
+    "etapas": [
+      {
+        "etapa": "inicio-solicitud",
+        "orden": 1,
+        "rol": "preparacion-runner-v1",
+        "declarableEnPreparacion": true,
+        "campos": [
+          "tipoAportante",
+          "tipoAfiliado",
+          "tipoEmpleador",
+          "naturaleza",
+          "claseEmpleador",
+          "tipoIdentificacion",
+          "numeroIdentificacion",
+          "correo",
+          "confirmacionCorreo",
+          "recibioAyudaAsesor",
+          "autorizaDatos",
+          "autorizaIntimidad"
+        ],
+        "camposConCapacidadPreparacion": [
+          "tipoAportante",
+          "tipoAfiliado",
+          "tipoEmpleador",
+          "naturaleza",
+          "claseEmpleador",
+          "tipoIdentificacion",
+          "numeroIdentificacion",
+          "correo",
+          "confirmacionCorreo",
+          "recibioAyudaAsesor",
+          "autorizaDatos",
+          "autorizaIntimidad"
+        ],
+        "nota": "Obligatoria en runner v1: única forma demostrada de crear el caso Bizagi."
+      },
+      {
+        "etapa": "informacion-empresa",
+        "orden": 2,
+        "rol": "preparacion-runner-v1",
+        "declarableEnPreparacion": true,
+        "campos": [
+          "razonSocial",
+          "codigoCiiu",
+          "actividadEconomicaEmpresa",
+          "fechaInicioActividad",
+          "valorNomina",
+          "numeroTrabajadores",
+          "afiliadoPrimeraVez",
+          "cajaCompensacionAnterior"
+        ],
+        "camposConCapacidadPreparacion": [
+          "razonSocial",
+          "codigoCiiu",
+          "actividadEconomicaEmpresa",
+          "fechaInicioActividad",
+          "valorNomina",
+          "numeroTrabajadores",
+          "afiliadoPrimeraVez",
+          "cajaCompensacionAnterior"
+        ],
+        "nota": "Preparación SEGÚN ESTADO (4S-R.1), solo Empleador Persona Jurídica (botón btn-empleador-pj-continuar). Ausente o deshabilitado: no se toca; precarga válida: se conserva; habilitado y vacío/inválido: dato legítimo del caso/actor (o auxiliar si la política lo permite) o DataGap EN PANTALLA. Sus gaps de datos no bloquean la compilación."
+      },
+      {
+        "etapa": "telefonos",
+        "orden": 3,
+        "rol": "preparacion-runner-v1",
+        "declarableEnPreparacion": true,
+        "campos": [
+          "numeroCelular",
+          "numeroTelefonoFijo"
+        ],
+        "camposConCapacidadPreparacion": [
+          "numeroCelular",
+          "numeroTelefonoFijo"
+        ],
+        "nota": "Preparación del runner v1. Si el perfil no tiene campos aplicables queda \"no-requerida\" (no falla)."
+      },
+      {
+        "etapa": "informacion-adicional",
+        "orden": 4,
+        "rol": "preparacion-runner-v1",
+        "declarableEnPreparacion": true,
+        "campos": [
+          "fondoPensiones",
+          "actividad",
+          "ingresoMensual",
+          "nacionalidad",
+          "estadoCivil",
+          "salarioBasico"
+        ],
+        "camposConCapacidadPreparacion": [
+          "nacionalidad",
+          "estadoCivil",
+          "fondoPensiones",
+          "actividad",
+          "ingresoMensual",
+          "salarioBasico"
+        ],
+        "nota": "Preparación del runner v1. Si el perfil no tiene campos aplicables queda \"no-requerida\" (no falla)."
+      },
+      {
+        "etapa": "informacion-contacto",
+        "orden": 5,
+        "rol": "punto-funcional",
+        "declarableEnPreparacion": false,
+        "campos": [
+          "departamento",
+          "ciudadVivienda",
+          "localidad",
+          "barrio"
+        ],
+        "camposConCapacidadPreparacion": [],
+        "nota": "Existe en el MODELO, pero el runner v1 NO la ejecuta como preparación: es el punto donde comienza el plan funcional. NO declararla en preparacion.etapas (sus campos no tienen capability de preparación: falla al compilar). Sus campos solo se leen/manipulan con operaciones funcionales."
+      },
+      {
+        "etapa": "direccion",
+        "orden": 6,
+        "rol": "no-soportada-runner-v1",
+        "declarableEnPreparacion": false,
+        "campos": [
+          "viaPrincipal",
+          "letrasVp",
+          "sectorVp",
+          "letrasVg",
+          "numeroVp",
+          "numeroVg",
+          "numeroPredio"
+        ],
+        "camposConCapacidadPreparacion": [],
+        "nota": "Existe en el MODELO, pero el runner v1 NO la orquesta y no hay operaciones funcionales sobre ella. Un diseño que requiera llegar o actuar en Dirección es CAPABILITY_GAP."
+      }
+    ],
+    "viabilidadPorPerfil": [
+      {
+        "perfil": "empresa",
+        "etapas": [
+          {
+            "etapa": "inicio-solicitud",
+            "estado": "soportada",
+            "campos": [
+              {
+                "campo": "tipoAportante",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "tipoEmpleador",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "naturaleza",
+                "vias": [
+                  "auxiliar"
+                ]
+              },
+              {
+                "campo": "claseEmpleador",
+                "vias": [
+                  "auxiliar"
+                ]
+              },
+              {
+                "campo": "tipoIdentificacion",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "numeroIdentificacion",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "correo",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "confirmacionCorreo",
+                "vias": [
+                  "derivacion"
+                ]
+              },
+              {
+                "campo": "recibioAyudaAsesor",
+                "vias": [
+                  "auxiliar"
+                ]
+              },
+              {
+                "campo": "autorizaDatos",
+                "vias": [
+                  "auxiliar"
+                ]
+              },
+              {
+                "campo": "autorizaIntimidad",
+                "vias": [
+                  "auxiliar"
+                ]
+              }
+            ]
+          },
+          {
+            "etapa": "informacion-empresa",
+            "estado": "soportada",
+            "campos": [
+              {
+                "campo": "razonSocial",
+                "vias": [
+                  "segun-estado"
+                ]
+              },
+              {
+                "campo": "codigoCiiu",
+                "vias": [
+                  "segun-estado"
+                ]
+              },
+              {
+                "campo": "actividadEconomicaEmpresa",
+                "vias": [
+                  "segun-estado"
+                ]
+              },
+              {
+                "campo": "fechaInicioActividad",
+                "vias": [
+                  "segun-estado"
+                ]
+              },
+              {
+                "campo": "valorNomina",
+                "vias": [
+                  "segun-estado"
+                ]
+              },
+              {
+                "campo": "numeroTrabajadores",
+                "vias": [
+                  "segun-estado"
+                ]
+              },
+              {
+                "campo": "afiliadoPrimeraVez",
+                "vias": [
+                  "segun-estado"
+                ]
+              },
+              {
+                "campo": "cajaCompensacionAnterior",
+                "vias": [
+                  "segun-estado"
+                ]
+              }
+            ]
+          },
+          {
+            "etapa": "telefonos",
+            "estado": "no-requerida",
+            "campos": []
+          },
+          {
+            "etapa": "informacion-adicional",
+            "estado": "no-requerida",
+            "campos": []
+          }
+        ]
+      },
+      {
+        "perfil": "pensionado",
+        "etapas": [
+          {
+            "etapa": "inicio-solicitud",
+            "estado": "soportada",
+            "campos": [
+              {
+                "campo": "tipoAportante",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "tipoAfiliado",
+                "vias": [
+                  "auxiliar"
+                ]
+              },
+              {
+                "campo": "tipoIdentificacion",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "numeroIdentificacion",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "correo",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "confirmacionCorreo",
+                "vias": [
+                  "derivacion"
+                ]
+              },
+              {
+                "campo": "autorizaDatos",
+                "vias": [
+                  "auxiliar"
+                ]
+              },
+              {
+                "campo": "autorizaIntimidad",
+                "vias": [
+                  "auxiliar"
+                ]
+              }
+            ]
+          },
+          {
+            "etapa": "informacion-empresa",
+            "estado": "no-requerida",
+            "campos": []
+          },
+          {
+            "etapa": "telefonos",
+            "estado": "soportada",
+            "campos": [
+              {
+                "campo": "numeroCelular",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "numeroTelefonoFijo",
+                "vias": [
+                  "actor"
+                ]
+              }
+            ]
+          },
+          {
+            "etapa": "informacion-adicional",
+            "estado": "no-requerida",
+            "campos": []
+          }
+        ]
+      },
+      {
+        "perfil": "facultativo",
+        "etapas": [
+          {
+            "etapa": "inicio-solicitud",
+            "estado": "soportada",
+            "campos": [
+              {
+                "campo": "tipoAportante",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "tipoAfiliado",
+                "vias": [
+                  "auxiliar"
+                ]
+              },
+              {
+                "campo": "tipoIdentificacion",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "numeroIdentificacion",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "correo",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "confirmacionCorreo",
+                "vias": [
+                  "derivacion"
+                ]
+              },
+              {
+                "campo": "autorizaDatos",
+                "vias": [
+                  "auxiliar"
+                ]
+              },
+              {
+                "campo": "autorizaIntimidad",
+                "vias": [
+                  "auxiliar"
+                ]
+              }
+            ]
+          },
+          {
+            "etapa": "informacion-empresa",
+            "estado": "no-requerida",
+            "campos": []
+          },
+          {
+            "etapa": "telefonos",
+            "estado": "soportada",
+            "campos": [
+              {
+                "campo": "numeroCelular",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "numeroTelefonoFijo",
+                "vias": [
+                  "actor"
+                ]
+              }
+            ]
+          },
+          {
+            "etapa": "informacion-adicional",
+            "estado": "soportada",
+            "campos": [
+              {
+                "campo": "fondoPensiones",
+                "vias": [
+                  "actor",
+                  "auxiliar"
+                ]
+              },
+              {
+                "campo": "nacionalidad",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "estadoCivil",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "salarioBasico",
+                "vias": [
+                  "actor"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "perfil": "independiente",
+        "etapas": [
+          {
+            "etapa": "inicio-solicitud",
+            "estado": "soportada",
+            "campos": [
+              {
+                "campo": "tipoAportante",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "tipoAfiliado",
+                "vias": [
+                  "actor",
+                  "auxiliar"
+                ]
+              },
+              {
+                "campo": "tipoIdentificacion",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "numeroIdentificacion",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "correo",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "confirmacionCorreo",
+                "vias": [
+                  "derivacion"
+                ]
+              },
+              {
+                "campo": "autorizaDatos",
+                "vias": [
+                  "auxiliar"
+                ]
+              },
+              {
+                "campo": "autorizaIntimidad",
+                "vias": [
+                  "auxiliar"
+                ]
+              }
+            ]
+          },
+          {
+            "etapa": "informacion-empresa",
+            "estado": "no-requerida",
+            "campos": []
+          },
+          {
+            "etapa": "telefonos",
+            "estado": "soportada",
+            "campos": [
+              {
+                "campo": "numeroCelular",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "numeroTelefonoFijo",
+                "vias": [
+                  "actor"
+                ]
+              }
+            ]
+          },
+          {
+            "etapa": "informacion-adicional",
+            "estado": "soportada",
+            "campos": [
+              {
+                "campo": "fondoPensiones",
+                "vias": [
+                  "auxiliar"
+                ]
+              },
+              {
+                "campo": "actividad",
+                "vias": [
+                  "actor"
+                ]
+              },
+              {
+                "campo": "ingresoMensual",
+                "vias": [
+                  "actor"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "reglaViabilidad": "Una etapa declarada en preparacion.etapas solo es GENERABLE si su viabilidad para el perfil es \"soportada\" o \"no-requerida\". Si está \"bloqueada\", el caso es CAPABILITY_GAP (salvo que el diseño aporte el valor explícito del campo bloqueado y ese campo lo admita). La viabilidad es de capability: los datos del actor se verifican al compilar.",
+    "reglasRunnerV1": [
+      "preparacion.etapas: subconjunto de etapasRunnerV1, en el orden de etapasModelo, incluyendo \"inicio-solicitud\".",
+      "Declarar una etapa del runner sin campos aplicables al perfil es seguro: queda \"no-requerida\".",
+      "Una etapa no declarada no se completa: si el Portal la presenta con datos obligatorios, la preparación no avanza.",
+      "Tras la preparación el runner espera la pantalla \"informacion-contacto\" y ejecuta los pasos funcionales en orden.",
+      "Login, reconocimiento, lifecycle/cleanup, reintentos, timeouts y selectores son del framework, nunca del JSON."
+    ],
+    "formasResolucion": [
+      {
+        "forma": "valor-concreto",
+        "significado": "Texto literal. Lo aporta el actor del perfil, una derivación del framework o, SOLO si el campo es public, datosCaso."
+      },
+      {
+        "forma": "estrategia-deterministic",
+        "significado": "{ \"estrategia\": { \"tipo\": \"deterministic-text\" | \"deterministic-number\", \"valor\", \"motivo\" } }. Prohibida en campos no public."
+      },
+      {
+        "forma": "valor-booleano",
+        "significado": "true / false literal."
+      },
+      {
+        "forma": "estrategia-boolean-required",
+        "significado": "{ \"estrategia\": { \"tipo\": \"boolean-required\", \"valor\": true, \"motivo\" } }."
+      },
+      {
+        "forma": "estrategia-first-valid-autocomplete",
+        "significado": "{ \"estrategia\": { \"tipo\": \"first-valid-autocomplete\" } }: en un autocomplete VACÍO, primera sugerencia visible y habilitada en el orden del catálogo; si ya trae valor no se toca. Sin opción válida => falla."
+      },
+      {
+        "forma": "estrategia-first-valid-option",
+        "significado": "{ \"estrategia\": { \"tipo\": \"first-valid-option\", \"orden\": \"catalogo\" | \"alfabetico\" } }: primera opción habilitada."
+      },
+      {
+        "forma": "politica-generable",
+        "significado": "Solo por política (autorización generable del perfil, AFI-TEST-DATA §7.3): opción determinista del catálogo observado. El caso nunca la declara."
+      }
+    ],
+    "estrategiasDatosCaso": [
+      {
+        "tipo": "first-valid-option",
+        "significado": "Delegar en \"cualquier opción válida\" del catálogo; el framework elige la primera habilitada (orden catalogo o alfabetico).",
+        "materializablePorCampos": [
+          "tipoAportante",
+          "tipoAfiliado",
+          "tipoEmpleador",
+          "naturaleza",
+          "claseEmpleador",
+          "tipoIdentificacion"
+        ]
+      },
+      {
+        "tipo": "first-valid-autocomplete",
+        "significado": "Primera sugerencia válida de un autocompletar. El contrato la acepta, pero solo sirve donde materializablePorCampos la lista.",
+        "materializablePorCampos": [
+          "fondoPensiones"
+        ]
+      },
+      {
+        "tipo": "deterministic-text",
+        "significado": "Texto literal fijo con motivo. Nunca en campos no public.",
+        "materializablePorCampos": [
+          "recibioAyudaAsesor"
+        ]
+      },
+      {
+        "tipo": "deterministic-number",
+        "significado": "Número literal fijo (solo dígitos) con motivo. Nunca en campos no public.",
+        "materializablePorCampos": []
+      },
+      {
+        "tipo": "boolean-required",
+        "significado": "Casilla que debe marcarse (valor true) con motivo.",
+        "materializablePorCampos": [
+          "autorizaDatos",
+          "autorizaIntimidad"
+        ]
+      }
+    ],
+    "capacidades": [
+      {
+        "etapa": "inicio-solicitud",
+        "campo": "tipoAportante",
+        "control": "select",
+        "acepta": [
+          "valor-concreto",
+          "estrategia-first-valid-option"
+        ],
+        "sensibilidad": "public",
+        "literalPermitidoEnDatosCaso": true,
+        "perfiles": [
+          "empresa",
+          "pensionado",
+          "facultativo",
+          "independiente"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true
+        }
+      },
+      {
+        "etapa": "inicio-solicitud",
+        "campo": "tipoAfiliado",
+        "control": "select",
+        "acepta": [
+          "valor-concreto",
+          "estrategia-first-valid-option"
+        ],
+        "sensibilidad": "pii",
+        "literalPermitidoEnDatosCaso": false,
+        "perfiles": [
+          "independiente",
+          "pensionado",
+          "facultativo"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true,
+          "auxiliar": {
+            "tipo": "first-valid-option",
+            "materializable": true
+          }
+        }
+      },
+      {
+        "etapa": "inicio-solicitud",
+        "campo": "tipoEmpleador",
+        "control": "select",
+        "acepta": [
+          "valor-concreto",
+          "estrategia-first-valid-option"
+        ],
+        "sensibilidad": "public",
+        "literalPermitidoEnDatosCaso": true,
+        "perfiles": [
+          "empresa"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true
+        }
+      },
+      {
+        "etapa": "inicio-solicitud",
+        "campo": "naturaleza",
+        "control": "select",
+        "acepta": [
+          "valor-concreto",
+          "estrategia-first-valid-option"
+        ],
+        "sensibilidad": "public",
+        "literalPermitidoEnDatosCaso": true,
+        "perfiles": [
+          "empresa"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true,
+          "auxiliar": {
+            "tipo": "first-valid-option",
+            "materializable": true
+          }
+        }
+      },
+      {
+        "etapa": "inicio-solicitud",
+        "campo": "claseEmpleador",
+        "control": "select",
+        "acepta": [
+          "valor-concreto",
+          "estrategia-first-valid-option"
+        ],
+        "sensibilidad": "public",
+        "literalPermitidoEnDatosCaso": true,
+        "perfiles": [
+          "empresa"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true,
+          "auxiliar": {
+            "tipo": "first-valid-option",
+            "materializable": true
+          }
+        }
+      },
+      {
+        "etapa": "inicio-solicitud",
+        "campo": "tipoIdentificacion",
+        "control": "select",
+        "acepta": [
+          "valor-concreto",
+          "estrategia-first-valid-option"
+        ],
+        "precargable": true,
+        "sensibilidad": "public",
+        "literalPermitidoEnDatosCaso": true,
+        "perfiles": [
+          "empresa",
+          "pensionado",
+          "facultativo",
+          "independiente"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true
+        }
+      },
+      {
+        "etapa": "inicio-solicitud",
+        "campo": "numeroIdentificacion",
+        "control": "identificacion",
+        "acepta": [
+          "valor-concreto",
+          "estrategia-deterministic"
+        ],
+        "sensibilidad": "pii",
+        "literalPermitidoEnDatosCaso": false,
+        "perfiles": [
+          "empresa",
+          "pensionado",
+          "facultativo",
+          "independiente"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true
+        }
+      },
+      {
+        "etapa": "inicio-solicitud",
+        "campo": "correo",
+        "control": "correo",
+        "acepta": [
+          "valor-concreto",
+          "estrategia-deterministic"
+        ],
+        "sensibilidad": "pii",
+        "literalPermitidoEnDatosCaso": false,
+        "perfiles": [
+          "empresa",
+          "pensionado",
+          "facultativo",
+          "independiente"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true
+        }
+      },
+      {
+        "etapa": "inicio-solicitud",
+        "campo": "confirmacionCorreo",
+        "control": "correo",
+        "acepta": [
+          "valor-concreto",
+          "estrategia-deterministic"
+        ],
+        "sensibilidad": "pii",
+        "literalPermitidoEnDatosCaso": false,
+        "perfiles": [
+          "empresa",
+          "pensionado",
+          "facultativo",
+          "independiente"
+        ],
+        "resueltoPorFramework": {
+          "delActor": false,
+          "derivadoDe": [
+            "correo"
+          ]
+        }
+      },
+      {
+        "etapa": "inicio-solicitud",
+        "campo": "recibioAyudaAsesor",
+        "control": "radio",
+        "acepta": [
+          "valor-concreto",
+          "estrategia-deterministic"
+        ],
+        "opcionesObservadas": [
+          "No"
+        ],
+        "sensibilidad": "public",
+        "literalPermitidoEnDatosCaso": true,
+        "perfiles": [
+          "empresa"
+        ],
+        "resueltoPorFramework": {
+          "delActor": false,
+          "auxiliar": {
+            "tipo": "deterministic-text",
+            "materializable": true
+          }
+        }
+      },
+      {
+        "etapa": "inicio-solicitud",
+        "campo": "autorizaDatos",
+        "control": "checkbox",
+        "acepta": [
+          "valor-booleano",
+          "estrategia-boolean-required"
+        ],
+        "sensibilidad": "public",
+        "literalPermitidoEnDatosCaso": true,
+        "perfiles": [
+          "empresa",
+          "pensionado",
+          "facultativo",
+          "independiente"
+        ],
+        "resueltoPorFramework": {
+          "delActor": false,
+          "auxiliar": {
+            "tipo": "boolean-required",
+            "materializable": true
+          }
+        }
+      },
+      {
+        "etapa": "inicio-solicitud",
+        "campo": "autorizaIntimidad",
+        "control": "checkbox",
+        "acepta": [
+          "valor-booleano",
+          "estrategia-boolean-required"
+        ],
+        "sensibilidad": "public",
+        "literalPermitidoEnDatosCaso": true,
+        "perfiles": [
+          "empresa",
+          "pensionado",
+          "facultativo",
+          "independiente"
+        ],
+        "resueltoPorFramework": {
+          "delActor": false,
+          "auxiliar": {
+            "tipo": "boolean-required",
+            "materializable": true
+          }
+        }
+      },
+      {
+        "etapa": "informacion-empresa",
+        "campo": "razonSocial",
+        "control": "text",
+        "acepta": [
+          "valor-concreto"
+        ],
+        "sensibilidad": "pii",
+        "literalPermitidoEnDatosCaso": false,
+        "perfiles": [
+          "empresa"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true
+        }
+      },
+      {
+        "etapa": "informacion-empresa",
+        "campo": "codigoCiiu",
+        "control": "autocomplete",
+        "acepta": [
+          "valor-concreto"
+        ],
+        "sensibilidad": "pii",
+        "literalPermitidoEnDatosCaso": false,
+        "perfiles": [
+          "empresa"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true
+        }
+      },
+      {
+        "etapa": "informacion-empresa",
+        "campo": "actividadEconomicaEmpresa",
+        "control": "text",
+        "acepta": [
+          "valor-concreto"
+        ],
+        "sensibilidad": "pii",
+        "literalPermitidoEnDatosCaso": false,
+        "perfiles": [
+          "empresa"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true
+        }
+      },
+      {
+        "etapa": "informacion-empresa",
+        "campo": "fechaInicioActividad",
+        "control": "text",
+        "acepta": [
+          "valor-concreto"
+        ],
+        "sensibilidad": "pii",
+        "literalPermitidoEnDatosCaso": false,
+        "perfiles": [
+          "empresa"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true
+        }
+      },
+      {
+        "etapa": "informacion-empresa",
+        "campo": "valorNomina",
+        "control": "text",
+        "acepta": [
+          "valor-concreto"
+        ],
+        "sensibilidad": "pii",
+        "literalPermitidoEnDatosCaso": false,
+        "perfiles": [
+          "empresa"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true
+        }
+      },
+      {
+        "etapa": "informacion-empresa",
+        "campo": "numeroTrabajadores",
+        "control": "text",
+        "acepta": [
+          "valor-concreto"
+        ],
+        "sensibilidad": "pii",
+        "literalPermitidoEnDatosCaso": false,
+        "perfiles": [
+          "empresa"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true
+        }
+      },
+      {
+        "etapa": "informacion-empresa",
+        "campo": "afiliadoPrimeraVez",
+        "control": "radio",
+        "acepta": [
+          "valor-concreto"
+        ],
+        "opcionesObservadas": [
+          "Si",
+          "No"
+        ],
+        "sensibilidad": "pii",
+        "literalPermitidoEnDatosCaso": false,
+        "perfiles": [
+          "empresa"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true
+        }
+      },
+      {
+        "etapa": "informacion-empresa",
+        "campo": "cajaCompensacionAnterior",
+        "control": "autocomplete",
+        "acepta": [
+          "valor-concreto"
+        ],
+        "sensibilidad": "pii",
+        "literalPermitidoEnDatosCaso": false,
+        "perfiles": [
+          "empresa"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true
+        }
+      },
+      {
+        "etapa": "telefonos",
+        "campo": "numeroCelular",
+        "control": "text",
+        "acepta": [
+          "valor-concreto"
+        ],
+        "sensibilidad": "pii",
+        "literalPermitidoEnDatosCaso": false,
+        "perfiles": [
+          "independiente",
+          "pensionado",
+          "facultativo"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true
+        }
+      },
+      {
+        "etapa": "telefonos",
+        "campo": "numeroTelefonoFijo",
+        "control": "text",
+        "acepta": [
+          "valor-concreto"
+        ],
+        "sensibilidad": "pii",
+        "literalPermitidoEnDatosCaso": false,
+        "perfiles": [
+          "independiente",
+          "pensionado",
+          "facultativo"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true
+        }
+      },
+      {
+        "etapa": "informacion-adicional",
+        "campo": "nacionalidad",
+        "control": "select",
+        "acepta": [
+          "valor-concreto"
+        ],
+        "sensibilidad": "pii",
+        "literalPermitidoEnDatosCaso": false,
+        "perfiles": [
+          "facultativo"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true,
+          "auxiliar": {
+            "tipo": "first-valid-option",
+            "materializable": false
+          }
+        }
+      },
+      {
+        "etapa": "informacion-adicional",
+        "campo": "estadoCivil",
+        "control": "select",
+        "acepta": [
+          "valor-concreto"
+        ],
+        "sensibilidad": "pii",
+        "literalPermitidoEnDatosCaso": false,
+        "perfiles": [
+          "facultativo"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true,
+          "auxiliar": {
+            "tipo": "first-valid-option",
+            "materializable": false
+          }
+        }
+      },
+      {
+        "etapa": "informacion-adicional",
+        "campo": "fondoPensiones",
+        "control": "autocomplete",
+        "acepta": [
+          "valor-concreto",
+          "estrategia-first-valid-autocomplete"
+        ],
+        "sensibilidad": "pii",
+        "literalPermitidoEnDatosCaso": false,
+        "perfiles": [
+          "independiente",
+          "facultativo"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true,
+          "auxiliar": {
+            "tipo": "first-valid-autocomplete",
+            "materializable": true
+          }
+        }
+      },
+      {
+        "etapa": "informacion-adicional",
+        "campo": "actividad",
+        "control": "select",
+        "acepta": [
+          "valor-concreto"
+        ],
+        "sensibilidad": "pii",
+        "literalPermitidoEnDatosCaso": false,
+        "perfiles": [
+          "independiente"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true
+        }
+      },
+      {
+        "etapa": "informacion-adicional",
+        "campo": "ingresoMensual",
+        "control": "text",
+        "acepta": [
+          "valor-concreto"
+        ],
+        "sensibilidad": "pii",
+        "literalPermitidoEnDatosCaso": false,
+        "perfiles": [
+          "independiente"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true
+        }
+      },
+      {
+        "etapa": "informacion-adicional",
+        "campo": "salarioBasico",
+        "control": "text",
+        "acepta": [
+          "valor-concreto"
+        ],
+        "sensibilidad": "pii",
+        "literalPermitidoEnDatosCaso": false,
+        "perfiles": [
+          "facultativo"
+        ],
+        "resueltoPorFramework": {
+          "delActor": true
+        }
+      }
+    ]
+  },
+  "funcional": {
+    "inicio": "Pantalla \"informacion-contacto\", alcanzada por la preparación del runner v1.",
+    "ejecucion": "Pasos y operaciones en orden, sobre la misma pantalla y sin reinicio: una selección afecta a las operaciones siguientes. El primer FAIL detiene el caso.",
+    "campos": [
+      {
+        "campo": "departamento",
+        "etapa": "informacion-contacto",
+        "control": "autocomplete"
+      },
+      {
+        "campo": "ciudadVivienda",
+        "etapa": "informacion-contacto",
+        "control": "autocomplete"
+      }
+    ],
+    "componentes": [
+      {
+        "componente": "alerta-territorial",
+        "descripcion": "Alerta de cobertura territorial de la pantalla de información de contacto."
+      },
+      {
+        "componente": "subtitulo-localizacion-vivienda",
+        "descripcion": "Subtítulo de la sección de localización de la vivienda en información de contacto."
+      }
+    ],
+    "fuentes": [
+      {
+        "fuente": "parametrica-ciudad-nacional",
+        "campos": [
+          "ciudadVivienda"
+        ],
+        "filtros": [
+          "departamento"
+        ],
+        "descripcion": "Paramétrica de municipios (Ciudad nacional) con su relación municipio -> departamento y estado activo, tal como la recibe la UI. El departamento se resuelve en la propia fuente a partir del valor actual del campo filtro.",
+        "certifica": "La UI representa el catálogo recibido de la paramétrica según la relación declarada (solo registros activos).",
+        "noCertifica": [
+          "Que la paramétrica esté conceptualmente bien configurada respecto de una fuente externa independiente.",
+          "Municipios que la fuente no entregó."
+        ]
+      }
+    ],
+    "familiasSoportadas": [
+      {
+        "familia": "estado-campo",
+        "intencion": "Editable o de solo lectura de un campo funcional.",
+        "operaciones": [
+          "campo-estado"
+        ]
+      },
+      {
+        "familia": "valor-campo",
+        "intencion": "Valor exacto o vacío de un campo, incluida una precarga tras otra acción del plan.",
+        "operaciones": [
+          "campo-valor"
+        ]
+      }
+    ],
+    "normalizaciones": {
+      "texto-es": {
+        "descripcion": "Quita tildes, deja solo letras A-Z y pasa a mayúsculas.",
+        "ejemplos": [
+          {
+            "entrada": "San José, D.C.",
+            "normalizado": "SANJOSEDC"
+          },
+          {
+            "entrada": "Peñol (Viejo)",
+            "normalizado": "PENOLVIEJO"
+          }
+        ]
+      }
+    },
+    "condiciones": {
+      "ruta": "funcional.pasos[].condiciones",
+      "opcional": true,
+      "forma": {
+        "paso": [
+          "id",
+          "esperado",
+          "operaciones",
+          "condiciones"
+        ],
+        "condicion": [
+          "entidad",
+          "expectativa"
+        ],
+        "entidad": [
+          "tipo",
+          "id"
+        ],
+        "expectativa": [
+          "tipo",
+          "igual (solo valor y resultado)"
+        ]
+      },
+      "rol": "`esperado` es el resultado esperado QA literal; `condiciones` es su representación observable SUFICIENTE cuando el hecho no está en el Portal. Describen el MISMO esperado: no son una segunda verdad ni amplían el alcance.",
+      "tipos": [
+        {
+          "tipo": "actividad",
+          "expectativas": [
+            {
+              "tipo": "alcanzada"
+            },
+            {
+              "tipo": "no-alcanzada"
+            }
+          ]
+        },
+        {
+          "tipo": "ruta",
+          "expectativas": [
+            {
+              "tipo": "tomada"
+            },
+            {
+              "tipo": "no-tomada"
+            }
+          ]
+        },
+        {
+          "tipo": "integracion",
+          "expectativas": [
+            {
+              "tipo": "resultado",
+              "igual": {
+                "valores": [
+                  "exito",
+                  "error"
+                ],
+                "descripcion": "Resultado de la llamada: \"exito\" o \"error\"."
+              }
+            },
+            {
+              "tipo": "invocada"
+            },
+            {
+              "tipo": "no-invocada"
+            }
+          ]
+        },
+        {
+          "tipo": "variable",
+          "expectativas": [
+            {
+              "tipo": "valor",
+              "igual": {
+                "descripcion": "Valor primitivo esperado (texto, número, booleano o null). Nunca PII."
+              }
+            }
+          ]
+        },
+        {
+          "tipo": "notificacion",
+          "expectativas": [
+            {
+              "tipo": "emitida"
+            },
+            {
+              "tipo": "no-emitida"
+            }
+          ]
+        }
+      ],
+      "pasoSoloCondiciones": "`operaciones` puede ser [] únicamente si el paso declara condiciones.",
+      "proveedoresProductivos": [
+        "tareas-pendientes-bizagi"
+      ],
+      "observablesHoy": [],
+      "noObservable": "Si en ejecución la fuente no permite concluir (infraestructura, autenticación o dato ausente), el paso queda NO_OBSERVABLE: ni PASS ni FAIL, y el caso no queda certificado. Nunca se convierte en FAIL ni se interpreta como la negación.",
+      "reglas": [
+        "Emite una condición SOLO si su (entidad, expectativa) figura en observablesHoy. Si no figura, no la emitas: diagnostica KNOWLEDGE_GAP (entidad no registrada) o TESTABILITY_GAP (registrada pero no observable hoy).",
+        "La condición es solo semántica: { entidad: { tipo, id }, expectativa }. Nunca proveedor, superficie, localización, nombre de tarea, selector, endpoint ni credenciales: los resuelve el framework.",
+        "La entidad debe estar en testabilidad.modelo con ese tipo, y la expectativa en las de su tipo.",
+        "Un proveedor implementado pero no productivo no hace observable nada: solo cuentan proveedoresProductivos.",
+        "pantalla-ui y campo-ui se certifican con funcional.operaciones, nunca con condiciones.",
+        "El actor, el perfil o actorRef nunca son evidencia de una condición."
+      ]
+    },
+    "operaciones": [
+      {
+        "tipo": "texto-ausente",
+        "camposAplicables": [],
+        "parametros": {
+          "requeridos": [
+            "texto",
+            "coincidencia"
+          ],
+          "opcionales": [
+            "evidencia"
+          ],
+          "detalle": {
+            "texto": {
+              "tipo": "string",
+              "descripcion": "Texto literal cuya presencia visible se descarta."
+            },
+            "coincidencia": {
+              "tipo": "enum",
+              "valores": [
+                "exacta",
+                "contiene"
+              ],
+              "descripcion": "exacta: un elemento cuyo texto completo es igual (espacios normalizados). contiene: subcadena sin distinguir mayúsculas."
+            },
+            "evidencia": {
+              "tipo": "string",
+              "descripcion": "Nombre de la captura de evidencia (opcional, sin espacios ni PII)."
+            }
+          }
+        },
+        "alcance": "Página completa, en el momento en que se ejecuta el paso.",
+        "semantica": "PASS si ningún elemento visible de la página coincide con el texto configurado (espera hasta el timeout de assertion a que desaparezca).",
+        "garantiza": [
+          "Que el texto configurado no está visible según la coincidencia elegida, en ese momento."
+        ],
+        "noGarantiza": [
+          "Ausencia de un componente visual (alerta, banner, ícono, color) si su texto cambia o no se conoce.",
+          "Ausencia de otra alerta o mensaje con texto diferente.",
+          "Que el texto no aparezca después (tras otra acción del plan o del usuario).",
+          "Nada sobre catálogos, campos o su estado."
+        ],
+        "observado": [
+          "coincidencia",
+          "visibles"
+        ]
+      },
+      {
+        "tipo": "catalogo-opcion-fuera-de",
+        "camposAplicables": [
+          "departamento",
+          "ciudadVivienda"
+        ],
+        "parametros": {
+          "requeridos": [
+            "campo",
+            "excluir",
+            "normalizacion"
+          ],
+          "opcionales": [
+            "evidencia"
+          ],
+          "detalle": {
+            "campo": {
+              "tipo": "CampoContactoFuncional",
+              "descripcion": "Campo de catálogo sobre el que actúa; ver camposAplicables."
+            },
+            "excluir": {
+              "tipo": "string[]",
+              "descripcion": "Conjunto no vacío de opciones a excluir; se comparan tras la normalización."
+            },
+            "normalizacion": {
+              "tipo": "enum",
+              "valores": [
+                "texto-es"
+              ],
+              "descripcion": "Ver normalizaciones."
+            },
+            "evidencia": {
+              "tipo": "string",
+              "descripcion": "Nombre de la captura de evidencia (opcional, sin espacios ni PII)."
+            }
+          }
+        },
+        "alcance": "Catálogo desplegado del campo (se abre y se espera a que sus opciones se estabilicen).",
+        "semantica": "PASS si existe AL MENOS UNA opción cuyo texto normalizado no pertenece al conjunto excluir normalizado.",
+        "garantiza": [
+          "Existe al menos una opción fuera del conjunto excluir tras normalización."
+        ],
+        "noGarantiza": [
+          "Que el catálogo sea completo (p. ej. nacional) ni que contenga una opción concreta.",
+          "Una cantidad concreta de opciones.",
+          "Pertenencia de las opciones a una paramétrica específica.",
+          "Que las opciones excluidas estén o no presentes."
+        ],
+        "observado": [
+          "cantidadOpciones",
+          "cantidadFuera",
+          "condicionCumplida"
+        ]
+      },
+      {
+        "tipo": "catalogo-no-vacio",
+        "camposAplicables": [
+          "departamento",
+          "ciudadVivienda"
+        ],
+        "parametros": {
+          "requeridos": [
+            "campo"
+          ],
+          "opcionales": [
+            "evidencia"
+          ],
+          "detalle": {
+            "campo": {
+              "tipo": "CampoContactoFuncional",
+              "descripcion": "Campo de catálogo sobre el que actúa; ver camposAplicables."
+            },
+            "evidencia": {
+              "tipo": "string",
+              "descripcion": "Nombre de la captura de evidencia (opcional, sin espacios ni PII)."
+            }
+          }
+        },
+        "alcance": "Catálogo desplegado del campo.",
+        "semantica": "PASS si el catálogo tiene al menos una opción.",
+        "garantiza": [
+          "Existe al menos una opción."
+        ],
+        "noGarantiza": [
+          "Contenido correcto de las opciones.",
+          "Ausencia de restricciones o filtros de negocio.",
+          "Pertenencia de las opciones a un departamento o paramétrica.",
+          "Que el campo sea editable o se comporte \"normalmente\"."
+        ],
+        "observado": [
+          "cantidadOpciones",
+          "condicionCumplida"
+        ]
+      },
+      {
+        "tipo": "seleccionar-exacto",
+        "camposAplicables": [
+          "departamento",
+          "ciudadVivienda"
+        ],
+        "parametros": {
+          "requeridos": [
+            "campo",
+            "valor"
+          ],
+          "opcionales": [
+            "normalizacion"
+          ],
+          "detalle": {
+            "campo": {
+              "tipo": "CampoContactoFuncional",
+              "descripcion": "Campo de catálogo sobre el que actúa; ver camposAplicables."
+            },
+            "valor": {
+              "tipo": "string",
+              "descripcion": "Texto de la opción. Sin normalizacion: literal (mayúsculas, tildes y puntuación cuentan)."
+            },
+            "normalizacion": {
+              "tipo": "enum",
+              "valores": [
+                "texto-es"
+              ],
+              "descripcion": "Opcional. Si se indica, compara valor y opciones normalizados y elige la opción OBSERVADA que coincide. Úsala cuando el literal del diseño identifica la opción sin certificar su escritura (composicion: identidad-vs-literal)."
+            }
+          }
+        },
+        "alcance": "Catálogo desplegado del campo; ACCIÓN que modifica el formulario.",
+        "semantica": "Sin normalizacion: PASS si existe exactamente UNA opción con ese texto literal; entonces la selecciona. Con normalizacion: PASS si exactamente UNA opción coincide tras normalizar; se selecciona esa opción tal como la muestra la UI. 0 o >1 coincidencias: FAIL sin seleccionar.",
+        "garantiza": [
+          "Existe exactamente una opción coincidente (literal, o normalizada si se indicó) y queda seleccionada en el campo.",
+          "Con normalizacion, la observación registra el valor pedido y el valor realmente seleccionado."
+        ],
+        "noGarantiza": [
+          "Efectos posteriores de la selección (campos dependientes, precargas, bloqueos).",
+          "Ninguna assertion sobre el resto del catálogo.",
+          "Con normalizacion, que la opción tenga la misma escritura que el diseño."
+        ],
+        "observado": [
+          "coincidenciasExactas",
+          "coincidenciasNormalizadas",
+          "valorSeleccionado"
+        ]
+      },
+      {
+        "tipo": "cerrar-catalogo",
+        "camposAplicables": [
+          "departamento",
+          "ciudadVivienda"
+        ],
+        "parametros": {
+          "requeridos": [
+            "campo"
+          ],
+          "opcionales": [],
+          "detalle": {
+            "campo": {
+              "tipo": "CampoContactoFuncional",
+              "descripcion": "Campo de catálogo sobre el que actúa; ver camposAplicables."
+            }
+          }
+        },
+        "alcance": "Catálogo del campo, que debe estar abierto por una operación anterior.",
+        "semantica": "Cierra el catálogo abierto sin seleccionar. FAIL si no estaba abierto o si no se cierra.",
+        "garantiza": [
+          "Se cierra el catálogo abierto."
+        ],
+        "noGarantiza": [
+          "Valor del campo tras cerrar.",
+          "Ninguna assertion sobre las opciones."
+        ],
+        "observado": [
+          "catalogoAbierto",
+          "cerrado"
+        ]
+      },
+      {
+        "tipo": "componente-visible",
+        "camposAplicables": [],
+        "componentesAplicables": [
+          "alerta-territorial",
+          "subtitulo-localizacion-vivienda"
+        ],
+        "parametros": {
+          "requeridos": [
+            "componente"
+          ],
+          "opcionales": [
+            "evidencia"
+          ],
+          "detalle": {
+            "componente": {
+              "tipo": "ComponenteFuncional",
+              "descripcion": "Componente visual con nombre; ver funcional.componentes. Nunca un selector."
+            },
+            "evidencia": {
+              "tipo": "string",
+              "descripcion": "Nombre de la captura de evidencia (opcional, sin espacios ni PII)."
+            }
+          }
+        },
+        "alcance": "Pantalla actual, en el momento del paso (espera hasta el timeout de assertion a que aparezca).",
+        "semantica": "PASS si el componente nombrado está visible y es único.",
+        "garantiza": [
+          "El componente identificado por el framework está visible en ese momento."
+        ],
+        "noGarantiza": [
+          "Su texto completo (el framework lo identifica, no certifica su contenido).",
+          "Color, ícono, estilo o legibilidad.",
+          "Su ubicación respecto de otros elementos.",
+          "Que siga visible después."
+        ],
+        "observado": [
+          "componente",
+          "visible",
+          "coincidencias"
+        ]
+      },
+      {
+        "tipo": "componente-posicion",
+        "camposAplicables": [],
+        "componentesAplicables": [
+          "alerta-territorial",
+          "subtitulo-localizacion-vivienda"
+        ],
+        "parametros": {
+          "requeridos": [
+            "componente",
+            "relacion",
+            "referencia"
+          ],
+          "opcionales": [
+            "evidencia"
+          ],
+          "detalle": {
+            "componente": {
+              "tipo": "ComponenteFuncional",
+              "descripcion": "Componente visual con nombre; ver funcional.componentes. Nunca un selector."
+            },
+            "relacion": {
+              "tipo": "enum",
+              "valores": [
+                "debajo-de",
+                "encima-de"
+              ],
+              "descripcion": "Posición vertical del componente respecto de la referencia."
+            },
+            "referencia": {
+              "tipo": "ComponenteFuncional",
+              "descripcion": "Otro componente de funcional.componentes."
+            },
+            "evidencia": {
+              "tipo": "string",
+              "descripcion": "Nombre de la captura de evidencia (opcional, sin espacios ni PII)."
+            }
+          }
+        },
+        "alcance": "Pantalla actual, en el momento del paso; ambos componentes deben estar visibles.",
+        "semantica": "debajo-de: el borde superior del componente está en o bajo el borde inferior de la referencia. encima-de: a la inversa.",
+        "garantiza": [
+          "Ambos componentes visibles y la relación vertical declarada entre ellos."
+        ],
+        "noGarantiza": [
+          "Que sean contiguos ni la distancia entre ellos.",
+          "Alineación horizontal.",
+          "Ubicación absoluta en la pantalla (\"parte superior\"): usar componente-region.",
+          "Contenido o estilo de los componentes."
+        ],
+        "observado": [
+          "visibles",
+          "separacion"
+        ]
+      },
+      {
+        "tipo": "componente-region",
+        "camposAplicables": [],
+        "componentesAplicables": [
+          "alerta-territorial",
+          "subtitulo-localizacion-vivienda"
+        ],
+        "parametros": {
+          "requeridos": [
+            "componente",
+            "region"
+          ],
+          "opcionales": [
+            "evidencia"
+          ],
+          "detalle": {
+            "componente": {
+              "tipo": "ComponenteFuncional",
+              "descripcion": "Componente visual con nombre; ver funcional.componentes. Nunca un selector."
+            },
+            "region": {
+              "tipo": "enum",
+              "valores": [
+                "superior"
+              ],
+              "descripcion": "Región canónica de la pantalla; su regla la define el framework (ver regla)."
+            },
+            "evidencia": {
+              "tipo": "string",
+              "descripcion": "Nombre de la captura de evidencia (opcional, sin espacios ni PII)."
+            }
+          }
+        },
+        "alcance": "Pantalla actual, contra el viewport real del contexto de ejecución (nunca declarado en el JSON).",
+        "semantica": "PASS si el componente está visible, es único y cumple la regla de la región. superior: El centro vertical del componente, medido desde el inicio de la página, está en la mitad superior de la primera pantalla (alto del viewport del contexto de ejecución). El límite es inclusivo.",
+        "garantiza": [
+          "Que el componente visible se encuentra en la región canónica declarada de la pantalla."
+        ],
+        "noGarantiza": [
+          "Posición exacta.",
+          "Relación con otro componente (usar componente-posicion).",
+          "Texto, color o ícono del componente.",
+          "Adaptación a otros tamaños de pantalla o contextos.",
+          "Que la posición persista tras cambios posteriores del layout."
+        ],
+        "observado": [
+          "componente",
+          "regionEsperada",
+          "regla",
+          "visible",
+          "viewportAncho",
+          "viewportAlto",
+          "centroY",
+          "limiteY",
+          "condicionCumplida",
+          "motivo"
+        ]
+      },
+      {
+        "tipo": "campo-estado",
+        "camposAplicables": [
+          "departamento",
+          "ciudadVivienda"
+        ],
+        "parametros": {
+          "requeridos": [
+            "campo",
+            "estado"
+          ],
+          "opcionales": [
+            "evidencia"
+          ],
+          "detalle": {
+            "campo": {
+              "tipo": "CampoContactoFuncional",
+              "descripcion": "Campo de catálogo sobre el que actúa; ver camposAplicables."
+            },
+            "estado": {
+              "tipo": "enum",
+              "valores": [
+                "editable",
+                "solo-lectura"
+              ],
+              "descripcion": "editable: el usuario puede editar/interactuar. solo-lectura: visible pero bloqueado para edición."
+            },
+            "evidencia": {
+              "tipo": "string",
+              "descripcion": "Nombre de la captura de evidencia (opcional, sin espacios ni PII)."
+            }
+          }
+        },
+        "alcance": "Campo en la pantalla actual; espera a que el estado se estabilice.",
+        "semantica": "PASS si el campo está visible y en el estado funcional declarado. Cómo se demuestra lo decide el framework según el control.",
+        "garantiza": [
+          "Que el campo es editable por el usuario, o que está bloqueado para edición, en ese momento."
+        ],
+        "noGarantiza": [
+          "Valor del campo.",
+          "Contenido del catálogo.",
+          "Causa del cambio de estado.",
+          "Que el servidor rechace un valor."
+        ],
+        "observado": [
+          "estadoEsperado",
+          "visible",
+          "editable"
+        ]
+      },
+      {
+        "tipo": "campo-valor",
+        "camposAplicables": [
+          "departamento",
+          "ciudadVivienda"
+        ],
+        "parametros": {
+          "requeridos": [
+            "campo"
+          ],
+          "opcionales": [
+            "valor",
+            "comparacion",
+            "vacio",
+            "evidencia"
+          ],
+          "detalle": {
+            "campo": {
+              "tipo": "CampoContactoFuncional",
+              "descripcion": "Campo de catálogo sobre el que actúa; ver camposAplicables."
+            },
+            "valor": {
+              "tipo": "string",
+              "descripcion": "Valor esperado (dato público de catálogo). Excluyente con vacio; exige comparacion."
+            },
+            "comparacion": {
+              "tipo": "enum",
+              "valores": [
+                "exacta",
+                "texto-es"
+              ],
+              "descripcion": "exacta: igual con espacios normalizados (solo si el requisito certifica la escritura). texto-es: igual tras la normalización texto-es (valor que identifica una opción de negocio; composicion: identidad-vs-literal)."
+            },
+            "vacio": {
+              "tipo": "true",
+              "descripcion": "Exige campo vacío. Excluyente con valor y comparacion."
+            },
+            "evidencia": {
+              "tipo": "string",
+              "descripcion": "Nombre de la captura de evidencia (opcional, sin espacios ni PII)."
+            }
+          }
+        },
+        "alcance": "Valor MOSTRADO por el campo; espera hasta el timeout de assertion a que se estabilice en el esperado.",
+        "semantica": "Dos formas excluyentes: { valor, comparacion } o { vacio: true }. PASS si el valor mostrado cumple.",
+        "garantiza": [
+          "El valor visible del campo en ese momento."
+        ],
+        "noGarantiza": [
+          "Persistencia en backend.",
+          "Causa del valor (precarga, selección previa...).",
+          "Estado editable o de solo lectura.",
+          "Que el valor no haya sido distinto antes: espera a que se estabilice, así que no demuestra que una entrada nunca se mostró (usar entrada-rechazada)."
+        ],
+        "observado": [
+          "comparacion",
+          "valorObservado"
+        ]
+      },
+      {
+        "tipo": "escribir",
+        "camposAplicables": [
+          "departamento",
+          "ciudadVivienda"
+        ],
+        "parametros": {
+          "requeridos": [
+            "campo",
+            "texto"
+          ],
+          "opcionales": [],
+          "detalle": {
+            "campo": {
+              "tipo": "CampoContactoFuncional",
+              "descripcion": "Campo de catálogo sobre el que actúa; ver camposAplicables."
+            },
+            "texto": {
+              "tipo": "string",
+              "descripcion": "Texto que el usuario teclea (dato público de prueba)."
+            }
+          }
+        },
+        "alcance": "ACCIÓN sobre el campo: lo enfoca, borra su contenido con el teclado y teclea carácter a carácter.",
+        "semantica": "Interacción de teclado realista (pasa por los filtros de teclado de la UI). No contiene ninguna assertion.",
+        "garantiza": [
+          "Se intentó introducir ese texto en el campo."
+        ],
+        "noGarantiza": [
+          "Que el campo lo aceptara.",
+          "Filtrado o sugerencias del catálogo.",
+          "El valor final del campo."
+        ],
+        "observado": [
+          "caracteres",
+          "escrito"
+        ]
+      },
+      {
+        "tipo": "entrada-rechazada",
+        "camposAplicables": [
+          "departamento",
+          "ciudadVivienda"
+        ],
+        "parametros": {
+          "requeridos": [
+            "campo",
+            "texto"
+          ],
+          "opcionales": [
+            "evidencia"
+          ],
+          "detalle": {
+            "campo": {
+              "tipo": "CampoContactoFuncional",
+              "descripcion": "Campo de catálogo sobre el que actúa; ver camposAplicables."
+            },
+            "texto": {
+              "tipo": "string",
+              "descripcion": "Caracteres que el campo debe rechazar (dato público de prueba)."
+            },
+            "evidencia": {
+              "tipo": "string",
+              "descripcion": "Nombre de la captura de evidencia (opcional, sin espacios ni PII)."
+            }
+          }
+        },
+        "alcance": "Campo editable; ACCIÓN + assertion: teclea carácter a carácter y observa el valor tras cada uno y durante una ventana breve.",
+        "semantica": "PASS si el campo es editable y ninguno de los caracteres cambia el valor mostrado, ni al teclearlo ni poco después. Un campo no editable es FAIL (no prueba un filtro de entrada).",
+        "garantiza": [
+          "Ninguno de los caracteres tecleados se plasmó en el campo durante la observación."
+        ],
+        "noGarantiza": [
+          "El tipo de teclado virtual o sus teclas disponibles.",
+          "Contenido pegado o dictado.",
+          "Validación del servidor.",
+          "El motivo del rechazo."
+        ],
+        "observado": [
+          "caracteres",
+          "aceptados",
+          "cambiosTardios",
+          "valorSinCambios",
+          "editable"
+        ]
+      },
+      {
+        "tipo": "salir-del-campo",
+        "camposAplicables": [
+          "departamento",
+          "ciudadVivienda"
+        ],
+        "parametros": {
+          "requeridos": [
+            "campo"
+          ],
+          "opcionales": [],
+          "detalle": {
+            "campo": {
+              "tipo": "CampoContactoFuncional",
+              "descripcion": "Campo de catálogo sobre el que actúa; ver camposAplicables."
+            }
+          }
+        },
+        "alcance": "ACCIÓN: el campo pierde el foco por una interacción del usuario en una zona neutra de la pantalla.",
+        "semantica": "PASS si el campo pierde el foco sin navegar. FAIL sin interactuar si la zona neutra está tapada (p. ej. por las opciones).",
+        "garantiza": [
+          "El campo perdió el foco sin navegar, guardar ni elegir una opción."
+        ],
+        "noGarantiza": [
+          "Qué hace la UI con el contenido al perder el foco (verificarlo con campo-valor)."
+        ],
+        "observado": [
+          "neutroLibre",
+          "sinFoco",
+          "sinNavegar"
+        ]
+      },
+      {
+        "tipo": "catalogo-segun-fuente",
+        "camposAplicables": [
+          "ciudadVivienda"
+        ],
+        "fuentesAplicables": [
+          "parametrica-ciudad-nacional"
+        ],
+        "parametros": {
+          "requeridos": [
+            "campo",
+            "fuente",
+            "filtroDesdeCampo",
+            "relacion",
+            "normalizacion"
+          ],
+          "opcionales": [
+            "evidencia"
+          ],
+          "detalle": {
+            "campo": {
+              "tipo": "CampoContactoFuncional",
+              "descripcion": "Campo de catálogo sobre el que actúa; ver camposAplicables."
+            },
+            "fuente": {
+              "tipo": "FuenteAutoritativa",
+              "descripcion": "Id de funcional.fuentes; debe describir el campo."
+            },
+            "filtroDesdeCampo": {
+              "tipo": "CampoContactoFuncional",
+              "descripcion": "Campo cuyo valor ACTUAL filtra la fuente (no es un selector); debe estar en los filtros de la fuente."
+            },
+            "relacion": {
+              "tipo": "enum",
+              "valores": [
+                "igual"
+              ],
+              "descripcion": "igual: el conjunto observado es exactamente el esperado por la fuente."
+            },
+            "normalizacion": {
+              "tipo": "enum",
+              "valores": [
+                "texto-es"
+              ],
+              "descripcion": "Ver normalizaciones; aplica al filtro y a la comparación."
+            },
+            "evidencia": {
+              "tipo": "string",
+              "descripcion": "Nombre de la captura de evidencia (opcional, sin espacios ni PII)."
+            }
+          }
+        },
+        "alcance": "Catálogo desplegado del campo frente a la fuente autoritativa, filtrada por el valor actual del campo filtro.",
+        "semantica": "PASS si el conjunto de opciones (normalizado, con duplicados) es igual al esperado. La fuente falla cerrada: incompleta, vacía, ilegible, ambigua o sin relación para el filtro => FAIL con motivo.",
+        "garantiza": [
+          "Conjunto observado = conjunto que la fuente declara para el filtro actual.",
+          "La UI representa el catálogo recibido de la fuente según la relación declarada."
+        ],
+        "noGarantiza": [
+          "Que la fuente esté bien configurada frente a una referencia externa independiente.",
+          "Orden de las opciones.",
+          "Información que la fuente no entregó.",
+          "Qué pasa al escribir en el campo (filtrado predictivo)."
+        ],
+        "observado": [
+          "fuente",
+          "filtro",
+          "completa",
+          "cantidadEsperada",
+          "cantidadObservada",
+          "faltantes",
+          "sobrantes",
+          "motivo",
+          "lecturasGetRespaldo"
+        ]
+      },
+      {
+        "tipo": "sugerencias-segun-fuente",
+        "camposAplicables": [
+          "ciudadVivienda"
+        ],
+        "fuentesAplicables": [
+          "parametrica-ciudad-nacional"
+        ],
+        "parametros": {
+          "requeridos": [
+            "campo",
+            "fuente",
+            "filtroDesdeCampo",
+            "normalizacion",
+            "textoBusqueda",
+            "coincidencia",
+            "diacriticos",
+            "mayusculas"
+          ],
+          "opcionales": [
+            "evidencia"
+          ],
+          "detalle": {
+            "campo": {
+              "tipo": "CampoContactoFuncional",
+              "descripcion": "Campo de catálogo sobre el que actúa; ver camposAplicables."
+            },
+            "fuente": {
+              "tipo": "FuenteAutoritativa",
+              "descripcion": "Id de funcional.fuentes; debe describir el campo."
+            },
+            "filtroDesdeCampo": {
+              "tipo": "CampoContactoFuncional",
+              "descripcion": "Campo cuyo valor ACTUAL filtra la fuente (no es un selector)."
+            },
+            "normalizacion": {
+              "tipo": "enum",
+              "valores": [
+                "texto-es"
+              ],
+              "descripcion": "Solo para decidir si una sugerencia PERTENECE a la fuente; no se usa en la búsqueda."
+            },
+            "textoBusqueda": {
+              "tipo": "string",
+              "descripcion": "Texto parcial ya escrito en el campo (con escribir), tal como lo declara el diseño."
+            },
+            "coincidencia": {
+              "tipo": "enum",
+              "valores": [
+                "contiene"
+              ],
+              "descripcion": "contiene: la sugerencia contiene el texto como subcadena."
+            },
+            "diacriticos": {
+              "tipo": "enum",
+              "valores": [
+                "sensibles"
+              ],
+              "descripcion": "sensibles: las tildes cuentan (una letra con tilde no coincide con la misma letra sin tilde)."
+            },
+            "mayusculas": {
+              "tipo": "enum",
+              "valores": [
+                "sensibles",
+                "insensibles"
+              ],
+              "descripcion": "Tratamiento de mayúsculas/minúsculas en la búsqueda. Sin valor por defecto: debe declararlo el diseño o el requerimiento. Si ninguno lo define y el resultado depende de ello, el requisito es INFORMACION_INSUFICIENTE (no elegir)."
+            },
+            "evidencia": {
+              "tipo": "string",
+              "descripcion": "Nombre de la captura de evidencia (opcional, sin espacios ni PII)."
+            }
+          }
+        },
+        "alcance": "Sugerencias del panel YA abierto tras escribir, sin interactuar con el control; frente a la fuente filtrada por el valor actual del campo filtro.",
+        "semantica": "PASS si el campo muestra exactamente textoBusqueda, hay al menos una sugerencia visible, todas pertenecen al conjunto que la fuente declara para el filtro actual y todas cumplen la regla de búsqueda. Comparación en Unicode NFC (misma letra con tilde en distinta codificación es igual; nunca se quitan tildes). No escribe, no hace clic, no selecciona ni cierra el panel.",
+        "garantiza": [
+          "Existe al menos una sugerencia visible.",
+          "Cada sugerencia visible pertenece al conjunto válido de la fuente bajo el filtro actual.",
+          "Cada sugerencia visible cumple la coincidencia declarada respecto del texto de búsqueda, con el tratamiento de diacríticos y mayúsculas declarado."
+        ],
+        "noGarantiza": [
+          "Que se muestren TODAS las coincidencias posibles (la UI puede limitar las sugerencias).",
+          "Orden de las sugerencias.",
+          "Comportamiento con otros textos de búsqueda.",
+          "Una regla general de mayúsculas/minúsculas más allá del texto probado.",
+          "Búsqueda aproximada, fonética o por raíz.",
+          "Que la fuente esté bien configurada frente a una referencia externa independiente.",
+          "Selección de una sugerencia, persistencia del valor o reapertura posterior del catálogo."
+        ],
+        "observado": [
+          "fuente",
+          "filtro",
+          "textoBusqueda",
+          "coincidencia",
+          "diacriticos",
+          "mayusculas",
+          "fuenteCompleta",
+          "cantidadSugerencias",
+          "fueraDeFuente",
+          "noCumplenBusqueda",
+          "motivo"
+        ]
+      }
+    ]
+  },
+  "ejecucion": {
+    "principio": "DefinicionCasoAfi describe la intención funcional. El contexto de ejecución (desktop, mobile) es una dimensión de ejecución: lo elige quien ejecuta, nunca el JSON.",
+    "contextos": [
+      {
+        "contexto": "desktop",
+        "descripcion": "Navegador de escritorio (Chromium/Edge) con viewport ancho.",
+        "soportadoRunnerV1": true,
+        "seleccion": "Único contexto del harness y del runner v1; se aplica siempre, sin que el JSON lo declare.",
+        "limites": [
+          "Un solo viewport: no certifica otros tamaños de escritorio ni otros navegadores."
+        ]
+      },
+      {
+        "contexto": "mobile",
+        "descripcion": "Emulación de navegador móvil en Chromium/Edge: pantalla estrecha e interacción táctil.",
+        "soportadoRunnerV1": false,
+        "seleccion": "No seleccionable por contrato: el runner v1 no lo ejecuta. Una variante mobile es CAPABILITY_GAP (familia contexto-ejecucion).",
+        "limites": [
+          "Es emulación: no es un dispositivo real, ni su navegador, ni su teclado virtual.",
+          "No observa el tipo de teclado táctil (inputmode) ni selectores nativos del sistema operativo.",
+          "El soporte administrativo (reconocimiento, cleanup) debe correr en un contexto desktop separado."
+        ]
+      }
+    ],
+    "reglas": [
+      "El JSON nunca declara viewport, dispositivo, touch ni navegador: el contrato no tiene dónde y una propiedad extra lo invalida.",
+      "Un diseño con variantes por contexto se traduce por variante: una DefinicionCasoAfi por variante, solo para contextos soportadoRunnerV1.",
+      "Los pasos de una variante en un contexto no soportado son CAPABILITY_GAP (familia contexto-ejecucion); nunca se emite JSON para ella, porque se ejecutaría en otro contexto.",
+      "\"Hacer clic\" y \"hacer tap\" son la misma operación funcional: la modalidad la decide el contexto.",
+      "Una assertion que solo tiene sentido en un contexto (adaptación al ancho, legibilidad) es una capability funcional, no un contexto."
+    ]
+  },
+  "testabilidad": {
+    "advertencia": "Clasificación para el diagnóstico, no operaciones del JSON. portal-ui se observa con funcional.operaciones; en las demás superficies, un proveedor productivo certifica SOLO su cobertura publicada (superficies[].cobertura, por tipo y expectativa) y una superficie \"parcial\" no es observable fuera de ella. Un proveedor productivo no hace observable ninguna entidad sin vínculo aprobado: las condiciones del caso se rigen por funcional.condiciones.observablesHoy.",
+    "entidades": [
+      {
+        "tipo": "pantalla-ui",
+        "descripcion": "Pantalla de la interfaz, reconocida por firma semántica.",
+        "superficies": [
+          "portal-ui"
+        ]
+      },
+      {
+        "tipo": "campo-ui",
+        "descripcion": "Control de la interfaz (Field Registry). Un dato interno del proceso NO es un campo UI.",
+        "superficies": [
+          "portal-ui"
+        ]
+      },
+      {
+        "tipo": "transicion-ui",
+        "descripcion": "Paso de navegación entre dos pantallas de la interfaz (desde -> hacia). NO es una ruta del proceso BPM.",
+        "superficies": [
+          "portal-ui"
+        ]
+      },
+      {
+        "tipo": "actividad",
+        "descripcion": "Estado, actividad o subproceso del proceso BPM.",
+        "superficies": [
+          "proceso-bpm"
+        ]
+      },
+      {
+        "tipo": "ruta",
+        "descripcion": "Ruta o transición del proceso BPM entre actividades. NO es una pantalla.",
+        "superficies": [
+          "proceso-bpm"
+        ]
+      },
+      {
+        "tipo": "integracion",
+        "descripcion": "Llamada a un sistema externo: si fue invocada y, si lo fue, su resultado. NO es una transición visual.",
+        "superficies": [
+          "integracion"
+        ]
+      },
+      {
+        "tipo": "variable",
+        "descripcion": "Dato del proceso o de una integración, no visible como control.",
+        "superficies": [
+          "proceso-bpm",
+          "integracion"
+        ]
+      },
+      {
+        "tipo": "notificacion",
+        "descripcion": "Mensaje emitido hacia un canal externo.",
+        "superficies": [
+          "notificacion"
+        ]
+      }
+    ],
+    "expectativasPorEntidad": {
+      "pantalla-ui": [
+        "visible",
+        "no-visible"
+      ],
+      "campo-ui": [
+        "valor"
+      ],
+      "transicion-ui": [
+        "tomada",
+        "no-tomada"
+      ],
+      "actividad": [
+        "alcanzada",
+        "no-alcanzada"
+      ],
+      "ruta": [
+        "tomada",
+        "no-tomada"
+      ],
+      "integracion": [
+        "resultado",
+        "invocada",
+        "no-invocada"
+      ],
+      "variable": [
+        "valor"
+      ],
+      "notificacion": [
+        "emitida",
+        "no-emitida"
+      ]
+    },
+    "superficies": [
+      {
+        "superficie": "portal-ui",
+        "descripcion": "Interfaz web del Portal.",
+        "observaciones": [
+          {
+            "entidad": "pantalla-ui",
+            "expectativas": [
+              "visible",
+              "no-visible"
+            ]
+          },
+          {
+            "entidad": "campo-ui",
+            "expectativas": [
+              "valor"
+            ]
+          },
+          {
+            "entidad": "transicion-ui",
+            "expectativas": [
+              "tomada",
+              "no-tomada"
+            ]
+          }
+        ],
+        "proveedores": [],
+        "mecanismoPrevio": "funcional.operaciones (runner v1): solo lo que esas operaciones garantizan",
+        "estado": "solo-mecanismo-previo"
+      },
+      {
+        "superficie": "proceso-bpm",
+        "descripcion": "Estado interno del proceso BPM (actividades, rutas, datos del caso).",
+        "observaciones": [
+          {
+            "entidad": "actividad",
+            "expectativas": [
+              "alcanzada",
+              "no-alcanzada"
+            ]
+          },
+          {
+            "entidad": "ruta",
+            "expectativas": [
+              "tomada",
+              "no-tomada"
+            ]
+          },
+          {
+            "entidad": "variable",
+            "expectativas": [
+              "valor"
+            ]
+          }
+        ],
+        "proveedores": [
+          "tareas-pendientes-bizagi"
+        ],
+        "cobertura": [
+          {
+            "proveedor": "tareas-pendientes-bizagi",
+            "observaciones": [
+              {
+                "entidad": "actividad",
+                "expectativas": [
+                  "alcanzada"
+                ]
+              }
+            ]
+          }
+        ],
+        "estado": "parcial"
+      },
+      {
+        "superficie": "integracion",
+        "descripcion": "Intercambios con sistemas externos y sus datos.",
+        "observaciones": [
+          {
+            "entidad": "integracion",
+            "expectativas": [
+              "resultado",
+              "invocada",
+              "no-invocada"
+            ]
+          },
+          {
+            "entidad": "variable",
+            "expectativas": [
+              "valor"
+            ]
+          }
+        ],
+        "proveedores": [],
+        "estado": "sin-proveedor"
+      },
+      {
+        "superficie": "notificacion",
+        "descripcion": "Mensajes emitidos a canales externos.",
+        "observaciones": [
+          {
+            "entidad": "notificacion",
+            "expectativas": [
+              "emitida",
+              "no-emitida"
+            ]
+          }
+        ],
+        "proveedores": [],
+        "estado": "sin-proveedor"
+      }
+    ],
+    "modelo": {
+      "pantallas": [
+        "inicio-solicitud",
+        "telefonos",
+        "informacion-adicional",
+        "informacion-contacto",
+        "pantalla-bloqueo-afiliacion-activa",
+        "pantalla-ingresa-informacion-empresa",
+        "pantalla-representante-legal",
+        "pantalla-contacto-caja",
+        "pantalla-responsable-portal",
+        "pantalla-documentos",
+        "pantalla-direccion"
+      ],
+      "campos": [
+        "departamento",
+        "ciudadVivienda",
+        "campo-tipo-sociedad",
+        "representante-legal-tipo-identificacion",
+        "representante-legal-numero-identificacion",
+        "representante-legal-primer-nombre",
+        "representante-legal-segundo-nombre",
+        "representante-legal-primer-apellido",
+        "representante-legal-segundo-apellido",
+        "representante-legal-nombre-completo",
+        "contacto-caja-tipo-identificacion",
+        "contacto-caja-numero-identificacion",
+        "contacto-caja-primer-nombre",
+        "contacto-caja-segundo-nombre",
+        "contacto-caja-primer-apellido",
+        "contacto-caja-segundo-apellido",
+        "contacto-caja-nombre-completo",
+        "contacto-caja-correo",
+        "responsable-portal-tipo-identificacion",
+        "responsable-portal-numero-identificacion",
+        "responsable-portal-primer-nombre",
+        "responsable-portal-segundo-nombre",
+        "responsable-portal-primer-apellido",
+        "responsable-portal-segundo-apellido",
+        "responsable-portal-nombre-completo"
+      ],
+      "transiciones": [
+        "transicion-representante-legal-a-contacto-caja",
+        "transicion-contacto-caja-a-responsable-portal",
+        "transicion-responsable-portal-a-documentos",
+        "transicion-contacto-a-direccion",
+        "transicion-direccion-a-representante-legal"
+      ],
+      "actividades": [
+        "actividad-ejecutar-sap",
+        "actividad-registrar-informacion-cliente"
+      ],
+      "rutas": [
+        "ruta-continua",
+        "ruta-no-continua-sap"
+      ],
+      "integraciones": [
+        "integracion-servicio-sap",
+        "integracion-giass",
+        "integracion-rues",
+        "integracion-registraduria"
+      ],
+      "variables": [
+        {
+          "id": "variable-sbp",
+          "superficies": [
+            "integracion",
+            "proceso-bpm"
+          ]
+        },
+        {
+          "id": "variable-sestadoafiliado",
+          "superficies": [
+            "integracion",
+            "proceso-bpm"
+          ]
+        },
+        {
+          "id": "variable-smotivoretiro",
+          "superficies": [
+            "integracion",
+            "proceso-bpm"
+          ]
+        },
+        {
+          "id": "variable-sgrupo",
+          "superficies": [
+            "integracion",
+            "proceso-bpm"
+          ]
+        },
+        {
+          "id": "variable-flag-registraduria",
+          "superficies": [
+            "proceso-bpm",
+            "integracion"
+          ]
+        }
+      ],
+      "notificaciones": [
+        "notificacion-inicio-tramite-correo",
+        "notificacion-aprobacion-empleador",
+        "notificacion-cierre-inactividad",
+        "notificacion-recordatorio-retoma"
+      ]
+    },
+    "diagnostico": {
+      "precedencia": [
+        "INFORMACION_INSUFICIENTE",
+        "KNOWLEDGE_GAP",
+        "TESTABILITY_GAP",
+        "CAPABILITY_GAP"
+      ],
+      "significado": {
+        "INFORMACION_INSUFICIENTE": "No está definido QUÉ significa PASS/FAIL (entidad o expectativa). Se pregunta al analista QA.",
+        "KNOWLEDGE_GAP": "La entidad está identificada con tipo semántico claro, pero no está en el Application Model. Se declara, no se programa.",
+        "TESTABILITY_GAP": "PASS/FAIL definido y entidad registrada, pero ninguna superficie EFECTIVA de la entidad tiene proveedor productivo.",
+        "CAPABILITY_GAP": "Falta una forma de ACTUAR u ORQUESTAR (interacción, orquestación, contexto de ejecución), o en portal-ui una operación que garantice el esperado."
+      },
+      "reglas": [
+        "Superficies efectivas: una variable solo se observa por las superficies que declara; el resto de tipos, por las de su tipo.",
+        "Frontera portal-ui: su mecanismo productivo son funcional.operaciones; si ninguna garantiza el esperado, sigue siendo CAPABILITY_GAP (compatibilidad).",
+        "Un requisito de otra superficie (proceso, integración, notificación) registrado y sin proveedor productivo es TESTABILITY_GAP, no CAPABILITY_GAP.",
+        "Cobertura exacta: un proveedor productivo solo cubre las (entidad, expectativa) de su cobertura publicada; fuera de ella (otra expectativa, otro tipo de la misma superficie) sigue siendo TESTABILITY_GAP.",
+        "KNOWLEDGE_GAP y TESTABILITY_GAP nunca se formulan como preguntas para QA.",
+        "Nunca KNOWLEDGE_GAP y TESTABILITY_GAP para la misma condición en una misma pasada: la primera capa bloqueante detiene la condición.",
+        "Deduplica gaps por capacidad técnica ATÓMICA: observar una ruta y leer una variable son gaps distintos aunque compartan paso o superficie.",
+        "No fuerces un gap a una familia del backlog que no lo describa honestamente."
+      ]
+    }
+  },
+  "agentIntake": {
+    "schemaVersion": "afi-agent-intake/v1",
+    "claves": [
+      "knowledgeProposals",
+      "classificationRequests",
+      "testDataRequirements"
+    ],
+    "forma": "{ \"schemaVersion\": \"afi-agent-intake/v1\", \"knowledgeProposals\": [...], \"classificationRequests\": [...], \"testDataRequirements\": [...] }",
+    "reglas": [
+      "En modo intake emite EXACTAMENTE UN bloque de código json al final, con este envelope; nunca dos bloques JSON de intake.",
+      "Las tres listas existen siempre, aunque estén vacías.",
+      "knowledgeProposals/classificationRequests (ver knowledgeIntake) y testDataRequirements (ver testData) son dimensiones independientes: una misma entidad de negocio puede producir un KNOWLEDGE_GAP y un requisito de datos de prueba.",
+      "El envelope nunca lleva valores de actores, nombres de variables de entorno ni decisiones de revisión."
+    ],
+    "compatibilidad": "Salidas antiguas (un objeto de conocimiento y/o uno de datos de prueba) se aceptan temporalmente; el formato canónico es solo el envelope."
+  },
+  "knowledgeIntake": {
+    "schemaVersion": "afi-knowledge-proposal/v1",
+    "enabled": true,
+    "salida": {
+      "claves": [
+        "knowledgeProposals",
+        "classificationRequests"
+      ],
+      "formato": "Listas knowledgeProposals y classificationRequests del envelope ÚNICO de intake (ver agentIntake), ADICIONAL a los bloques humanos KNOWLEDGE_GAP."
+    },
+    "entityTypes": [
+      {
+        "tipo": "pantalla-ui",
+        "descripcion": "Pantalla de la interfaz, reconocida por firma semántica.",
+        "requeridos": [
+          "tipo",
+          "id",
+          "descripcion"
+        ],
+        "opcionales": [
+          "senales",
+          "titulo",
+          "etapa",
+          "consulta"
+        ],
+        "referencias": [],
+        "etapasPermitidas": [
+          "inicio-solicitud",
+          "informacion-empresa",
+          "telefonos",
+          "informacion-adicional",
+          "informacion-contacto",
+          "direccion"
+        ],
+        "titulo": "encabezado visible que reconoce la pantalla",
+        "consulta": "texto del botón que consulta a la persona"
+      },
+      {
+        "tipo": "campo-ui",
+        "descripcion": "Control de la interfaz (Field Registry). Un dato interno del proceso NO es un campo UI.",
+        "requeridos": [
+          "tipo",
+          "id",
+          "descripcion"
+        ],
+        "opcionales": [
+          "pantalla",
+          "control",
+          "etiqueta",
+          "dato",
+          "obligatorio"
+        ],
+        "referencias": [
+          {
+            "campo": "pantalla",
+            "tipo": "pantalla-ui"
+          }
+        ],
+        "controlesPermitidos": [
+          "autocomplete",
+          "select",
+          "text",
+          "checkbox",
+          "radio",
+          "archivo"
+        ],
+        "obligatorio": [
+          "si",
+          "no"
+        ],
+        "dato": "campo del modelo AFI o de persona (testData.campos / camposPedibles)"
+      },
+      {
+        "tipo": "transicion-ui",
+        "descripcion": "Paso de navegación entre dos pantallas de la interfaz (desde -> hacia). NO es una ruta del proceso BPM.",
+        "requeridos": [
+          "tipo",
+          "id",
+          "descripcion",
+          "desde",
+          "hacia"
+        ],
+        "opcionales": [
+          "avance",
+          "condicion"
+        ],
+        "referencias": [
+          {
+            "campo": "desde",
+            "tipo": "pantalla-ui"
+          },
+          {
+            "campo": "hacia",
+            "tipo": "pantalla-ui"
+          }
+        ],
+        "avance": "texto visible del botón que lleva de desde a hacia",
+        "condicion": "condición de negocio (texto) bajo la que existe"
+      },
+      {
+        "tipo": "actividad",
+        "descripcion": "Estado, actividad o subproceso del proceso BPM.",
+        "requeridos": [
+          "tipo",
+          "id",
+          "descripcion"
+        ],
+        "opcionales": [],
+        "referencias": []
+      },
+      {
+        "tipo": "ruta",
+        "descripcion": "Ruta o transición del proceso BPM entre actividades. NO es una pantalla.",
+        "requeridos": [
+          "tipo",
+          "id",
+          "descripcion"
+        ],
+        "opcionales": [
+          "desde",
+          "hacia"
+        ],
+        "referencias": [
+          {
+            "campo": "desde",
+            "tipo": "actividad"
+          },
+          {
+            "campo": "hacia",
+            "tipo": "actividad"
+          }
+        ]
+      },
+      {
+        "tipo": "integracion",
+        "descripcion": "Llamada a un sistema externo: si fue invocada y, si lo fue, su resultado. NO es una transición visual.",
+        "requeridos": [
+          "tipo",
+          "id",
+          "descripcion"
+        ],
+        "opcionales": [],
+        "referencias": []
+      },
+      {
+        "tipo": "variable",
+        "descripcion": "Dato del proceso o de una integración, no visible como control.",
+        "requeridos": [
+          "tipo",
+          "id",
+          "descripcion",
+          "superficies"
+        ],
+        "opcionales": [
+          "ambito"
+        ],
+        "referencias": [
+          {
+            "campo": "ambito.integracion",
+            "tipo": "integracion"
+          }
+        ],
+        "superficiesPermitidas": [
+          "proceso-bpm",
+          "integracion"
+        ],
+        "ambito": [
+          "{ \"tipo\": \"proceso\" }",
+          "{ \"tipo\": \"integracion\", \"integracion\": \"<id>\" }"
+        ]
+      },
+      {
+        "tipo": "notificacion",
+        "descripcion": "Mensaje emitido hacia un canal externo.",
+        "requeridos": [
+          "tipo",
+          "id",
+          "descripcion"
+        ],
+        "opcionales": [
+          "canal"
+        ],
+        "referencias": []
+      }
+    ],
+    "proposalShape": {
+      "requeridos": [
+        "schemaVersion",
+        "proposalId",
+        "entidad",
+        "origen",
+        "evidenciaSemantica",
+        "estado",
+        "revisiones"
+      ],
+      "opcionales": [
+        "alias",
+        "operacion"
+      ],
+      "valoresFijos": {
+        "schemaVersion": "afi-knowledge-proposal/v1",
+        "estado": "PENDING_REVIEW",
+        "revisiones": []
+      },
+      "proposalId": "Único en la salida; letras, dígitos, punto, guion o guion bajo (máx. 80).",
+      "entidad": "Un objeto con \"tipo\" (exactamente uno de entityTypes) y SOLO los requeridos/opcionales de ese tipo. id semántico: kebab-case o camelCase.",
+      "origen": {
+        "requeridos": [
+          "fuente",
+          "ocurrencias"
+        ],
+        "ocurrencia": {
+          "requeridos": [
+            "hu"
+          ],
+          "opcionales": [
+            "caso",
+            "paso",
+            "condicion"
+          ]
+        }
+      },
+      "evidenciaSemantica": "Por qué las fuentes muestran que la entidad existe (texto público, sin PII).",
+      "alias": "Nombres con los que aparece en las fuentes (opcional; ayuda a detectar duplicados).",
+      "operacion": "Opcional: \"completar\" añade atributos opcionales AUSENTES a una entidad YA aprobada (pantalla-ui, campo-ui), con su id y descripción idénticos. Sin operacion: crear."
+    },
+    "classificationRequestShape": {
+      "requeridos": [
+        "schemaVersion",
+        "solicitudId",
+        "id",
+        "descripcion",
+        "alternativas",
+        "origen",
+        "evidenciaSemantica",
+        "estado"
+      ],
+      "valoresFijos": {
+        "schemaVersion": "afi-knowledge-proposal/v1",
+        "estado": "NEEDS_CLASSIFICATION"
+      },
+      "alternativas": "Dos o más tipos distintos de entityTypes entre los que un humano elegirá UNO."
+    },
+    "rules": [
+      "Solo para una condición cuyo diagnóstico FINAL es KNOWLEDGE_GAP. Nunca para INFORMACION_INSUFICIENTE, TESTABILITY_GAP, CAPABILITY_GAP ni una condición representable.",
+      "Una propuesta = UNA entidad con exactamente UN tipo de entityTypes. Nunca tipos compuestos, listas de tipos ni varias entidades.",
+      "Si una frase del caso contiene dos entidades, emite dos propuestas atómicas.",
+      "Si no puedes decidir el tipo, emite una classificationRequest (no una propuesta).",
+      "estado siempre PENDING_REVIEW y revisiones siempre []. Nunca autoapruebes ni escribas el modelo: revisar y aplicar es humano.",
+      "Reglas, predicados, expectativas y valores esperados NO son entidades: la entidad dice QUÉ existe, no qué valor debe tener.",
+      "origen.fuente, al menos una ocurrencia con hu y evidenciaSemantica son obligatorias.",
+      "Una referencia (desde/hacia, pantalla, ambito.integracion) solo apunta a una entidad de testabilidad.modelo o propuesta en la MISMA salida; si no se conoce, omítela.",
+      "Una entidad ya registrada no se propone: no es un KNOWLEDGE_GAP. Para aportarle un atributo opcional ausente, usa operacion \"completar\".",
+      "Sin PII, selectores, código, URLs, comandos ni proveedores en ningún campo.",
+      "Aprobar una pantalla o campo UI la vuelve CONOCIDA, no operable ni reconocible: no inventes señales técnicas ni controles."
+    ]
+  },
+  "testData": {
+    "schemaVersion": "afi-test-data-requirement/v1",
+    "registro": "afi-test-data-registry/v1",
+    "salida": {
+      "clave": "testDataRequirements",
+      "formato": "Lista testDataRequirements del envelope ÚNICO de intake (ver agentIntake). Dimensión independiente del conocimiento: una misma entidad de negocio puede producir un KNOWLEDGE_GAP de aplicación Y un requisito de datos de ejecución."
+    },
+    "sensibilidad": {
+      "significado": "Qué tan privado es el dato (public | pii | secret). Un dato pii que el framework resuelve solo (derived/auxiliary) no genera secreto.",
+      "porCampo": {
+        "tipoAportante": "public",
+        "tipoAfiliado": "pii",
+        "tipoEmpleador": "public",
+        "naturaleza": "public",
+        "claseEmpleador": "public",
+        "tipoIdentificacion": "public",
+        "numeroIdentificacion": "pii",
+        "correo": "pii",
+        "confirmacionCorreo": "pii",
+        "recibioAyudaAsesor": "public",
+        "autorizaDatos": "public",
+        "autorizaIntimidad": "public",
+        "razonSocial": "pii",
+        "codigoCiiu": "pii",
+        "actividadEconomicaEmpresa": "pii",
+        "fechaInicioActividad": "pii",
+        "valorNomina": "pii",
+        "numeroTrabajadores": "pii",
+        "afiliadoPrimeraVez": "pii",
+        "cajaCompensacionAnterior": "pii",
+        "numeroCelular": "pii",
+        "numeroTelefonoFijo": "pii",
+        "fondoPensiones": "pii",
+        "actividad": "pii",
+        "ingresoMensual": "pii",
+        "nacionalidad": "pii",
+        "estadoCivil": "pii",
+        "salarioBasico": "pii",
+        "departamento": "public",
+        "ciudadVivienda": "public",
+        "localidad": "public",
+        "barrio": "public",
+        "viaPrincipal": "public",
+        "letrasVp": "public",
+        "sectorVp": "public",
+        "letrasVg": "public",
+        "numeroVp": "public",
+        "numeroVg": "public",
+        "numeroPredio": "public"
+      }
+    },
+    "resoluciones": [
+      {
+        "resolucion": "ACTOR_SECRET",
+        "significado": "Valor propio del actor de prueba: lo aporta un secreto del entorno. Nunca en el caso, el registro, el manifest ni un log.",
+        "origenEquivalente": "actor",
+        "requiereSecreto": true,
+        "camposPorDefecto": [
+          "numeroIdentificacion",
+          "correo",
+          "razonSocial",
+          "codigoCiiu",
+          "actividadEconomicaEmpresa",
+          "fechaInicioActividad",
+          "valorNomina",
+          "numeroTrabajadores",
+          "afiliadoPrimeraVez",
+          "cajaCompensacionAnterior",
+          "numeroCelular",
+          "numeroTelefonoFijo",
+          "actividad",
+          "ingresoMensual",
+          "salarioBasico"
+        ]
+      },
+      {
+        "resolucion": "ACTOR_BASE",
+        "significado": "Valor público del actor: metadatos del perfil o actor base del MISMO perfil. No es un secreto nuevo.",
+        "origenEquivalente": "actor",
+        "requiereSecreto": false,
+        "camposPorDefecto": [
+          "tipoAportante",
+          "tipoEmpleador",
+          "tipoIdentificacion"
+        ]
+      },
+      {
+        "resolucion": "SHARED",
+        "significado": "Secreto compartido declarado (p. ej. un buzón QA). SOLO si un humano lo decide para ese actor; nunca automático.",
+        "origenEquivalente": "actor",
+        "requiereSecreto": true,
+        "camposPorDefecto": []
+      },
+      {
+        "resolucion": "PUBLIC_CASE",
+        "significado": "Valor que pertenece al CASO (datosCaso), p. ej. porque el caso lo certifica. No es secreto.",
+        "origenEquivalente": "test-case",
+        "requiereSecreto": false,
+        "camposPorDefecto": []
+      },
+      {
+        "resolucion": "DERIVED",
+        "significado": "Se calcula desde otro dato ya resuelto: no lleva secreto propio.",
+        "origenEquivalente": "derived",
+        "requiereSecreto": false,
+        "camposPorDefecto": [
+          "confirmacionCorreo",
+          "ciudadVivienda"
+        ]
+      },
+      {
+        "resolucion": "AUXILIARY",
+        "significado": "Preparación auxiliar segura del framework (consentimientos, primera opción válida): no lleva secreto.",
+        "origenEquivalente": "auxiliary",
+        "requiereSecreto": false,
+        "camposPorDefecto": [
+          "tipoAfiliado",
+          "naturaleza",
+          "claseEmpleador",
+          "recibioAyudaAsesor",
+          "autorizaDatos",
+          "autorizaIntimidad",
+          "fondoPensiones",
+          "nacionalidad",
+          "estadoCivil",
+          "departamento",
+          "localidad",
+          "barrio",
+          "viaPrincipal",
+          "letrasVp",
+          "sectorVp",
+          "letrasVg",
+          "numeroVp",
+          "numeroVg",
+          "numeroPredio"
+        ]
+      }
+    ],
+    "campos": {
+      "condicionables": {
+        "significado": "Propiedades del actor que una condición lógica puede mencionar. Mencionarlas NO crea un secreto ni las vuelve pedibles.",
+        "campos": [
+          "tipoAportante",
+          "tipoAfiliado",
+          "tipoEmpleador",
+          "naturaleza",
+          "claseEmpleador",
+          "tipoIdentificacion",
+          "numeroIdentificacion",
+          "correo",
+          "razonSocial",
+          "codigoCiiu",
+          "actividadEconomicaEmpresa",
+          "fechaInicioActividad",
+          "valorNomina",
+          "numeroTrabajadores",
+          "afiliadoPrimeraVez",
+          "cajaCompensacionAnterior",
+          "numeroCelular",
+          "numeroTelefonoFijo",
+          "fondoPensiones",
+          "actividad",
+          "ingresoMensual",
+          "nacionalidad",
+          "estadoCivil",
+          "salarioBasico"
+        ]
+      },
+      "requierenSecreto": {
+        "significado": "Datos que deben PROVISIONARSE (secreto del actor que QA debe conseguir). Idéntico a camposPedibles.",
+        "campos": [
+          "numeroIdentificacion",
+          "correo",
+          "razonSocial",
+          "codigoCiiu",
+          "actividadEconomicaEmpresa",
+          "fechaInicioActividad",
+          "valorNomina",
+          "numeroTrabajadores",
+          "afiliadoPrimeraVez",
+          "cajaCompensacionAnterior",
+          "numeroCelular",
+          "numeroTelefonoFijo",
+          "actividad",
+          "ingresoMensual",
+          "salarioBasico"
+        ]
+      },
+      "autoResolubles": {
+        "significado": "El framework los resuelve solo (derived/auxiliary). Nunca van en camposRequeridos; pueden mencionarse en una condición.",
+        "campos": [
+          "tipoAfiliado",
+          "naturaleza",
+          "claseEmpleador",
+          "confirmacionCorreo",
+          "recibioAyudaAsesor",
+          "autorizaDatos",
+          "autorizaIntimidad",
+          "fondoPensiones",
+          "nacionalidad",
+          "estadoCivil",
+          "departamento",
+          "ciudadVivienda",
+          "localidad",
+          "barrio",
+          "viaPrincipal",
+          "letrasVp",
+          "sectorVp",
+          "letrasVg",
+          "numeroVp",
+          "numeroVg",
+          "numeroPredio"
+        ]
+      },
+      "actorBase": {
+        "significado": "Públicos del actor (metadatos del perfil): no son secretos.",
+        "campos": [
+          "tipoAportante",
+          "tipoEmpleador",
+          "tipoIdentificacion"
+        ]
+      },
+      "compartibles": {
+        "significado": "El framework PERMITE compartir el secreto si un humano lo decide para un actor; NUNCA lo comparte automáticamente.",
+        "campos": [
+          "correo",
+          "numeroCelular",
+          "numeroTelefonoFijo"
+        ]
+      }
+    },
+    "camposPedibles": [
+      "numeroIdentificacion",
+      "correo",
+      "razonSocial",
+      "codigoCiiu",
+      "actividadEconomicaEmpresa",
+      "fechaInicioActividad",
+      "valorNomina",
+      "numeroTrabajadores",
+      "afiliadoPrimeraVez",
+      "cajaCompensacionAnterior",
+      "numeroCelular",
+      "numeroTelefonoFijo",
+      "actividad",
+      "ingresoMensual",
+      "salarioBasico"
+    ],
+    "camposIdentidad": [
+      "numeroIdentificacion"
+    ],
+    "estados": [
+      {
+        "estado": "READY",
+        "significado": "Todos los datos del actor son resolvibles: el caso puede ejecutarse."
+      },
+      {
+        "estado": "MISSING_SECRET",
+        "significado": "El actor lógico está definido y provisionado, pero falta configurar uno o más valores en el entorno (.env)."
+      },
+      {
+        "estado": "NEEDS_PROVISIONING",
+        "significado": "La condición del actor está definida, pero QA todavía debe conseguir/identificar un actor que la cumpla. No es un bug técnico."
+      },
+      {
+        "estado": "NEEDS_REVIEW",
+        "significado": "Ambigüedad de actor, campo o reutilización: requiere una decisión humana en el Test Data Registry."
+      }
+    ],
+    "resolucion": [
+      "secreto específico del actor (slot)",
+      "secreto compartido o actor base del MISMO perfil, solo si un humano lo declara para el slot",
+      "derived",
+      "auxiliary seguro",
+      "DataGap"
+    ],
+    "secretRef": {
+      "generadoPor": "framework",
+      "convencion": "AFI_ACTOR_<ACTOR>_<CAMPO> y AFI_SHARED_<REF>: mayúsculas, sin tildes, separadores -> \"_\""
+    },
+    "contractShape": {
+      "requisito": {
+        "requeridos": [
+          "schemaVersion",
+          "id",
+          "condiciones",
+          "camposRequeridos",
+          "ocurrencias",
+          "reutilizable"
+        ],
+        "opcionales": [
+          "perfil",
+          "rol",
+          "actorSugerido",
+          "camposCondicionales",
+          "distintoDe"
+        ],
+        "valoresFijos": {
+          "schemaVersion": "afi-test-data-requirement/v1"
+        },
+        "condicion": "{ \"id\": kebab-case semántico, \"descripcion\": condición de negocio sin valores }",
+        "ocurrencia": {
+          "requeridos": [
+            "hu"
+          ],
+          "opcionales": [
+            "caso",
+            "paso",
+            "rol"
+          ]
+        }
+      },
+      "actorRef": "DefinicionCasoAfi.actorRef? = id de un actor de \"actores\" (mismo perfil). Sin actorRef, el caso usa el actor del perfil.",
+      "estadosSlot": [
+        "pendiente-provisionar",
+        "provisionado"
+      ]
+    },
+    "participantes": {
+      "significado": "Un caso puede necesitar, además del actor principal (aportante), cero o más PARTICIPANTES secundarios, cada uno con un ROL semántico definido por el diseño QA, sus propias condiciones, sus propios campos y su propio aprovisionamiento.",
+      "requisito": "Requisito con \"rol\" (kebab-case, nunca \"principal\"): es un participante; \"perfil\" solo si aplica. Sin \"rol\": el actor principal (perfil obligatorio).",
+      "caso": "DefinicionCasoAfi.participantes?: [{ rol, actorRef }] (actorRef = sujeto aprobado) y relaciones?: [{ tipo: mismo-sujeto | distinto-sujeto, sujetos: [rol|\"principal\", rol|\"principal\"] }].",
+      "tiposRelacion": [
+        "mismo-sujeto",
+        "distinto-sujeto"
+      ],
+      "consumoRuntime": false,
+      "capabilityGap": "Ninguna operación ni etapa de preparación consume aún un participante: los participantes se modelan, provisionan y verifican antes de ejecutar, pero un paso que necesite diligenciar o comparar datos de un participante sigue siendo CAPABILITY_GAP."
+    },
+    "actores": [
+      {
+        "id": "pensionado-no-registrado-sap",
+        "perfil": "pensionado",
+        "condiciones": [
+          {
+            "id": "pensionado-no-registrado-sap",
+            "descripcion": "Solicitante con perfil Pensionado que no existe en la base de datos ni servicio web de SAP (no registrado como cotizante titular ni como persona a cargo)."
+          }
+        ]
+      },
+      {
+        "id": "independiente-beneficiario-conyuge-sap",
+        "perfil": "independiente",
+        "condiciones": [
+          {
+            "id": "independiente-beneficiario-conyuge-sap",
+            "descripcion": "Solicitante con perfil Independiente registrado en SAP exclusivamente como beneficiario o cónyuge (persona a cargo activa), sin estar afiliado como cotizante titular."
+          }
+        ]
+      },
+      {
+        "id": "facultativo-cotizante-activo-sap",
+        "perfil": "facultativo",
+        "condiciones": [
+          {
+            "id": "facultativo-cotizante-activo-sap",
+            "descripcion": "Solicitante con perfil Facultativo registrado en SAP como afiliado cotizante titular con estado activo en Colsubsidio."
+          }
+        ]
+      },
+      {
+        "id": "pensionado-cotizante-inactivo-sap",
+        "perfil": "pensionado",
+        "condiciones": [
+          {
+            "id": "pensionado-cotizante-inactivo-sap",
+            "descripcion": "Solicitante con perfil Pensionado registrado en SAP como afiliado cotizante titular, pero con estado inactivo o con motivo de retiro registrado."
+          }
+        ]
+      },
+      {
+        "id": "pensionado-activo-y-beneficiario-sap",
+        "perfil": "pensionado",
+        "condiciones": [
+          {
+            "id": "pensionado-activo-y-beneficiario-sap",
+            "descripcion": "Solicitante con perfil Pensionado registrado en SAP como afiliado cotizante titular activo y simultáneamente como beneficiario o cónyuge."
+          }
+        ]
+      },
+      {
+        "id": "empresa-empleador-juridico-rues-con-rep-legal",
+        "perfil": "empresa",
+        "condiciones": [
+          {
+            "id": "empleador-juridico-rues-con-rep-legal",
+            "descripcion": "Aportante tipo Empleador Jurídico existente en RUES, no afiliado a Colsubsidio, con información/número del Representante Legal retornado por RUES."
+          },
+          {
+            "id": "sin-solicitud-afiliacion-en-curso",
+            "descripcion": "Sin solicitud de afiliación en curso que impida crear un nuevo trámite."
+          }
+        ]
+      },
+      {
+        "id": "empresa-empleador-juridico-rues-sin-rep-legal",
+        "perfil": "empresa",
+        "condiciones": [
+          {
+            "id": "empleador-juridico-rues-sin-rep-legal",
+            "descripcion": "Aportante tipo Empleador Jurídico existente en RUES, no afiliado a Colsubsidio, sin Representante Legal retornado por RUES."
+          },
+          {
+            "id": "sin-solicitud-afiliacion-en-curso",
+            "descripcion": "Sin solicitud de afiliación en curso que impida crear un nuevo trámite."
+          }
+        ]
+      }
+    ],
+    "reglas": [
+      "Dato SECRET = valor personal del actor (identificación, correo, teléfonos, salario...). Nunca lo generes, pidas ni copies.",
+      "Expresa QUÉ actor se necesita: perfil + condiciones de negocio (\"titular con estado inactivo\"). Las condiciones SÍ deben aparecer.",
+      "Nunca escribas nombres de variables de entorno ni secretRef: el framework los deriva de actor + campo.",
+      "actorRef es semántico y reutilizable: si un actor de \"actores\" cumple EXACTAMENTE las condiciones y el perfil, úsalo.",
+      "camposRequeridos contiene SOLO campos de camposPedibles: datos que deben provisionarse para ejecutar. Cualquier otro campo se rechaza.",
+      "Una condición lógica puede mencionar una propiedad auto-resoluble (campos.autoResolubles) si define la clase de actor; eso NO la convierte en camposRequeridos ni en un secreto.",
+      "Si el caso CERTIFICA el valor de un campo auto-resoluble, ese valor pertenece al CASO (contrato funcional); si no es representable, es un DataGap, nunca un secreto de datos de prueba ni una opción arbitraria.",
+      "reutilizable=false solo si el caso consume o altera el actor (no puede compartirlo con otro caso).",
+      "Compartir un secreto (p. ej. un buzón QA) es SIEMPRE una decisión humana en la revisión; no lo propongas como hecho.",
+      "El agente solo PROPONE requisitos: crear o aprobar actores es una revisión humana.",
+      "Una matriz humana de datos se usa solo por su columna de prerrequisito/condición; la columna de valores reales nunca se envía al agente.",
+      "Participantes (4S): un sujeto secundario del caso (p. ej. otra persona además del aportante) va en un requisito PROPIO con \"rol\"; nunca lo conviertas en el actor principal ni en una condición del aportante.",
+      "Mismo rol + mismas condiciones NO significa el mismo sujeto. Declara relaciones mismo-sujeto / distinto-sujeto SOLO si el diseño QA las exige; sin relación no se infiere igualdad ni diferencia."
+    ],
+    "noPublicado": "Valores, nombres de variables concretos y estado del entorno nunca se publican."
+  },
+  "protocoloDecision": {
+    "fuentes": {
+      "jerarquia": [
+        {
+          "fuente": "metadata",
+          "rol": "Identidad autoritativa del caso: hu, caso, nombre, perfil y variante objetivo."
+        },
+        {
+          "fuente": "diseno-qa",
+          "rol": "Qué se certifica: pasos, acciones y resultados esperados. Delimita el alcance."
+        },
+        {
+          "fuente": "requerimiento",
+          "rol": "Comportamiento de negocio que aclara lo que el diseño ya pide. Nunca agrega pasos ni assertions."
+        },
+        {
+          "fuente": "manifest",
+          "rol": "Qué puede demostrar el framework."
+        },
+        {
+          "fuente": "contrato",
+          "rol": "Cómo se representa lo generable."
+        }
+      ],
+      "reglas": [
+        "El requerimiento puede precisar una condición del diseño (qué significa \"coincidir\", cuál es la fuente de un catálogo); no puede ampliar el alcance del caso.",
+        "Un requisito del requerimiento que el diseño no pide no se certifica ni se reporta como gap del caso.",
+        "Si requerimiento y diseño se contradicen en una condición observable: INFORMACION_INSUFICIENTE indicando ambas versiones; nunca elegir en silencio.",
+        "Si la metadata y el diseño discrepan en identidad (caso, perfil, variante): INFORMACION_INSUFICIENTE."
+      ]
+    },
+    "precedencia": [
+      "INFORMACION_INSUFICIENTE",
+      "KNOWLEDGE_GAP",
+      "TESTABILITY_GAP",
+      "CAPABILITY_GAP"
+    ],
+    "pasos": [
+      {
+        "paso": 1,
+        "pregunta": "¿Puedes formular la condición observable COMPLETA de este requisito sin elegir entre varias semánticas posibles que ni el diseño ni el requerimiento resuelven? (Sin mirar todavía funcional.operaciones.)",
+        "no": "INFORMACION_INSUFICIENTE",
+        "alNo": "DETENERSE para este requisito: no se analizan capabilities ni se reporta CAPABILITY_GAP para él.",
+        "si": "paso 2"
+      },
+      {
+        "paso": 2,
+        "requiere": "paso 1 = sí",
+        "pregunta": "¿La entidad de la condición, con su tipo semántico (testabilidad.entidades), ya está registrada (testabilidad.modelo, funcional.campos, funcional.componentes)?",
+        "no": "KNOWLEDGE_GAP",
+        "alNo": "Declararla, no programarla: no la conviertas en CAPABILITY_GAP ni en pregunta para QA.",
+        "si": "paso 3"
+      },
+      {
+        "paso": 3,
+        "requiere": "paso 2 = sí",
+        "pregunta": "¿Alguna superficie EFECTIVA de la entidad puede observarla hoy? portal-ui: funcional.operaciones; otras superficies: un proveedor productivo en testabilidad.superficies.",
+        "no": "TESTABILITY_GAP",
+        "alNo": "No es una pregunta para QA: el requisito está definido; falta un proveedor.",
+        "si": "paso 4"
+      },
+      {
+        "paso": 4,
+        "requiere": "paso 3 = sí",
+        "pregunta": "¿Una operación existente, o si no una composición mínima de operaciones existentes, representa ESA condición sin debilitarla ni aproximarla (revisar garantiza, noGarantiza y composicion), incluidas las acciones y la orquestación que exige?",
+        "orden": [
+          "una operación individual que garantice la condición (garantiza/noGarantiza)",
+          "una composición mínima de operaciones soportadas que la demuestre sin falsos positivos (ver composicion)",
+          "solo si ninguna composición fiel existe: CAPABILITY_GAP"
+        ],
+        "no": "CAPABILITY_GAP",
+        "si": "la operación puede formar parte del JSON"
+      }
+    ],
+    "reglas": [
+      "Evaluar CADA paso del diseño; si uno solo cae en INFORMACION_INSUFICIENTE, KNOWLEDGE_GAP, TESTABILITY_GAP o CAPABILITY_GAP, no se emite JSON (tampoco parcial).",
+      "Modo intake/benchmark: un análisis de uno o varios casos puede reportar una MEZCLA de INFORMACION_INSUFICIENTE, KNOWLEDGE_GAP, TESTABILITY_GAP y CAPABILITY_GAP: un bloque por paso afectado, en ese orden de precedencia.",
+      "KNOWLEDGE_GAP y TESTABILITY_GAP nunca se formulan como preguntas para QA. CAPABILITY_GAP conserva su significado: interacción, orquestación o contexto de ejecución faltante (ver testabilidad.diagnostico).",
+      "Nunca sustituir un resultado esperado por una assertion más débil: si el esperado exige algo listado en noGarantiza, es CAPABILITY_GAP.",
+      "Una etapa del modelo que el runner v1 no orquesta no se vuelve preparación: es CAPABILITY_GAP o el punto funcional.",
+      "Ante duda: INFORMACION_INSUFICIENTE si falta definir QUÉ observar; KNOWLEDGE_GAP si la entidad es clara pero no está registrada; TESTABILITY_GAP si está registrada y ninguna superficie efectiva tiene proveedor productivo; CAPABILITY_GAP si falta cómo actuar u orquestar, o una operación de portal-ui que garantice el esperado.",
+      "ANTES de consultar funcional.operaciones, formula la condición observable completa de cada requisito. Si para formularla debes elegir entre varias semánticas posibles no resueltas por el diseño ni por el requerimiento: INFORMACION_INSUFICIENTE, y NO continúes al análisis de capabilities para ese requisito.",
+      "La existencia, ausencia o cobertura parcial de una capability nunca resuelve ni oculta una ambigüedad: un requisito ambiguo no se reporta como CAPABILITY_GAP, aunque además falte la capability.",
+      "Cada CAPABILITY_GAP indica la familia de backlog.familias que lo cubre; si ninguna encaja, familia: sin-familia.",
+      "Solo son utilizables las operaciones de funcional.operaciones. Lo pendiente de una familia parcial del backlog sigue siendo CAPABILITY_GAP solo si el requisito concreto lo necesita y ninguna operación ni composición soportada lo demuestra (ver diagnostico).",
+      "Componentes, fuentes y campos se nombran solo con los ids de sus catálogos cerrados; nunca con selectores ni textos de la UI.",
+      "Un JSON válido y compilable no basta: cada paso debe demostrar su esperado sin falsos positivos (ver composicion)."
+    ],
+    "composicion": {
+      "analisis": {
+        "instruccion": "Antes de dar por representado un resultado esperado compuesto, identifica sus partes y materializa solo las necesarias.",
+        "partes": [
+          "estado inicial relevante",
+          "acción",
+          "estado intermedio relevante",
+          "evento disparador",
+          "estado final"
+        ]
+      },
+      "reglas": [
+        {
+          "id": "transicion-demostrada",
+          "regla": "Si el esperado describe una transición (estado A → acción o evento → estado B) y afirmar solo B podría pasar aunque A nunca hubiera ocurrido, afirma A ANTES de la acción o evento que produce B, siempre que una operación soportada lo permita. Si no existe operación para afirmar A, es CAPABILITY_GAP; no se omite A."
+        },
+        {
+          "id": "minimo-suficiente",
+          "regla": "Materializa solo los estados que distinguen el comportamiento pedido de un falso positivo razonable. Si el esperado describe únicamente un estado final, sin transición que distinguir, no añadas assertions intermedias."
+        },
+        {
+          "id": "identidad-vs-literal",
+          "regla": "Si el diseño usa un literal para IDENTIFICAR una opción o valor de negocio y no certifica su escritura exacta (mayúsculas, tildes, puntuación), represéntalo con la normalización publicada que corresponda: normalizacion en seleccionar-exacto, comparacion \"texto-es\" en campo-valor. Que el diseño no afirme la escritura NO implica comparación literal. Usa comparación literal (sin normalizacion; comparacion \"exacta\") solo si el requisito certifica el texto exacto. Nunca asumas una normalización que el manifest no publique."
+        }
+      ],
+      "ejemplos": [
+        {
+          "regla": "transicion-demostrada",
+          "requisito": "\"el usuario escribe un valor no válido y, al salir del campo, el campo se limpia\"",
+          "insuficiente": [
+            "escribir",
+            "salir-del-campo",
+            "campo-valor"
+          ],
+          "porque": "el último campo-valor (vacío) pasaría también si el campo hubiera rechazado el texto desde el principio: nunca se probó que se limpiara.",
+          "suficiente": [
+            "escribir",
+            "campo-valor",
+            "salir-del-campo",
+            "campo-valor"
+          ],
+          "como": "primer campo-valor: el texto escrito está presente; segundo campo-valor: vacío tras salir del campo."
+        },
+        {
+          "regla": "minimo-suficiente",
+          "requisito": "\"tras elegir la opción A, el campo B muestra el valor V\"",
+          "suficiente": [
+            "seleccionar-exacto",
+            "campo-valor"
+          ],
+          "como": "solo se pide el estado final de B después de la acción: no hace falta afirmar el valor previo de B."
+        },
+        {
+          "regla": "identidad-vs-literal",
+          "requisito": "\"seleccionar la opción Opción Uno del catálogo\" (identifica la opción; no certifica cómo se escribe)",
+          "suficiente": [
+            "seleccionar-exacto"
+          ],
+          "como": "con normalizacion; si luego se verifica el valor del campo, campo-valor con comparacion \"texto-es\".",
+          "contraste": "\"el campo muestra exactamente OPCIÓN UNO, en mayúsculas y con tilde\" certifica la escritura: comparación literal."
+        }
+      ]
+    },
+    "diagnostico": {
+      "ambiguedadAntesDeCapability": true,
+      "composicionAntesDeGap": true,
+      "backlogNoImplicaGap": true,
+      "condicionObservable": [
+        "dato de entrada",
+        "condición",
+        "relación de coincidencia o comparación",
+        "evento",
+        "resultado observable"
+      ],
+      "busqueda": [
+        "una operación individual que garantice la condición (garantiza/noGarantiza)",
+        "una composición mínima de operaciones soportadas que la demuestre sin falsos positivos (ver composicion)",
+        "solo si ninguna composición fiel existe: CAPABILITY_GAP"
+      ],
+      "reglas": [
+        {
+          "id": "ambiguedad-antes-de-capability",
+          "regla": "Antes de consultar el manifest, especifica para la condición: dato de entrada, condición, relación de coincidencia o comparación, evento y resultado observable. Si alguno es necesario para decidir PASS/FAIL y ninguna fuente lo define: INFORMACION_INSUFICIENTE, y se detiene el análisis de capabilities de ESA condición."
+        },
+        {
+          "id": "composicion-antes-de-gap",
+          "regla": "Para cada condición observable inequívoca busca primero una operación individual que la garantice; si no existe, una composición mínima de operaciones soportadas. Un comportamiento que emerge de una composición fiel es REPRESENTABLE: no se describe como capability faltante. Solo si ninguna composición fiel existe: CAPABILITY_GAP."
+        },
+        {
+          "id": "backlog-no-implica-gap",
+          "regla": "Que una familia relacionada figure en backlog NO es evidencia de un gap: el backlog describe cobertura global incompleta, no el requisito concreto. Un gap exige demostrar que ninguna operación ni composición soportada representa la condición."
+        },
+        {
+          "id": "gap-minimo-de-campo",
+          "regla": "Si la operación genérica existe pero el campo concreto no está en funcional.campos, reporta únicamente el gap del CAMPO: es KNOWLEDGE_GAP (un campo de interfaz claramente identificado se declara en el Field Registry, no se programa). No añadas un gap de la operación salvo que exista además otro comportamiento realmente no representable (CAPABILITY_GAP)."
+        },
+        {
+          "id": "condicionalidad",
+          "regla": "Una frase condicional (\"si aplica\", \"cuando corresponda\") no es automáticamente un gap. Si las fuentes definen qué activa la condición y cómo se observa, pero el contrato no puede expresar un paso condicional: CAPABILITY_GAP. Si las fuentes no determinan cuándo es verdadera ni qué la provoca: INFORMACION_INSUFICIENTE."
+        },
+        {
+          "id": "minimo-suficiente-evidencia",
+          "regla": "Pide solo la información que cambia PASS/FAIL. Si el requisito exige reconocer inequívocamente un estado o una pantalla, basta una firma semántica que la identifique: no exijas el literal exacto de todos sus textos ni preguntes datos que no alteran el veredicto. Exige el literal solo si el requisito certifica ese texto."
+        },
+        {
+          "id": "transicion-destino",
+          "regla": "En avances o cambios de pantalla/estado: si el destino o estado resultante está claramente definido pero no es representable, CAPABILITY_GAP; si el destino o estado esperado no está identificado suficientemente, INFORMACION_INSUFICIENTE. Las reglas de composicion (transicion-demostrada) siguen aplicando a lo representable."
+        },
+        {
+          "id": "condicion-atomica",
+          "regla": "Antes de diagnosticar, descompón cada paso en condiciones ATÓMICAS independientes. Cada una recorre su propia precedencia y puede detenerse en una capa distinta; nunca saltes capas dentro de una misma condición."
+        },
+        {
+          "id": "stop-primera-capa",
+          "regla": "Para cada condición atómica, DETENTE en la primera capa bloqueante (INFORMACION_INSUFICIENTE, KNOWLEDGE_GAP, TESTABILITY_GAP, CAPABILITY_GAP). Entidad no registrada: no analices proveedores ni emitas TESTABILITY_GAP para ella. Sin proveedor: no analices acciones ni orquestación para ella. Una sola salida por condición en cada pasada."
+        },
+        {
+          "id": "regla-con-predicado",
+          "regla": "Una regla de negocio (predicado -> consecuencia) solo se aplica si las fuentes DEMUESTRAN su predicado en el escenario del caso. Predicado falso: la consecuencia no aparece. No infieras la regla inversa ni la extiendas a un escenario vecino por compartir perfil, proceso o integración. Predicado no establecido y consecuencia que cambia PASS/FAIL: INFORMACION_INSUFICIENTE."
+        },
+        {
+          "id": "trazabilidad-de-consecuencias",
+          "regla": "Toda expectativa derivada del requerimiento declara fuente, predicado que la activa y consecuencia. Si el diseño del caso no activa el predicado, esa consecuencia no entra al caso (no se amplía el alcance)."
+        }
+      ],
+      "ejemplos": [
+        {
+          "regla": "composicion-antes-de-gap",
+          "requisito": "\"se introduce texto libre en un campo catalogado y, al perder el foco, el campo queda vacío\"",
+          "composicion": [
+            "escribir",
+            "campo-valor",
+            "salir-del-campo",
+            "campo-valor"
+          ],
+          "resultado": "REPRESENTABLE por composición: valor presente tras escribir, vacío tras salir del campo.",
+          "noEs": "una capability faltante de \"limpieza automática al perder el foco\": el comportamiento emerge de la composición."
+        },
+        {
+          "regla": "gap-minimo-de-campo",
+          "requisito": "\"el campo X, que no está en funcional.campos, no acepta caracteres especiales\"",
+          "operacionExistente": "entrada-rechazada",
+          "gaps": [
+            {
+              "salida": "KNOWLEDGE_GAP",
+              "conocimientoFaltante": "declarar el campo X (tipo campo-ui) en el Field Registry"
+            }
+          ],
+          "noEs": "además un gap de \"rechazo de caracteres\": esa operación ya existe. Tampoco un CAPABILITY_GAP: nombrar un campo es conocimiento declarativo."
+        },
+        {
+          "regla": "backlog-no-implica-gap",
+          "requisito": "un requisito cuya familia relacionada (p. ej. entrada-validacion) aparece en backlog con cobertura parcial",
+          "familiaRelacionada": "entrada-validacion",
+          "resultado": "Si una operación o composición soportada demuestra el requisito concreto, es REPRESENTABLE aunque la familia siga en backlog."
+        },
+        {
+          "regla": "ambiguedad-antes-de-capability",
+          "requisito": "\"escriba algunos caracteres de una opción válida y verifique las coincidencias\"",
+          "faltante": [
+            "qué entrada se escribe, cuando esa entrada afecta el resultado",
+            "la relación de coincidencia requerida"
+          ],
+          "noAsumir": [
+            "contiene",
+            "prefijo",
+            "mayúsculas/minúsculas",
+            "diacríticos"
+          ],
+          "resultado": "INFORMACION_INSUFICIENTE, sin analizar capabilities.",
+          "siDefinido": "Si una fuente define explícitamente la entrada y la relación de coincidencia, se continúa al análisis de capabilities."
+        },
+        {
+          "regla": "condicionalidad",
+          "requisito": "\"si aplica, verifique el campo X\"",
+          "casos": [
+            {
+              "cuando": "las fuentes definen qué activa la condición y cómo se observa, pero el contrato no expresa pasos condicionales",
+              "resultado": "CAPABILITY_GAP (familia orquestacion-plan)"
+            },
+            {
+              "cuando": "las fuentes no determinan cuándo aplica ni qué lo provoca",
+              "resultado": "INFORMACION_INSUFICIENTE"
+            }
+          ]
+        },
+        {
+          "regla": "minimo-suficiente-evidencia",
+          "requisito": "\"se muestra la pantalla de bloqueo\"",
+          "resultado": "Definido: la pantalla se reconoce por su firma semántica. No es INFORMACION_INSUFICIENTE por no conocer el texto literal de sus mensajes.",
+          "contraste": "\"el mensaje dice exactamente T\" sí certifica el texto: entonces T es necesario."
+        },
+        {
+          "regla": "transicion-destino",
+          "requisito": "\"al continuar, el sistema avanza\"",
+          "casos": [
+            {
+              "cuando": "la pantalla o estado de destino está identificado pero no es representable",
+              "resultado": "CAPABILITY_GAP (familia transicion)"
+            },
+            {
+              "cuando": "no se identifica a qué pantalla o estado debe llegar",
+              "resultado": "INFORMACION_INSUFICIENTE"
+            }
+          ]
+        },
+        {
+          "regla": "condicion-atomica",
+          "requisito": "\"avanza por la ruta X y muestra la pantalla Y\"",
+          "condiciones": [
+            "ruta X tomada",
+            "pantalla Y visible"
+          ],
+          "resultado": "Dos condiciones con su propia precedencia: una puede ser KNOWLEDGE_GAP y la otra CAPABILITY_GAP."
+        },
+        {
+          "regla": "stop-primera-capa",
+          "requisito": "la entidad X está claramente definida pero no está registrada en el Application Model",
+          "resultado": "KNOWLEDGE_GAP únicamente (sin analizar proveedores).",
+          "despues": "Una vez registrada X, una nueva evaluación puede dar TESTABILITY_GAP si ninguna de sus superficies tiene proveedor."
+        },
+        {
+          "regla": "regla-con-predicado",
+          "requisito": "regla \"si el registro corresponde a un tercero, se limpian las variables del registro\"",
+          "casos": [
+            {
+              "cuando": "el caso establece que el registro es de un tercero",
+              "resultado": "la limpieza es una expectativa del caso, trazada a la regla"
+            },
+            {
+              "cuando": "el caso establece que no existe registro",
+              "resultado": "la limpieza NO aparece: la regla no dice qué ocurre sin registro"
+            },
+            {
+              "cuando": "el caso no establece si el registro es de un tercero y la limpieza cambia PASS/FAIL",
+              "resultado": "INFORMACION_INSUFICIENTE"
+            }
+          ]
+        }
+      ]
+    },
+    "ejemplos": [
+      {
+        "diseno": "\"el componente X no debe ser visible\" y solo existe ausencia de texto",
+        "resultado": "CAPABILITY_GAP"
+      },
+      {
+        "diseno": "\"se comporta normalmente\" sin definir qué observar",
+        "resultado": "INFORMACION_INSUFICIENTE"
+      },
+      {
+        "diseno": "\"se muestran las entradas que coincidan con X\" sin definir la relación de coincidencia (igualdad, empieza por, contiene, tildes)",
+        "resultado": "INFORMACION_INSUFICIENTE, sin analizar capabilities"
+      },
+      {
+        "diseno": "\"el catálogo contiene al menos una opción fuera de A/B\"",
+        "resultado": "GENERABLE con catalogo-opcion-fuera-de"
+      },
+      {
+        "diseno": "\"el proceso pasa a la actividad A\" y A no está en testabilidad.modelo",
+        "resultado": "KNOWLEDGE_GAP (declarar la actividad A)"
+      },
+      {
+        "diseno": "\"la variable interna X queda vacía\", X registrada y sin proveedor productivo en sus superficies",
+        "resultado": "TESTABILITY_GAP (no preguntar a QA)"
+      }
+    ],
+    "salidas": {
+      "GENERABLE": {
+        "cuando": "Todos los pasos pasan el protocolo.",
+        "formato": "Únicamente el JSON DefinicionCasoAfi, sin texto adicional."
+      },
+      "CAPABILITY_GAP": {
+        "cuando": "El diseño es claro pero el framework no puede representarlo fielmente.",
+        "formato": [
+          "CAPABILITY_GAP",
+          "",
+          "- paso:",
+          "- requisito:",
+          "- capability faltante:",
+          "- familia:"
+        ]
+      },
+      "INFORMACION_INSUFICIENTE": {
+        "cuando": "El diseño no define una condición observable suficientemente precisa, o las fuentes se contradicen.",
+        "formato": [
+          "INFORMACION_INSUFICIENTE",
+          "",
+          "- paso:",
+          "- significado conocido:",
+          "- información faltante:"
+        ]
+      },
+      "KNOWLEDGE_GAP": {
+        "cuando": "La entidad está clara pero no está registrada en el Application Model. Se declara; no pide implementación ni es una capability.",
+        "formato": [
+          "KNOWLEDGE_GAP",
+          "",
+          "- paso:",
+          "- entidad:",
+          "- tipo:",
+          "- conocimiento declarativo faltante:"
+        ]
+      },
+      "TESTABILITY_GAP": {
+        "cuando": "PASS/FAIL definido y entidad registrada, pero ninguna superficie efectiva tiene proveedor productivo. Nunca es una pregunta para QA.",
+        "formato": [
+          "TESTABILITY_GAP",
+          "",
+          "- paso:",
+          "- requisito:",
+          "- entidad:",
+          "- superficies candidatas:",
+          "- observación faltante:"
+        ]
+      }
+    }
+  },
+  "backlog": {
+    "soportado": false,
+    "advertencia": "NADA de esta sección es utilizable en el JSON. Solo sirve para nombrar la familia de un CAPABILITY_GAP. Que una familia relacionada figure aquí no prueba un gap (protocoloDecision.diagnostico: backlog-no-implica-gap).",
+    "familias": [
+      {
+        "familia": "componente-visual",
+        "intencion": "Presencia, texto, ubicación relativa y legibilidad de un componente visual con nombre.",
+        "cobertura": "parcial",
+        "operacionesSoportadas": [
+          "componente-visible",
+          "componente-posicion",
+          "componente-region"
+        ],
+        "pendiente": "Ausencia de un componente, certificar su texto, color e ícono, legibilidad, adaptación responsive, regiones distintas de \"superior\", componentes no catalogados."
+      },
+      {
+        "familia": "catalogo-semantico",
+        "intencion": "Conjunto exacto de opciones, o igualdad/subconjunto frente a una fuente autoritativa.",
+        "cobertura": "parcial",
+        "operacionesSoportadas": [
+          "catalogo-segun-fuente",
+          "seleccionar-exacto"
+        ],
+        "pendiente": "Conjunto exacto enumerado por el diseño, relación subconjunto, \"todas las opciones cumplen una regla\", \"incluye una opción\", otras fuentes."
+      },
+      {
+        "familia": "entrada-validacion",
+        "intencion": "Escribir, borrar y salir de un campo, observando rechazo o limpieza de la entrada.",
+        "cobertura": "parcial",
+        "operacionesSoportadas": [
+          "escribir",
+          "entrada-rechazada",
+          "salir-del-campo",
+          "campo-valor"
+        ],
+        "pendiente": "Borrar un campo sin escribir, pegar o dictar contenido, mensajes de validación."
+      },
+      {
+        "familia": "autocomplete",
+        "intencion": "Sugerencias filtradas por lo escrito, selección y restauración del catálogo completo al reabrir.",
+        "cobertura": "parcial",
+        "operacionesSoportadas": [
+          "escribir",
+          "sugerencias-segun-fuente",
+          "seleccionar-exacto",
+          "catalogo-segun-fuente",
+          "cerrar-catalogo"
+        ],
+        "pendiente": "Sugerencias solo en campos descritos por una fuente autoritativa (hoy ciudad de vivienda), solo coincidencia \"contiene\" con diacríticos sensibles; faltan otras coincidencias (empieza por), diacríticos insensibles, completitud de las sugerencias, campos sin fuente (localidad, barrio) y comparar con un catálogo capturado antes."
+      },
+      {
+        "familia": "campos-adicionales",
+        "intencion": "Campos funcionales hoy no nombrables (localidad, barrio...) y su presencia condicional.",
+        "cobertura": "ninguna",
+        "operacionesSoportadas": []
+      },
+      {
+        "familia": "transicion",
+        "intencion": "Avance permitido o bloqueado de la pantalla y validación mostrada al intentarlo.",
+        "cobertura": "ninguna",
+        "operacionesSoportadas": []
+      },
+      {
+        "familia": "etapas-posteriores",
+        "intencion": "Llegar y actuar en pantallas posteriores (dirección, documentación) y verificar el formulario final.",
+        "cobertura": "ninguna",
+        "operacionesSoportadas": []
+      },
+      {
+        "familia": "orquestacion-plan",
+        "intencion": "Pasos condicionales, valores elegidos en la corrida y reutilizados, y capturas para comparar después.",
+        "cobertura": "ninguna",
+        "operacionesSoportadas": []
+      },
+      {
+        "familia": "contexto-ejecucion",
+        "intencion": "Ejecutar una variante en un contexto distinto de desktop (mobile emulado).",
+        "cobertura": "ninguna",
+        "operacionesSoportadas": []
+      }
+    ]
+  }
+}

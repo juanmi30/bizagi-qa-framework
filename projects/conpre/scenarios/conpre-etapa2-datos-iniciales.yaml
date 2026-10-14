@@ -1,0 +1,24 @@
+proceso: Definición datos iniciales Contratos
+escenario: Diligenciar los 4 campos y guardar (etapa 2)
+etiquetas: [smoke-real, conpre]
+
+inicio:
+  modo: crear-caso
+  usuario: admin
+  categoria: Gestión de contratos
+  proceso_a_crear: Definición datos iniciales Contratos
+
+pasos:
+  - actividad: Definir datos iniciales
+    llenar:
+      - { campo: Objeto contractual, valor: "Prueba automatizada etapa 2 ${unico}", tipo: área de texto }
+      - { campo: Fecha estimada de contratación, valor: "15/08/2026", tipo: fecha }
+      - { campo: Fecha inicio proceso de selección, valor: "20/08/2026", tipo: fecha }
+      - { campo: Dependencia ejecutora, valor: "Dirección Programación Presupuestal - DIPRE", tipo: lista }
+    accion: Guardar        # guarda SIN avanzar el caso
+
+hazards:
+  - campo_tiene_valor: { campo: Objeto contractual, valor: "Prueba automatizada etapa 2 ${unico}" }
+  - campo_tiene_valor: { campo: Fecha estimada de contratación, valor: "15/08/2026" }
+  - campo_tiene_valor: { campo: Fecha inicio proceso de selección, valor: "20/08/2026" }
+  - campo_tiene_valor: { campo: Dependencia ejecutora, valor: "Dirección Programación Presupuestal - DIPRE" }

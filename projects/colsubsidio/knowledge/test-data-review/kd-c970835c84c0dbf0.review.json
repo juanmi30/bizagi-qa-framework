@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "afi-test-data-review/v1",
+  "batchId": "kd-c970835c84c0dbf0",
+  "revisionBase": 10,
+  "hashRegistroBase": "fa3ccb774b29cc2387213078d627864268372ef4119d36d5a55ec450003b2d56",
+  "nota": [
+    "Artefacto generado a partir de una salida de agente NO confiable. No contiene decisiones ni valores.",
+    "Los nombres de variables los deriva el framework al aprobar; las decisiones van en el archivo de decisiones separado."
+  ],
+  "propuestas": [
+    {
+      "proposalId": "ps-empresa-empleador-juridico-rues-sin-rep-legal-2",
+      "hash": "9f672f3fc3b03c0b0bc0d1c3e0cfde588e537439d5553c9921da83f8c2f1aac4",
+      "propuesta": {
+        "schemaVersion": "afi-actor-slot-proposal/v1",
+        "proposalId": "ps-empresa-empleador-juridico-rues-sin-rep-legal-2",
+        "slot": {
+          "id": "empresa-empleador-juridico-rues-sin-rep-legal-2",
+          "perfil": "empresa",
+          "condiciones": [
+            {
+              "id": "empleador-juridico-rues-sin-rep-legal",
+              "descripcion": "Aportante tipo Empleador Jurídico existente en RUES, no afiliado a Colsubsidio, sin Representante Legal retornado por RUES."
+            },
+            {
+              "id": "sin-solicitud-afiliacion-en-curso",
+              "descripcion": "Sin solicitud de afiliación en curso que impida crear un nuevo trámite."
+            }
+          ],
+          "campos": [
+            {
+              "campo": "codigoCiiu",
+              "fuente": "slot"
+            },
+            {
+              "campo": "razonSocial",
+              "fuente": "slot"
+            },
+            {
+              "campo": "actividadEconomicaEmpresa",
+              "fuente": "slot"
+            },
+            {
+              "campo": "fechaInicioActividad",
+              "fuente": "slot"
+            },
+            {
+              "campo": "valorNomina",
+              "fuente": "slot"
+            },
+            {
+              "campo": "numeroTrabajadores",
+              "fuente": "slot"
+            },
+            {
+              "campo": "afiliadoPrimeraVez",
+              "fuente": "slot"
+            }
+          ]
+        },
+        "requisitos": [
+          "empresa-juridica-rues-sin-rep-legal-datos-empresa"
+        ],
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP02"
+          },
+          {
+            "hu": "HU 7.14",
+            "caso": "CP03"
+          },
+          {
+            "hu": "HU 7.14",
+            "caso": "CP04"
+          }
+        ],
+        "reutilizable": true,
+        "estado": "PENDING_REVIEW"
+      }
+    },
+    {
+      "proposalId": "ps-empresa-empleador-juridico-rues-con-rep-legal-2",
+      "hash": "29b5a0c429911e1b9b1b84223a0bf8660014728710d0b459e4366ecb938aa0e3",
+      "propuesta": {
+        "schemaVersion": "afi-actor-slot-proposal/v1",
+        "proposalId": "ps-empresa-empleador-juridico-rues-con-rep-legal-2",
+        "slot": {
+          "id": "empresa-empleador-juridico-rues-con-rep-legal-2",
+          "perfil": "empresa",
+          "condiciones": [
+            {
+              "id": "empleador-juridico-rues-con-rep-legal",
+              "descripcion": "Aportante tipo Empleador Jurídico existente en RUES, no afiliado a Colsubsidio, con información/número del Representante Legal retornado por RUES."
+            },
+            {
+              "id": "sin-solicitud-afiliacion-en-curso",
+              "descripcion": "Sin solicitud de afiliación en curso que impida crear un nuevo trámite."
+            }
+          ],
+          "campos": [
+            {
+              "campo": "numeroIdentificacion",
+              "fuente": "slot"
+            },
+            {
+              "campo": "correo",
+              "fuente": "slot"
+            }
+          ]
+        },
+        "requisitos": [
+          "empresa-juridica-rues-con-rep-legal-sin-solicitud-en-curso"
+        ],
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01"
+          }
+        ],
+        "reutilizable": true,
+        "estado": "PENDING_REVIEW"
+      }
+    }
+  ],
+  "reutilizados": [],
+  "posiblesDuplicados": [
+    {
+      "a": "ps-empresa-empleador-juridico-rues-sin-rep-legal-2",
+      "b": "empresa-empleador-juridico-rues-sin-rep-legal",
+      "motivo": "condiciones-relacionadas"
+    },
+    {
+      "a": "ps-empresa-empleador-juridico-rues-con-rep-legal-2",
+      "b": "empresa-empleador-juridico-rues-con-rep-legal",
+      "motivo": "condiciones-relacionadas"
+    }
+  ],
+  "rechazados": [],
+  "resumen": {
+    "requisitosRecibidos": 2,
+    "validos": 2,
+    "rechazados": 0,
+    "reutilizados": 0,
+    "propuestas": 2,
+    "posiblesDuplicados": 2,
+    "revisionBase": 10,
+    "runtimeChanges": 0
+  }
+}

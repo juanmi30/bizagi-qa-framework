@@ -1,0 +1,13 @@
+Carpeta CUSTOM
+==============
+Aquí viven los PASOS PERSONALIZADOS (snippets <nombre>.ts) que una plantilla invoca
+con  "personalizado: <nombre>"  para resolver UNA pantalla rara sin perder el resto
+de la plantilla.
+
+Cada snippet exporta una función por defecto que recibe el contexto (página + motor):
+    import type { PasoContext } from '@shared';
+    export default async function ({ page }: PasoContext) { ... }
+
+Para grabar solo una pantalla:  npm run grabar -- <cliente> <nombre> --como paso
+Luego adoptarla:                npm run adoptar -- <cliente> <nombre> --como paso
+Sin credenciales: solo usuarios lógicos del .env.

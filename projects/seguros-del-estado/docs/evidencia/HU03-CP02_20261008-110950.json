@@ -1,0 +1,427 @@
+{
+  "cp": "HU03-CP02",
+  "escenario": "2-hu03-cp02.yaml",
+  "inicio": "2026-10-08T16:09:50.368Z",
+  "unico": "20261008-110950",
+  "cleanup": {
+    "politica": "CLEANUP_NOT_APPLICABLE",
+    "razon": "El caso avanza a Análisis (estado de negocio esperado); no hay acción reversible para deshacerlo."
+  },
+  "fin": "2026-10-08T16:09:50.368Z",
+  "estado": "BLOCKED",
+  "motivo": "Prerrequisitos faltantes (ver bloqueos).",
+  "numero_caso": null,
+  "actividades_observadas": [],
+  "pasos": [
+    {
+      "indice": 1,
+      "hacer": "iniciar_sesion",
+      "matriz": [
+        2
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 2,
+      "hacer": "nuevo_caso",
+      "matriz": [
+        2,
+        3
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 3,
+      "hacer": "diligenciar",
+      "matriz": [
+        4
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 4,
+      "hacer": "diligenciar",
+      "matriz": [
+        5
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 5,
+      "hacer": "verificar",
+      "matriz": [
+        6
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 6,
+      "hacer": "no_automatizado",
+      "matriz": [
+        6
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 7,
+      "hacer": "diligenciar",
+      "matriz": [
+        7
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 8,
+      "hacer": "pulsar",
+      "matriz": [
+        8
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 9,
+      "hacer": "verificar_ruta",
+      "matriz": [
+        9
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 10,
+      "hacer": "integracion",
+      "matriz": [
+        10,
+        11
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 11,
+      "hacer": "integracion",
+      "matriz": [
+        12
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 12,
+      "hacer": "abrir_caso",
+      "matriz": [
+        13
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 13,
+      "hacer": "verificar",
+      "matriz": [
+        11,
+        14
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 14,
+      "hacer": "verificar",
+      "matriz": [
+        15
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 15,
+      "hacer": "diligenciar",
+      "matriz": [
+        16
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 16,
+      "hacer": "diligenciar",
+      "matriz": [
+        16
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 17,
+      "hacer": "verificar",
+      "matriz": [
+        17
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 18,
+      "hacer": "no_automatizado",
+      "matriz": [
+        17
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 19,
+      "hacer": "no_automatizado",
+      "matriz": [
+        18
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 20,
+      "hacer": "verificar",
+      "matriz": [
+        19
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 21,
+      "hacer": "pulsar",
+      "matriz": [
+        20
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 22,
+      "hacer": "verificar_ruta",
+      "matriz": [
+        20,
+        21
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    },
+    {
+      "indice": 23,
+      "hacer": "integracion",
+      "matriz": [
+        20
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: faltan prerrequisitos."
+    }
+  ],
+  "matriz": [
+    {
+      "n": 1,
+      "accion": "Objetivo:",
+      "esperado": "Validar la consulta individual de una póliza de Autos, verificando la integración con SISE, precarga de información de póliza, Tomador, Asegurado y vehículo, y las reglas de Completar Información.",
+      "estado": "BLOCKED",
+      "cubierto_por": []
+    },
+    {
+      "n": 2,
+      "accion": "Ingresar a Bizagi mediante https://test-aiprocesos-sde.bizagi.com/.",
+      "esperado": "El ambiente permite iniciar la radicación.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        1,
+        2
+      ]
+    },
+    {
+      "n": 3,
+      "accion": "Crear un nuevo caso de Radicación.",
+      "esperado": "El formulario de inicio se presenta correctamente y permite diligenciar una nueva solicitud.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        2
+      ]
+    },
+    {
+      "n": 4,
+      "accion": "Seleccionar Línea = Autos, Ramo, Tipo de Solicitud/Movimiento y Sucursal correspondientes a la data preparada para el caso.",
+      "esperado": "El formulario presenta las opciones parametrizadas correspondientes a Autos.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        3
+      ]
+    },
+    {
+      "n": 5,
+      "accion": "Seleccionar Tipo de Radicación = Individual y Forma de Consulta = Numero de Poliza.",
+      "esperado": "Se habilita el campo Número de póliza y se presentan únicamente los campos aplicables al escenario.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        4
+      ]
+    },
+    {
+      "n": 6,
+      "accion": "Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización.",
+      "esperado": "El formulario presenta correctamente la caracterización funcional de cada campo.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        5,
+        6
+      ]
+    },
+    {
+      "n": 7,
+      "accion": "Ingresar una póliza válida de Autos asociada al intermediario y completar los campos/documentos obligatorios parametrizados.",
+      "esperado": "El formulario queda diligenciado con información válida y permite crear la solicitud.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        7
+      ]
+    },
+    {
+      "n": 8,
+      "accion": "Seleccionar Crear e identificar el número único del caso.",
+      "esperado": "Se genera correctamente un número de caso y la información registrada queda asociada a la radicación.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        8
+      ]
+    },
+    {
+      "n": 9,
+      "accion": "Validar el paso por la compuerta ¿Masivo?.",
+      "esperado": "Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        9
+      ]
+    },
+    {
+      "n": 10,
+      "accion": "Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud.",
+      "esperado": "Se ejecuta la consulta correspondiente y se envía al servicio SISE la poliza registrada como criterio de búsqueda.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        10
+      ]
+    },
+    {
+      "n": 11,
+      "accion": "Validar la respuesta de la integración.",
+      "esperado": "SISE retorna la póliza vigente y la información correspondiente queda almacenada para continuar el flujo.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        10,
+        13
+      ]
+    },
+    {
+      "n": 12,
+      "accion": "Validar la ejecución de Consultar alertas Intermediarios.",
+      "esperado": "Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        11
+      ]
+    },
+    {
+      "n": 13,
+      "accion": "Validar la asignación de Completar Información.",
+      "esperado": "La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        12
+      ]
+    },
+    {
+      "n": 14,
+      "accion": "Validar Información de Póliza, Tomador y Asegurado.",
+      "esperado": "La información recuperada desde SISE es visible y permanece en solo lectura.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        13
+      ]
+    },
+    {
+      "n": 15,
+      "accion": "Validar Información del Vehículo.",
+      "esperado": "Se presentan Placa y demás datos del vehículo relacionados con la póliza consultada, de acuerdo con la respuesta de SISE.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        14
+      ]
+    },
+    {
+      "n": 16,
+      "accion": "Validar la actualización de correo electrónico.",
+      "esperado": "Si se selecciona actualizar correo, el nuevo correo se habilita y se vuelve obligatorio.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        15,
+        16
+      ]
+    },
+    {
+      "n": 17,
+      "accion": "Validar Comentarios y documentos.",
+      "esperado": "Ambas secciones se encuentran disponibles y permiten registrar información según las reglas configuradas.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        17,
+        18
+      ]
+    },
+    {
+      "n": 18,
+      "accion": "Validar ortografía, capitalización y presentación del formulario.",
+      "esperado": "Los nombres de campos, grupos, mensajes y botones presentan la nomenclatura definida.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        19
+      ]
+    },
+    {
+      "n": 19,
+      "accion": "Validar los botones disponibles para el escenario exitoso.",
+      "esperado": "Se presentan únicamente Desistir Solicitud y Confirmar Radicación.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        20
+      ]
+    },
+    {
+      "n": 20,
+      "accion": "Confirmar la radicación.",
+      "esperado": "La información queda almacenada y el caso toma la decisión Continuar solicitud.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        21,
+        22,
+        23
+      ]
+    },
+    {
+      "n": 21,
+      "accion": "Validar el avance del flujo.",
+      "esperado": "El caso continúa hacia Análisis.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        22
+      ]
+    }
+  ],
+  "bloqueos": [
+    "TEST_DATA POL-AUTOS-VIGENTE: faltan SDE_AUTOS_POLIZA"
+  ]
+}

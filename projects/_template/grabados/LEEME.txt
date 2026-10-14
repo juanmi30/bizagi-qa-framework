@@ -1,0 +1,11 @@
+Carpeta GRABADOS
+================
+Aquí viven los escenarios GRABADOS ya ADOPTADOS (archivos <nombre>.spec.ts).
+Se usan solo para casos RAROS que la plantilla YAML no puede expresar.
+
+Flujo:
+  1) npm run grabar  -- <cliente> <nombre>     -> graba y guarda la cruda en _crudo/
+  2) npm run adoptar -- <cliente> <nombre>     -> limpia login/credenciales y crea el .spec.ts aquí
+
+Las grabaciones CRUDAS quedan en _crudo/ como respaldo y NO se ejecutan.
+Ningún archivo debe contener credenciales: solo usuarios lógicos del .env.

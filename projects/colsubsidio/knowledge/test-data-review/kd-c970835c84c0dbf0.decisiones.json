@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "afi-test-data-decisions/v1",
+  "batchId": "kd-c970835c84c0dbf0",
+  "revisionBase": 10,
+  "decisiones": [
+    {
+      "proposalId": "ps-empresa-empleador-juridico-rues-sin-rep-legal-2",
+      "hash": "9f672f3fc3b03c0b0bc0d1c3e0cfde588e537439d5553c9921da83f8c2f1aac4",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Reutilizar actor existente; agrega datos de empresa y la condición sin solicitud de afiliación en curso. Requiere nueva confirmación de provisión.",
+      "mismoActorQue": "empresa-empleador-juridico-rues-sin-rep-legal"
+    },
+    {
+      "proposalId": "ps-empresa-empleador-juridico-rues-con-rep-legal-2",
+      "hash": "29b5a0c429911e1b9b1b84223a0bf8660014728710d0b459e4366ecb938aa0e3",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Reutilizar actor existente; agrega la condición sin solicitud de afiliación en curso. Requiere nueva confirmación de provisión.",
+      "mismoActorQue": "empresa-empleador-juridico-rues-con-rep-legal"
+    }
+  ],
+  "compartidos": []
+}

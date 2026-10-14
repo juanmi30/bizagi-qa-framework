@@ -1,0 +1,35 @@
+# Bloque HU03 (F-INDIVIDUAL-CONSULTA), pasos 8–13 comunes a CP01–CP08: "Crear" → compuerta ¿Masivo? (No) →
+# Realizar consultas (SISE) → Consultar alertas → "Completar información de solicitud" asignada al intermediario.
+# Ruta calibrada hasta "Consultar Alertas Intermediario" (casos 352 y 425). "Completar información de solicitud" NO se
+# ha podido observar (ENV-03 / BUG-02): su apertura y el valor de Línea siguen [PENDIENTE] de calibrar.
+descripcion: Crear la radicación Individual y abrir Completar información de solicitud.
+parametros: [actor, linea, criterio, respuesta_sise]
+pasos:
+  - matriz: [8]
+    hacer: pulsar
+    boton: Crear
+    capturar_numero_caso: true
+
+  - matriz: [9]
+    hacer: verificar_ruta
+    actor: "${param:actor}"
+    llega_a: Completar información de solicitud
+    no_llega_a: [Estructurar información]
+    maximo_minutos: 8
+
+  - matriz: [10, 11]
+    hacer: integracion
+    nombre: SISE — Consultar información de la solicitud (Requirement 231437 / 231510)
+    esperado: "Se envía ${param:criterio} y SISE ${param:respuesta_sise}."
+
+  - matriz: [12]
+    hacer: integracion
+    nombre: Consultar alertas intermediarios (Requirement 231440)
+    esperado: Se consulta la clave del intermediario antes de asignar Completar información.
+
+  - matriz: [13]
+    hacer: abrir_caso
+    actor: "${param:actor}"
+    actividad: Completar información de solicitud
+    verificar:
+      - valor: { campo: Línea, igual: "${param:linea}" }

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "afi-knowledge-decisions/v1",
+  "batchId": "kr-33ec98af97a1e8df",
+  "revisionBase": 4,
+  "decisiones": [
+    {
+      "proposalId": "prop-completar-pantalla-representante-legal-observada",
+      "entidad": "pantalla-ui:pantalla-representante-legal",
+      "hash": "e054790a68a4d261fc3777c151084a3d6e034c6f58f83fb288b86237e9ef0ac5",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Valores observados en QA (exploración Dirección PJ): titulo \"Representante legal\" y consulta \"Buscar representante\". Solo completa atributos ausentes."
+    }
+  ],
+  "clasificaciones": []
+}

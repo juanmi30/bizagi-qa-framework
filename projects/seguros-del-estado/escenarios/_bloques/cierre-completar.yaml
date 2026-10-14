@@ -1,0 +1,25 @@
+# Bloque HU03: cierre exitoso de "Completar información de solicitud" → Confirmar Radicación → compuerta Acción a
+# tomar → Análisis. Botones y actividad siguiente tomados de la matriz [PENDIENTE de calibrar] (FUNC-03).
+descripcion: Botones del escenario exitoso, Confirmar Radicación y paso a Análisis.
+parametros: [actor, p_botones, p_confirmar, p_accion]
+pasos:
+  - matriz: "${param:p_botones}"
+    hacer: verificar
+    verificar:
+      - botones_exactos: [Desistir Solicitud, Confirmar Radicación]
+
+  - matriz: "${param:p_confirmar}"
+    hacer: pulsar
+    boton: Confirmar Radicación
+
+  - matriz: "${param:p_accion}"
+    hacer: verificar_ruta
+    actor: "${param:actor}"
+    llega_a: Análisis
+    no_llega_a: [Completar información de solicitud]
+    maximo_minutos: 5
+
+  - matriz: "${param:p_accion}"
+    hacer: integracion
+    nombre: Compuerta Acción a tomar (Requirement 231506)
+    esperado: Registra "Continuar solicitud"; se infiere por la actividad siguiente.

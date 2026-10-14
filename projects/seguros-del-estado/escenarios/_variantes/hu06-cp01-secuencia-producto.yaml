@@ -1,0 +1,116 @@
+# VARIANTE DIAGNÓSTICA de HU06-CP01 — secuencia de documentos observada en el PRODUCTO (2026-10-13). NO es el CP aprobado.
+# Comparar con escenarios/3-hu06-cp01.yaml (secuencia de la matriz). Sustenta el control de cambios de BUG-01
+# (docs/CONTROL-CAMBIOS-DOCUMENTOS-HU06.md). Sus reportes se guardan como VARIANTE_HU06-CP01_*.json y no cuentan para CP01.
+# Evidencia de origen: diagnóstico sin "Crear" + caso 428 (creado con esta secuencia y llegado a Estructurar información).
+# Seguridad BUG-03: la variante no abre el pop-up de filas (P18–P26 se validan en el escenario oficial).
+id: HU06-CP01
+titulo: VARIANTE — Masivo Generales Póliza Nueva con la secuencia de documentos del producto (guardar fila → re-pintar → tipo → archivo)
+etiquetas: [hu06, variante, masivo, generales, cp01]
+actores: [analista]
+datasets: [CFG-PROCESO, INI-GENERALES-MASIVO, DOC-SOPORTE, DOCS-OBLIGATORIOS]
+variante:
+  descripcion: >-
+    En el formulario de inicio la lista "Tipo Documental" de "Documentos Anexos" está vacía hasta que la fila se guarda y el
+    formulario se vuelve a pintar. La matriz (P9) pide elegir el tipo y adjuntar en un solo paso, antes de crear.
+  difiere_en:
+    - "P9: se guarda la fila de documentos SIN tipo antes de elegirlo (la matriz no lo menciona)"
+    - "P9: el formulario se re-pinta cambiando y restaurando Sucursal (sin una acción así la lista no se actualiza)"
+    - "P9: el archivo se carga con el diálogo 'Subir un archivo' de la fila, ya guardada"
+cleanup:
+  politica: CLEANUP_NOT_APPLICABLE
+  razon: El caso queda en Estructurar información (identificable por ${unico} en la narrativa); no se completa ni se desiste.
+pasos:
+  - incluir: sesion-y-formulario
+    con: { actor: analista, p_sesion: [2], p_formulario: [2, 3] }
+
+  - matriz: [3]
+    hacer: diligenciar
+    campos:
+      - { campo: Línea, valor: "${dato:INI-GENERALES-MASIVO.linea}", tipo: lista }
+      - { campo: Ramo, valor: "${dato:INI-GENERALES-MASIVO.ramo}", tipo: lista }
+      - { campo: Tipo de Solicitud, valor: "${dato:INI-GENERALES-MASIVO.movimiento}", tipo: lista }
+
+  - matriz: [4, 5]
+    hacer: verificar
+    verificar:
+      - etiquetas: [Línea, Ramo, Tipo de Solicitud, Sucursal]
+      - obligatorio: [Sucursal]
+
+  - matriz: [5]
+    hacer: diligenciar
+    campos:
+      - { campo: Sucursal, valor: "${dato:INI-GENERALES-MASIVO.sucursal}", tipo: lista }
+
+  - matriz: [6]
+    hacer: diligenciar
+    campos:
+      - { campo: Tipo de Radicación, valor: "${dato:INI-GENERALES-MASIVO.tipo_radicacion}", tipo: radio }
+    verificar:
+      - visible: Descripción de la Solicitud (Masiva/Múltiple)
+      - visible: Documentos Anexos
+
+  - matriz: [7]
+    hacer: verificar
+    verificar:
+      - texto_exacto: "Masivo: Solicitud asociada a más de una póliza."
+
+  - matriz: [8]
+    hacer: verificar
+    verificar:
+      - editable: [Descripción de la Solicitud (Masiva/Múltiple)]
+
+  - matriz: [9]
+    hacer: diligenciar
+    campos:
+      - { campo: Descripción de la Solicitud (Masiva/Múltiple), valor: "${dato:INI-GENERALES-MASIVO.narrativa} ${dato:INI-GENERALES-MASIVO.narrativa_polizas}", tipo: area }
+
+  - matriz: [9]
+    hacer: adjuntar_en_grilla
+    grilla: Documentos Anexos
+    secuencia: guardar_primero
+    refrescar_con: { campo: Sucursal, valor_temporal: MEDELLIN, valor: "${dato:INI-GENERALES-MASIVO.sucursal}" }
+    tipo_documental: "${dato:DOCS-OBLIGATORIOS.tipos_generales_masivo}"
+    archivo: "${dato:DOC-SOPORTE.archivo}"
+
+  - incluir: masivo-hasta-estructurar
+    con: { p_crear: [10], p_compuerta: [11, 12], p_worker: [12, 17], p_estructurar: [13] }
+
+  - matriz: [14]
+    hacer: verificar
+    verificar:
+      - solo_lectura: [Número de Caso, Creador del Caso, Fecha de Creación, Línea, Ramo, Movimiento]
+      - valor: { campo: Línea, igual: "${dato:INI-GENERALES-MASIVO.linea}" }
+
+  - matriz: [15]
+    hacer: verificar
+    verificar:
+      - solo_lectura: [Tipo Radicación, Sucursal]
+      - valor: { campo: Tipo Radicación, igual: "${dato:INI-GENERALES-MASIVO.tipo_radicacion}" }
+
+  - matriz: [16]
+    hacer: verificar
+    verificar:
+      - visible: Información a Consultar
+      - solo_lectura: [Descripción Solicitud Masiva]
+
+  - matriz: [17]
+    hacer: tabla_verificar
+    tabla: Detalle Polizas Asociadas
+    minimo_filas: 1
+    columnas: [Forma Consulta, Tipo documento del Tomador, Número de Documento Tomador, Número Póliza]
+
+  # P18–P26 (edición de filas en el pop-up) no forman parte de esta variante: la cubre el escenario oficial, que solo abre el
+  # pop-up cuando tiene los datos para cerrarlo con "Guardar" (BUG-03; regla verificada en tests/unit/secuencia-variantes).
+
+  - matriz: [29]
+    hacer: verificar
+    verificar:
+      - solo_lectura: [Línea, Ramo, Movimiento, Sucursal, Tipo Radicación]
+
+  - matriz: [28]
+    hacer: abrir_pestana
+    pestana: Documentos de la solicitud
+    contiene: [soporte-prueba.pdf]
+
+  - incluir: estructurar-secciones
+    con: { p_pestanas: [28], p_observaciones: [27] }

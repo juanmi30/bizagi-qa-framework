@@ -1,0 +1,20 @@
+# Bloque HU06: Observaciones, Documentos de la solicitud y Seguimiento de "Estructurar información".
+# Pestañas calibradas contra QA el 2026-10-13 (caso 426): ambas se activan con su panel; Seguimiento muestra la
+# actividad "Estructurar información". Va al FINAL del escenario: tras cambiar de pestaña la grilla deja de verse.
+# Observaciones: se asierta el texto de la matriz; la UI muestra "Observaciónes" (BUG-04) y el paso falla mientras siga.
+descripcion: Pestañas Documentos/Seguimiento con contenido y campo Observaciones.
+parametros: [p_pestanas, p_observaciones]
+pasos:
+  - matriz: "${param:p_pestanas}"
+    hacer: abrir_pestana
+    pestana: Documentos de la solicitud
+
+  - matriz: "${param:p_pestanas}"
+    hacer: abrir_pestana
+    pestana: Seguimiento/Trazabilidad
+    contiene: [Estructurar información]
+
+  - matriz: "${param:p_observaciones}"
+    hacer: verificar
+    verificar:
+      - editable: [Observaciones]

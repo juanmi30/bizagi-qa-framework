@@ -1,0 +1,43 @@
+{
+  "estado": "APLICABLE",
+  "batchId": "kr-33ec98af97a1e8df",
+  "revisionAntes": 4,
+  "revisionDespues": 5,
+  "entidadesAnadidas": [
+    {
+      "proposalId": "prop-completar-pantalla-representante-legal-observada",
+      "entidad": "pantalla-ui:pantalla-representante-legal"
+    }
+  ],
+  "decisiones": [
+    {
+      "proposalId": "prop-completar-pantalla-representante-legal-observada",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "e054790a68a4d261fc3777c151084a3d6e034c6f58f83fb288b86237e9ef0ac5",
+      "comentario": "Valores observados en QA (exploración Dirección PJ): titulo \"Representante legal\" y consulta \"Buscar representante\". Solo completa atributos ausentes."
+    }
+  ],
+  "sinDecision": [],
+  "clasificadas": [],
+  "metricas": {
+    "knowledgeGapsRecibidos": 1,
+    "propuestasRecibidas": 1,
+    "validas": 1,
+    "rechazadasValidacion": 0,
+    "unicas": 1,
+    "posiblesDuplicados": 0,
+    "clasificacionesPendientes": 0,
+    "clasificadas": 0,
+    "aprobadas": 1,
+    "rechazadas": 0,
+    "cambiosSolicitados": 0,
+    "sinDecision": 0,
+    "entidadesPrevistas": 1,
+    "revisionAntes": 4,
+    "revisionDespues": 5,
+    "runtimeChanges": 0
+  },
+  "fecha": "2026-10-07"
+}

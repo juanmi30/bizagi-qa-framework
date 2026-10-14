@@ -1,0 +1,29 @@
+{
+  "name": "bizagi-cloud-playwright-framework",
+  "version": "1.0.0",
+  "description": "Framework reutilizable de pruebas E2E para proyectos Bizagi Cloud. Nucleo compartido + carpeta por proyecto. Patron Base Object Model.",
+  "scripts": {
+    "test": "node tools/run.mjs",
+    "new:project": "node tools/new-project.mjs",
+    "new:object": "node tools/new-page-object.mjs",
+    "codegen": "playwright codegen",
+    "grabar": "node tools/grabar.mjs",
+    "adoptar": "node tools/adoptar.mjs",
+    "report": "playwright show-report",
+    "lint": "eslint . --ext .ts",
+    "depurar": "node tools/depurar.mjs",
+    "cleanup": "node tools/cleanup.mjs",
+    "validar": "node tools/validar.mjs",
+    "resumen": "node tools/resumen.mjs",
+    "afi": "node tools/afi.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.7.0",
+    "dotenv": "^16.4.5",
+    "js-yaml": "^5.2.1",
+    "pdfjs-dist": "6.3.289",
+    "typescript": "^5.6.2"
+  }
+}

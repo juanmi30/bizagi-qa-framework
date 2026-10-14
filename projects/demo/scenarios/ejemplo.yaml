@@ -1,0 +1,31 @@
+proceso: Radicación por aviso web
+escenario: Radicador completa la información faltante
+etiquetas: [regresion, radicacion-web]
+
+inicio:
+  modo: bandeja
+  usuario: radicador1
+
+pasos:
+  - actividad: Completar información de la reclamación
+    usuario: radicador1
+    verificar_al_entrar:
+      - campo: Observaciones
+        debe_estar: vacío
+    llenar:
+      - campo: Fecha del evento
+        valor: "2026-06-15"
+        tipo: fecha
+      - campo: Ciudad del evento
+        valor: Bogotá
+        tipo: búsqueda
+      - campo: ¿El solicitante es el mismo asegurado?
+        valor: "Sí"
+        tipo: radio
+      - campo: Observaciones
+        valor: Prueba automatizada
+    accion: Siguiente
+
+hazards:
+  - el_caso_avanza_a: Creación de caso de indemnización
+  - el_caso_ya_no_esta_en_bandeja_de: radicador1

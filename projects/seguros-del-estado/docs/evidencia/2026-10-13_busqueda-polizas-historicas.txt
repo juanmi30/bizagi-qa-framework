@@ -1,0 +1,14 @@
+SDE-CEL — Búsqueda de pólizas en fuentes históricas (2026-10-13, ~10 min, SOLO LECTURA, sin crear casos). Sin datos personales.
+
+Fuentes locales revisadas (0 números de póliza/placa encontrados): documentos y evidencias del proyecto, fuentes/, paquete
+SDE_arranque, reportes en test-results, Excel HU03 V2 y Plan Maestro V4 (la Matriz Data no trae valores).
+Bizagi QA con CE_Analista:
+- Menú "Consultas": solo ofrece "Administrador de Permisos" (herramienta administrativa: no se usó).
+- Buscador global: solo busca por número de caso; un término de texto ("Autos") devuelve 0 filas → no permite encontrar casos
+  históricos sin enumerar números (no se hizo).
+- Caso 337 (de otro equipo, el único histórico conocido que llegó a Completar información el 2026-10-08): hoy sin actividades
+  (cerrado) y su resumen no entrega formulario → no expone póliza ni clave.
+- Casos propios (336–352, 425–431): Individuales con criterio SINTÉTICO o Masivos con narrativa sintética → ninguno contiene
+  una póliza devuelta por SISE.
+Bizagi QA con el intermediario INT-013403: bandeja vacía y sin consultas (sprint anterior).
+Clasificación: NO ENCONTRADO. Ninguna póliza candidata; nada comprobado en SISE.

@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "hu": "AFI HU 14.12",
+  "caso": "CP02",
+  "nombre": "CP02 Independiente Desktop (fixture de regresion de compilacion; no es golden)",
+  "fuente": { "tipo": "diseno-qa", "referencia": "equivalente al archivo generado por el agente en Benchmark 8" },
+  "perfil": "independiente",
+  "preparacion": {
+    "datosCaso": {},
+    "camposAsercion": [],
+    "etapas": ["inicio-solicitud", "telefonos", "informacion-adicional"]
+  },
+  "funcional": {
+    "caso": "CP02",
+    "pasos": [
+      {
+        "id": "P02",
+        "esperado": "Alerta territorial en la parte superior, debajo del subtitulo de localizacion de vivienda.",
+        "operaciones": [
+          { "tipo": "componente-visible", "componente": "alerta-territorial" },
+          { "tipo": "componente-region", "componente": "alerta-territorial", "region": "superior" },
+          { "tipo": "componente-posicion", "componente": "alerta-territorial", "relacion": "debajo-de", "referencia": "subtitulo-localizacion-vivienda" }
+        ]
+      },
+      {
+        "id": "P03",
+        "esperado": "Ciudad de vivienda se habilita.",
+        "operaciones": [
+          { "tipo": "seleccionar-exacto", "campo": "departamento", "valor": "Cundinamarca", "normalizacion": "texto-es" },
+          { "tipo": "campo-estado", "campo": "ciudadVivienda", "estado": "editable" }
+        ]
+      },
+      {
+        "id": "P04",
+        "esperado": "Solo municipios del departamento segun la parametrica.",
+        "operaciones": [
+          { "tipo": "catalogo-segun-fuente", "campo": "ciudadVivienda", "fuente": "parametrica-ciudad-nacional", "filtroDesdeCampo": "departamento", "relacion": "igual", "normalizacion": "texto-es" },
+          { "tipo": "cerrar-catalogo", "campo": "ciudadVivienda" }
+        ]
+      },
+      {
+        "id": "P05",
+        "esperado": "No acepta numeros ni especiales.",
+        "operaciones": [
+          { "tipo": "entrada-rechazada", "campo": "ciudadVivienda", "texto": "123" },
+          { "tipo": "entrada-rechazada", "campo": "ciudadVivienda", "texto": "@#$%&*" }
+        ]
+      },
+      {
+        "id": "P06",
+        "esperado": "Texto libre se limpia al perder el foco.",
+        "operaciones": [
+          { "tipo": "escribir", "campo": "ciudadVivienda", "texto": "Zxyw" },
+          { "tipo": "campo-valor", "campo": "ciudadVivienda", "valor": "Zxyw", "comparacion": "exacta" },
+          { "tipo": "salir-del-campo", "campo": "ciudadVivienda" },
+          { "tipo": "campo-valor", "campo": "ciudadVivienda", "vacio": true }
+        ]
+      },
+      {
+        "id": "P07",
+        "esperado": "Sugerencias filtradas en tiempo real que contienen el texto.",
+        "operaciones": [
+          { "tipo": "escribir", "campo": "ciudadVivienda", "texto": "Chí" },
+          { "tipo": "campo-valor", "campo": "ciudadVivienda", "valor": "Chí", "comparacion": "exacta" },
+          { "tipo": "sugerencias-segun-fuente", "campo": "ciudadVivienda", "fuente": "parametrica-ciudad-nacional", "filtroDesdeCampo": "departamento", "normalizacion": "texto-es", "textoBusqueda": "Chí", "coincidencia": "contiene", "diacriticos": "sensibles", "mayusculas": "insensibles" }
+        ]
+      },
+      {
+        "id": "P08",
+        "esperado": "Seleccion conservada y catalogo completo al reabrir.",
+        "operaciones": [
+          { "tipo": "seleccionar-exacto", "campo": "ciudadVivienda", "valor": "Chía", "normalizacion": "texto-es" },
+          { "tipo": "campo-valor", "campo": "ciudadVivienda", "valor": "Chía", "comparacion": "texto-es" },
+          { "tipo": "catalogo-segun-fuente", "campo": "ciudadVivienda", "fuente": "parametrica-ciudad-nacional", "filtroDesdeCampo": "departamento", "relacion": "igual", "normalizacion": "texto-es" },
+          { "tipo": "cerrar-catalogo", "campo": "ciudadVivienda" },
+          { "tipo": "campo-valor", "campo": "ciudadVivienda", "valor": "Chía", "comparacion": "texto-es" }
+        ]
+      },
+      {
+        "id": "P09",
+        "esperado": "Precarga y bloqueo de la ciudad.",
+        "operaciones": [
+          { "tipo": "seleccionar-exacto", "campo": "departamento", "valor": "BOGOTÁ, D.C.", "normalizacion": "texto-es" },
+          { "tipo": "campo-valor", "campo": "ciudadVivienda", "valor": "BOGOTÁ, D.C.", "comparacion": "texto-es" },
+          { "tipo": "campo-estado", "campo": "ciudadVivienda", "estado": "solo-lectura" }
+        ]
+      },
+      {
+        "id": "P10",
+        "esperado": "Ciudad editable de nuevo, catalogo del departamento y reseleccion.",
+        "operaciones": [
+          { "tipo": "seleccionar-exacto", "campo": "departamento", "valor": "Cundinamarca", "normalizacion": "texto-es" },
+          { "tipo": "campo-estado", "campo": "ciudadVivienda", "estado": "editable" },
+          { "tipo": "catalogo-segun-fuente", "campo": "ciudadVivienda", "fuente": "parametrica-ciudad-nacional", "filtroDesdeCampo": "departamento", "relacion": "igual", "normalizacion": "texto-es" },
+          { "tipo": "escribir", "campo": "ciudadVivienda", "texto": "Chía" },
+          { "tipo": "seleccionar-exacto", "campo": "ciudadVivienda", "valor": "Chía", "normalizacion": "texto-es" }
+        ]
+      }
+    ]
+  }
+}

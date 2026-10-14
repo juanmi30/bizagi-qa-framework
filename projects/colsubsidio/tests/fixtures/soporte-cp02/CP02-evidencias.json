@@ -1,0 +1,457 @@
+{
+  "version": 1,
+  "hu": "AFI HU 14.12",
+  "caso": "CP02",
+  "nombre": "CP02 Independiente Cundinamarca Desktop",
+  "resultado": "PASS",
+  "resultadoArchivo": "CP02-resultado.json",
+  "evidencia": {
+    "modo": "cliente",
+    "estado": "completa",
+    "capturasCliente": 17,
+    "adjuntosTecnicos": 14,
+    "erroresCaptura": 0,
+    "manifiesto": "CP02-evidencias.json"
+  },
+  "politica": {
+    "modo": "cliente",
+    "captura": "assertion",
+    "alcance": "viewport",
+    "mascaraPii": "politicas-afi",
+    "camposSinMascara": []
+  },
+  "pasos": [
+    {
+      "id": "P02",
+      "esperado": "Se visualiza la pantalla de \"Información de contacto\" con la alerta territorial ubicada en la parte superior de la pantalla, debajo del subtítulo \"Información de localización de vivienda\".",
+      "resultado": "PASS"
+    },
+    {
+      "id": "P03",
+      "esperado": "El campo \"Ciudad de vivienda\" se habilita como lista desplegable (ya no está bloqueado).",
+      "resultado": "PASS"
+    },
+    {
+      "id": "P04",
+      "esperado": "El catálogo muestra únicamente los municipios pertenecientes al departamento de Cundinamarca configurados en la paramétrica Ciudad nacional. No se muestran ciudades de otros departamentos.",
+      "resultado": "PASS"
+    },
+    {
+      "id": "P05",
+      "esperado": "El campo \"Ciudad de vivienda\" no acepta la entrada: ninguno de los caracteres numéricos ni especiales digitados se visualiza en el campo.",
+      "resultado": "PASS"
+    },
+    {
+      "id": "P06",
+      "esperado": "El sistema no conserva el texto libre: limpia automáticamente el campo \"Ciudad de vivienda\", que queda vacío, debido a que el texto digitado no coincide de forma exacta con una opción válida de la lista desplegable.",
+      "resultado": "PASS"
+    },
+    {
+      "id": "P07",
+      "esperado": "El sistema aplica texto predictivo en tiempo real, mostrando solo los municipios de Cundinamarca que coincidan con \"Chí\" (ej. \"Chía\").",
+      "resultado": "PASS"
+    },
+    {
+      "id": "P08",
+      "esperado": "El municipio seleccionado queda registrado en el campo \"Ciudad de vivienda\". Al volver a abrir la lista se visualiza nuevamente el listado completo de municipios de Cundinamarca configurados en la paramétrica Ciudad nacional, sin quedar limitado a las coincidencias de la búsqueda anterior (\"Chí\") y sin mostrar ciudades de otros departamentos.",
+      "resultado": "PASS"
+    },
+    {
+      "id": "P09",
+      "esperado": "El sistema precarga automáticamente el valor \"BOGOTÁ, D.C.\" en el campo \"Ciudad de vivienda\" y lo bloquea en modo solo lectura, impidiendo su modificación manual.",
+      "resultado": "PASS"
+    },
+    {
+      "id": "P10",
+      "esperado": "El campo \"Ciudad de vivienda\" se habilita nuevamente como lista desplegable (sin bloqueo), muestra únicamente municipios de Cundinamarca y permite seleccionar el municipio.",
+      "resultado": "PASS"
+    }
+  ],
+  "evidencias": [
+    {
+      "secuencia": 1,
+      "paso": "P02",
+      "esperado": "Se visualiza la pantalla de \"Información de contacto\" con la alerta territorial ubicada en la parte superior de la pantalla, debajo del subtítulo \"Información de localización de vivienda\".",
+      "orden": 1,
+      "indiceOperacion": 0,
+      "operacion": "componente-region",
+      "claseOperacion": "assertion",
+      "status": "PASS",
+      "clasificacion": "cliente",
+      "tipo": "screenshot",
+      "alcance": "viewport",
+      "archivo": "CP02-P02-01-componente-region.png",
+      "contentType": "image/png",
+      "mascarasPii": 16
+    },
+    {
+      "secuencia": 2,
+      "paso": "P02",
+      "esperado": "Se visualiza la pantalla de \"Información de contacto\" con la alerta territorial ubicada en la parte superior de la pantalla, debajo del subtítulo \"Información de localización de vivienda\".",
+      "orden": 2,
+      "indiceOperacion": 1,
+      "operacion": "componente-posicion",
+      "claseOperacion": "assertion",
+      "status": "PASS",
+      "clasificacion": "cliente",
+      "tipo": "screenshot",
+      "alcance": "viewport",
+      "archivo": "CP02-P02-02-componente-posicion.png",
+      "contentType": "image/png",
+      "mascarasPii": 16
+    },
+    {
+      "secuencia": 3,
+      "paso": "P03",
+      "esperado": "El campo \"Ciudad de vivienda\" se habilita como lista desplegable (ya no está bloqueado).",
+      "orden": 1,
+      "indiceOperacion": 1,
+      "operacion": "campo-estado",
+      "claseOperacion": "assertion",
+      "status": "PASS",
+      "clasificacion": "cliente",
+      "tipo": "screenshot",
+      "alcance": "viewport",
+      "archivo": "CP02-P03-01-campo-estado.png",
+      "contentType": "image/png",
+      "mascarasPii": 16
+    },
+    {
+      "secuencia": 4,
+      "paso": "P04",
+      "esperado": "El catálogo muestra únicamente los municipios pertenecientes al departamento de Cundinamarca configurados en la paramétrica Ciudad nacional. No se muestran ciudades de otros departamentos.",
+      "orden": 1,
+      "indiceOperacion": 0,
+      "operacion": "catalogo-segun-fuente",
+      "claseOperacion": "assertion",
+      "status": "PASS",
+      "clasificacion": "cliente",
+      "tipo": "screenshot",
+      "alcance": "viewport",
+      "archivo": "CP02-P04-01-catalogo-segun-fuente.png",
+      "contentType": "image/png",
+      "mascarasPii": 16
+    },
+    {
+      "secuencia": 5,
+      "paso": "P05",
+      "esperado": "El campo \"Ciudad de vivienda\" no acepta la entrada: ninguno de los caracteres numéricos ni especiales digitados se visualiza en el campo.",
+      "orden": 1,
+      "indiceOperacion": 0,
+      "operacion": "entrada-rechazada",
+      "claseOperacion": "mixta",
+      "status": "PASS",
+      "clasificacion": "cliente",
+      "tipo": "screenshot",
+      "alcance": "viewport",
+      "archivo": "CP02-P05-01-entrada-rechazada.png",
+      "contentType": "image/png",
+      "mascarasPii": 16
+    },
+    {
+      "secuencia": 6,
+      "paso": "P06",
+      "esperado": "El sistema no conserva el texto libre: limpia automáticamente el campo \"Ciudad de vivienda\", que queda vacío, debido a que el texto digitado no coincide de forma exacta con una opción válida de la lista desplegable.",
+      "orden": 1,
+      "indiceOperacion": 1,
+      "operacion": "campo-valor",
+      "claseOperacion": "assertion",
+      "status": "PASS",
+      "clasificacion": "cliente",
+      "tipo": "screenshot",
+      "alcance": "viewport",
+      "archivo": "CP02-P06-01-campo-valor.png",
+      "contentType": "image/png",
+      "mascarasPii": 16
+    },
+    {
+      "secuencia": 7,
+      "paso": "P06",
+      "esperado": "El sistema no conserva el texto libre: limpia automáticamente el campo \"Ciudad de vivienda\", que queda vacío, debido a que el texto digitado no coincide de forma exacta con una opción válida de la lista desplegable.",
+      "orden": 2,
+      "indiceOperacion": 3,
+      "operacion": "campo-valor",
+      "claseOperacion": "assertion",
+      "status": "PASS",
+      "clasificacion": "cliente",
+      "tipo": "screenshot",
+      "alcance": "viewport",
+      "archivo": "CP02-P06-02-campo-valor.png",
+      "contentType": "image/png",
+      "mascarasPii": 16
+    },
+    {
+      "secuencia": 8,
+      "paso": "P07",
+      "esperado": "El sistema aplica texto predictivo en tiempo real, mostrando solo los municipios de Cundinamarca que coincidan con \"Chí\" (ej. \"Chía\").",
+      "orden": 1,
+      "indiceOperacion": 1,
+      "operacion": "sugerencias-segun-fuente",
+      "claseOperacion": "assertion",
+      "status": "PASS",
+      "clasificacion": "cliente",
+      "tipo": "screenshot",
+      "alcance": "viewport",
+      "archivo": "CP02-P07-01-sugerencias-segun-fuente.png",
+      "contentType": "image/png",
+      "mascarasPii": 16
+    },
+    {
+      "secuencia": 9,
+      "paso": "P08",
+      "esperado": "El municipio seleccionado queda registrado en el campo \"Ciudad de vivienda\". Al volver a abrir la lista se visualiza nuevamente el listado completo de municipios de Cundinamarca configurados en la paramétrica Ciudad nacional, sin quedar limitado a las coincidencias de la búsqueda anterior (\"Chí\") y sin mostrar ciudades de otros departamentos.",
+      "orden": 1,
+      "indiceOperacion": 1,
+      "operacion": "campo-valor",
+      "claseOperacion": "assertion",
+      "status": "PASS",
+      "clasificacion": "cliente",
+      "tipo": "screenshot",
+      "alcance": "viewport",
+      "archivo": "CP02-P08-01-campo-valor.png",
+      "contentType": "image/png",
+      "mascarasPii": 16
+    },
+    {
+      "secuencia": 10,
+      "paso": "P08",
+      "esperado": "El municipio seleccionado queda registrado en el campo \"Ciudad de vivienda\". Al volver a abrir la lista se visualiza nuevamente el listado completo de municipios de Cundinamarca configurados en la paramétrica Ciudad nacional, sin quedar limitado a las coincidencias de la búsqueda anterior (\"Chí\") y sin mostrar ciudades de otros departamentos.",
+      "orden": 2,
+      "indiceOperacion": 2,
+      "operacion": "catalogo-segun-fuente",
+      "claseOperacion": "assertion",
+      "status": "PASS",
+      "clasificacion": "cliente",
+      "tipo": "screenshot",
+      "alcance": "viewport",
+      "archivo": "CP02-P08-02-catalogo-segun-fuente.png",
+      "contentType": "image/png",
+      "mascarasPii": 16
+    },
+    {
+      "secuencia": 11,
+      "paso": "P08",
+      "esperado": "El municipio seleccionado queda registrado en el campo \"Ciudad de vivienda\". Al volver a abrir la lista se visualiza nuevamente el listado completo de municipios de Cundinamarca configurados en la paramétrica Ciudad nacional, sin quedar limitado a las coincidencias de la búsqueda anterior (\"Chí\") y sin mostrar ciudades de otros departamentos.",
+      "orden": 3,
+      "indiceOperacion": 4,
+      "operacion": "campo-valor",
+      "claseOperacion": "assertion",
+      "status": "PASS",
+      "clasificacion": "cliente",
+      "tipo": "screenshot",
+      "alcance": "viewport",
+      "archivo": "CP02-P08-03-campo-valor.png",
+      "contentType": "image/png",
+      "mascarasPii": 16
+    },
+    {
+      "secuencia": 12,
+      "paso": "P09",
+      "esperado": "El sistema precarga automáticamente el valor \"BOGOTÁ, D.C.\" en el campo \"Ciudad de vivienda\" y lo bloquea en modo solo lectura, impidiendo su modificación manual.",
+      "orden": 1,
+      "indiceOperacion": 1,
+      "operacion": "campo-valor",
+      "claseOperacion": "assertion",
+      "status": "PASS",
+      "clasificacion": "cliente",
+      "tipo": "screenshot",
+      "alcance": "viewport",
+      "archivo": "CP02-P09-01-campo-valor.png",
+      "contentType": "image/png",
+      "mascarasPii": 16
+    },
+    {
+      "secuencia": 13,
+      "paso": "P09",
+      "esperado": "El sistema precarga automáticamente el valor \"BOGOTÁ, D.C.\" en el campo \"Ciudad de vivienda\" y lo bloquea en modo solo lectura, impidiendo su modificación manual.",
+      "orden": 2,
+      "indiceOperacion": 2,
+      "operacion": "campo-estado",
+      "claseOperacion": "assertion",
+      "status": "PASS",
+      "clasificacion": "cliente",
+      "tipo": "screenshot",
+      "alcance": "viewport",
+      "archivo": "CP02-P09-02-campo-estado.png",
+      "contentType": "image/png",
+      "mascarasPii": 16
+    },
+    {
+      "secuencia": 14,
+      "paso": "P10",
+      "esperado": "El campo \"Ciudad de vivienda\" se habilita nuevamente como lista desplegable (sin bloqueo), muestra únicamente municipios de Cundinamarca y permite seleccionar el municipio.",
+      "orden": 1,
+      "indiceOperacion": 1,
+      "operacion": "campo-estado",
+      "claseOperacion": "assertion",
+      "status": "PASS",
+      "clasificacion": "cliente",
+      "tipo": "screenshot",
+      "alcance": "viewport",
+      "archivo": "CP02-P10-01-campo-estado.png",
+      "contentType": "image/png",
+      "mascarasPii": 16
+    },
+    {
+      "secuencia": 15,
+      "paso": "P10",
+      "esperado": "El campo \"Ciudad de vivienda\" se habilita nuevamente como lista desplegable (sin bloqueo), muestra únicamente municipios de Cundinamarca y permite seleccionar el municipio.",
+      "orden": 2,
+      "indiceOperacion": 2,
+      "operacion": "catalogo-segun-fuente",
+      "claseOperacion": "assertion",
+      "status": "PASS",
+      "clasificacion": "cliente",
+      "tipo": "screenshot",
+      "alcance": "viewport",
+      "archivo": "CP02-P10-02-catalogo-segun-fuente.png",
+      "contentType": "image/png",
+      "mascarasPii": 16
+    },
+    {
+      "secuencia": 16,
+      "paso": "P10",
+      "esperado": "El campo \"Ciudad de vivienda\" se habilita nuevamente como lista desplegable (sin bloqueo), muestra únicamente municipios de Cundinamarca y permite seleccionar el municipio.",
+      "orden": 3,
+      "indiceOperacion": 4,
+      "operacion": "sugerencias-segun-fuente",
+      "claseOperacion": "assertion",
+      "status": "PASS",
+      "clasificacion": "cliente",
+      "tipo": "screenshot",
+      "alcance": "viewport",
+      "archivo": "CP02-P10-03-sugerencias-segun-fuente.png",
+      "contentType": "image/png",
+      "mascarasPii": 16
+    },
+    {
+      "secuencia": 17,
+      "paso": "P10",
+      "esperado": "El campo \"Ciudad de vivienda\" se habilita nuevamente como lista desplegable (sin bloqueo), muestra únicamente municipios de Cundinamarca y permite seleccionar el municipio.",
+      "orden": 4,
+      "indiceOperacion": 6,
+      "operacion": "campo-valor",
+      "claseOperacion": "assertion",
+      "status": "PASS",
+      "clasificacion": "cliente",
+      "tipo": "screenshot",
+      "alcance": "viewport",
+      "archivo": "CP02-P10-04-campo-valor.png",
+      "contentType": "image/png",
+      "mascarasPii": 16
+    }
+  ],
+  "incidencias": [],
+  "tecnica": [
+    {
+      "clasificacion": "tecnica",
+      "tipo": "json",
+      "archivo": "CP02-plan-inicio.json",
+      "contentType": "application/json",
+      "gestion": "runner"
+    },
+    {
+      "clasificacion": "tecnica",
+      "tipo": "json",
+      "archivo": "CP02-plan-telefonos.json",
+      "contentType": "application/json",
+      "gestion": "runner"
+    },
+    {
+      "clasificacion": "tecnica",
+      "tipo": "json",
+      "archivo": "CP02-plan-informacion-adicional.json",
+      "contentType": "application/json",
+      "gestion": "runner"
+    },
+    {
+      "clasificacion": "tecnica",
+      "tipo": "json",
+      "archivo": "CP02-plan-funcional.json",
+      "contentType": "application/json",
+      "gestion": "runner"
+    },
+    {
+      "clasificacion": "tecnica",
+      "tipo": "json",
+      "archivo": "CP02-traza-tecnica.json",
+      "contentType": "application/json",
+      "gestion": "runner"
+    },
+    {
+      "clasificacion": "tecnica",
+      "tipo": "json",
+      "archivo": "CP02-ejecucion-inicio.json",
+      "contentType": "application/json",
+      "gestion": "runner"
+    },
+    {
+      "clasificacion": "tecnica",
+      "tipo": "json",
+      "archivo": "caso-creado.json",
+      "contentType": "application/json",
+      "gestion": "runner"
+    },
+    {
+      "clasificacion": "tecnica",
+      "tipo": "json",
+      "archivo": "independiente-preparacion-0.json",
+      "contentType": "application/json",
+      "gestion": "runner"
+    },
+    {
+      "clasificacion": "tecnica",
+      "tipo": "json",
+      "archivo": "CP02-ejecucion-telefonos.json",
+      "contentType": "application/json",
+      "gestion": "runner"
+    },
+    {
+      "clasificacion": "tecnica",
+      "tipo": "json",
+      "archivo": "independiente-telefonos-completos-0.json",
+      "contentType": "application/json",
+      "gestion": "runner"
+    },
+    {
+      "clasificacion": "tecnica",
+      "tipo": "json",
+      "archivo": "independiente-preparacion-1.json",
+      "contentType": "application/json",
+      "gestion": "runner"
+    },
+    {
+      "clasificacion": "tecnica",
+      "tipo": "json",
+      "archivo": "CP02-ejecucion-informacion-adicional.json",
+      "contentType": "application/json",
+      "gestion": "runner"
+    },
+    {
+      "clasificacion": "tecnica",
+      "tipo": "json",
+      "archivo": "CP02-ejecucion-funcional.json",
+      "contentType": "application/json",
+      "gestion": "runner"
+    },
+    {
+      "clasificacion": "tecnica",
+      "tipo": "json",
+      "archivo": "CP02-resultado.json",
+      "contentType": "application/json",
+      "gestion": "runner"
+    },
+    {
+      "clasificacion": "tecnica",
+      "tipo": "video",
+      "gestion": "playwright",
+      "politica": "retain-on-failure"
+    },
+    {
+      "clasificacion": "tecnica",
+      "tipo": "trace",
+      "gestion": "playwright",
+      "politica": "retain-on-failure"
+    }
+  ]
+}

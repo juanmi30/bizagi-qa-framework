@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "afi-test-data-decisions/v1",
+  "batchId": "kd-06d8f9578f37ab19",
+  "revisionBase": 13,
+  "decisiones": [
+    {
+      "proposalId": "ps-empresa-empleador-juridico-rues-sin-rep-legal-2",
+      "hash": "15e23e3a9f3573adbe02cc203fd3d97d7647cbff00619f0563f124fd6a0fb369",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "comentario": "Reutilizar el actor existente; agrega únicamente el dato condicional Caja de compensación anterior, sin modificar sus condiciones de negocio.",
+      "mismoActorQue": "empresa-empleador-juridico-rues-sin-rep-legal"
+    }
+  ],
+  "compartidos": []
+}

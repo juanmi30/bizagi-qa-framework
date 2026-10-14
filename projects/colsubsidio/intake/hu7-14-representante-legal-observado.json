@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "afi-agent-intake/v1",
+  "classificationRequests": [],
+  "testDataRequirements": [],
+  "knowledgeProposals": [
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-pantalla-representante-legal-observada",
+      "operacion": "completar",
+      "entidad": {
+        "tipo": "pantalla-ui",
+        "id": "pantalla-representante-legal",
+        "descripcion": "Pantalla 'Ingresa información representante legal' en el portal de afiliaciones.",
+        "titulo": "Representante legal",
+        "consulta": "Buscar representante"
+      },
+      "origen": {
+        "fuente": "Exploración QA Dirección Empleador PJ 2026-10-07 (estructura sanitizada, fixture estructura-direccion-pj-qa-observada)",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP02",
+            "paso": "Paso 5"
+          },
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 12"
+          }
+        ]
+      },
+      "evidenciaSemantica": "Observado en QA tras Dirección: encabezado exacto \"Representante legal\" y botón de consulta \"Buscar representante\". Reemplaza la propuesta NEEDS_CHANGES del lote anterior, cuyo título tenía fuentes en conflicto.",
+      "estado": "PENDING_REVIEW",
+      "revisiones": []
+    }
+  ]
+}

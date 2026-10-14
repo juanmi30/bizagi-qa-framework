@@ -1,0 +1,24 @@
+proceso: Radicación con adjuntos
+escenario: Radicar y marcar anexos revisados
+etiquetas: [regresion]
+
+inicio:
+  modo: crear-caso
+  usuario: admin
+  proceso_a_crear: Radicación con adjuntos
+
+pasos:
+  # Pantalla RARA -> se resuelve con un snippet grabado en custom/ (no con "llenar").
+  - actividad: Adjuntar y revisar documentos
+    usuario: admin
+    personalizado: marcar-revisado
+
+  # A partir de aquí, pasos NORMALES de plantilla, en la misma sesión.
+  - actividad: Completar información
+    llenar:
+      - campo: Observaciones
+        valor: Prueba automatizada
+    accion: Siguiente
+
+hazards:
+  - el_caso_avanza_a: Aprobación

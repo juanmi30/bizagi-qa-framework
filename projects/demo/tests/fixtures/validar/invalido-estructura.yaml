@@ -1,0 +1,8 @@
+proceso: Proceso de prueba
+escenario: Escenario sin estructura completa
+
+inicio:
+  modo: crear-caso
+  usuario: analista1
+
+pasos: []

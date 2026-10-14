@@ -1,0 +1,24 @@
+proceso:
+escenario: Escenario con múltiples problemas
+etiquetas: regresion
+
+inicio:
+  modo: inventado
+  usuario: otro_fantasma
+
+pasos:
+  - usuario: otro_fantasma
+    llenar:
+      - campo:
+        tipo: texo
+
+      - campo: Contrato
+        valor: faltante.pdf
+        tipo: archivo
+
+    esperar_integracion:
+      maximo_minutos: -3
+
+hazards:
+  - hazard_inventado: algo
+  - asignado_a: tercer_fantasma

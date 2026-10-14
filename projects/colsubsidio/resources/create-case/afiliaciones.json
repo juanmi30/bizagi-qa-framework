@@ -1,0 +1,88 @@
+{
+  "nombre": "Afiliaciones",
+  "ambiente": "test",
+  "apiUrl": "https://test-procesosdigitales-colsubsidio.bizagi.com",
+  "processId": "d5e224d0-4f05-4ebb-9a61-f4cafdc9ed63",
+  "startParameters": [
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmAfiliacion.kmAfiliado.kpTipoAfiliado",
+      "value": "I2"
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmAfiliacion.kpTipoAportante",
+      "value": "TA003"
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmAfiliacion.kmAfiliado.kpTipoAportante",
+      "value": "TA003"
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmAfiliacion.kpTipoEmpleador",
+      "value": ""
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmAfiliacion.kmAfiliado.kmAfiliadoEmpleador.kpClaseEmpleador",
+      "value": ""
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmAfiliacion.kpNaturaleza",
+      "value": ""
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmIntegraciones.kpTipoIdentificacion",
+      "value": "CO1C"
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmIntegraciones.sNumeroIdentificacion",
+      "value": "28189133"
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmAfiliacion.kmAfiliado.kmTratamientoDatos.bAceptaTratamientoDatos",
+      "value": true
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmAfiliacion.bCreadoDesdeSite",
+      "value": true
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmIntegraciones.bNumerovalido",
+      "value": true
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmAfiliacion.kmITratamientoDatos.dFechaHoraAceptacion",
+      "value": "2026-08-11T20:30:52.441Z"
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmAfiliacion.kmITratamientoDatos.sIP",
+      "value": "2800:2131:143f:a29b:c8e8:ffa2:e2ea:aef0"
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmAfiliacion.kmITratamientoDatos.sURLPoliticas",
+      "value": "https://dev.colsubsidio.com/afiliate/proceso/afiliaciones-en-linea/tratamiento-de-datos"
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmAfiliacion.kmITratamientoDatos.sVersion",
+      "value": "V4"
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmAfiliacion.kmIDerechoIntimidad.dFechaHoraAceptacion",
+      "value": "2026-08-11T20:30:52.441Z"
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmAfiliacion.kmIDerechoIntimidad.sIP",
+      "value": "2800:2131:143f:a29b:c8e8:ffa2:e2ea:aef0"
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmAfiliacion.kmIDerechoIntimidad.sURLPoliticas",
+      "value": "https://transacciones.colsubsidio.com/afiliaciones-en-linea/qa/assets/pdf/autorizacion-ley-2300-de-2023.pdf"
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmAfiliacion.kmIDerechoIntimidad.sVersion",
+      "value": "V4"
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmIntegraciones.sCorreoElectronicoPIF",
+      "value": "contacto.qa@example.test"
+    }
+  ]
+}

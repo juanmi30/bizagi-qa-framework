@@ -1,0 +1,16 @@
+proceso: Definición datos iniciales Contratos
+escenario: Crear caso por categoría y abrir la actividad (etapa 1)
+etiquetas: [smoke-real, conpre]
+
+inicio:
+  modo: crear-caso
+  usuario: admin                     # lógico -> domain\usuario.qa (ver .env)
+  categoria: Gestión de contratos
+  proceso_a_crear: Definición datos iniciales Contratos
+
+pasos:
+  # Sin llenar y sin avanzar: solo confirmamos que el caso se creó y abrió la actividad.
+  - actividad: Definir datos iniciales
+
+hazards:
+  - el_caso_avanza_a: Definir datos iniciales

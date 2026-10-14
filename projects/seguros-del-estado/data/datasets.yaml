@@ -1,0 +1,275 @@
+# Registro LÓGICO de datos de prueba SDE-CEL.
+# Aquí NO hay valores reales: cada propiedad dice de dónde sale su valor.
+#   fuente: matriz   -> literal tomado de la matriz QA (Excel); va en "valor".
+#   fuente: qa       -> lo provee QA; el valor vive SOLO en projects/seguros-del-estado/.env (ignorado) bajo "env".
+#   fuente: generado -> lo produce la prueba (ej. narrativa con ${unico}); va en "valor".
+#   fuente: config   -> configuración del ambiente (no es dato de negocio); valor en .env bajo "env".
+# El estado READY/MISSING se CALCULA en ejecución (sde/datos.ts): READY solo si todas las propiedades
+# obligatorias tienen valor. Nunca se escriben valores de .env en reportes: se enmascaran.
+# sensible: true -> dato de negocio de SISE (póliza, placa, documento): se enmascara en evidencias.
+
+actores:
+  intermediario:
+    rol: Intermediario (radica y completa información)
+    variables: [USUARIO_intermediario, CLAVE_intermediario]
+    dominio: DOMINIO_intermediario   # opcional; si falta usa BIZAGI_LOGIN_DOMINIO
+    usado_por: [HU06-CP01, HU06-CP02, HU06-CP03, HU06-CP04, HU06-CP05, HU03-CP01, HU03-CP02, HU03-CP03, HU03-CP04, HU03-CP05, HU03-CP06, HU03-CP07, HU03-CP08, HU03-CP10, HU03-CP11, HU03-CP12]
+  analista:
+    rol: Analista Centro de Expedición (Estructurar Información; Requirement 230849)
+    variables: [USUARIO_analista, CLAVE_analista]
+    dominio: DOMINIO_analista
+    usado_por: [HU06-CP01, HU06-CP02, HU06-CP03, HU06-CP04]
+  intermediario_alerta:
+    rol: Intermediario cuya clave retorna alerta bloqueante (EN PROCESO DE CANCELACIÓN | SIN IDONEIDAD | SIN SARLAFT | SIN CONTRATO)
+    variables: [USUARIO_intermediario_alerta, CLAVE_intermediario_alerta]
+    dominio: DOMINIO_intermediario_alerta
+    usado_por: [HU03-CP09]
+
+datasets:
+  CFG-PROCESO:
+    descripcion: Cómo se inicia una Radicación en el Work Portal (nombre visible del proceso y categoría si existe).
+    actor: intermediario
+    propiedades:
+      - { nombre: proceso, fuente: config, env: SDE_PROCESO_RADICACION }
+      - { nombre: categoria, fuente: config, env: SDE_PROCESO_CATEGORIA, opcional: true }
+    usado_por: [todos]
+    limpieza: No aplica (configuración).
+
+  DOC-SOPORTE:
+    descripcion: Documento PDF sintético SIN PII para adjuntar donde la matriz pide "documentos obligatorios parametrizados".
+    actor: intermediario
+    propiedades:
+      - { nombre: archivo, fuente: generado, valor: docs/soporte-prueba.pdf }
+    nota: El ARCHIVO está listo; QUÉ tipos documentales son obligatorios por Línea/Ramo/Movimiento lo define DOCS-OBLIGATORIOS.
+    limpieza: No aplica.
+
+  DOCS-OBLIGATORIOS:
+    descripcion: Tipos documentales parametrizados como obligatorios en el formulario de inicio (por Línea/Ramo/Movimiento y modalidad).
+    actor: intermediario
+    propiedades:
+      # Opcionales: el paso de adjunto verifica PRIMERO que la lista ofrezca tipos (defecto si está vacía) y solo
+      # después necesita el nombre del tipo obligatorio; si falta, ese paso queda BLOCKED.
+      - { nombre: tipos_generales_masivo, fuente: qa, env: SDE_DOCS_GENERALES_MASIVO, opcional: true }
+      - { nombre: tipos_individual, fuente: qa, env: SDE_DOCS_INDIVIDUAL, opcional: true }
+    usado_por: [HU06-CP01, HU06-CP02, HU06-CP03, HU06-CP04, HU06-CP05, HU03-CP01, HU03-CP02, HU03-CP03, HU03-CP04, HU03-CP05, HU03-CP06, HU03-CP07, HU03-CP08]
+    limpieza: No aplica.
+
+  INI-INDIVIDUAL-RUTA:
+    descripcion: >-
+      HU06-CP05. Combinación válida Línea/Ramo/Movimiento/Sucursal + criterio de consulta individual.
+      La aserción del CP es la RUTA de la compuerta (no el resultado SISE), pero el criterio debe ser provisto por QA:
+      no se inventan pólizas/placas/documentos.
+    actor: intermediario
+    propiedades:
+      - { nombre: linea, fuente: qa, env: SDE_RUTA_LINEA }
+      - { nombre: ramo, fuente: qa, env: SDE_RUTA_RAMO }
+      - { nombre: movimiento, fuente: qa, env: SDE_RUTA_MOVIMIENTO }
+      - { nombre: sucursal, fuente: qa, env: SDE_SUCURSAL }
+      - { nombre: tipo_radicacion, fuente: matriz, valor: Individual }
+      - { nombre: forma_consulta, fuente: qa, env: SDE_RUTA_FORMA_CONSULTA }
+      - { nombre: criterio_campo, fuente: qa, env: SDE_RUTA_CRITERIO_CAMPO }
+      - { nombre: criterio_valor, fuente: qa, env: SDE_RUTA_CRITERIO_VALOR, sensible: true }
+    usado_por: [HU06-CP05]
+    limpieza: CLEANUP_NOT_APPLICABLE — la radicación queda como evidencia en QA (no se desiste para no alterar el flujo).
+
+  INI-GENERALES-MASIVO:
+    descripcion: HU06-CP01. Radicación Masiva Línea Generales, Movimiento Póliza Nueva (paso 19 de la matriz).
+    actor: intermediario
+    propiedades:
+      - { nombre: linea, fuente: matriz, valor: Generales }
+      - { nombre: ramo, fuente: qa, env: SDE_GEN_RAMO }
+      - { nombre: movimiento, fuente: matriz, valor: Póliza Nueva }
+      - { nombre: sucursal, fuente: qa, env: SDE_SUCURSAL }
+      # La matriz dice "Masivo"; la opción REAL del radio en QA es "Masiva" (hallazgo de nomenclatura OBS-02).
+      - { nombre: tipo_radicacion, fuente: matriz, valor: Masiva }
+      - { nombre: narrativa, fuente: generado, valor: "Prueba QA automatizada ${unico}: solicitud masiva para más de una póliza." }
+      - { nombre: narrativa_polizas, fuente: qa, env: SDE_GEN_MASIVO_NARRATIVA_POLIZAS, sensible: true, opcional: true }
+    nota: >-
+      Para que el Worker AI estructure filas con datos reales la narrativa debe mencionar pólizas/tomadores existentes
+      (narrativa_polizas). Es opcional para CREAR el caso; los pasos que validan el contenido estructurado la exigen
+      (requiere: [NARRATIVA-POLIZAS]).
+    usado_por: [HU06-CP01]
+    limpieza: CLEANUP_NOT_APPLICABLE — evidencia de radicación masiva.
+
+  NARRATIVA-POLIZAS:
+    descripcion: HU06-CP01 pasos 17–26. Texto con pólizas/tomadores reales para que el Worker AI estructure filas verificables.
+    actor: analista
+    propiedades:
+      - { nombre: texto, fuente: qa, env: SDE_GEN_MASIVO_NARRATIVA_POLIZAS, sensible: true }
+    usado_por: [HU06-CP01]
+    limpieza: No aplica (texto de entrada).
+
+  EST-FILA-GENERALES-PN:
+    descripcion: HU06-CP01 pasos 21–25. Datos para editar/agregar fila en Pólizas asociadas (Forma de Consulta Identificación de Tomador).
+    actor: analista
+    propiedades:
+      - { nombre: tipo_documento, fuente: matriz, valor: NIT }
+      - { nombre: numero_documento, fuente: qa, env: SDE_EST_TOMADOR_NIT, sensible: true }
+      - { nombre: numero_documento_nueva_fila, fuente: qa, env: SDE_EST_TOMADOR_NIT_2, sensible: true }
+    usado_por: [HU06-CP01]
+    limpieza: Las filas se crean/eliminan DENTRO del caso creado por la prueba; nunca sobre casos ajenos.
+
+  INI-AUTOS-MASIVO:
+    descripcion: HU06-CP02. Masivo Autos; edición por Placa (máx. 6 caracteres).
+    actor: intermediario
+    propiedades:
+      - { nombre: linea, fuente: matriz, valor: Autos }
+      - { nombre: ramo, fuente: qa, env: SDE_AUTOS_RAMO }
+      - { nombre: movimiento, fuente: qa, env: SDE_AUTOS_MASIVO_MOVIMIENTO }
+      - { nombre: sucursal, fuente: qa, env: SDE_SUCURSAL }
+      - { nombre: tipo_radicacion, fuente: matriz, valor: Masiva }
+      - { nombre: narrativa, fuente: generado, valor: "Prueba QA automatizada ${unico}: solicitud masiva Autos para más de una póliza." }
+      - { nombre: narrativa_polizas, fuente: qa, env: SDE_AUTOS_MASIVO_NARRATIVA, sensible: true, opcional: true }
+      - { nombre: placa, fuente: qa, env: SDE_AUTOS_PLACA, sensible: true }
+      - { nombre: placa_nueva_fila, fuente: qa, env: SDE_AUTOS_PLACA_2, sensible: true }
+    nota: >-
+      placa_nueva_fila debe ser DISTINTA de placa (la fila agregada se identifica por su valor exacto). La narrativa con
+      placas/pólizas reales (narrativa_polizas) es la que permite al Worker AI estructurar filas editables.
+    usado_por: [HU06-CP02]
+    limpieza: CLEANUP_NOT_APPLICABLE.
+
+  INI-CUMPL-MASIVO-SIN-RCE:
+    descripcion: HU06-CP03. Cumplimiento (Fianzas), Ramo SIN propiedad Póliza RCE, Movimiento Modificación.
+    actor: intermediario
+    propiedades:
+      - { nombre: linea, fuente: matriz, valor: Cumplimiento }
+      - { nombre: ramo_sin_rce, fuente: qa, env: SDE_CUMPL_RAMO_SIN_RCE }
+      - { nombre: movimiento, fuente: matriz, valor: Modificación }
+      - { nombre: sucursal, fuente: qa, env: SDE_SUCURSAL }
+      - { nombre: tipo_radicacion, fuente: matriz, valor: Masiva }
+      - { nombre: narrativa, fuente: generado, valor: "Prueba QA automatizada ${unico}: solicitud masiva de Cumplimiento para más de una póliza." }
+      - { nombre: narrativa_polizas, fuente: qa, env: SDE_CUMPL_MASIVO_NARRATIVA, sensible: true, opcional: true }
+      - { nombre: poliza, fuente: qa, env: SDE_CUMPL_POLIZA_SIN_RCE, sensible: true }
+      - { nombre: ramo_rce, fuente: qa, env: SDE_CUMPL_RAMO_RCE }
+      - { nombre: poliza_rce, fuente: qa, env: SDE_CUMPL_POLIZA_RCE, sensible: true }
+    usado_por: [HU06-CP03]
+    limpieza: CLEANUP_NOT_APPLICABLE.
+
+  INI-CUMPL-MASIVO-CON-RCE:
+    descripcion: HU06-CP04. Cumplimiento, Ramo CON propiedad Póliza RCE.
+    actor: intermediario
+    propiedades:
+      - { nombre: linea, fuente: matriz, valor: Cumplimiento }
+      - { nombre: ramo_con_rce, fuente: qa, env: SDE_CUMPL_RAMO_CON_RCE }
+      - { nombre: movimiento, fuente: qa, env: SDE_CUMPL_MOVIMIENTO }
+      - { nombre: sucursal, fuente: qa, env: SDE_SUCURSAL }
+      - { nombre: tipo_radicacion, fuente: matriz, valor: Masiva }
+      - { nombre: narrativa, fuente: generado, valor: "Prueba QA automatizada ${unico}: solicitud masiva de Cumplimiento y RCE para más de una póliza." }
+      - { nombre: narrativa_polizas, fuente: qa, env: SDE_CUMPL_MASIVO_NARRATIVA, sensible: true, opcional: true }
+      - { nombre: poliza, fuente: qa, env: SDE_CUMPL_POLIZA_CON_RCE, sensible: true }
+      - { nombre: poliza_nueva_fila, fuente: qa, env: SDE_CUMPL_POLIZA_CON_RCE_2, sensible: true }
+    nota: poliza_nueva_fila (DISTINTA de poliza) se agrega y luego se elimina por su valor exacto (P20–P22).
+    usado_por: [HU06-CP04]
+    limpieza: CLEANUP_NOT_APPLICABLE.
+
+  POL-AUTOS-VIGENTE:
+    descripcion: >-
+      HU03-CP02. Póliza de Autos VIGENTE en SISE, asociada a la clave del intermediario de prueba y SIN alerta bloqueante
+      (si no, el caso derivaría a CP09/CP10). Debe tener vehículo (placa) asociado.
+    actor: intermediario
+    propiedades:
+      - { nombre: linea, fuente: matriz, valor: Autos }
+      - { nombre: ramo, fuente: qa, env: SDE_AUTOS_RAMO }
+      - { nombre: movimiento, fuente: qa, env: SDE_AUTOS_MOVIMIENTO }
+      - { nombre: sucursal, fuente: qa, env: SDE_SUCURSAL }
+      - { nombre: tipo_radicacion, fuente: matriz, valor: Individual }
+      - { nombre: forma_consulta, fuente: matriz, valor: Número de póliza }
+      - { nombre: poliza, fuente: qa, env: SDE_AUTOS_POLIZA, sensible: true }
+      # Clave intermediario de la cuenta USUARIO_intermediario (cuenta habilitada con rol CE_Intermediarios, 2026-10-13).
+      # No se usa en la UI: documenta que la póliza debe pertenecer a ESTA clave (si no, el caso deriva a carta de nombramiento).
+      - { nombre: clave_intermediario, fuente: qa, env: SDE_INTERMEDIARIO_CLAVE, sensible: true, opcional: true }
+    relaciones: póliza ↔ clave del intermediario (misma clave) ↔ vehículo/placa ↔ tomador/asegurado
+    usado_por: [HU03-CP02]
+    limpieza: CLEANUP_NOT_APPLICABLE — la radicación avanza a Análisis; no se desiste.
+
+  PLACA-MULTIPOLIZA:
+    descripcion: HU03-CP01. Placa asociada a MÁS DE UNA póliza vigente en SISE del intermediario.
+    actor: intermediario
+    propiedades:
+      - { nombre: linea, fuente: matriz, valor: Autos }
+      - { nombre: tipo_radicacion, fuente: matriz, valor: Individual }
+      - { nombre: forma_consulta, fuente: matriz, valor: Placa }
+      - { nombre: ramo, fuente: qa, env: SDE_AUTOS_RAMO }
+      - { nombre: movimiento, fuente: qa, env: SDE_AUTOS_MOVIMIENTO }
+      - { nombre: sucursal, fuente: qa, env: SDE_SUCURSAL }
+      - { nombre: placa, fuente: qa, env: SDE_PLACA_MULTIPOLIZA, sensible: true }
+      - { nombre: polizas_esperadas, fuente: qa, env: SDE_PLACA_MULTIPOLIZA_N }
+    usado_por: [HU03-CP01]
+    limpieza: CLEANUP_NOT_APPLICABLE.
+
+  POL-GENERALES-VIGENTE:
+    descripcion: HU03-CP03. Póliza Generales vigente del intermediario; Movimiento Modificación.
+    actor: intermediario
+    propiedades:
+      - { nombre: linea, fuente: matriz, valor: Generales }
+      - { nombre: tipo_radicacion, fuente: matriz, valor: Individual }
+      - { nombre: ramo, fuente: qa, env: SDE_GEN_RAMO }
+      - { nombre: movimiento, fuente: matriz, valor: Modificación }
+      - { nombre: sucursal, fuente: qa, env: SDE_SUCURSAL }
+      - { nombre: poliza, fuente: qa, env: SDE_GEN_POLIZA, sensible: true }
+    usado_por: [HU03-CP03]
+    limpieza: CLEANUP_NOT_APPLICABLE.
+
+  TOMADOR-EXISTENTE:
+    descripcion: HU03-CP04. Tipo y número de documento de un Tomador EXISTENTE en SISE (Póliza Nueva Generales).
+    actor: intermediario
+    propiedades:
+      - { nombre: linea, fuente: matriz, valor: Generales }
+      - { nombre: sucursal, fuente: qa, env: SDE_SUCURSAL }
+      - { nombre: tipo_radicacion, fuente: matriz, valor: Individual }
+      - { nombre: ramo, fuente: qa, env: SDE_GEN_RAMO }
+      - { nombre: movimiento, fuente: matriz, valor: Póliza Nueva }
+      - { nombre: tipo_documento, fuente: qa, env: SDE_TOMADOR_EXISTENTE_TIPO }
+      - { nombre: numero_documento, fuente: qa, env: SDE_TOMADOR_EXISTENTE_NUM, sensible: true }
+    usado_por: [HU03-CP04]
+    limpieza: CLEANUP_NOT_APPLICABLE.
+
+  TOMADOR-INEXISTENTE:
+    descripcion: HU03-CP05. Documento con formato válido que QA CONFIRMA inexistente en SISE (no se genera al azar).
+    actor: intermediario
+    propiedades:
+      - { nombre: linea, fuente: matriz, valor: Generales }
+      - { nombre: ramo, fuente: qa, env: SDE_GEN_RAMO }
+      - { nombre: movimiento, fuente: matriz, valor: Póliza Nueva }
+      - { nombre: sucursal, fuente: qa, env: SDE_SUCURSAL }
+      - { nombre: tipo_radicacion, fuente: matriz, valor: Individual }
+      - { nombre: tipo_documento, fuente: qa, env: SDE_TOMADOR_INEXISTENTE_TIPO }
+      - { nombre: numero_documento, fuente: qa, env: SDE_TOMADOR_INEXISTENTE_NUM, sensible: true }
+    usado_por: [HU03-CP05]
+    limpieza: CLEANUP_NOT_APPLICABLE.
+
+  POL-CUMPL-RCE:
+    descripcion: HU03-CP06/07/08/12. Pólizas de Cumplimiento (ramo con/sin RCE) y Póliza RCE vigente/inexistente.
+    actor: intermediario
+    propiedades:
+      - { nombre: linea, fuente: matriz, valor: Cumplimiento }
+      - { nombre: movimiento, fuente: qa, env: SDE_CUMPL_MOVIMIENTO }
+      - { nombre: sucursal, fuente: qa, env: SDE_SUCURSAL }
+      - { nombre: tipo_radicacion, fuente: matriz, valor: Individual }
+      - { nombre: ramo_rce, fuente: qa, env: SDE_CUMPL_RAMO_RCE }
+      - { nombre: ramo_con_rce, fuente: qa, env: SDE_CUMPL_RAMO_CON_RCE }
+      - { nombre: poliza_ramo_con_rce, fuente: qa, env: SDE_CUMPL_POLIZA_CON_RCE, sensible: true }
+      - { nombre: ramo_sin_rce, fuente: qa, env: SDE_CUMPL_RAMO_SIN_RCE }
+      - { nombre: poliza_sin_rce, fuente: qa, env: SDE_CUMPL_POLIZA_SIN_RCE, sensible: true }
+      - { nombre: poliza_rce, fuente: qa, env: SDE_CUMPL_POLIZA_RCE, sensible: true }
+      - { nombre: poliza_rce_inexistente, fuente: qa, env: SDE_CUMPL_POLIZA_RCE_INEXISTENTE, sensible: true, opcional: true }
+    usado_por: [HU03-CP06, HU03-CP07, HU03-CP08, HU03-CP12]
+    limpieza: CLEANUP_NOT_APPLICABLE.
+
+  POL-OTRO-INTERMEDIARIO:
+    descripcion: HU03-CP10. Póliza vigente cuya clave de intermediario es DISTINTA a la del intermediario de prueba, sin alerta bloqueante; y una carta de nombramiento de prueba.
+    actor: intermediario
+    propiedades:
+      - { nombre: poliza, fuente: qa, env: SDE_POLIZA_OTRO_INTERMEDIARIO, sensible: true }
+      - { nombre: carta_nombramiento, fuente: qa, env: SDE_CARTA_NOMBRAMIENTO_ARCHIVO }
+    usado_por: [HU03-CP10]
+    limpieza: CLEANUP_NOT_APPLICABLE.
+
+  POL-INEXISTENTE-RECONSULTA:
+    descripcion: HU03-CP11. Número de póliza con formato válido INEXISTENTE en SISE (confirmado por QA) + póliza válida para la reconsulta.
+    actor: intermediario
+    propiedades:
+      - { nombre: poliza_inexistente, fuente: qa, env: SDE_POLIZA_INEXISTENTE, sensible: true }
+      - { nombre: poliza_valida, fuente: qa, env: SDE_AUTOS_POLIZA, sensible: true }
+    usado_por: [HU03-CP11]
+    limpieza: CLEANUP_NOT_APPLICABLE.

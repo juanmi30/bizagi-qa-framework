@@ -1,0 +1,102 @@
+# HU03-CP01 — Radicación Individual Autos por Placa con varias pólizas  (Fase 2, familia F-INDIVIDUAL-CONSULTA)
+# Fuente: fuentes/20261006_SDE_CEL_V2_Casos de Prueba_HU03.xlsx, hoja CP01 (22 pasos).
+# Actor: intermediario (la matriz exige "un intermediario habilitado"). ENV-03 vigente (2026-10-13) → BLOCKED de ambiente.
+# Formulario de inicio de Autos Individual calibrado (CP05: Forma de Consulta Unitaria = radio "Número de póliza"/"Placa").
+# Etiqueta del campo Placa y TODO "Completar información de solicitud" [PENDIENTE]: nunca se ha podido observar.
+# UI-06: la selección única se demuestra seleccionando dos filas distintas; cada paso exige exactamente 1 seleccionada.
+id: HU03-CP01
+titulo: Individual Autos por Placa — SISE con varias pólizas, selección única y Completar información
+etiquetas: [hu03, fase2, individual, autos, placa, cp01]
+actores: [intermediario]
+datasets: [CFG-PROCESO, PLACA-MULTIPOLIZA]
+cleanup:
+  politica: CLEANUP_NOT_APPLICABLE
+  razon: El caso avanza a Análisis (estado de negocio esperado); no hay acción reversible para deshacerlo.
+pasos:
+  - incluir: sesion-y-formulario
+    con: { actor: intermediario, p_sesion: [2], p_formulario: [3] }
+
+  - matriz: [4]
+    hacer: diligenciar
+    campos:
+      - { campo: Línea, valor: "${dato:PLACA-MULTIPOLIZA.linea}", tipo: lista }
+      - { campo: Ramo, valor: "${dato:PLACA-MULTIPOLIZA.ramo}", tipo: lista }
+      - { campo: Sucursal, valor: "${dato:PLACA-MULTIPOLIZA.sucursal}", tipo: lista }
+    verificar:
+      - valor: { campo: Tipo de Solicitud, igual: "${dato:PLACA-MULTIPOLIZA.movimiento}" }
+
+  - matriz: [5]
+    hacer: diligenciar
+    campos:
+      - { campo: Tipo de Radicación, valor: "${dato:PLACA-MULTIPOLIZA.tipo_radicacion}", tipo: radio }
+      - { campo: Forma de Consulta Unitaria, valor: "${dato:PLACA-MULTIPOLIZA.forma_consulta}", tipo: radio }
+    verificar:
+      # "Placa" también es una OPCIÓN del radio: se verifica la etiqueta de CAMPO.
+      - campo_visible: Placa
+      - campo_no_visible: Número de Póliza
+      - no_visible: Descripción de la Solicitud (Masiva/Múltiple)
+
+  - matriz: [6]
+    hacer: verificar
+    verificar:
+      - etiquetas: [Línea, Ramo, Tipo de Solicitud, Sucursal, Tipo de Radicación, Forma de Consulta Unitaria, Placa]
+      - obligatorio: [Placa]
+
+  - matriz: [6]
+    hacer: no_automatizado
+    razon: Ortografía/capitalización global sin glosario de referencia; se verifican las etiquetas exactas (hallazgos en OBS).
+
+  - matriz: [7]
+    hacer: diligenciar
+    campos:
+      - { campo: Placa, valor: "${dato:PLACA-MULTIPOLIZA.placa}", tipo: texto }
+
+  - incluir: individual-hasta-completar
+    con:
+      actor: intermediario
+      linea: "${dato:PLACA-MULTIPOLIZA.linea}"
+      criterio: la Placa registrada como criterio de búsqueda
+      respuesta_sise: retorna las pólizas vigentes asociadas a la Placa
+
+  - matriz: [14]
+    hacer: tabla_verificar
+    tabla: Seleccione la póliza asociada a la solicitud
+    minimo_filas: 2
+
+  - matriz: [14]
+    hacer: tabla_seleccionar_fila
+    tabla: Seleccione la póliza asociada a la solicitud
+    fila: 2
+
+  - matriz: [14, 15]
+    hacer: tabla_seleccionar_fila
+    tabla: Seleccione la póliza asociada a la solicitud
+    fila: 1
+    verificar:
+      - visible: Tomador
+      - visible: Asegurado
+      - visible: Información del Vehículo
+
+  - matriz: [16]
+    hacer: verificar
+    verificar:
+      - solo_lectura: [Placa]
+
+  - incluir: correo-facturacion
+    con: { p_correo: [17] }
+
+  - matriz: [18]
+    hacer: verificar
+    verificar:
+      - editable: [Comentarios]
+
+  - matriz: [18]
+    hacer: no_automatizado
+    razon: Tabla de documentos de Completar información — nombre y tipos parametrizados sin especificar (DOCS-OBLIGATORIOS).
+
+  - matriz: [19]
+    hacer: no_automatizado
+    razon: Nomenclatura completa sin glosario de referencia; se cubren las etiquetas exactas citadas en la matriz.
+
+  - incluir: cierre-completar
+    con: { actor: intermediario, p_botones: [20], p_confirmar: [21], p_accion: [21, 22] }

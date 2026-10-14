@@ -1,0 +1,781 @@
+{
+  "schemaVersion": "afi-agent-intake/v1",
+  "knowledgeProposals": [
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-pantalla-direccion",
+      "entidad": {
+        "tipo": "pantalla-ui",
+        "id": "pantalla-direccion",
+        "descripcion": "Pantalla 'Ingresa la información asociada a la dirección' del portal de afiliaciones.",
+        "titulo": "Ingresa la información asociada a la dirección",
+        "etapa": "direccion"
+      },
+      "origen": {
+        "fuente": "REQ 228319 HU 7.14 Reorganización Portal pantallas Empresa (orden de pantallas Empleador Jurídico)",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 11"
+          }
+        ]
+      },
+      "evidenciaSemantica": "El orden propuesto de pantallas para Empleador Jurídico ubica 'Ingresa la información asociada a la dirección' en la posición 4, después de 'Información de contacto'; el piloto del portal la reconoce por ese mismo encabezado.",
+      "estado": "PENDING_REVIEW",
+      "revisiones": []
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-transicion-contacto-a-direccion",
+      "entidad": {
+        "tipo": "transicion-ui",
+        "id": "transicion-contacto-a-direccion",
+        "descripcion": "Navegación del portal: Información de contacto (3) -> información asociada a la dirección (4).",
+        "desde": "informacion-contacto",
+        "hacia": "pantalla-direccion",
+        "avance": "Continuar"
+      },
+      "origen": {
+        "fuente": "REQ 228319 HU 7.14 Reorganización Portal pantallas Empresa (orden de pantallas Empleador Jurídico)",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 11"
+          }
+        ]
+      },
+      "evidenciaSemantica": "El orden propuesto de pantallas del REQ fija esta secuencia (Información de contacto (3) -> información asociada a la dirección (4).); el avance entre formularios se hace con el botón \"Continuar\" (REQ 228332: se bloquean \"Buscar\" y \"Continuar\" hasta registrar otra identificación).",
+      "estado": "PENDING_REVIEW",
+      "revisiones": []
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-transicion-direccion-a-representante-legal",
+      "entidad": {
+        "tipo": "transicion-ui",
+        "id": "transicion-direccion-a-representante-legal",
+        "descripcion": "Navegación del portal: Dirección (4) -> Representante legal (5).",
+        "desde": "pantalla-direccion",
+        "hacia": "pantalla-representante-legal",
+        "avance": "Continuar",
+        "condicion": "Aportante Empleador"
+      },
+      "origen": {
+        "fuente": "REQ 228319 HU 7.14 Reorganización Portal pantallas Empresa (orden de pantallas Empleador Jurídico)",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 11"
+          },
+          {
+            "hu": "HU 7.14",
+            "caso": "CP02",
+            "paso": "Paso 5"
+          }
+        ]
+      },
+      "evidenciaSemantica": "El orden propuesto de pantallas del REQ fija esta secuencia (Dirección (4) -> Representante legal (5).); el avance entre formularios se hace con el botón \"Continuar\" (REQ 228332: se bloquean \"Buscar\" y \"Continuar\" hasta registrar otra identificación).",
+      "estado": "PENDING_REVIEW",
+      "revisiones": []
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-transicion-representante-legal-a-contacto-caja",
+      "entidad": {
+        "tipo": "transicion-ui",
+        "id": "transicion-representante-legal-a-contacto-caja",
+        "descripcion": "Navegación del portal: Representante legal (5) -> contacto con la caja (6).",
+        "desde": "pantalla-representante-legal",
+        "hacia": "pantalla-contacto-caja",
+        "avance": "Continuar",
+        "condicion": "Empleador Jurídico (para Empleador Natural la pantalla de contacto con la caja se oculta)"
+      },
+      "origen": {
+        "fuente": "REQ 228319 HU 7.14 Reorganización Portal pantallas Empresa (orden de pantallas Empleador Jurídico)",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 18"
+          },
+          {
+            "hu": "HU 7.14",
+            "caso": "CP02",
+            "paso": "Paso 9"
+          }
+        ]
+      },
+      "evidenciaSemantica": "El orden propuesto de pantallas del REQ fija esta secuencia (Representante legal (5) -> contacto con la caja (6).); el avance entre formularios se hace con el botón \"Continuar\" (REQ 228332: se bloquean \"Buscar\" y \"Continuar\" hasta registrar otra identificación).",
+      "estado": "PENDING_REVIEW",
+      "revisiones": []
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-transicion-contacto-caja-a-responsable-portal",
+      "entidad": {
+        "tipo": "transicion-ui",
+        "id": "transicion-contacto-caja-a-responsable-portal",
+        "descripcion": "Navegación del portal: Contacto con la caja (6) -> responsable del portal (7).",
+        "desde": "pantalla-contacto-caja",
+        "hacia": "pantalla-responsable-portal",
+        "avance": "Continuar",
+        "condicion": "Empleador Jurídico (para Empleador Natural la pantalla del responsable del portal se oculta)"
+      },
+      "origen": {
+        "fuente": "REQ 228319 HU 7.14 Reorganización Portal pantallas Empresa (orden de pantallas Empleador Jurídico)",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 23"
+          },
+          {
+            "hu": "HU 7.14",
+            "caso": "CP02",
+            "paso": "Paso 14"
+          }
+        ]
+      },
+      "evidenciaSemantica": "El orden propuesto de pantallas del REQ fija esta secuencia (Contacto con la caja (6) -> responsable del portal (7).); el avance entre formularios se hace con el botón \"Continuar\" (REQ 228332: se bloquean \"Buscar\" y \"Continuar\" hasta registrar otra identificación).",
+      "estado": "PENDING_REVIEW",
+      "revisiones": []
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-transicion-responsable-portal-a-documentos",
+      "entidad": {
+        "tipo": "transicion-ui",
+        "id": "transicion-responsable-portal-a-documentos",
+        "descripcion": "Navegación del portal: Responsable del portal (7) -> Documentación (8).",
+        "desde": "pantalla-responsable-portal",
+        "hacia": "pantalla-documentos",
+        "avance": "Continuar",
+        "condicion": "Empleador Jurídico"
+      },
+      "origen": {
+        "fuente": "REQ 228319 HU 7.14 Reorganización Portal pantallas Empresa (orden de pantallas Empleador Jurídico)",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 28"
+          },
+          {
+            "hu": "HU 7.14",
+            "caso": "CP02",
+            "paso": "Paso 19"
+          }
+        ]
+      },
+      "evidenciaSemantica": "El orden propuesto de pantallas del REQ fija esta secuencia (Responsable del portal (7) -> Documentación (8).); el avance entre formularios se hace con el botón \"Continuar\" (REQ 228332: se bloquean \"Buscar\" y \"Continuar\" hasta registrar otra identificación).",
+      "estado": "PENDING_REVIEW",
+      "revisiones": []
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-pantalla-representante-legal",
+      "entidad": {
+        "tipo": "pantalla-ui",
+        "id": "pantalla-representante-legal",
+        "descripcion": "Pantalla 'Ingresa información representante legal' en el portal de afiliaciones.",
+        "titulo": "Ingresa información representante legal",
+        "consulta": "Buscar"
+      },
+      "origen": {
+        "fuente": "REQ 228319 HU 7.14 Reorganización Portal pantallas Empresa (orden de pantallas Empleador Jurídico); REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 12"
+          },
+          {
+            "hu": "HU 7.14",
+            "caso": "CP02",
+            "paso": "Paso 5"
+          }
+        ]
+      },
+      "evidenciaSemantica": "El REQ nombra la pantalla \"Ingresa información representante legal\"; al ingresar Tipo de Documento y Número de Identificación el usuario presiona el botón \"Buscar\" para consultar nombres y apellidos.",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-pantalla-contacto-caja",
+      "entidad": {
+        "tipo": "pantalla-ui",
+        "id": "pantalla-contacto-caja",
+        "descripcion": "Pantalla 'Ingresa información contacto con la caja' en el portal.",
+        "titulo": "Ingresa información contacto con la caja",
+        "consulta": "Buscar"
+      },
+      "origen": {
+        "fuente": "REQ 228319 HU 7.14 Reorganización Portal pantallas Empresa (orden de pantallas Empleador Jurídico); REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 18"
+          },
+          {
+            "hu": "HU 7.14",
+            "caso": "CP02",
+            "paso": "Paso 9"
+          }
+        ]
+      },
+      "evidenciaSemantica": "El REQ nombra la pantalla \"Ingresa información contacto con la caja\"; al ingresar Tipo de Documento y Número de Identificación el usuario presiona el botón \"Buscar\" para consultar nombres y apellidos.",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-pantalla-responsable-portal",
+      "entidad": {
+        "tipo": "pantalla-ui",
+        "id": "pantalla-responsable-portal",
+        "descripcion": "Pantalla 'Ingresa información responsable del portal' en el portal.",
+        "titulo": "Ingresa información responsable del portal",
+        "consulta": "Buscar"
+      },
+      "origen": {
+        "fuente": "REQ 228319 HU 7.14 Reorganización Portal pantallas Empresa (orden de pantallas Empleador Jurídico); REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 23"
+          },
+          {
+            "hu": "HU 7.14",
+            "caso": "CP02",
+            "paso": "Paso 14"
+          }
+        ]
+      },
+      "evidenciaSemantica": "El REQ nombra la pantalla \"Ingresa información responsable del portal\"; al ingresar Tipo de Documento y Número de Identificación el usuario presiona el botón \"Buscar\" para consultar nombres y apellidos.",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-pantalla-documentos",
+      "entidad": {
+        "tipo": "pantalla-ui",
+        "id": "pantalla-documentos",
+        "descripcion": "Pantalla 'Documentos' para la descarga/cargue de formularios y archivos obligatorios.",
+        "titulo": "Documentación"
+      },
+      "origen": {
+        "fuente": "REQ 228319 HU 7.14 Reorganización Portal pantallas Empresa (orden de pantallas Empleador Jurídico); piloto del portal",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 28"
+          },
+          {
+            "hu": "HU 7.14",
+            "caso": "CP02",
+            "paso": "Paso 19"
+          }
+        ]
+      },
+      "evidenciaSemantica": "El orden de pantallas nombra \"Documentación\" (posición 8) y el piloto del portal la reconoce por ese encabezado.",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-representante-legal-tipo-identificacion",
+      "entidad": {
+        "tipo": "campo-ui",
+        "id": "representante-legal-tipo-identificacion",
+        "descripcion": "Campo 'Tipo de identificación' del Representante Legal.",
+        "etiqueta": "Tipo de identificación",
+        "dato": "tipoIdentificacion",
+        "obligatorio": "si"
+      },
+      "origen": {
+        "fuente": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx; REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 12"
+          }
+        ]
+      },
+      "evidenciaSemantica": "La etiqueta \"Tipo de identificación\" es la citada en la descripción aprobada del campo; el campo captura tipoIdentificacion de la persona. Tipo y número de identificación son los que se registran para consultar a la persona (diseño QA y REQ).",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-representante-legal-numero-identificacion",
+      "entidad": {
+        "tipo": "campo-ui",
+        "id": "representante-legal-numero-identificacion",
+        "descripcion": "Campo 'Número de identificación' del Representante Legal.",
+        "etiqueta": "Número de identificación",
+        "dato": "numeroIdentificacion",
+        "obligatorio": "si"
+      },
+      "origen": {
+        "fuente": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx; REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 12"
+          }
+        ]
+      },
+      "evidenciaSemantica": "La etiqueta \"Número de identificación\" es la citada en la descripción aprobada del campo; el campo captura numeroIdentificacion de la persona. Tipo y número de identificación son los que se registran para consultar a la persona (diseño QA y REQ).",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-representante-legal-primer-nombre",
+      "entidad": {
+        "tipo": "campo-ui",
+        "id": "representante-legal-primer-nombre",
+        "descripcion": "Campo 'Primer nombre' del Representante Legal.",
+        "etiqueta": "Primer nombre",
+        "dato": "primerNombre"
+      },
+      "origen": {
+        "fuente": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx; REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 12"
+          }
+        ]
+      },
+      "evidenciaSemantica": "La etiqueta \"Primer nombre\" es la citada en la descripción aprobada del campo; el campo captura primerNombre de la persona.",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-representante-legal-segundo-nombre",
+      "entidad": {
+        "tipo": "campo-ui",
+        "id": "representante-legal-segundo-nombre",
+        "descripcion": "Campo 'Segundo nombre' del Representante Legal.",
+        "etiqueta": "Segundo nombre",
+        "dato": "segundoNombre"
+      },
+      "origen": {
+        "fuente": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx; REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 12"
+          }
+        ]
+      },
+      "evidenciaSemantica": "La etiqueta \"Segundo nombre\" es la citada en la descripción aprobada del campo; el campo captura segundoNombre de la persona.",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-representante-legal-primer-apellido",
+      "entidad": {
+        "tipo": "campo-ui",
+        "id": "representante-legal-primer-apellido",
+        "descripcion": "Campo 'Primer apellido' del Representante Legal.",
+        "etiqueta": "Primer apellido",
+        "dato": "primerApellido"
+      },
+      "origen": {
+        "fuente": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx; REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 12"
+          }
+        ]
+      },
+      "evidenciaSemantica": "La etiqueta \"Primer apellido\" es la citada en la descripción aprobada del campo; el campo captura primerApellido de la persona.",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-representante-legal-segundo-apellido",
+      "entidad": {
+        "tipo": "campo-ui",
+        "id": "representante-legal-segundo-apellido",
+        "descripcion": "Campo 'Segundo apellido' del Representante Legal.",
+        "etiqueta": "Segundo apellido",
+        "dato": "segundoApellido"
+      },
+      "origen": {
+        "fuente": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx; REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 12"
+          }
+        ]
+      },
+      "evidenciaSemantica": "La etiqueta \"Segundo apellido\" es la citada en la descripción aprobada del campo; el campo captura segundoApellido de la persona.",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-contacto-caja-tipo-identificacion",
+      "entidad": {
+        "tipo": "campo-ui",
+        "id": "contacto-caja-tipo-identificacion",
+        "descripcion": "Campo 'Tipo de identificación' del Contacto con la Caja.",
+        "etiqueta": "Tipo de identificación",
+        "dato": "tipoIdentificacion",
+        "obligatorio": "si"
+      },
+      "origen": {
+        "fuente": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx; REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 18"
+          }
+        ]
+      },
+      "evidenciaSemantica": "La etiqueta \"Tipo de identificación\" es la citada en la descripción aprobada del campo; el campo captura tipoIdentificacion de la persona. Tipo y número de identificación son los que se registran para consultar a la persona (diseño QA y REQ).",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-contacto-caja-numero-identificacion",
+      "entidad": {
+        "tipo": "campo-ui",
+        "id": "contacto-caja-numero-identificacion",
+        "descripcion": "Campo 'Número de identificación' del Contacto con la Caja.",
+        "etiqueta": "Número de identificación",
+        "dato": "numeroIdentificacion",
+        "obligatorio": "si"
+      },
+      "origen": {
+        "fuente": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx; REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 18"
+          }
+        ]
+      },
+      "evidenciaSemantica": "La etiqueta \"Número de identificación\" es la citada en la descripción aprobada del campo; el campo captura numeroIdentificacion de la persona. Tipo y número de identificación son los que se registran para consultar a la persona (diseño QA y REQ).",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-contacto-caja-primer-nombre",
+      "entidad": {
+        "tipo": "campo-ui",
+        "id": "contacto-caja-primer-nombre",
+        "descripcion": "Campo 'Primer nombre' del Contacto con la Caja.",
+        "etiqueta": "Primer nombre",
+        "dato": "primerNombre"
+      },
+      "origen": {
+        "fuente": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx; REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 18"
+          }
+        ]
+      },
+      "evidenciaSemantica": "La etiqueta \"Primer nombre\" es la citada en la descripción aprobada del campo; el campo captura primerNombre de la persona.",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-contacto-caja-segundo-nombre",
+      "entidad": {
+        "tipo": "campo-ui",
+        "id": "contacto-caja-segundo-nombre",
+        "descripcion": "Campo 'Segundo nombre' del Contacto con la Caja.",
+        "etiqueta": "Segundo nombre",
+        "dato": "segundoNombre"
+      },
+      "origen": {
+        "fuente": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx; REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 18"
+          }
+        ]
+      },
+      "evidenciaSemantica": "La etiqueta \"Segundo nombre\" es la citada en la descripción aprobada del campo; el campo captura segundoNombre de la persona.",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-contacto-caja-primer-apellido",
+      "entidad": {
+        "tipo": "campo-ui",
+        "id": "contacto-caja-primer-apellido",
+        "descripcion": "Campo 'Primer apellido' del Contacto con la Caja.",
+        "etiqueta": "Primer apellido",
+        "dato": "primerApellido"
+      },
+      "origen": {
+        "fuente": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx; REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 18"
+          }
+        ]
+      },
+      "evidenciaSemantica": "La etiqueta \"Primer apellido\" es la citada en la descripción aprobada del campo; el campo captura primerApellido de la persona.",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-contacto-caja-segundo-apellido",
+      "entidad": {
+        "tipo": "campo-ui",
+        "id": "contacto-caja-segundo-apellido",
+        "descripcion": "Campo 'Segundo apellido' del Contacto con la Caja.",
+        "etiqueta": "Segundo apellido",
+        "dato": "segundoApellido"
+      },
+      "origen": {
+        "fuente": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx; REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 18"
+          }
+        ]
+      },
+      "evidenciaSemantica": "La etiqueta \"Segundo apellido\" es la citada en la descripción aprobada del campo; el campo captura segundoApellido de la persona.",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-contacto-caja-correo",
+      "entidad": {
+        "tipo": "campo-ui",
+        "id": "contacto-caja-correo",
+        "descripcion": "Campo 'Correo electrónico' en la pantalla de contacto con la caja.",
+        "etiqueta": "Correo electrónico",
+        "dato": "correo",
+        "obligatorio": "si"
+      },
+      "origen": {
+        "fuente": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx; REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 18"
+          }
+        ]
+      },
+      "evidenciaSemantica": "La etiqueta \"Correo electrónico\" es la citada en la descripción aprobada del campo; el campo captura correo de la persona. El REQ indica que el correo electrónico del contacto con la caja se presenta vacío para su diligenciamiento obligatorio.",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-responsable-portal-tipo-identificacion",
+      "entidad": {
+        "tipo": "campo-ui",
+        "id": "responsable-portal-tipo-identificacion",
+        "descripcion": "Campo 'Tipo de identificación' del Responsable del Portal.",
+        "etiqueta": "Tipo de identificación",
+        "dato": "tipoIdentificacion",
+        "obligatorio": "si"
+      },
+      "origen": {
+        "fuente": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx; REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 23"
+          }
+        ]
+      },
+      "evidenciaSemantica": "La etiqueta \"Tipo de identificación\" es la citada en la descripción aprobada del campo; el campo captura tipoIdentificacion de la persona. Tipo y número de identificación son los que se registran para consultar a la persona (diseño QA y REQ).",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-responsable-portal-numero-identificacion",
+      "entidad": {
+        "tipo": "campo-ui",
+        "id": "responsable-portal-numero-identificacion",
+        "descripcion": "Campo 'Número de identificación' del Responsable del Portal.",
+        "etiqueta": "Número de identificación",
+        "dato": "numeroIdentificacion",
+        "obligatorio": "si"
+      },
+      "origen": {
+        "fuente": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx; REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 23"
+          }
+        ]
+      },
+      "evidenciaSemantica": "La etiqueta \"Número de identificación\" es la citada en la descripción aprobada del campo; el campo captura numeroIdentificacion de la persona. Tipo y número de identificación son los que se registran para consultar a la persona (diseño QA y REQ).",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-responsable-portal-primer-nombre",
+      "entidad": {
+        "tipo": "campo-ui",
+        "id": "responsable-portal-primer-nombre",
+        "descripcion": "Campo 'Primer nombre' del Responsable del Portal.",
+        "etiqueta": "Primer nombre",
+        "dato": "primerNombre"
+      },
+      "origen": {
+        "fuente": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx; REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 23"
+          }
+        ]
+      },
+      "evidenciaSemantica": "La etiqueta \"Primer nombre\" es la citada en la descripción aprobada del campo; el campo captura primerNombre de la persona.",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-responsable-portal-segundo-nombre",
+      "entidad": {
+        "tipo": "campo-ui",
+        "id": "responsable-portal-segundo-nombre",
+        "descripcion": "Campo 'Segundo nombre' del Responsable del Portal.",
+        "etiqueta": "Segundo nombre",
+        "dato": "segundoNombre"
+      },
+      "origen": {
+        "fuente": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx; REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 23"
+          }
+        ]
+      },
+      "evidenciaSemantica": "La etiqueta \"Segundo nombre\" es la citada en la descripción aprobada del campo; el campo captura segundoNombre de la persona.",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-responsable-portal-primer-apellido",
+      "entidad": {
+        "tipo": "campo-ui",
+        "id": "responsable-portal-primer-apellido",
+        "descripcion": "Campo 'Primer apellido' del Responsable del Portal.",
+        "etiqueta": "Primer apellido",
+        "dato": "primerApellido"
+      },
+      "origen": {
+        "fuente": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx; REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 23"
+          }
+        ]
+      },
+      "evidenciaSemantica": "La etiqueta \"Primer apellido\" es la citada en la descripción aprobada del campo; el campo captura primerApellido de la persona.",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    },
+    {
+      "schemaVersion": "afi-knowledge-proposal/v1",
+      "proposalId": "prop-completar-responsable-portal-segundo-apellido",
+      "entidad": {
+        "tipo": "campo-ui",
+        "id": "responsable-portal-segundo-apellido",
+        "descripcion": "Campo 'Segundo apellido' del Responsable del Portal.",
+        "etiqueta": "Segundo apellido",
+        "dato": "segundoApellido"
+      },
+      "origen": {
+        "fuente": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx; REQ 228332 HU 7.14.1 Reorganización de flujo consumo Registraduría",
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01",
+            "paso": "Paso 23"
+          }
+        ]
+      },
+      "evidenciaSemantica": "La etiqueta \"Segundo apellido\" es la citada en la descripción aprobada del campo; el campo captura segundoApellido de la persona.",
+      "estado": "PENDING_REVIEW",
+      "revisiones": [],
+      "operacion": "completar"
+    }
+  ],
+  "classificationRequests": [],
+  "testDataRequirements": []
+}

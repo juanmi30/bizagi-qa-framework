@@ -1,0 +1,136 @@
+# HU06-CP04 — Radicación Masiva de Cumplimiento CON propiedad Póliza RCE  (Fase 2, familia F-MASIVO-ESTRUCTURAR)
+# Fuente: fuentes/20260928_SDE_CEL_V1_Casos de Prueba_HU06.xlsx, hoja CP04 (23 pasos).
+# Actores: radica el intermediario (ENV-03 vigente → BLOCKED de ambiente), estructura el analista.
+# P15 (comportamiento de Ramo RCE / Número de Póliza RCE con propiedad RCE) no está especificado (FUNC-05): se declara.
+# Número Póliza: maxlength=20 observado en QA (OBS-11); la regla 9–12 se verifica intentando confirmar (P18).
+# La fila que agrega la prueba (poliza_nueva_fila) es la ÚNICA que se elimina, por su valor exacto (P22).
+# UI-10 (2026-10-13): en el pop-up real las etiquetas NO siempre coinciden con las columnas de la grilla (caso 430). Calibrado:
+# "Forma Consulta" (solo visualización) y "Número Póliza" (input, maxlength 20) en Masiva Modificación (caso 426). SIN calibrar:
+# "Placa", "¿Requiere modificar RCE?", "Ramo RCE", "Número Póliza RCE". No ejecutar los pasos del pop-up hasta calibrarlos con QA
+# (una etiqueta errónea con el pop-up abierto deja el caso inutilizable, BUG-03). Datos: la Matriz Data pide formato válido,
+# "Datos de Cliente: N/A".
+id: HU06-CP04
+titulo: Masivo Cumplimiento con propiedad RCE — sin pregunta RCE, formato de Número Póliza, agregar y eliminar fila propia
+etiquetas: [hu06, fase2, masivo, cumplimiento, rce, cp04]
+actores: [intermediario, analista]
+datasets: [CFG-PROCESO, INI-CUMPL-MASIVO-CON-RCE]
+cleanup:
+  politica: CLEANUP_NOT_APPLICABLE
+  razon: El caso queda en Estructurar información; la fila agregada por la prueba se elimina dentro del propio CP (P22).
+pasos:
+  - incluir: sesion-y-formulario
+    con: { actor: intermediario, p_sesion: [2], p_formulario: [2, 3] }
+
+  - matriz: [3]
+    hacer: diligenciar
+    campos:
+      - { campo: Línea, valor: "${dato:INI-CUMPL-MASIVO-CON-RCE.linea}", tipo: lista }
+      - { campo: Ramo, valor: "${dato:INI-CUMPL-MASIVO-CON-RCE.ramo_con_rce}", tipo: lista }
+      - { campo: Tipo de Solicitud, valor: "${dato:INI-CUMPL-MASIVO-CON-RCE.movimiento}", tipo: lista }
+
+  - matriz: [4]
+    hacer: diligenciar
+    campos:
+      - { campo: Sucursal, valor: "${dato:INI-CUMPL-MASIVO-CON-RCE.sucursal}", tipo: lista }
+
+  - matriz: [5]
+    hacer: diligenciar
+    campos:
+      - { campo: Tipo de Radicación, valor: "${dato:INI-CUMPL-MASIVO-CON-RCE.tipo_radicacion}", tipo: radio }
+    verificar:
+      - visible: Descripción de la Solicitud (Masiva/Múltiple)
+
+  - matriz: [6]
+    hacer: verificar
+    verificar:
+      - texto_exacto: "Masivo: Solicitud asociada a más de una póliza de cumplimiento y/o RCE."
+
+  - matriz: [7]
+    hacer: diligenciar
+    campos:
+      - { campo: ¿Su solicitud requiere cambio de intermediario?, valor: "No", tipo: radio }
+      - { campo: Descripción de la Solicitud (Masiva/Múltiple), valor: "${dato:INI-CUMPL-MASIVO-CON-RCE.narrativa} ${dato:INI-CUMPL-MASIVO-CON-RCE.narrativa_polizas}", tipo: area }
+
+  - incluir: masivo-hasta-estructurar
+    con: { p_crear: [8], p_compuerta: [9], p_worker: [9], p_estructurar: [10] }
+
+  - matriz: [11]
+    hacer: verificar
+    verificar:
+      - solo_lectura: [Número de Caso, Línea, Ramo, Movimiento, Sucursal, Tipo Radicación]
+
+  - matriz: [12]
+    hacer: tabla_abrir_fila
+    formulario: detalle-polizas-cumplimiento
+    tabla: Detalle Polizas Asociadas
+    fila: 1
+
+  - matriz: [13]
+    hacer: verificar
+    verificar:
+      - visible: Forma Consulta
+
+  - matriz: [14]
+    hacer: verificar
+    verificar:
+      - no_visible: ¿Requiere modificar RCE?
+
+  - matriz: [15]
+    hacer: no_automatizado
+    razon: >-
+      La matriz no define el comportamiento esperado de Ramo RCE y Número de Póliza RCE cuando el Ramo tiene la
+      propiedad Póliza RCE (FUNC-05); sin criterio no hay aserción objetiva.
+
+  - matriz: [16, 17]
+    hacer: intentar_diligenciar
+    campo: Número Póliza
+    valor: ABCDEFGHI
+    esperado_mostrado: ""
+
+  - matriz: [18]
+    hacer: intentar_diligenciar
+    campo: Número Póliza
+    valor: "12345678"
+    esperado_mostrado: "12345678"
+
+  - matriz: [18]
+    hacer: dialogo_confirmar
+    espera: permanece_abierto
+
+  - matriz: [19]
+    hacer: diligenciar
+    campos:
+      - { campo: Número Póliza, valor: "${dato:INI-CUMPL-MASIVO-CON-RCE.poliza}", tipo: texto }
+
+  - matriz: [19]
+    hacer: dialogo_confirmar
+    espera: cierra
+    fila_resultante:
+      Número Póliza: "${dato:INI-CUMPL-MASIVO-CON-RCE.poliza}"
+
+  - matriz: [20]
+    hacer: tabla_agregar
+    formulario: detalle-polizas-cumplimiento
+    tabla: Detalle Polizas Asociadas
+    verificar:
+      - no_visible: ¿Requiere modificar RCE?
+
+  - matriz: [21]
+    hacer: diligenciar
+    campos:
+      - { campo: Número Póliza, valor: "${dato:INI-CUMPL-MASIVO-CON-RCE.poliza_nueva_fila}", tipo: texto }
+
+  - matriz: [21]
+    hacer: dialogo_confirmar
+    espera: cierra
+    fila_resultante:
+      Número Póliza: "${dato:INI-CUMPL-MASIVO-CON-RCE.poliza_nueva_fila}"
+
+  - matriz: [22]
+    hacer: tabla_eliminar_fila
+    tabla: Detalle Polizas Asociadas
+    fila_con:
+      Número Póliza: "${dato:INI-CUMPL-MASIVO-CON-RCE.poliza_nueva_fila}"
+
+  - incluir: estructurar-secciones
+    con: { p_pestanas: [23], p_observaciones: [23] }

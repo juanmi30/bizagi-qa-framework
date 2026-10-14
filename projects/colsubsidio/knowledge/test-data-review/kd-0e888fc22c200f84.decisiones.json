@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "afi-test-data-decisions/v1",
+  "batchId": "kd-0e888fc22c200f84",
+  "revisionBase": 14,
+  "decisiones": [
+    {
+      "proposalId": "ps-empresa-empleador-juridico-rues-con-rep-legal-2",
+      "hash": "f3e0a2521ba551860bfee6a0fdd252d574827b3f87528695a7c57bd2a2b5ab64",
+      "decision": null,
+      "revisor": "",
+      "comentario": ""
+    }
+  ],
+  "compartidos": []
+}

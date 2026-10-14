@@ -1,0 +1,28 @@
+proceso: Proceso de prueba
+escenario: Escenario válido
+etiquetas: [regresion, validacion]
+
+inicio:
+  modo: crear-caso
+  usuario: analista1
+  proceso_a_crear: Proceso de prueba
+
+pasos:
+  - actividad: Registrar solicitud
+    llenar:
+      - campo: Nombre
+        valor: Prueba
+        tipo: texto
+
+      - campo: Fecha
+        valor: 19/08/2026
+        tipo: fecha
+
+      - campo: Tipo
+        valor: Opción A
+        tipo: lista
+
+    accion: Siguiente
+
+hazards:
+  - el_caso_avanza_a: Revisar solicitud

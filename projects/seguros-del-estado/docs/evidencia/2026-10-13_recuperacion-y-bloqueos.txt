@@ -1,0 +1,50 @@
+SDE-CEL — Evidencia textual de la sesión de recuperación (2026-10-13, PC nuevo). Sin credenciales ni PII.
+Fuentes: salidas locales en test-results/seguros-del-estado/sde/ (bloqueos-*.json, HU06-CP05_20261013-091148.json) y
+consola de tests/bloqueos.real.spec.ts y tests/calibracion.real.spec.ts. Todo con --workers=1 --trace off.
+
+== Ambiente y login (tests @smoke) — 09:00
+5 passed: Work Portal responde con login por dominio (2/2); login real analista, intermediario, intermediario_alerta (3/3).
+
+== ENV-03 — procesos que recibe el PROPIO portal al abrir "Nuevo Caso" (GET /Rest/Processes/All, respuestas HTTP 200)
+intermediario:        proceso "Gestión Solicitudes Centro Expedición" NO listado; categorías vacías; árbol: 0 categorías.
+intermediario_alerta: proceso NO listado; categorías vacías; árbol: 0 categorías.
+analista:             proceso listado; árbol: 1 categoría visible.
+Nota técnica: una petición directa desde el contexto de prueba (page.request) devuelve 401; solo es válida la respuesta que
+recibe el portal. Las respuestas 304 no traen cuerpo y no se usan como evidencia.
+→ ENV-03 VIGENTE.
+
+== BUG-01 — "Documentos Anexos" en Masiva / Generales / RC MEDICO PROFESIONAL INDIVIDUAL / Póliza Nueva (sin pulsar Crear)
+#1 iniciar_sesion PASS · #2 nuevo_caso PASS · #3 diligenciar PASS (Línea, Ramo, Tipo de Solicitud, Sucursal, Masiva)
+#4 adjuntar_en_grilla FAIL: el combo "Tipo Documental" no ofrece ninguna opción (solo "-------------").
+→ BUG-01 VIGENTE. No se creó caso.
+
+== BUG-02 — casos propios Individuales (buscador, analista)
+336, 345, 346, 347, 348, 352: sin actividades abiertas. Fila del buscador: proceso, fecha de creación y una segunda fecha
+~2 h posterior (352: ~16 h) → los casos ya no están en "Consultar Alertas Intermediario"; no avanzaron a Completar información.
+Caso NUEVO 425 (HU06-CP05, 09:12): "Máximo tiempo de radicación → Consultar Alertas Intermediario → Deshabilitar cancelación".
+→ El comportamiento se REPRODUCE: el Individual radicado por CE_Analista se detiene en Consultar Alertas Intermediario.
+  Sigue POR CONFIRMAR si es esperado (el analista no tiene clave de intermediario) o un defecto.
+
+== HU06-CP05 — regresión real tras los cambios de nuevo_caso (09:11–09:12)
+REAL_PASS_PARCIAL · caso 425 · P2–P5, P7, P8 PASS · P6 NOT_AUTOMATED · P9 INTEGRATION_NOT_VERIFIED (igual que el caso 352).
+
+== Calibración real de "Estructurar información" — caso NUEVO 426 (Masiva Generales/Modificación, 09:19–09:21)
+Creación: "¿Su solicitud requiere cambio de intermediario?" = No (obligatorio, OBS-08); CREATENEWCASE 426.
+Ruta: Máximo tiempo de radicación → Estructurar información → Deshabilitar cancelación (nunca Consultar Alertas).
+P14–P17, P28, P29: PASS (sin cambios respecto al caso 343). "Detalle Polizas Asociadas": 1 fila (narrativa sintética).
+UI-04 abrir_pestana: "Documentos de la solicitud" activa con panel; "Seguimiento/Trazabilidad" activa con panel y muestra
+"Estructurar información". Estructura real: li[role=tab].ui-tabs-active > a.ui-tabs-anchor[href="#ui-bizagi-tab-…"].
+P27: FAIL "Observaciones" no visible (la UI dice "Observaciónes") → BUG-04 VIGENTE.
+
+== Pop-up "Editar Detalle Polizas Asociadas" — caso 426 (estructura, sin valores)
+Grupo "Información de Consulta": "Forma Consulta" (solo visualización), "Número Póliza" (input text, maxlength=20,
+marca de obligatorio con el campo vacío), "Digito de Verificacion del Tomador" (sin tildes, OBS-10). Botones: Guardar, Cancelar.
+OBS-11: maxlength 20 frente a la regla 9–12 numéricos de la matriz (HU06-CP03 P14 / CP04 P16).
+
+== BUG-03 — ampliado (09:27)
+Tras dos aperturas del pop-up en el caso 426 en las que la sesión terminó con el pop-up ABIERTO (sin Cancelar ni Guardar),
+reabrir "Estructurar información" muestra: "Error Type: ArgumentException Error Message: Invalid scope action type" y el
+formulario no carga. El disparador no es solo "Cancelar": es salir del pop-up sin Guardar. Caso 426 inutilizable (propio).
+
+== Casos creados hoy (todos propios, registrados automáticamente en el historial)
+425 HU06-CP05 · 426 CALIBRACION Estructurar (inutilizable por BUG-03). No se tocaron casos de otros equipos.

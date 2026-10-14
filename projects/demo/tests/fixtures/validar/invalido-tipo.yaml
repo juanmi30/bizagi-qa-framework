@@ -1,0 +1,18 @@
+proceso: Proceso de prueba
+escenario: Tipo incorrecto
+
+inicio:
+  modo: crear-caso
+  usuario: analista1
+  proceso_a_crear: Proceso de prueba
+
+pasos:
+  - actividad: Registrar solicitud
+    llenar:
+      - campo: Cliente
+        valor: Juan
+        tipo: busquda
+    accion: Siguiente
+
+hazards:
+  - el_caso_avanza_a: Revisar

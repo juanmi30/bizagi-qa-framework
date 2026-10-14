@@ -1,0 +1,40 @@
+{
+  "nombre": "Gestión de Crédito",
+  "ambiente": "test",
+  "apiUrl": "https://test-procesosdigitales-colsubsidio.bizagi.com",
+  "processId": "0188d3ec-f208-4653-be77-788fc76e370c",
+  "startParameters": [
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmGestionCreditos.bModificarAgencia",
+      "value": "false"
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmIntegraciones.kpTipoIdentificacion",
+      "value": "CO1C"
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmIntegraciones.sNumeroIdentificacion",
+      "value": "6768256"
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmGestionCreditos.sCodigoOperador",
+      "value": "01"
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmGestionCreditos.kpAgencia",
+      "value": "AG01"
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmGestionCreditos.kpTipoSolicitud",
+      "value": "TS02"
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionTramite.kmGestionCreditos.sUsuarioCreadorCaso",
+      "value": "${env:COLSUBSIDIO_USUARIO_ADMINISTRADOR}"
+    },
+    {
+      "xpath": "M_SolicitudTramite.kmInformacionGeneral.ksCreadorCaso",
+      "value": 1
+    }
+  ]
+}

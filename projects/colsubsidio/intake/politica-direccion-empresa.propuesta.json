@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "afi-politica-propuesta/v1",
+  "estado": "PROPUESTA - NO APLICADA (politicas.ts no la carga; se aplica solo con decisión humana)",
+  "perfil": "empresa",
+  "etapa": "direccion",
+  "evidencia": {
+    "tipo": "qa-observado",
+    "referencia": "Exploración QA Dirección Empleador PJ 2026-10-07 (runner oficial, caso propio cancelado, PII 0; fixture tests/fixtures/estructura-direccion-pj-qa-observada.json): solo los 4 obligatorios diligenciados con valores generados -> Continuar habilitado -> llegada a \"Representante legal\". Opcionales vacíos; Dirección completa compuesta por el Portal."
+  },
+  "campos": {
+    "viaPrincipal": {
+      "uso": "FILLER", "resolucion": "GENERATED",
+      "variante": {
+        "obligatorioParaAvanzar": true,
+        "generable": {
+          "perfiles": ["empresa"], "etapa": "direccion", "estrategia": "opcion-dominio",
+          "restricciones": { "dominio": "catálogo observado del control en la corrida (15 opciones)", "seleccion": "opcionDeDominio(dominio ordenado es, semilla HU|CP|versión|campo)", "nunca": "primera opción implícita" }
+        }
+      },
+      "demostrado": "Avenida Calle (catálogo de 15 opciones observado)"
+    },
+    "numeroVp": {
+      "uso": "FILLER", "resolucion": "GENERATED",
+      "variante": { "obligatorioParaAvanzar": true, "generable": { "perfiles": ["empresa"], "etapa": "direccion", "estrategia": "entero-rango", "restricciones": { "min": 10, "max": 99, "maxlength": 3 } } },
+      "demostrado": "36 (maxlength=3 observado)"
+    },
+    "numeroVg": {
+      "uso": "FILLER", "resolucion": "GENERATED",
+      "variante": { "obligatorioParaAvanzar": true, "generable": { "perfiles": ["empresa"], "etapa": "direccion", "estrategia": "entero-rango", "restricciones": { "min": 10, "max": 99, "maxlength": 3 } } },
+      "demostrado": "75 (maxlength=3 observado)"
+    },
+    "numeroPredio": {
+      "uso": "FILLER", "resolucion": "GENERATED",
+      "variante": { "obligatorioParaAvanzar": true, "generable": { "perfiles": ["empresa"], "etapa": "direccion", "estrategia": "entero-rango", "restricciones": { "min": 10, "max": 99, "maxlength": 3 } } },
+      "demostrado": "33 (maxlength=3 observado)"
+    },
+    "letrasVp": { "uso": "FILLER", "resolucion": "no diligenciar", "variante": { "obligatorioParaAvanzar": false } },
+    "sectorVp": { "uso": "FILLER", "resolucion": "no diligenciar", "variante": { "obligatorioParaAvanzar": false } },
+    "letrasVg": { "uso": "FILLER", "resolucion": "no diligenciar", "variante": { "obligatorioParaAvanzar": false } }
+  },
+  "sinPolitica": {
+    "caracteristica": "opcional observado; no se diligencia (no es campo del modelo)",
+    "numeroCaract": "opcional observado (maxlength 20); no se diligencia",
+    "informacion": "opcional observado (maxlength 50); no se diligencia",
+    "direccionCompleta": "SYSTEM: solo lectura, la compone el Portal (observado precargado tras diligenciar)"
+  },
+  "limites": [
+    "El rango 10-99 es interior al dominio de maxlength=3; la aceptación se demostró con 36, 75 y 33 en una corrida, no exhaustivamente.",
+    "La evidencia es de Empleador PJ; no autoriza a otros perfiles (independiente conserva su política auxiliar del piloto)."
+  ]
+}

@@ -1,0 +1,93 @@
+# HU06-CP05 — Radicación Individual y ruta de la compuerta ¿Masivo?  (Vertical 1)
+# Fuente: fuentes/20260928_SDE_CEL_V1_Casos de Prueba_HU06.xlsx, hoja CP05 (9 pasos).
+# Calibrado contra el DOM real de QA el 2026-10-08.
+#
+# DESVIACIÓN DE ACTOR (documentada, ENV-03): en QA los usuarios intermediarios NO tienen procesos habilitados
+# (Rest/Processes/All → categorías vacías). El único rol que puede iniciar "Gestión Solicitudes Centro Expedición"
+# es CE_Analista; por eso radica el analista. La aserción del CP (ruta de la compuerta) no depende del actor.
+#
+# Ruta esperada (paso 9): "continúa por el camino regular hacia el flujo de consulta unitaria" (Realizar consultas →
+# Consultar Alertas Intermediario → Completar información de solicitud, Requirement 231435/231440/231442) y nunca
+# "Estructurar información". Se acepta cualquier actividad de ese flujo como llegada (verificada con el estado real
+# del caso que Bizagi entrega a la UI: SummaryGuid.currentState).
+#
+# Criterio de consulta: número SINTÉTICO de 9 dígitos, declarado como NO verificado en SISE. La aserción es la ruta;
+# con o sin resultado SISE el caso sigue el flujo unitario (ver HU03-CP11).
+id: HU06-CP05
+titulo: Radicación Individual toma la ruta regular (no Worker AI / no Estructurar información)
+etiquetas: [hu06, vertical, individual, cp05]
+actores: [analista]
+datasets: [CFG-PROCESO, INI-INDIVIDUAL-RUTA]
+cleanup:
+  politica: CLEANUP_NOT_APPLICABLE
+  razon: La radicación queda en el flujo de consulta unitaria como evidencia; desistir no es reversible y no es parte del CP.
+pasos:
+  - matriz: [2]
+    hacer: iniciar_sesion
+    actor: analista
+
+  - matriz: [2, 3]
+    hacer: nuevo_caso
+    proceso: "${config:SDE_PROCESO_RADICACION}"
+    categoria: "${config:SDE_PROCESO_CATEGORIA}"
+    verificar:
+      - etiquetas: [Línea]
+
+  - matriz: [3]
+    hacer: diligenciar
+    campos:
+      - { campo: Línea, valor: "${dato:INI-INDIVIDUAL-RUTA.linea}", tipo: lista }
+      - { campo: Ramo, valor: "${dato:INI-INDIVIDUAL-RUTA.ramo}", tipo: lista }
+    verificar:
+      # "El formulario presenta la configuración correspondiente": para Autos el Tipo de Solicitud se asigna solo.
+      - valor: { campo: Tipo de Solicitud, igual: "${dato:INI-INDIVIDUAL-RUTA.movimiento}" }
+
+  - matriz: [4]
+    hacer: diligenciar
+    campos:
+      - { campo: Sucursal, valor: "${dato:INI-INDIVIDUAL-RUTA.sucursal}", tipo: lista }
+
+  - matriz: [5]
+    hacer: diligenciar
+    campos:
+      - { campo: Tipo de Radicación, valor: "${dato:INI-INDIVIDUAL-RUTA.tipo_radicacion}", tipo: radio }
+    verificar:
+      # Elemento exclusivo de Masivo (HU06-CP01 paso 6). La leyenda "Individual: ... / Masivo: ..." es general y no se exige ausente.
+      - no_visible: Descripción de la Solicitud (Masiva/Múltiple)
+      - visible: Forma de Consulta Unitaria
+
+  - matriz: [6]
+    hacer: verificar
+    verificar:
+      - etiquetas: [Línea, Ramo, Tipo de Solicitud, Sucursal, Tipo de Radicación, Forma de Consulta Unitaria]
+
+  - matriz: [6]
+    hacer: no_automatizado
+    razon: >-
+      Ortografía/capitalización de TODOS los textos visibles: la matriz no trae glosario. Se verifican las etiquetas reales;
+      las inconsistencias observadas en QA se reportan como hallazgos (OBS-01..04 en docs/REPORTE-FASE1B.md).
+
+  - matriz: [7]
+    hacer: diligenciar
+    campos:
+      - { campo: Forma de Consulta Unitaria, valor: "${dato:INI-INDIVIDUAL-RUTA.forma_consulta}", tipo: radio }
+      - { campo: "${dato:INI-INDIVIDUAL-RUTA.criterio_campo}", valor: "${dato:INI-INDIVIDUAL-RUTA.criterio_valor}", tipo: texto }
+    verificar:
+      - valor: { campo: Tipo de Radicación, igual: "${dato:INI-INDIVIDUAL-RUTA.tipo_radicacion}" }
+
+  - matriz: [7]
+    hacer: pulsar
+    boton: Crear
+    capturar_numero_caso: true
+
+  - matriz: [8, 9]
+    hacer: verificar_ruta
+    actor: analista
+    llega_a: [Consultar Alertas Intermediario, Completar información de solicitud]
+    no_llega_a: [Estructurar información]
+    maximo_minutos: 8
+
+  - matriz: [9]
+    hacer: integracion
+    nombre: Worker AI
+    esperado: No es invocado para radicación Individual (la ausencia de invocación no es observable; la línea de tiempo del caso está vacía).

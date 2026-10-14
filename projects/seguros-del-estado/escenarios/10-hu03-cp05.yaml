@@ -1,0 +1,78 @@
+# HU03-CP05 — Póliza Nueva Generales con Tomador INEXISTENTE en SISE  (Fase 2, familia F-INDIVIDUAL-CONSULTA)
+# Fuente: fuentes/20261006_SDE_CEL_V2_Casos de Prueba_HU03.xlsx, hoja CP05 (21 pasos).
+# Mismo inicio que HU03-CP04 con un documento que QA CONFIRMA inexistente (no se genera al azar: TOMADOR-INEXISTENTE).
+# "SISE no retorna información" es una respuesta de integración: INTEGRATION_NOT_VERIFIED salvo evidencia directa.
+id: HU03-CP05
+titulo: Póliza Nueva Generales con Tomador inexistente — Completar información sin precarga del Tomador y Análisis
+etiquetas: [hu03, fase2, individual, generales, poliza-nueva, cp05]
+actores: [intermediario]
+datasets: [CFG-PROCESO, TOMADOR-INEXISTENTE]
+cleanup:
+  politica: CLEANUP_NOT_APPLICABLE
+  razon: El caso avanza a Análisis (estado de negocio esperado); no hay acción reversible para deshacerlo.
+pasos:
+  - incluir: sesion-y-formulario
+    con: { actor: intermediario, p_sesion: [2], p_formulario: [3] }
+
+  - matriz: [4]
+    hacer: diligenciar
+    campos:
+      - { campo: Línea, valor: "${dato:TOMADOR-INEXISTENTE.linea}", tipo: lista }
+      - { campo: Ramo, valor: "${dato:TOMADOR-INEXISTENTE.ramo}", tipo: lista }
+      - { campo: Tipo de Solicitud, valor: "${dato:TOMADOR-INEXISTENTE.movimiento}", tipo: lista }
+      - { campo: Sucursal, valor: "${dato:TOMADOR-INEXISTENTE.sucursal}", tipo: lista }
+
+  - matriz: [5, 6]
+    hacer: diligenciar
+    campos:
+      - { campo: Tipo de Radicación, valor: "${dato:TOMADOR-INEXISTENTE.tipo_radicacion}", tipo: radio }
+    verificar:
+      - campo_visible: Tipo de Documento del Tomador
+      - campo_visible: Número de Documento del Tomador
+      - obligatorio: [Tipo de Documento del Tomador, Número de Documento del Tomador]
+
+  - matriz: [6]
+    hacer: no_automatizado
+    razon: Tipo de dato/longitud y ortografía global sin especificación ni glosario (FUNC-09).
+
+  - matriz: [7]
+    hacer: diligenciar
+    campos:
+      - { campo: Tipo de Documento del Tomador, valor: "${dato:TOMADOR-INEXISTENTE.tipo_documento}", tipo: lista }
+      - { campo: Número de Documento del Tomador, valor: "${dato:TOMADOR-INEXISTENTE.numero_documento}", tipo: texto }
+
+  # Calibrado con el intermediario (2026-10-13): el formulario de inicio Individual de Póliza Nueva NO tiene la grilla
+  # "Documentos Anexos" (solo existe en Masiva). Los documentos de Póliza Nueva se validan en Completar información (P15/P16).
+  - matriz: [7]
+    hacer: verificar
+    verificar:
+      - no_visible: Documentos Anexos
+
+  - incluir: individual-hasta-completar
+    con:
+      actor: intermediario
+      linea: "${dato:TOMADOR-INEXISTENTE.linea}"
+      criterio: el número de identificación del Tomador
+      respuesta_sise: no retorna información de la persona
+
+  - matriz: [14, 15]
+    hacer: verificar
+    verificar:
+      - visible: Tomador
+      - visible: ¿Requiere editar datos del tomador?
+
+  - matriz: [14, 15]
+    hacer: no_automatizado
+    razon: La matriz no enumera qué campos del Tomador se completan/ajustan ni cuáles son editables; sin esa lista no hay aserción objetiva.
+
+  - matriz: [16, 18]
+    hacer: no_automatizado
+    razon: Tipos documentales obligatorios de Póliza Nueva sin especificar (DOCS-OBLIGATORIOS) y nomenclatura sin glosario.
+
+  - matriz: [17]
+    hacer: verificar
+    verificar:
+      - editable: [Comentarios]
+
+  - incluir: cierre-completar
+    con: { actor: intermediario, p_botones: [19], p_confirmar: [20], p_accion: [20, 21] }

@@ -1,0 +1,18 @@
+proceso: Gestión de Créditos
+escenario: Crear caso de crédito por API (servicio) y abrirlo en el Work Portal
+etiquetas: [servicio, colsubsidio, crd]
+
+inicio:
+  modo: servicio
+  usuario: admin                        # usuario UI para abrir el caso y continuar
+  recurso: create-case/credito.json     # processId + startParameters (API OData)
+  proceso_a_crear: Gestión de Créditos   # informativo
+
+# OJO: al correr, este escenario CREA UN CASO REAL por API (consume una cédula del recurso).
+# La URL/token de la API salen del .env (BIZAGI_API_URL, BIZAGI_API_TOKEN).
+pasos:
+  # El caso creado por API abre en su primera actividad; se continúa por UI desde aquí.
+  - actividad: Registrar Información Inicial
+
+hazards:
+  - el_caso_avanza_a: Registrar Información Inicial

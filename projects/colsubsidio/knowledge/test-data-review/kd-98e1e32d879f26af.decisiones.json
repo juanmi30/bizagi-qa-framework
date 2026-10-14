@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "afi-test-data-decisions/v1",
+  "batchId": "kd-98e1e32d879f26af",
+  "revisionBase": 14,
+  "decisiones": [
+    {
+      "proposalId": "ps-empresa-empleador-juridico-rues-sin-rep-legal-2",
+      "hash": "6da710b312db09ad9f74f84da06130405928ebf57a3ce3b0eef8106ed3e4511d",
+      "decision": null,
+      "revisor": "",
+      "comentario": ""
+    },
+    {
+      "proposalId": "ps-representante-legal-persona-en-bizagi-con-verificacion",
+      "hash": "8d78673e277f11920f60ea30b2c3a02337925e4a9183d8d7dad837c532c8a31e",
+      "decision": null,
+      "revisor": "",
+      "comentario": ""
+    },
+    {
+      "proposalId": "ps-contacto-caja-persona-en-bizagi-con-verificacion",
+      "hash": "23f18aef23a5dbe6679db8e08ec19d9520576a5a6ce4f47675c26d5d84fcafc8",
+      "decision": null,
+      "revisor": "",
+      "comentario": ""
+    },
+    {
+      "proposalId": "ps-responsable-portal-persona-en-bizagi-con-verificacion",
+      "hash": "a88db31da8d76aecd3b29ad3c870621cadaf58d164c3bf564bf55a2380bbd775",
+      "decision": null,
+      "revisor": "",
+      "comentario": ""
+    }
+  ],
+  "compartidos": []
+}

@@ -1,0 +1,17 @@
+{
+  "estado": "APLICABLE",
+  "batchId": "kd-06d8f9578f37ab19",
+  "altas": [],
+  "reutilizaciones": [
+    {
+      "requisito": "empresa-juridica-rues-sin-rep-legal-caja-anterior",
+      "slot": "empresa-empleador-juridico-rues-sin-rep-legal"
+    }
+  ],
+  "rechazadas": [],
+  "cambiosSolicitados": [],
+  "sinDecision": [],
+  "revisionAntes": 13,
+  "revisionDespues": 14,
+  "fecha": "2026-10-06"
+}

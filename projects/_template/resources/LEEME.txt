@@ -1,0 +1,2 @@
+Archivos que las pruebas de ESTE proyecto necesitan cargar (ej. PDFs).
+Se referencian con resourcePath('archivo.pdf') -> projects/<proyecto>/resources/archivo.pdf

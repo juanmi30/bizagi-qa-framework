@@ -1,0 +1,7 @@
+Recursos específicos del proyecto Colsubsidio.
+
+Create Case OData confirmado por Iván:
+  resources/create-case/credito.json
+  resources/create-case/afiliaciones.json
+
+Ver resources/create-case/README.md y docs/MODO-SERVICIO.md para ejecución y alcance.

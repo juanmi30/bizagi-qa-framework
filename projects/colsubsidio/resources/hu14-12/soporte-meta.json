@@ -1,0 +1,19 @@
+{
+  "$comentario": "Metadata PÚBLICA del soporte de certificación cliente HU 14.12 (Fase 4H). Sin PII. idExterno es metadata EXTERNA (tracker del cliente): no existe en el repositorio ni en el diseño QA; se toma del soporte histórico de QA. logoCliente es el logo usado por QA en ese soporte.",
+  "version": 1,
+  "hu": "AFI HU 14.12",
+  "cliente": "Colsubsidio",
+  "proyecto": "HU - 223169",
+  "nombrePruebas": "CLS – Afiliaciones – Historias de usuario",
+  "iteracion": "Cambio",
+  "fechaInicio": "SP 37",
+  "fechaFinalizacion": "SP 38",
+  "seccion": "Afiliaciones",
+  "encabezado": "HU - 223169",
+  "logoCliente": "logo-cliente-colsubsidio.png",
+  "diseno": "20260910_CLS_AFI_HU 14.12_V2_Casos_Prueba.xlsx",
+  "template": "projects/colsubsidio/templates/soporte-certificacion-cliente-referencia.docx",
+  "casos": {
+    "CP02": { "hoja": "CP02", "variante": "DESKTOP", "idExterno": "228501" }
+  }
+}

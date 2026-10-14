@@ -1,0 +1,82 @@
+# HU03-CP03 — Radicación Individual Generales por Número de póliza  (Fase 2, familia F-INDIVIDUAL-CONSULTA)
+# Fuente: fuentes/20261006_SDE_CEL_V2_Casos de Prueba_HU03.xlsx, hoja CP03 (21 pasos).
+# Actor: intermediario (ENV-03 vigente → BLOCKED de ambiente). P4 de la matriz espera "opciones correspondientes a Autos"
+# con Línea Generales (FUNC-08, probable copia): se verifica la selección real, no esa frase.
+# Formulario de inicio Generales Individual [PENDIENTE]: la matriz dice que se habilita "Número de póliza".
+id: HU03-CP03
+titulo: Individual Generales por póliza — precarga SISE sin bloque de vehículo, correo, Completar información y Análisis
+etiquetas: [hu03, fase2, individual, generales, cp03]
+actores: [intermediario]
+datasets: [CFG-PROCESO, POL-GENERALES-VIGENTE]
+cleanup:
+  politica: CLEANUP_NOT_APPLICABLE
+  razon: El caso avanza a Análisis (estado de negocio esperado); no hay acción reversible para deshacerlo.
+pasos:
+  - incluir: sesion-y-formulario
+    con: { actor: intermediario, p_sesion: [2], p_formulario: [3] }
+
+  - matriz: [4]
+    hacer: diligenciar
+    campos:
+      - { campo: Línea, valor: "${dato:POL-GENERALES-VIGENTE.linea}", tipo: lista }
+      - { campo: Ramo, valor: "${dato:POL-GENERALES-VIGENTE.ramo}", tipo: lista }
+      - { campo: Tipo de Solicitud, valor: "${dato:POL-GENERALES-VIGENTE.movimiento}", tipo: lista }
+      - { campo: Sucursal, valor: "${dato:POL-GENERALES-VIGENTE.sucursal}", tipo: lista }
+
+  - matriz: [5]
+    hacer: diligenciar
+    campos:
+      - { campo: Tipo de Radicación, valor: "${dato:POL-GENERALES-VIGENTE.tipo_radicacion}", tipo: radio }
+    verificar:
+      - visible: Número de Póliza
+      - no_visible: Descripción de la Solicitud (Masiva/Múltiple)
+
+  - matriz: [6]
+    hacer: verificar
+    verificar:
+      - obligatorio: [Número de Póliza]
+      - editable: [Número de Póliza]
+
+  - matriz: [6]
+    hacer: no_automatizado
+    razon: La matriz no detalla tipo de dato/longitud por campo ni glosario; se verifican etiqueta, obligatoriedad y editabilidad.
+
+  - matriz: [7]
+    hacer: diligenciar
+    campos:
+      - { campo: Número de Póliza, valor: "${dato:POL-GENERALES-VIGENTE.poliza}", tipo: texto }
+
+  - incluir: individual-hasta-completar
+    con:
+      actor: intermediario
+      linea: "${dato:POL-GENERALES-VIGENTE.linea}"
+      criterio: el número de póliza registrado
+      respuesta_sise: retorna la póliza vigente
+
+  - matriz: [14]
+    hacer: verificar
+    verificar:
+      - valor: { campo: Número de Póliza, igual: "${dato:POL-GENERALES-VIGENTE.poliza}" }
+      - solo_lectura: [Número de Póliza]
+      - visible: Tomador
+      - visible: Asegurado
+
+  - matriz: [15]
+    hacer: verificar
+    verificar:
+      - no_visible: Información del Vehículo
+
+  - incluir: correo-facturacion
+    con: { p_correo: [16] }
+
+  - matriz: [17]
+    hacer: verificar
+    verificar:
+      - editable: [Comentarios]
+
+  - matriz: [17, 18]
+    hacer: no_automatizado
+    razon: Tipos documentales de Completar información y nomenclatura completa sin especificación de referencia (DOCS-OBLIGATORIOS).
+
+  - incluir: cierre-completar
+    con: { actor: intermediario, p_botones: [19], p_confirmar: [20], p_accion: [20, 21] }

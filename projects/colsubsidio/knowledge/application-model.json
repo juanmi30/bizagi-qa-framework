@@ -1,0 +1,1113 @@
+{
+  "schemaVersion": "afi-application-model/v1",
+  "revision": 5,
+  "entidades": {
+    "pantallas": [
+      {
+        "id": "pantalla-bloqueo-afiliacion-activa",
+        "descripcion": "Pantalla UI de bloqueo mostrada al usuario cuando la consulta en SAP determina que el solicitante figura como afiliado activo."
+      },
+      {
+        "id": "pantalla-ingresa-informacion-empresa",
+        "descripcion": "Pantalla unificada 'Ingresa la información de la empresa' para aportante Empleador Jurídico/Natural."
+      },
+      {
+        "id": "pantalla-representante-legal",
+        "descripcion": "Pantalla 'Ingresa información representante legal' en el portal de afiliaciones.",
+        "titulo": "Representante legal",
+        "consulta": "Buscar representante"
+      },
+      {
+        "id": "pantalla-contacto-caja",
+        "descripcion": "Pantalla 'Ingresa información contacto con la caja' en el portal."
+      },
+      {
+        "id": "pantalla-responsable-portal",
+        "descripcion": "Pantalla 'Ingresa información responsable del portal' en el portal."
+      },
+      {
+        "id": "pantalla-documentos",
+        "descripcion": "Pantalla 'Documentos' para la descarga/cargue de formularios y archivos obligatorios.",
+        "titulo": "Documentación"
+      },
+      {
+        "id": "pantalla-direccion",
+        "descripcion": "Pantalla 'Ingresa la información asociada a la dirección' del portal de afiliaciones.",
+        "titulo": "Ingresa la información asociada a la dirección",
+        "etapa": "direccion"
+      }
+    ],
+    "campos": [
+      {
+        "id": "campo-tipo-sociedad",
+        "descripcion": "Campo 'Tipo de sociedad' en la pantalla de información de la empresa.",
+        "pantalla": "pantalla-ingresa-informacion-empresa",
+        "control": "select"
+      },
+      {
+        "id": "representante-legal-tipo-identificacion",
+        "descripcion": "Campo 'Tipo de identificación' del Representante Legal.",
+        "pantalla": "pantalla-representante-legal",
+        "control": "select",
+        "etiqueta": "Tipo de identificación",
+        "dato": "tipoIdentificacion",
+        "obligatorio": "si"
+      },
+      {
+        "id": "representante-legal-numero-identificacion",
+        "descripcion": "Campo 'Número de identificación' del Representante Legal.",
+        "pantalla": "pantalla-representante-legal",
+        "control": "text",
+        "etiqueta": "Número de identificación",
+        "dato": "numeroIdentificacion",
+        "obligatorio": "si"
+      },
+      {
+        "id": "representante-legal-primer-nombre",
+        "descripcion": "Campo 'Primer nombre' del Representante Legal.",
+        "pantalla": "pantalla-representante-legal",
+        "control": "text",
+        "etiqueta": "Primer nombre",
+        "dato": "primerNombre"
+      },
+      {
+        "id": "representante-legal-segundo-nombre",
+        "descripcion": "Campo 'Segundo nombre' del Representante Legal.",
+        "pantalla": "pantalla-representante-legal",
+        "control": "text",
+        "etiqueta": "Segundo nombre",
+        "dato": "segundoNombre"
+      },
+      {
+        "id": "representante-legal-primer-apellido",
+        "descripcion": "Campo 'Primer apellido' del Representante Legal.",
+        "pantalla": "pantalla-representante-legal",
+        "control": "text",
+        "etiqueta": "Primer apellido",
+        "dato": "primerApellido"
+      },
+      {
+        "id": "representante-legal-segundo-apellido",
+        "descripcion": "Campo 'Segundo apellido' del Representante Legal.",
+        "pantalla": "pantalla-representante-legal",
+        "control": "text",
+        "etiqueta": "Segundo apellido",
+        "dato": "segundoApellido"
+      },
+      {
+        "id": "representante-legal-nombre-completo",
+        "descripcion": "Campo 'Nombre completo' del Representante Legal.",
+        "pantalla": "pantalla-representante-legal",
+        "control": "text"
+      },
+      {
+        "id": "contacto-caja-tipo-identificacion",
+        "descripcion": "Campo 'Tipo de identificación' del Contacto con la Caja.",
+        "pantalla": "pantalla-contacto-caja",
+        "control": "select",
+        "etiqueta": "Tipo de identificación",
+        "dato": "tipoIdentificacion",
+        "obligatorio": "si"
+      },
+      {
+        "id": "contacto-caja-numero-identificacion",
+        "descripcion": "Campo 'Número de identificación' del Contacto con la Caja.",
+        "pantalla": "pantalla-contacto-caja",
+        "control": "text",
+        "etiqueta": "Número de identificación",
+        "dato": "numeroIdentificacion",
+        "obligatorio": "si"
+      },
+      {
+        "id": "contacto-caja-primer-nombre",
+        "descripcion": "Campo 'Primer nombre' del Contacto con la Caja.",
+        "pantalla": "pantalla-contacto-caja",
+        "control": "text",
+        "etiqueta": "Primer nombre",
+        "dato": "primerNombre"
+      },
+      {
+        "id": "contacto-caja-segundo-nombre",
+        "descripcion": "Campo 'Segundo nombre' del Contacto con la Caja.",
+        "pantalla": "pantalla-contacto-caja",
+        "control": "text",
+        "etiqueta": "Segundo nombre",
+        "dato": "segundoNombre"
+      },
+      {
+        "id": "contacto-caja-primer-apellido",
+        "descripcion": "Campo 'Primer apellido' del Contacto con la Caja.",
+        "pantalla": "pantalla-contacto-caja",
+        "control": "text",
+        "etiqueta": "Primer apellido",
+        "dato": "primerApellido"
+      },
+      {
+        "id": "contacto-caja-segundo-apellido",
+        "descripcion": "Campo 'Segundo apellido' del Contacto con la Caja.",
+        "pantalla": "pantalla-contacto-caja",
+        "control": "text",
+        "etiqueta": "Segundo apellido",
+        "dato": "segundoApellido"
+      },
+      {
+        "id": "contacto-caja-nombre-completo",
+        "descripcion": "Campo 'Nombre completo' del Contacto con la Caja.",
+        "pantalla": "pantalla-contacto-caja",
+        "control": "text"
+      },
+      {
+        "id": "contacto-caja-correo",
+        "descripcion": "Campo 'Correo electrónico' en la pantalla de contacto con la caja.",
+        "pantalla": "pantalla-contacto-caja",
+        "control": "text",
+        "etiqueta": "Correo electrónico",
+        "dato": "correo",
+        "obligatorio": "si"
+      },
+      {
+        "id": "responsable-portal-tipo-identificacion",
+        "descripcion": "Campo 'Tipo de identificación' del Responsable del Portal.",
+        "pantalla": "pantalla-responsable-portal",
+        "control": "select",
+        "etiqueta": "Tipo de identificación",
+        "dato": "tipoIdentificacion",
+        "obligatorio": "si"
+      },
+      {
+        "id": "responsable-portal-numero-identificacion",
+        "descripcion": "Campo 'Número de identificación' del Responsable del Portal.",
+        "pantalla": "pantalla-responsable-portal",
+        "control": "text",
+        "etiqueta": "Número de identificación",
+        "dato": "numeroIdentificacion",
+        "obligatorio": "si"
+      },
+      {
+        "id": "responsable-portal-primer-nombre",
+        "descripcion": "Campo 'Primer nombre' del Responsable del Portal.",
+        "pantalla": "pantalla-responsable-portal",
+        "control": "text",
+        "etiqueta": "Primer nombre",
+        "dato": "primerNombre"
+      },
+      {
+        "id": "responsable-portal-segundo-nombre",
+        "descripcion": "Campo 'Segundo nombre' del Responsable del Portal.",
+        "pantalla": "pantalla-responsable-portal",
+        "control": "text",
+        "etiqueta": "Segundo nombre",
+        "dato": "segundoNombre"
+      },
+      {
+        "id": "responsable-portal-primer-apellido",
+        "descripcion": "Campo 'Primer apellido' del Responsable del Portal.",
+        "pantalla": "pantalla-responsable-portal",
+        "control": "text",
+        "etiqueta": "Primer apellido",
+        "dato": "primerApellido"
+      },
+      {
+        "id": "responsable-portal-segundo-apellido",
+        "descripcion": "Campo 'Segundo apellido' del Responsable del Portal.",
+        "pantalla": "pantalla-responsable-portal",
+        "control": "text",
+        "etiqueta": "Segundo apellido",
+        "dato": "segundoApellido"
+      },
+      {
+        "id": "responsable-portal-nombre-completo",
+        "descripcion": "Campo 'Nombre completo' del Responsable del Portal.",
+        "pantalla": "pantalla-responsable-portal",
+        "control": "text"
+      }
+    ],
+    "actividades": [
+      {
+        "id": "actividad-ejecutar-sap",
+        "descripcion": "Actividad automática o subproceso de ejecución de validación SAP dentro del proceso BPM de Afiliaciones."
+      },
+      {
+        "id": "actividad-registrar-informacion-cliente",
+        "descripcion": "Actividad 'Registrar información del cliente' en el proceso BPM de Afiliaciones."
+      }
+    ],
+    "rutas": [
+      {
+        "id": "ruta-continua",
+        "descripcion": "Ruta/transición de proceso 'Continua' tomada cuando la evaluación de la respuesta de SAP permite avanzar sin bloqueo."
+      },
+      {
+        "id": "ruta-no-continua-sap",
+        "descripcion": "Ruta/transición de proceso 'No continua SAP' tomada cuando la respuesta de SAP identifica cotizante activo y detiene la solicitud."
+      }
+    ],
+    "integraciones": [
+      {
+        "id": "integracion-servicio-sap",
+        "descripcion": "Servicio web de validación de SAP encargado de consultar y retornar el estado de afiliación del solicitante en la CCF."
+      },
+      {
+        "id": "integracion-giass",
+        "descripcion": "Servicio de integración con GIASS para validaciones iniciales de la empresa."
+      },
+      {
+        "id": "integracion-rues",
+        "descripcion": "Servicio de integración con RUES para validación de empresa y representante legal."
+      },
+      {
+        "id": "integracion-registraduria",
+        "descripcion": "Servicio de integración con Registraduría Nacional para consulta de Cédula de Ciudadanía."
+      }
+    ],
+    "variables": [
+      {
+        "id": "variable-sbp",
+        "descripcion": "Variable de respuesta de SAP (Código de socio de negocio BP) objeto de saneamiento (asignación null) en escenario beneficiario/cónyuge.",
+        "superficies": [
+          "integracion",
+          "proceso-bpm"
+        ],
+        "ambito": {
+          "tipo": "integracion",
+          "integracion": "integracion-servicio-sap"
+        }
+      },
+      {
+        "id": "variable-sestadoafiliado",
+        "descripcion": "Variable de respuesta de SAP (Estado del afiliado) objeto de saneamiento (asignación null) en escenario beneficiario/cónyuge.",
+        "superficies": [
+          "integracion",
+          "proceso-bpm"
+        ],
+        "ambito": {
+          "tipo": "integracion",
+          "integracion": "integracion-servicio-sap"
+        }
+      },
+      {
+        "id": "variable-smotivoretiro",
+        "descripcion": "Variable de respuesta de SAP (Motivo de retiro) objeto de saneamiento (asignación null) en escenario beneficiario/cónyuge.",
+        "superficies": [
+          "integracion",
+          "proceso-bpm"
+        ],
+        "ambito": {
+          "tipo": "integracion",
+          "integracion": "integracion-servicio-sap"
+        }
+      },
+      {
+        "id": "variable-sgrupo",
+        "descripcion": "Variable de respuesta de SAP (Grupo de población) objeto de saneamiento (asignación null) en escenario beneficiario/cónyuge.",
+        "superficies": [
+          "integracion",
+          "proceso-bpm"
+        ],
+        "ambito": {
+          "tipo": "integracion",
+          "integracion": "integracion-servicio-sap"
+        }
+      },
+      {
+        "id": "variable-flag-registraduria",
+        "descripcion": "Flag de verificación de información de Registraduría guardado en la BD de Bizagi.",
+        "superficies": [
+          "proceso-bpm",
+          "integracion"
+        ]
+      }
+    ],
+    "notificaciones": [
+      {
+        "id": "notificacion-inicio-tramite-correo",
+        "descripcion": "Notificación por correo electrónico enviada al solicitante con el número de caso al iniciar el trámite de afiliación."
+      },
+      {
+        "id": "notificacion-aprobacion-empleador",
+        "descripcion": "Notificación 'Notificación aprobación Empleador' enviada por correo."
+      },
+      {
+        "id": "notificacion-cierre-inactividad",
+        "descripcion": "Notificación 'Notificación de cierre de caso por inactividad' enviada por correo."
+      },
+      {
+        "id": "notificacion-recordatorio-retoma",
+        "descripcion": "Notificación 'Notificar Recordatorio Retoma Caso' enviada por correo."
+      }
+    ],
+    "transiciones": [
+      {
+        "id": "transicion-representante-legal-a-contacto-caja",
+        "descripcion": "Navegación del portal: Representante legal (5) -> contacto con la caja (6).",
+        "desde": "pantalla-representante-legal",
+        "hacia": "pantalla-contacto-caja",
+        "avance": "Continuar",
+        "condicion": "Empleador Jurídico (para Empleador Natural la pantalla de contacto con la caja se oculta)"
+      },
+      {
+        "id": "transicion-contacto-caja-a-responsable-portal",
+        "descripcion": "Navegación del portal: Contacto con la caja (6) -> responsable del portal (7).",
+        "desde": "pantalla-contacto-caja",
+        "hacia": "pantalla-responsable-portal",
+        "avance": "Continuar",
+        "condicion": "Empleador Jurídico (para Empleador Natural la pantalla del responsable del portal se oculta)"
+      },
+      {
+        "id": "transicion-responsable-portal-a-documentos",
+        "descripcion": "Navegación del portal: Responsable del portal (7) -> Documentación (8).",
+        "desde": "pantalla-responsable-portal",
+        "hacia": "pantalla-documentos",
+        "avance": "Continuar",
+        "condicion": "Empleador Jurídico"
+      },
+      {
+        "id": "transicion-contacto-a-direccion",
+        "descripcion": "Navegación del portal: Información de contacto (3) -> información asociada a la dirección (4).",
+        "desde": "informacion-contacto",
+        "hacia": "pantalla-direccion",
+        "avance": "Continuar"
+      },
+      {
+        "id": "transicion-direccion-a-representante-legal",
+        "descripcion": "Navegación del portal: Dirección (4) -> Representante legal (5).",
+        "desde": "pantalla-direccion",
+        "hacia": "pantalla-representante-legal",
+        "avance": "Continuar",
+        "condicion": "Aportante Empleador"
+      }
+    ]
+  },
+  "historial": [
+    {
+      "revision": 2,
+      "fecha": "2026-10-01",
+      "entidad": "notificacion-inicio-tramite-correo",
+      "tipo": "notificacion",
+      "propuesta": "notificacion-inicio-tramite-correo",
+      "hash": "00e0f7f5ccf670da16e26a534dcbb93667579cb117f34c11dd2971be057dd2e8",
+      "revisor": "qa-analista",
+      "lote": "kr-36688994e9cedada"
+    },
+    {
+      "revision": 2,
+      "fecha": "2026-10-01",
+      "entidad": "integracion-servicio-sap",
+      "tipo": "integracion",
+      "propuesta": "integracion-servicio-sap",
+      "hash": "1f13ece1033fd903e3f3871aaf593026e1a88a421526d33a363201c946651b04",
+      "revisor": "qa-analista",
+      "lote": "kr-36688994e9cedada"
+    },
+    {
+      "revision": 2,
+      "fecha": "2026-10-01",
+      "entidad": "actividad-ejecutar-sap",
+      "tipo": "actividad",
+      "propuesta": "actividad-ejecutar-sap",
+      "hash": "862ebd9c2dac1f22c2430002c594634c9c3e91f0c4db04be4c3c86ef43c39eea",
+      "revisor": "qa-analista",
+      "lote": "kr-36688994e9cedada"
+    },
+    {
+      "revision": 2,
+      "fecha": "2026-10-01",
+      "entidad": "ruta-continua",
+      "tipo": "ruta",
+      "propuesta": "ruta-continua",
+      "hash": "f744c1d7170a3aa5c8ccad9b17742b464cb015eef7c5fdaa7e3f9843d30b54e7",
+      "revisor": "qa-analista",
+      "lote": "kr-36688994e9cedada"
+    },
+    {
+      "revision": 2,
+      "fecha": "2026-10-01",
+      "entidad": "ruta-no-continua-sap",
+      "tipo": "ruta",
+      "propuesta": "ruta-no-continua-sap",
+      "hash": "4cb8390d899d54d859e0df105c8039a0fc1a9f757e308e74a43f5d57a94ea383",
+      "revisor": "qa-analista",
+      "lote": "kr-36688994e9cedada"
+    },
+    {
+      "revision": 2,
+      "fecha": "2026-10-01",
+      "entidad": "pantalla-bloqueo-afiliacion-activa",
+      "tipo": "pantalla-ui",
+      "propuesta": "pantalla-bloqueo-afiliacion-activa",
+      "hash": "121d37203ab65af7b83a6ec3c0c54d30dec35d6a51cecce58586adae79c72705",
+      "revisor": "qa-analista",
+      "lote": "kr-36688994e9cedada"
+    },
+    {
+      "revision": 2,
+      "fecha": "2026-10-01",
+      "entidad": "variable-sbp",
+      "tipo": "variable",
+      "propuesta": "variable-sbp",
+      "hash": "1b455b1e623d417e84810d60b564f84292780ad81a1ac8153e6d4a80d9e2aab8",
+      "revisor": "qa-analista",
+      "lote": "kr-36688994e9cedada"
+    },
+    {
+      "revision": 2,
+      "fecha": "2026-10-01",
+      "entidad": "variable-sestadoafiliado",
+      "tipo": "variable",
+      "propuesta": "variable-sestadoafiliado",
+      "hash": "b4f6e3e4b15a75cb8bdf8d47a3bdf10382bb938fd2518613af238cca0bd47d2e",
+      "revisor": "qa-analista",
+      "lote": "kr-36688994e9cedada"
+    },
+    {
+      "revision": 2,
+      "fecha": "2026-10-01",
+      "entidad": "variable-smotivoretiro",
+      "tipo": "variable",
+      "propuesta": "variable-smotivoretiro",
+      "hash": "2d9b3aac2ce51afff1abf950c4381e0df365c69dd324d6041111f568ab337d8c",
+      "revisor": "qa-analista",
+      "lote": "kr-36688994e9cedada"
+    },
+    {
+      "revision": 2,
+      "fecha": "2026-10-01",
+      "entidad": "variable-sgrupo",
+      "tipo": "variable",
+      "propuesta": "variable-sgrupo",
+      "hash": "70a65b2dfc63a9ff33cf5fe9da00467929cfb240fb06be3cbdb68c7a3986bee3",
+      "revisor": "qa-analista",
+      "lote": "kr-36688994e9cedada"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "pantalla-ingresa-informacion-empresa",
+      "tipo": "pantalla-ui",
+      "propuesta": "prop-pantalla-ingresa-informacion-empresa",
+      "hash": "eca875d47426b9f79c6d0aa66ffaced4d2befc900b1d3209b21eeab84181df4c",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "pantalla-representante-legal",
+      "tipo": "pantalla-ui",
+      "propuesta": "prop-pantalla-representante-legal",
+      "hash": "1f6cd5d0094d95f956bed3a18fcfe3a9aed51559ffb74f5b7a4c3f4dcc47f752",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "pantalla-contacto-caja",
+      "tipo": "pantalla-ui",
+      "propuesta": "prop-pantalla-contacto-caja",
+      "hash": "61a011942d8b28de50658bd67b1f7a21b2166332c165129cee920d9b3b0be5b4",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "pantalla-responsable-portal",
+      "tipo": "pantalla-ui",
+      "propuesta": "prop-pantalla-responsable-portal",
+      "hash": "a009667311cbc9fbd3b8609491ab83db23df86ad0eced8514248eeee3af17595",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "pantalla-documentos",
+      "tipo": "pantalla-ui",
+      "propuesta": "prop-pantalla-documentos",
+      "hash": "fc68baf4ebc98a961cacf3b153410e97e1a2ec5032ab2fe389db3eff45f392d5",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "actividad-registrar-informacion-cliente",
+      "tipo": "actividad",
+      "propuesta": "prop-actividad-registrar-informacion-cliente",
+      "hash": "ffecc16b8de112838abea2e4781a5e098ef980215a60b55c9f783364b8170e10",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "integracion-giass",
+      "tipo": "integracion",
+      "propuesta": "prop-integracion-giass",
+      "hash": "6cf43434bde9110a0af6c2fd6cd5099074063f7c2e8a30862cc0288eb13188fc",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "integracion-rues",
+      "tipo": "integracion",
+      "propuesta": "prop-integracion-rues",
+      "hash": "6e04434754cde6d1ac6df9b87c198a0787d531cb9301f5faf0c5f263c300e266",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "integracion-registraduria",
+      "tipo": "integracion",
+      "propuesta": "prop-integracion-registraduria",
+      "hash": "2923dee4c5481811301d2e9e0bcb87ac6542f34862d0d1a609053aa2cc79a11b",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "variable-flag-registraduria",
+      "tipo": "variable",
+      "propuesta": "prop-variable-flag-registraduria",
+      "hash": "c74013fe0f4bde248ab59cf8e6b784471fc34f9f397c116fd05a920026ffca99",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "notificacion-aprobacion-empleador",
+      "tipo": "notificacion",
+      "propuesta": "prop-notificacion-aprobacion-empleador",
+      "hash": "9cced0e7e993cc8d94dbeede1e2ab7cabf6b0aa59491e2aa6655374442298699",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "notificacion-cierre-inactividad",
+      "tipo": "notificacion",
+      "propuesta": "prop-notificacion-cierre-inactividad",
+      "hash": "67577d6e9d6f2a2d36576e8b28161c36950966203d6866310b8b52dfba5f3f45",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "notificacion-recordatorio-retoma",
+      "tipo": "notificacion",
+      "propuesta": "prop-notificacion-recordatorio-retoma",
+      "hash": "8f8b0371118e5ad8c2cdd5b7a5c1595175f683542da74c127ba0ac87269308c7",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "campo-tipo-sociedad",
+      "tipo": "campo-ui",
+      "propuesta": "prop-campo-tipo-sociedad",
+      "hash": "e6caa85de2e278be485a9a127a8e6e092cfe13e0022d9ac273dd75ece92d8bf9",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "representante-legal-tipo-identificacion",
+      "tipo": "campo-ui",
+      "propuesta": "prop-representante-legal-tipo-identificacion",
+      "hash": "4222449516be1eeadcbf5bccf9a310114b16918505850c6845ad8bc62d34e278",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "representante-legal-numero-identificacion",
+      "tipo": "campo-ui",
+      "propuesta": "prop-representante-legal-numero-identificacion",
+      "hash": "f1651a1d89d1d1c24e6ef498192f1a4189137ee0076bd2eaab4f22718d7e87f7",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "representante-legal-primer-nombre",
+      "tipo": "campo-ui",
+      "propuesta": "prop-representante-legal-primer-nombre",
+      "hash": "d5198c5dc93b02dac59bab9135817f07dc78603cb3c30ae768db6e30d20f4e4a",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "representante-legal-segundo-nombre",
+      "tipo": "campo-ui",
+      "propuesta": "prop-representante-legal-segundo-nombre",
+      "hash": "5bde313b5ee5cee1aee4be66f6ab53c5995f36699419eab35167de8cd0616d39",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "representante-legal-primer-apellido",
+      "tipo": "campo-ui",
+      "propuesta": "prop-representante-legal-primer-apellido",
+      "hash": "0638cf33afab8b0f391ba92c156394cc8852a64c11ed0ce4066c1c81719f4468",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "representante-legal-segundo-apellido",
+      "tipo": "campo-ui",
+      "propuesta": "prop-representante-legal-segundo-apellido",
+      "hash": "886cbba6e3e321412abbae19a5d6ede3cefa6c931fe60d69aeec434e9678e6ba",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "representante-legal-nombre-completo",
+      "tipo": "campo-ui",
+      "propuesta": "prop-representante-legal-nombre-completo",
+      "hash": "a78e6177b41b4ad1ec6849737e2b229e72a74799e16e754415f6feb685eb6860",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "contacto-caja-tipo-identificacion",
+      "tipo": "campo-ui",
+      "propuesta": "prop-contacto-caja-tipo-identificacion",
+      "hash": "1a9d109841bb420d3ccaa85e795920866e190c6c10b07a0482f0bffe65ad2495",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "contacto-caja-numero-identificacion",
+      "tipo": "campo-ui",
+      "propuesta": "prop-contacto-caja-numero-identificacion",
+      "hash": "2311aa71c7b5e523a02f833d685dde77d06dca3bf6347b1d18925fa6adaccb2e",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "contacto-caja-primer-nombre",
+      "tipo": "campo-ui",
+      "propuesta": "prop-contacto-caja-primer-nombre",
+      "hash": "2fbc0e2dba1fbf59850be1737817a92cc4013c5129bfb5e12bad8b3f256feb0a",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "contacto-caja-segundo-nombre",
+      "tipo": "campo-ui",
+      "propuesta": "prop-contacto-caja-segundo-nombre",
+      "hash": "df8dd533b5c87c53a0d3e89e292ef1037c2f90b2e931cf3d6ad841e6555dcb65",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "contacto-caja-primer-apellido",
+      "tipo": "campo-ui",
+      "propuesta": "prop-contacto-caja-primer-apellido",
+      "hash": "65d2698af706fd54908bbdee0cffba37568d5668bcfee8c3a44d3d56ed1e65b9",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "contacto-caja-segundo-apellido",
+      "tipo": "campo-ui",
+      "propuesta": "prop-contacto-caja-segundo-apellido",
+      "hash": "b55063e7ae9665b1304ae84b50d7b194caddd488237fa7eb5f1fc8f1716ed9df",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "contacto-caja-nombre-completo",
+      "tipo": "campo-ui",
+      "propuesta": "prop-contacto-caja-nombre-completo",
+      "hash": "26a595eb58b3c4e3845156c12761c1456d7c7ca5199c93224eec01647a8f5909",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "contacto-caja-correo",
+      "tipo": "campo-ui",
+      "propuesta": "prop-contacto-caja-correo",
+      "hash": "f983cac39f673d0884afc43b93e503e110d8fff8ec552c585bb9a6cd3cccaba5",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "responsable-portal-tipo-identificacion",
+      "tipo": "campo-ui",
+      "propuesta": "prop-responsable-portal-tipo-identificacion",
+      "hash": "909c9e350f66c544b12c98d15f9b2c2ca8a6506e972ee1658cbd64fe0cdcb7e0",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "responsable-portal-numero-identificacion",
+      "tipo": "campo-ui",
+      "propuesta": "prop-responsable-portal-numero-identificacion",
+      "hash": "a9213e49db53bc686c5d5eac2b0967617325f5ecfea215169bf6bd31e1496d4f",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "responsable-portal-primer-nombre",
+      "tipo": "campo-ui",
+      "propuesta": "prop-responsable-portal-primer-nombre",
+      "hash": "86ebe05928c2b34593ca604f8ccac7348941ab3d647b26cfe707aefd468e4d9b",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "responsable-portal-segundo-nombre",
+      "tipo": "campo-ui",
+      "propuesta": "prop-responsable-portal-segundo-nombre",
+      "hash": "29611b50a6a8aa54433dfbe9334a357a57094b0bbe53304536a5155a43e1e9a9",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "responsable-portal-primer-apellido",
+      "tipo": "campo-ui",
+      "propuesta": "prop-responsable-portal-primer-apellido",
+      "hash": "74d15953ef33b6b65a739e83ecbf9c988e2eb38bb1f8c468d9c5c7cb459d8f21",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "responsable-portal-segundo-apellido",
+      "tipo": "campo-ui",
+      "propuesta": "prop-responsable-portal-segundo-apellido",
+      "hash": "5f0a15943c8b7b18b50521c7f53060dbc5e9ec0d500cd57c802e143375ca71a7",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-05",
+      "entidad": "responsable-portal-nombre-completo",
+      "tipo": "campo-ui",
+      "propuesta": "prop-responsable-portal-nombre-completo",
+      "hash": "11ca397298e771b103595520c8164a34f75594ddec3373611a9f2ae0bb3e5316",
+      "revisor": "qa",
+      "lote": "kr-77e24bc0b4a5942e"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "pantalla-direccion",
+      "tipo": "pantalla-ui",
+      "propuesta": "prop-pantalla-direccion",
+      "hash": "84bdeb37fe8a4988f28fccfa65851821729d9bf5370d1749443a3fda2b0e724c",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "transicion-representante-legal-a-contacto-caja",
+      "tipo": "transicion-ui",
+      "propuesta": "prop-transicion-representante-legal-a-contacto-caja",
+      "hash": "ba801d1a6744e6c04fdb23b72e2a83205ad82653f95eb1c4d0d6ef3c976ff618",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "transicion-contacto-caja-a-responsable-portal",
+      "tipo": "transicion-ui",
+      "propuesta": "prop-transicion-contacto-caja-a-responsable-portal",
+      "hash": "47d554047e38de0f1c2dbee8fd99c22dcc913966d3bfbcc83c84b309d5db2d1f",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "transicion-responsable-portal-a-documentos",
+      "tipo": "transicion-ui",
+      "propuesta": "prop-transicion-responsable-portal-a-documentos",
+      "hash": "f79b118ccdb251c2c32b42d79ce2a250f3eca50dc8c7ec27bdb27c5f5972b41b",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "pantalla-documentos",
+      "tipo": "pantalla-ui",
+      "propuesta": "prop-completar-pantalla-documentos",
+      "hash": "ffccd592cc704b2412d0f0708fcaa5a6c0fcf93599bebc46222a8e4158e7381f",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "representante-legal-tipo-identificacion",
+      "tipo": "campo-ui",
+      "propuesta": "prop-completar-representante-legal-tipo-identificacion",
+      "hash": "3a72674561fb06f309748f5a276f74e09ffdc1c40d897ee3fe942f3f36309567",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "representante-legal-numero-identificacion",
+      "tipo": "campo-ui",
+      "propuesta": "prop-completar-representante-legal-numero-identificacion",
+      "hash": "e10aac2f1db35636634ba7d587aa13a47b4f5382e6eaa7e003712179c11ac690",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "representante-legal-primer-nombre",
+      "tipo": "campo-ui",
+      "propuesta": "prop-completar-representante-legal-primer-nombre",
+      "hash": "85072543f5158375e9086c940644cf14920c7130a146c6769bcc281c5727b1e2",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "representante-legal-segundo-nombre",
+      "tipo": "campo-ui",
+      "propuesta": "prop-completar-representante-legal-segundo-nombre",
+      "hash": "77435ae9b3325c9d015493cb51ecc4e3ff658b88092ddb35984ac83d39ecf82d",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "representante-legal-primer-apellido",
+      "tipo": "campo-ui",
+      "propuesta": "prop-completar-representante-legal-primer-apellido",
+      "hash": "7549e1f08730e4d2d880e809648131f0b24a7baa3546e1fbedfcadded90a8ac7",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "representante-legal-segundo-apellido",
+      "tipo": "campo-ui",
+      "propuesta": "prop-completar-representante-legal-segundo-apellido",
+      "hash": "e120cfe3ae7c993d5f17155438f4bfadfd1c95179451c1cdced6f574e512a73e",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "contacto-caja-tipo-identificacion",
+      "tipo": "campo-ui",
+      "propuesta": "prop-completar-contacto-caja-tipo-identificacion",
+      "hash": "39f3e67e284e81e8e7def79c6156a0ed2e754312361607943a1787c81548bf46",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "contacto-caja-numero-identificacion",
+      "tipo": "campo-ui",
+      "propuesta": "prop-completar-contacto-caja-numero-identificacion",
+      "hash": "0020c3c12b97694cb76593da9ee4cf2aa0a036ef54482d42b221466e712ac465",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "contacto-caja-primer-nombre",
+      "tipo": "campo-ui",
+      "propuesta": "prop-completar-contacto-caja-primer-nombre",
+      "hash": "4a60f47d887c947a1aed3992a095205f833961d128a6092f68fbed0773311e0d",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "contacto-caja-segundo-nombre",
+      "tipo": "campo-ui",
+      "propuesta": "prop-completar-contacto-caja-segundo-nombre",
+      "hash": "85b932d1270a84df9eb460347efadfcd84416b48e25c6a0e857a126b385f572f",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "contacto-caja-primer-apellido",
+      "tipo": "campo-ui",
+      "propuesta": "prop-completar-contacto-caja-primer-apellido",
+      "hash": "2001f2eb1be87f1ea15f889f6ef2eeb20319958887ced881bfa39d273b98ce91",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "contacto-caja-segundo-apellido",
+      "tipo": "campo-ui",
+      "propuesta": "prop-completar-contacto-caja-segundo-apellido",
+      "hash": "cf893df704d783be01e95ecd0aabeb2909ad6c9aab354e60099d62b436a8546b",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "contacto-caja-correo",
+      "tipo": "campo-ui",
+      "propuesta": "prop-completar-contacto-caja-correo",
+      "hash": "e58d5e4ef9482437ad09d49e830c38219fd537942cd1b6e4a5544bb6a8dc77d6",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "responsable-portal-tipo-identificacion",
+      "tipo": "campo-ui",
+      "propuesta": "prop-completar-responsable-portal-tipo-identificacion",
+      "hash": "7cf282bca1abab0f82808777d80040a529af93b90a33e0f3e9f995bec13dcc0e",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "responsable-portal-numero-identificacion",
+      "tipo": "campo-ui",
+      "propuesta": "prop-completar-responsable-portal-numero-identificacion",
+      "hash": "6434bf498753a9204a04a13d6690e0ffa3a4a149f08395d4edef97b49dad55bb",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "responsable-portal-primer-nombre",
+      "tipo": "campo-ui",
+      "propuesta": "prop-completar-responsable-portal-primer-nombre",
+      "hash": "aaed17121b1986f80de301bd43d6e429e03fc62cd3f87fff37e8277d1f1908d1",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "responsable-portal-segundo-nombre",
+      "tipo": "campo-ui",
+      "propuesta": "prop-completar-responsable-portal-segundo-nombre",
+      "hash": "f1f9db67157177ab4e0b76a2b95b579d301490a0a2a8e31fac4bb26c89f9661b",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "responsable-portal-primer-apellido",
+      "tipo": "campo-ui",
+      "propuesta": "prop-completar-responsable-portal-primer-apellido",
+      "hash": "b3eb5635b175599c5959573f5b791d021f783918b4eddb6c8f1cd361c05a07b3",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "responsable-portal-segundo-apellido",
+      "tipo": "campo-ui",
+      "propuesta": "prop-completar-responsable-portal-segundo-apellido",
+      "hash": "648e2bee59a72a688eef28ac9d74f54ea7621f871e8afe59c52ddc0ff5c4b568",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "transicion-contacto-a-direccion",
+      "tipo": "transicion-ui",
+      "propuesta": "prop-transicion-contacto-a-direccion",
+      "hash": "00e1cdbf261ea04c5b6cc8aa050bfc00643bce4ba17c3f550ea2cca14cbd5a02",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-07",
+      "entidad": "transicion-direccion-a-representante-legal",
+      "tipo": "transicion-ui",
+      "propuesta": "prop-transicion-direccion-a-representante-legal",
+      "hash": "d88523aafb38bcfe2e2be4b25fde4cd3b04ec1da1036e2835c1b59bf7ef8eebf",
+      "revisor": "qa",
+      "lote": "kr-d388556f92e4935c"
+    },
+    {
+      "revision": 5,
+      "fecha": "2026-10-07",
+      "entidad": "pantalla-representante-legal",
+      "tipo": "pantalla-ui",
+      "propuesta": "prop-completar-pantalla-representante-legal-observada",
+      "hash": "e054790a68a4d261fc3777c151084a3d6e034c6f58f83fb288b86237e9ef0ac5",
+      "revisor": "qa",
+      "lote": "kr-33ec98af97a1e8df"
+    }
+  ]
+}

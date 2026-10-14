@@ -1,0 +1,53 @@
+# CI de la suite Playwright sobre Bizagi Cloud.
+# El proyecto a probar se pasa por la variable de pipeline PROJECT (ej. "colpensiones").
+# En PR corre solo smoke (@smoke); en main/develop corre la suite completa del proyecto.
+trigger:
+  branches: { include: [main, develop] }
+pr:
+  branches: { include: [main, develop] }
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  CI: 'true'
+  PROJECT: 'demo'   # sobreescribir por proyecto real al configurar el pipeline
+
+steps:
+  - task: NodeTool@0
+    inputs: { versionSpec: '20.x' }
+    displayName: 'Instalar Node.js 20'
+
+  - script: npm ci
+    displayName: 'Instalar dependencias'
+
+  - script: npx playwright install --with-deps chromium
+    displayName: 'Instalar navegador Playwright'
+
+  - script: |
+      if [ "$(Build.Reason)" = "PullRequest" ]; then
+        npm test -- $(PROJECT) --grep @smoke
+      else
+        npm test -- $(PROJECT)
+      fi
+    displayName: 'Ejecutar pruebas ($(PROJECT))'
+    env:
+      BIZAGI_BASE_URL: $(BIZAGI_BASE_URL)
+      BIZAGI_USER: $(BIZAGI_USER)
+      BIZAGI_PASSWORD: $(BIZAGI_PASSWORD)
+      BIZAGI_QUICK_USER: $(BIZAGI_QUICK_USER)
+
+  - task: PublishTestResults@2
+    condition: always()
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: 'test-results/$(PROJECT)/junit/results.xml'
+      testRunTitle: 'Bizagi E2E - $(PROJECT)'
+    displayName: 'Publicar resultados (JUnit)'
+
+  - task: PublishPipelineArtifact@1
+    condition: always()
+    inputs:
+      targetPath: 'test-results/$(PROJECT)/html-report'
+      artifact: 'playwright-report-$(PROJECT)'
+    displayName: 'Publicar reporte HTML'

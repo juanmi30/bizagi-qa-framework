@@ -1,0 +1,112 @@
+# Manifest de los 17 CP SDE-CEL. Títulos, pasos y requisitos NO se copian aquí: viven en
+# fuentes/matriz.json (extracción literal de los Excel). Este archivo agrega lo que la matriz no dice:
+# familia, fase, actores, datos, escenario ejecutable y estado.
+# Estados:  PREPARADO (modelado, sin escenario) | EJECUTABLE (escenario listo, prerrequisitos OK, sin correr)
+#           BLOCKED (escenario listo, faltan credenciales/datos/ambiente) | FAIL | REAL_PASS_PARCIAL | REAL_PASS
+# Regla: un CP solo puede pasar a REAL_PASS* con un reporte en test-results/seguros-del-estado/sde/ (evidencia).
+
+familias:
+  F-MASIVO-ESTRUCTURAR:
+    descripcion: Inicio Masivo → compuerta ¿Masivo? → Worker AI → Estructurar Información (analista) → edición de Pólizas asociadas.
+    variaciones: [Línea (Generales | Autos | Cumplimiento), Forma de Consulta por Línea/Movimiento, propiedad Póliza RCE del Ramo, texto de ayuda Masivo]
+    capacidades: [iniciar_sesion, nuevo_caso, diligenciar, adjuntar, pulsar, verificar_ruta, abrir_caso, tabla_verificar, tabla_abrir_fila, tabla_agregar, dialogo_confirmar, tabla_eliminar_fila, verificar]
+  F-INDIVIDUAL-RUTA:
+    descripcion: Inicio Individual → compuerta ¿Masivo? (No) → flujo regular hasta Completar Información.
+    variaciones: [cualquier combinación válida Línea/Ramo/Movimiento]
+    capacidades: [iniciar_sesion, nuevo_caso, diligenciar, pulsar, verificar_ruta, abrir_caso, verificar]
+  F-INDIVIDUAL-CONSULTA:
+    descripcion: Inicio Individual por criterio → SISE → alertas → Completar Información (precarga, solo lectura, correo, documentos) → Confirmar → Análisis.
+    variaciones: [criterio (Placa | Número de póliza | Tipo/Número de documento del Tomador), Línea (Autos muestra vehículo; Generales no), bloque Póliza RCE, edición de datos del Tomador en Póliza Nueva]
+    capacidades: [iniciar_sesion, nuevo_caso, diligenciar, pulsar, verificar_ruta, abrir_caso, verificar, integracion]
+  F-EXCEPCIONES:
+    descripcion: Completar Información con mensajes de excepción y bucles (alerta bloqueante, carta de nombramiento, reconsulta).
+    variaciones: [alerta bloqueante → solo Desistir, clave distinta → Carta de nombramiento, SISE sin datos → Nueva Consulta, RCE sin datos → reconsulta RCE]
+    capacidades: [verificar (texto_exacto, botones_exactos, no_visible), diligenciar, pulsar, verificar_ruta]
+
+casos:
+  HU06-CP01: { familia: F-MASIVO-ESTRUCTURAR, fase: 1, prioridad: P1, actores: [analista], datasets: [CFG-PROCESO, INI-GENERALES-MASIVO, DOC-SOPORTE, DOCS-OBLIGATORIOS], escenario: 3-hu06-cp01.yaml, estado: EJECUTABLE,
+               brechas: [BUG-01, BUG-05, BUG-06, BUG-03, BUG-04, UI-10, DATA-03, UI-03, INT-02, FUNC-04, FUNC-06, FUNC-10] }
+  HU06-CP02: { familia: F-MASIVO-ESTRUCTURAR, fase: 2, prioridad: P2, actores: [intermediario, analista], datasets: [CFG-PROCESO, INI-AUTOS-MASIVO], escenario: 4-hu06-cp02.yaml, estado: BLOCKED,
+               brechas: [ENV-03, BUG-01, BUG-03, BUG-04, DATA-06, UI-03, UI-05, INT-02, FUNC-10, UI-10] }
+  HU06-CP03: { familia: F-MASIVO-ESTRUCTURAR, fase: 2, prioridad: P2, actores: [intermediario, analista], datasets: [CFG-PROCESO, INI-CUMPL-MASIVO-SIN-RCE], escenario: 5-hu06-cp03.yaml, estado: BLOCKED,
+               brechas: [ENV-03, BUG-03, BUG-04, DATA-07, UI-03, UI-05, INT-02, FUNC-02, OBS-11, FUNC-10, UI-10] }
+  HU06-CP04: { familia: F-MASIVO-ESTRUCTURAR, fase: 2, prioridad: P2, actores: [intermediario, analista], datasets: [CFG-PROCESO, INI-CUMPL-MASIVO-CON-RCE], escenario: 6-hu06-cp04.yaml, estado: BLOCKED,
+               brechas: [ENV-03, BUG-03, BUG-04, DATA-07, UI-03, UI-05, INT-02, FUNC-02, FUNC-05, OBS-11, FUNC-10, UI-10] }
+  HU06-CP05: { familia: F-INDIVIDUAL-RUTA, fase: 1, prioridad: P1, actores: [analista], datasets: [CFG-PROCESO, INI-INDIVIDUAL-RUTA], escenario: 1-hu06-cp05.yaml, estado: EJECUTABLE,
+               brechas: [ENV-03, BUG-02, INT-01, FUNC-10] }
+  HU03-CP01: { familia: F-INDIVIDUAL-CONSULTA, fase: 2, prioridad: P2, actores: [intermediario], datasets: [CFG-PROCESO, PLACA-MULTIPOLIZA], escenario: 7-hu03-cp01.yaml, estado: BLOCKED,
+               brechas: [ENV-03, BUG-02, DATA-08, UI-06, UI-09, INT-01, FUNC-03] }
+  HU03-CP02: { familia: F-INDIVIDUAL-CONSULTA, fase: 1, prioridad: P1, actores: [intermediario], datasets: [CFG-PROCESO, POL-AUTOS-VIGENTE], escenario: 2-hu03-cp02.yaml, estado: BLOCKED,
+               brechas: [ENV-03, BUG-02, DATA-09, DATA-05, UI-01, INT-01, FUNC-03] }
+  HU03-CP03: { familia: F-INDIVIDUAL-CONSULTA, fase: 2, prioridad: P2, actores: [intermediario], datasets: [CFG-PROCESO, POL-GENERALES-VIGENTE], escenario: 8-hu03-cp03.yaml, estado: BLOCKED,
+               brechas: [ENV-03, BUG-02, DATA-10, UI-09, INT-01, FUNC-03, FUNC-08] }
+  HU03-CP04: { familia: F-INDIVIDUAL-CONSULTA, fase: 2, prioridad: P2, actores: [intermediario], datasets: [CFG-PROCESO, TOMADOR-EXISTENTE], escenario: 9-hu03-cp04.yaml, estado: BLOCKED,
+               brechas: [ENV-03, BUG-02, DATA-11, DATA-05, UI-09, INT-01, FUNC-03, FUNC-08, FUNC-09] }
+  HU03-CP05: { familia: F-INDIVIDUAL-CONSULTA, fase: 2, prioridad: P2, actores: [intermediario], datasets: [CFG-PROCESO, TOMADOR-INEXISTENTE], escenario: 10-hu03-cp05.yaml, estado: BLOCKED,
+               brechas: [ENV-03, BUG-02, DATA-12, DATA-05, UI-09, INT-01, FUNC-03, FUNC-08, FUNC-09] }
+  HU03-CP06: { familia: F-INDIVIDUAL-CONSULTA, fase: 2, prioridad: P2, actores: [intermediario], datasets: [CFG-PROCESO, POL-CUMPL-RCE], escenario: 11-hu03-cp06.yaml, estado: BLOCKED,
+               brechas: [ENV-03, BUG-02, DATA-13, UI-09, INT-01, FUNC-02, FUNC-03, FUNC-08] }
+  HU03-CP07: { familia: F-INDIVIDUAL-CONSULTA, fase: 2, prioridad: P2, actores: [intermediario], datasets: [CFG-PROCESO, POL-CUMPL-RCE], escenario: 12-hu03-cp07.yaml, estado: BLOCKED,
+               brechas: [ENV-03, BUG-02, DATA-13, UI-09, INT-01, FUNC-02, FUNC-03, FUNC-08] }
+  HU03-CP08: { familia: F-INDIVIDUAL-CONSULTA, fase: 2, prioridad: P2, actores: [intermediario], datasets: [CFG-PROCESO, POL-CUMPL-RCE], escenario: 13-hu03-cp08.yaml, estado: BLOCKED,
+               brechas: [ENV-03, BUG-02, DATA-13, UI-09, INT-01, FUNC-02, FUNC-03, FUNC-08] }
+  HU03-CP09: { familia: F-EXCEPCIONES, fase: 3, prioridad: P3, actores: [intermediario_alerta], datasets: [CFG-PROCESO, POL-AUTOS-VIGENTE], escenario: null, estado: PREPARADO,
+               brechas: [DATA-14, UI-01, UI-07, INT-01] }
+  HU03-CP10: { familia: F-EXCEPCIONES, fase: 3, prioridad: P3, actores: [intermediario], datasets: [CFG-PROCESO, POL-OTRO-INTERMEDIARIO, DOC-SOPORTE], escenario: null, estado: PREPARADO,
+               brechas: [DATA-15, UI-01, UI-08, INT-01] }
+  HU03-CP11: { familia: F-EXCEPCIONES, fase: 3, prioridad: P3, actores: [intermediario], datasets: [CFG-PROCESO, POL-INEXISTENTE-RECONSULTA], escenario: null, estado: PREPARADO,
+               brechas: [DATA-16, UI-01, INT-01, INT-03] }
+  HU03-CP12: { familia: F-EXCEPCIONES, fase: 3, prioridad: P3, actores: [intermediario], datasets: [CFG-PROCESO, POL-CUMPL-RCE, DOC-SOPORTE], escenario: null, estado: PREPARADO,
+               brechas: [DATA-13, UI-01, UI-05, INT-01, INT-03, FUNC-02] }
+
+# Catálogo de brechas (detalle y acción de QA en docs/TEST-DATA-GAPS.md y docs/SIGUIENTE-FASE.md).
+brechas:
+  ENV-01:  { tipo: ENVIRONMENT_GAP, titulo: 'RESUELTO 2026-10-08: credenciales de intermediario, analista e intermediario_alerta cargadas; login real 3/3' }
+  ENV-03:  { tipo: ENVIRONMENT_GAP, titulo: 'PARCIALMENTE RESUELTO 2026-10-13: el permiso es POR USUARIO (rol CE_Intermediarios). Cuenta habilitada INT-013403 (Excel de QA) registrada como intermediario; intermediario_alerta sigue sin rol' }
+  BUG-01:  { tipo: FUNCTIONAL_AMBIGUITY, titulo: 'RECLASIFICADO 2026-10-13: no es lista vacía sino secuencia. Los tipos documentales aparecen tras guardar la fila Y re-pintar el formulario; la matriz (P9) no lo describe. Control de cambios en docs/CONTROL-CAMBIOS-DOCUMENTOS-HU06.md (casos 428/429)' }
+  BUG-02:  { tipo: FUNCTIONAL_AMBIGUITY, titulo: 'RECLASIFICADO 2026-10-13: observación de una ejecución con actor NO conforme (Individual radicado por CE_Analista queda en Consultar Alertas Intermediario). QA confirmó que HU03 radica el Intermediario; no es defecto confirmado' }
+  BUG-03:  { tipo: FUNCTIONAL_DEFECT, titulo: 'YA REPORTADO POR QA (ticket pendiente de registrar): salir del pop-up de Detalle Polizas Asociadas sin Guardar deja el caso inutilizable (342, 350, 426). No se reproduce más' }
+  BUG-04:  { tipo: FUNCTIONAL_DEFECT, titulo: 'Ortografía: etiqueta "Observaciónes" en Estructurar información (matriz: "Observaciones")' }
+  ENV-02:  { tipo: ENVIRONMENT_GAP, titulo: 'Sin acceso a la API OData de Bizagi SDE (permitiría verificar actividades del caso directamente)' }
+  DATA-01: { tipo: TEST_DATA_GAP, titulo: 'RESUELTO 2026-10-08: proceso "Gestión Solicitudes Centro Expedición" (App > Processes > Centro de Expedición)' }
+  DATA-02: { tipo: TEST_DATA_GAP, titulo: 'Ramo/Sucursal válidos para Masivo por Línea' }
+  DATA-03: { tipo: TEST_DATA_GAP, titulo: 'Narrativa con pólizas/tomadores reales para que el Worker AI estructure filas' }
+  DATA-04: { tipo: TEST_DATA_GAP, titulo: 'Combinación Individual + criterio de consulta para HU06-CP05' }
+  DATA-05: { tipo: TEST_DATA_GAP, titulo: 'Tipos documentales obligatorios por Línea/Ramo/Movimiento/modalidad (DOCS-OBLIGATORIOS)' }
+  DATA-06: { tipo: TEST_DATA_GAP, titulo: 'Placa válida para edición Masivo Autos' }
+  DATA-07: { tipo: TEST_DATA_GAP, titulo: 'Ramos de Cumplimiento con y sin propiedad Póliza RCE + pólizas de 9–12 dígitos' }
+  DATA-08: { tipo: TEST_DATA_GAP, titulo: 'Placa con más de una póliza vigente del intermediario' }
+  DATA-09: { tipo: TEST_DATA_GAP, titulo: 'Póliza Autos vigente del intermediario, sin alerta, con vehículo' }
+  DATA-10: { tipo: TEST_DATA_GAP, titulo: 'Póliza Generales vigente (Modificación)' }
+  DATA-11: { tipo: TEST_DATA_GAP, titulo: 'Tomador existente en SISE' }
+  DATA-12: { tipo: TEST_DATA_GAP, titulo: 'Documento confirmado inexistente en SISE' }
+  DATA-13: { tipo: TEST_DATA_GAP, titulo: 'Pólizas Cumplimiento + Póliza RCE válida/inexistente' }
+  DATA-14: { tipo: TEST_DATA_GAP, titulo: 'Intermediario con alerta bloqueante (por código)' }
+  DATA-15: { tipo: TEST_DATA_GAP, titulo: 'Póliza de otro intermediario + carta de nombramiento de prueba' }
+  DATA-16: { tipo: TEST_DATA_GAP, titulo: 'Póliza con formato válido inexistente en SISE' }
+  UI-01:   { tipo: UI_CAPABILITY_GAP, titulo: 'Selectores del Work Portal SDE sin calibrar (contenedor de campo, listas, botones, número de caso, búsqueda)' }
+  UI-02:   { tipo: UI_CAPABILITY_GAP, titulo: 'Lectura del número de caso tras "Crear" (etiqueta/selector desconocido)' }
+  UI-03:   { tipo: UI_CAPABILITY_GAP, titulo: 'Grilla Bizagi "Pólizas asociadas" — acciones Editar/Agregar/Eliminar y pop-up sin calibrar' }
+  UI-04:   { tipo: UI_CAPABILITY_GAP, titulo: 'Navegación de pestañas Documentos de la solicitud / Seguimiento' }
+  UI-05:   { tipo: UI_CAPABILITY_GAP, titulo: 'Pruebas negativas de formato (longitud > máx., no numérico) — falta capability "intentar_diligenciar" que no falle por post-condición' }
+  UI-06:   { tipo: UI_CAPABILITY_GAP, titulo: 'Selección única en tabla de pólizas retornadas (HU03-CP01)' }
+  UI-07:   { tipo: UI_CAPABILITY_GAP, titulo: 'Verificar que el caso TERMINA tras Desistir (evento terminal)' }
+  UI-10:   { tipo: UI_CAPABILITY_GAP, titulo: 'Etiquetas reales del pop-up de Póliza Nueva desconocidas: "Tipo documento del Tomador" no existe como etiqueta, "Número de Documento Tomador" aparece 2 veces y Forma Consulta no muestra "Identificación de Tomador" (caso 430, inutilizable). Calibrar con captura/definición de QA o tras corregir BUG-03' }
+  BUG-06:  { tipo: FUNCTIONAL_DEFECT, titulo: 'POR CONFIRMAR: Crear exige "tipo documental obligatorio ID 3" (Solicitud de seguro, data-value 3) pero acepta un documento de tipo 2 (Sarlaft) o 4 (Otros): casos 430 y 431' }
+  BUG-05:  { tipo: FUNCTIONAL_DEFECT, titulo: 'POR CONFIRMAR: tras guardar la fila de Documentos Anexos la grilla no se refresca (sigue "Por favor guarde el registro…" y sin tipos) hasta que algo re-pinta el formulario' }
+  UI-09:   { tipo: UI_CAPABILITY_GAP, titulo: 'Completar información de solicitud nunca observada (ENV-03/BUG-02): etiquetas, grupos y botones tomados de la matriz, sin calibrar' }
+  OBS-11:  { tipo: FUNCTIONAL_AMBIGUITY, titulo: 'Número Póliza del pop-up con maxlength 20 (observado 2026-10-13); la matriz exige 9–12 numéricos: confirmar si se valida al Guardar' }
+  UI-08:   { tipo: UI_CAPABILITY_GAP, titulo: 'Tabla de documentos con registro obligatorio "Carta de nombramiento"' }
+  INT-01:  { tipo: INTEGRATION_VISIBILITY_GAP, titulo: 'Sin acceso a traza/log de SISE ni de Consultar alertas (solo evidencia indirecta por UI)' }
+  INT-02:  { tipo: INTEGRATION_VISIBILITY_GAP, titulo: 'Sin acceso a traza/log del Worker AI' }
+  INT-03:  { tipo: INTEGRATION_VISIBILITY_GAP, titulo: 'Verificar que la reconsulta usa el valor corregido (requiere log del request SISE)' }
+  FUNC-01: { tipo: FUNCTIONAL_AMBIGUITY, titulo: 'Etiqueta exacta "Tipo de Solicitud/Movimiento" vs "Tipo de Solicitud" vs "Tipo de Movimiento" (la matriz usa las tres)' }
+  FUNC-02: { tipo: FUNCTIONAL_AMBIGUITY, titulo: 'Nombre de la Línea: "Cumplimiento (Fianzas)" / "Cumpimiento"; "Generales" / "General"' }
+  FUNC-03: { tipo: FUNCTIONAL_AMBIGUITY, titulo: 'Nombre exacto de la actividad posterior a Confirmar ("Análisis") y de "Completar Información" en la bandeja' }
+  FUNC-04: { tipo: FUNCTIONAL_AMBIGUITY, titulo: 'HU06-CP01 P22 — si el Worker AI ya llenó Número de Documento, "sin diligenciar obligatorios" exige vaciar el campo primero' }
+  FUNC-05: { tipo: FUNCTIONAL_AMBIGUITY, titulo: 'HU06-CP04 P15 — comportamiento esperado de Ramo RCE/Número de Póliza RCE con propiedad RCE no está especificado' }
+  FUNC-06: { tipo: FUNCTIONAL_AMBIGUITY, titulo: 'Columnas definidas de "Pólizas asociadas a la solicitud" no listadas en la matriz' }
+  FUNC-07: { tipo: FUNCTIONAL_AMBIGUITY, titulo: 'Opción de Forma de Consulta: "Numero de Poliza" (acción) vs "Número de póliza" (resultado)' }
+  FUNC-08: { tipo: FUNCTIONAL_AMBIGUITY, titulo: 'HU03 CP03–CP08 P4 esperan "opciones correspondientes a Autos" aunque la Línea es General/Cumplimiento (copia de CP01–02)' }
+  FUNC-10: { tipo: FUNCTIONAL_AMBIGUITY, titulo: 'HU06 no especifica qué actor radica (solo Requirement 230849: Analista en Estructurar). CP01/CP05 radican con CE_Analista; CP02–CP04 con Intermediario. Confirmar con QA' }
+  FUNC-09: { tipo: FUNCTIONAL_AMBIGUITY, titulo: 'HU03 CP04/CP05 P5 esperan "campo Número de póliza" en Póliza Nueva consultada por Tomador' }

@@ -1,0 +1,107 @@
+{
+ "archivo": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx",
+ "hoja": "CP02",
+ "pasos": [
+  {
+   "paso": 1,
+   "accion": "Objetivo",
+   "esperado": "Validar el comportamiento de los formularios del rep legal, contacto de caja y rep del portal, cuando precarga los datos correctamente encontrados al consultar la bd de bizagi, ahorrando asi un consumo de la registraduria"
+  },
+  {
+   "paso": 2,
+   "accion": "Ingrese al Portal de afiliaciones de test de Colsubsidio mediante el siguiente link \"https://transacciones.colsubsidio.com/afiliaciones-en-linea/qa/home\"",
+   "esperado": "El ambiente de pruebas carga correctamente permitiendo el inicio del trámite"
+  },
+  {
+   "paso": 3,
+   "accion": "Inicie un proceso de afiliación para un tipo de aportante \"Empleador\" juridico que exista en RUES y que NO este afiliado a colsubsidio",
+   "esperado": "Se debe iniciar el proceso con un número de caso enviado al correo electronico"
+  },
+  {
+   "paso": 4,
+   "accion": "El proceso iniciara las validaciones de GIASS y RUES",
+   "esperado": "Las validaciones deben ser correctas y la integración de GIASS obtendra la información correspondiente y  el proceso avanza correctamente \n\nEl proceso continuara correctamente y llegara a la actividad \"Registrar información del cliente\""
+  },
+  {
+   "paso": 5,
+   "accion": "En la actividad \"Registrar información cliente\" valide en la pantalla \"Representante legal\" la información del representante legal retornada de RUES",
+   "esperado": "El formulario NO precargara ningun número de identificación retornado de la integración, debido a que no encontro ningun representante legal en RUES\n\nSolo se visualiza los campos Tipo de identificación y Numero de identificación\n\nEl campo tipo de identificación y numero de identificación estaran vacio",
+   "nota": "No se puede indicar en el caso que se busco una persona en bizagi que ya haya sido consultada en Registraduria , ya que de acuerdo al req, se prioriza primero, consultarlo en bizagi de acuerdo al FLAG tambien y si no lo encuentra en bizagi, que lo consulte en la registraduria, para este escenario se consulta una persona que si exista en bizagi y de acuerdo a eso se ahorre la consulta en la registraduria"
+  },
+  {
+   "paso": 6,
+   "accion": "Valide la misma funcionalidad y diseño en la versión Mobile",
+   "esperado": "Se debe visualizar correctamente el prototipo en la versión Mobile"
+  },
+  {
+   "paso": 7,
+   "accion": "En la pantalla \"Representante legal\" registre el numero de identificación y el tipo de identificación, realice la consulta de la persona correctamente\n\nAl consultar el sistema mostrara un spinner de cargar con un mensaje de espera\n\nEl mensaje sera: Estamos realizando algunas validaciones",
+   "esperado": "El sistema identifica que la información tiene el flag marcado como SI y por ende consultara la información en bizagi\n\nLos campos de nombres y apellidos precargaran la información correctamente\n\nEl campo de nombre completo sera eliminado y no sera visible\n\n El formulario precargara los valores encontrados de la bizagi correctamente, ahorrando asi una consulta a la registraduria"
+  },
+  {
+   "paso": 8,
+   "accion": "Valide la misma funcionalidad y diseño en la versión Mobile",
+   "esperado": "Se debe visualizar correctamente el prototipo en la versión Mobile"
+  },
+  {
+   "paso": 9,
+   "accion": "En la pantalla \"Representante legal\" registre la información obligatoria y avance hasta el formulario de \"Ingresa información contacto con la caja\"",
+   "esperado": "Solo se visualizara los campos Tipo de identificación y Numero de identificación\n\nLos campos Tipo de identificación y Numero de identificación estaran vacios"
+  },
+  {
+   "paso": 10,
+   "accion": "Valide la misma funcionalidad y diseño en la versión Mobile",
+   "esperado": "Se debe visualizar correctamente el prototipo en la versión Mobile"
+  },
+  {
+   "paso": 11,
+   "accion": "En la pantalla \"Ingresa información contacto con la caja\" consulte un número de identificación con tipo de identificación \"Cedula de Ciudadania\" que exista en bizagi y valide el spinner de consulta",
+   "esperado": "Al consultar el sistema mostrara un spinner de cargar con un mensaje de espera\n\nEl mensaje sera: Estamos realizando algunas validaciones"
+  },
+  {
+   "paso": 12,
+   "accion": "En la pantalla \"Ingresa información contacto con la caja\" el sistema encontrara la persona en bizagi correctamente, precargando asi los nombres y apellidos de la persona, ahorrando asi una consulta en la registraduria",
+   "esperado": "El sistema identifica que la información tiene el flag marcado como SI y por ende consultara la información en bizagi, ahorrando asi una consulta a la registraduria, el portal precargara los nombres y apellidos correctamente, los cuales no seran editables\n\nLos campos que no retornen nombres, no tendran el tootip \"Escribe\"\n\nEl campo de nombre completo sera eliminado y no sera visible"
+  },
+  {
+   "paso": 13,
+   "accion": "Valide la misma funcionalidad y diseño en la versión Mobile",
+   "esperado": "Se debe visualizar correctamente el prototipo en la versión Mobile"
+  },
+  {
+   "paso": 14,
+   "accion": "En la pantalla \"Ingresa información contacto con la caja\" registre la información obligatoria y avance hasta el formulario de \"Ingresa información responsable del portal\"",
+   "esperado": "Solo se visualizara los campos Tipo de identificación y Numero de identificación\n\nLos campos Tipo de identificación y Numero de identificación estaran vacios"
+  },
+  {
+   "paso": 15,
+   "accion": "Valide la misma funcionalidad y diseño en la versión Mobile",
+   "esperado": "Se debe visualizar correctamente el prototipo en la versión Mobile"
+  },
+  {
+   "paso": 16,
+   "accion": "En la pantalla \"Ingresa información responsable del portal\" consulte un número de identificación con tipo de identificación \"Cedula de Ciudadania\" que exista en bizagi y valide el spinner de consulta",
+   "esperado": "Al consultar el sistema mostrara un spinner de cargar con un mensaje de espera\n\nEl mensaje sera: Estamos realizando algunas validaciones"
+  },
+  {
+   "paso": 17,
+   "accion": "En la pantalla \"Ingresa información responsable del portal\" el sistema encontrara la persona en bizagi correctamente, precargando asi los nombres y apellidos de la persona, ahorrando asi una consulta en la registraduria",
+   "esperado": "El sistema identifica que la información tiene el flag marcado como SI y por ende consultara la información en bizagi, ahorrando asi una consulta a la registraduria, el portal precargara los nombres y apellidos correctamente, los cuales no seran editables\n\nLos campos que no retornen nombres, no tendran el tootip \"Escribe\"\n\nEl campo de nombre completo sera eliminado y no sera visible"
+  },
+  {
+   "paso": 18,
+   "accion": "Valide la misma funcionalidad y diseño en la versión Mobile",
+   "esperado": "Se debe visualizar correctamente el prototipo en la versión Mobile"
+  },
+  {
+   "paso": 19,
+   "accion": "En la pantalla \"Ingresa información responsable del portal\" Registre la información obligatoria y avance hasta el formulario de \"Documentos\"\n\nEn la pantalla de documentos, descargue el formulario del tipo de aportante y valide la información para la persona de la caja y responsable del portal",
+   "esperado": "Se debera evidenciar en las columnas de la persona de contacto con la caja y el responsable del portal, tendran su respectiva persona registrada correctamente y no sera la misma que la del representante legal"
+  },
+  {
+   "paso": 20,
+   "accion": "En la pantalla de documentos cargue los documentos obligatorios y avance la solicitud",
+   "esperado": "El sistema identifica que toda la información fue registrada correctamente y permite avanzar"
+  }
+ ]
+}

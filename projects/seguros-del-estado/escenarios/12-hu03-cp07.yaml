@@ -1,0 +1,79 @@
+# HU03-CP07 — Cumplimiento SIN Ramo RCE que SÍ requiere RCE  (Fase 2, familia F-INDIVIDUAL-CONSULTA)
+# Fuente: fuentes/20261006_SDE_CEL_V2_Casos de Prueba_HU03.xlsx, hoja CP07 (21 pasos).
+# Actor: intermediario (ENV-03 vigente → BLOCKED de ambiente). La pregunta RCE del formulario de inicio y sus campos usan
+# las etiquetas reales de "Detalle Polizas Asociadas" (¿Requiere modificar RCE?, Ramo RCE, Número Póliza RCE); en el
+# formulario de inicio individual [PENDIENTE de calibrar].
+id: HU03-CP07
+titulo: Individual Cumplimiento sin Ramo RCE que requiere RCE — póliza principal + Póliza RCE y Análisis
+etiquetas: [hu03, fase2, individual, cumplimiento, rce, cp07]
+actores: [intermediario]
+datasets: [CFG-PROCESO, POL-CUMPL-RCE]
+cleanup:
+  politica: CLEANUP_NOT_APPLICABLE
+  razon: El caso avanza a Análisis (estado de negocio esperado); no hay acción reversible para deshacerlo.
+pasos:
+  - incluir: sesion-y-formulario
+    con: { actor: intermediario, p_sesion: [2], p_formulario: [3] }
+
+  - matriz: [4]
+    hacer: diligenciar
+    campos:
+      - { campo: Línea, valor: "${dato:POL-CUMPL-RCE.linea}", tipo: lista }
+      - { campo: Ramo, valor: "${dato:POL-CUMPL-RCE.ramo_sin_rce}", tipo: lista }
+      - { campo: Tipo de Solicitud, valor: "${dato:POL-CUMPL-RCE.movimiento}", tipo: lista }
+      - { campo: Sucursal, valor: "${dato:POL-CUMPL-RCE.sucursal}", tipo: lista }
+
+  - matriz: [5, 6]
+    hacer: diligenciar
+    campos:
+      - { campo: Tipo de Radicación, valor: "${dato:POL-CUMPL-RCE.tipo_radicacion}", tipo: radio }
+    verificar:
+      - visible: Número de Póliza
+      - visible: ¿Requiere modificar RCE?
+
+  - matriz: [6]
+    hacer: no_automatizado
+    razon: Tipo de dato/longitud y ortografía global sin especificación ni glosario.
+
+  - matriz: [7]
+    hacer: diligenciar
+    campos:
+      - { campo: Número de Póliza, valor: "${dato:POL-CUMPL-RCE.poliza_sin_rce}", tipo: texto }
+      - { campo: ¿Requiere modificar RCE?, valor: Si, tipo: radio }
+      - { campo: Ramo RCE, valor: "${dato:POL-CUMPL-RCE.ramo_rce}", tipo: lista }
+      - { campo: Número Póliza RCE, valor: "${dato:POL-CUMPL-RCE.poliza_rce}", tipo: texto }
+
+  - incluir: individual-hasta-completar
+    con:
+      actor: intermediario
+      linea: "${dato:POL-CUMPL-RCE.linea}"
+      criterio: el número de póliza principal y la Póliza RCE
+      respuesta_sise: retorna la póliza principal y la Póliza RCE
+
+  - matriz: [14]
+    hacer: verificar
+    verificar:
+      - valor: { campo: Número de Póliza, igual: "${dato:POL-CUMPL-RCE.poliza_sin_rce}" }
+      - solo_lectura: [Número de Póliza]
+      - visible: Tomador
+      - visible: Asegurado
+
+  - matriz: [15]
+    hacer: verificar
+    verificar:
+      - visible: Póliza RCE
+
+  - incluir: correo-facturacion
+    con: { p_correo: [16] }
+
+  - matriz: [17]
+    hacer: verificar
+    verificar:
+      - editable: [Comentarios]
+
+  - matriz: [17, 18]
+    hacer: no_automatizado
+    razon: Tipos documentales de Completar información y nomenclatura completa sin especificación de referencia.
+
+  - incluir: cierre-completar
+    con: { actor: intermediario, p_botones: [19], p_confirmar: [20], p_accion: [20, 21] }

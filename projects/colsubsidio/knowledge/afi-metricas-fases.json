@@ -1,0 +1,43 @@
+[
+  {
+    "fase": "4K",
+    "fecha": "2026-09-29",
+    "cambiosRuntime": true,
+    "motivoRuntime": "Instrumentación shadow del reconocimiento de pantalla (solo observa; desactivada por defecto).",
+    "operacionesNuevas": 0,
+    "capabilitiesFuncionalesNuevas": 0,
+    "cambiosEspecificosHu": 0
+  },
+  {
+    "fase": "4L",
+    "fecha": "2026-09-29",
+    "cambiosRuntime": false,
+    "operacionesNuevas": 0,
+    "capabilitiesFuncionalesNuevas": 0,
+    "cambiosEspecificosHu": 0
+  },
+  {
+    "fase": "4M",
+    "fecha": "2026-09-29",
+    "cambiosRuntime": false,
+    "operacionesNuevas": 0,
+    "capabilitiesFuncionalesNuevas": 0,
+    "cambiosEspecificosHu": 0
+  },
+  {
+    "fase": "4N",
+    "fecha": "2026-09-30",
+    "cambiosRuntime": false,
+    "operacionesNuevas": 0,
+    "capabilitiesFuncionalesNuevas": 0,
+    "cambiosEspecificosHu": 0
+  },
+  {
+    "fase": "4O",
+    "fecha": "2026-09-30",
+    "cambiosRuntime": false,
+    "operacionesNuevas": 0,
+    "capabilitiesFuncionalesNuevas": 0,
+    "cambiosEspecificosHu": 0
+  }
+]

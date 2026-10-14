@@ -1,0 +1,95 @@
+# Política: Git guarda código, documentación y fixtures revisados. Todo lo que pueda contener credenciales,
+# sesiones, datos de QA o capturas se queda LOCAL. Las excepciones (!) son archivos revisados uno a uno.
+# Verificación: `git ls-files -ci --exclude-standard` debe listar solo las excepciones revisadas (ver PROTOCOLO-AGENTES.md).
+
+# ---- Dependencias y resultados de ejecución (capturas, valores tecleados, PII) ----
+node_modules/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+*.log
+
+# ---- Credenciales, tokens y configuración local (solo se versionan las plantillas .env.example) ----
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+.npmrc
+*.pem
+*.key
+*.pfx
+*.p12
+*.crt
+**/secrets/
+**/credenciales*
+**/*credentials*.json
+**/*token*.json
+.claude/settings.local.json
+
+# ---- Sesiones y estado de autenticación de Playwright ----
+**/.auth/
+**/storageState*.json
+**/storage-state*.json
+**/*.cookies.json
+
+# ---- Traces, videos y tráfico de red (registran valores tecleados y respuestas) ----
+**/trace*.zip
+*.trace
+*.har
+*.webm
+*.mp4
+*.avi
+
+# ---- Capturas (pueden mostrar usuario, correo y datos de QA). Solo fixtures revisados ----
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.webp
+!projects/colsubsidio/tests/fixtures/soporte-cp02/*.png
+!projects/colsubsidio/resources/hu14-12/logo-cliente-colsubsidio.png
+
+# ---- Documentos de cliente (se conservan LOCALMENTE). Solo los revisados y necesarios para pruebas ----
+# El PDF del formato CRD queda local: nombraba la cuenta QA y no se puede sanear de forma verificable (el DOCX sí se saneó).
+*.xlsx
+*.xls
+*.xlsm
+*.docx
+*.doc
+*.pdf
+!projects/seguros-del-estado/fuentes/20260928_SDE_CEL_V1_Casos de Prueba_HU06.xlsx
+!projects/seguros-del-estado/fuentes/20261006_SDE_CEL_V2_Casos de Prueba_HU03.xlsx
+!projects/seguros-del-estado/resources/docs/soporte-prueba.pdf
+!projects/colsubsidio/docs/CLS_CRD_Formato_de_entrada_de_escenario.docx
+!projects/colsubsidio/templates/soporte-certificacion-cliente-referencia.docx
+
+# ---- Listados con identificadores reales (intermediarios, usuarios, candidatos) ----
+**/Intermedi*
+**/*intermediarios*.xlsx
+**/*intermediarios*.csv
+**/candidatos*.json
+!projects/seguros-del-estado/tests/candidatos.real.spec.ts
+
+# ---- Material privado de la raíz (historias de usuario, arranques, temporales) ----
+/228*.md
+/HU7_14_1_*.md
+/SDE_arranque_Claude_*/
+/tmp/
+/image/
+/evidencias/
+/entregas/
+**/_crudo/
+projects/**/docs/evidencia/*.log
+
+# ---- Paquetes, respaldos y temporales ----
+*.zip
+*.7z
+*.rar
+*.bak
+*.tmp
+*.orig
+~$*

@@ -1,0 +1,223 @@
+# HU06-CP01 — Radicación Masiva Generales (Póliza Nueva) + Worker AI + Estructurar información  (Vertical 3)
+# Fuente: fuentes/20260928_SDE_CEL_V1_Casos de Prueba_HU06.xlsx, hoja CP01 (29 pasos).
+# Calibrado contra el DOM real de QA el 2026-10-08:
+#  - formulario de inicio Masivo (Generales/Póliza Nueva) y grilla "Documentos Anexos" (edición en línea);
+#  - "Estructurar información" observada en los casos 342 (Autos) y 343 (Generales/Modificación): grupos Encabezado /
+#    Tipo de Consulta / Información a Consultar, grilla "Detalle Polizas Asociadas" con pop-up "Editar ...".
+# DESVIACIÓN DE ACTOR (ENV-03): radica CE_Analista (los intermediarios no tienen el proceso habilitado en QA). La
+# actividad Estructurar información SÍ corresponde al analista según la matriz.
+# Etiquetas: se usan las REALES de la UI donde la matriz usa nombres informales (ver OBS en REPORTE-FASE1B); donde la UI
+# tiene un error ortográfico frente a la matriz ("Observaciónes") se asierta el texto de la matriz para detectarlo.
+id: HU06-CP01
+titulo: Masivo Generales — Worker AI, Estructurar información (analista) y edición de Detalle Polizas Asociadas
+etiquetas: [hu06, vertical, masivo, generales, cp01]
+actores: [analista]
+datasets: [CFG-PROCESO, INI-GENERALES-MASIVO, DOC-SOPORTE, DOCS-OBLIGATORIOS]
+cleanup:
+  politica: CLEANUP_NOT_APPLICABLE
+  razon: El caso queda en Estructurar información (identificable por ${unico} en la narrativa); la matriz no pide completarlo ni desistirlo.
+pasos:
+  - matriz: [2]
+    hacer: iniciar_sesion
+    actor: analista
+
+  - matriz: [2, 3]
+    hacer: nuevo_caso
+    proceso: "${config:SDE_PROCESO_RADICACION}"
+    categoria: "${config:SDE_PROCESO_CATEGORIA}"
+
+  - matriz: [3]
+    hacer: diligenciar
+    campos:
+      - { campo: Línea, valor: "${dato:INI-GENERALES-MASIVO.linea}", tipo: lista }
+      - { campo: Ramo, valor: "${dato:INI-GENERALES-MASIVO.ramo}", tipo: lista }
+      - { campo: Tipo de Solicitud, valor: "${dato:INI-GENERALES-MASIVO.movimiento}", tipo: lista }
+
+  - matriz: [4, 5]
+    hacer: verificar
+    verificar:
+      - etiquetas: [Línea, Ramo, Tipo de Solicitud, Sucursal]
+      # La marca de obligatorio de Bizagi solo se ve con el campo vacío: se verifica ANTES de diligenciarlo.
+      - obligatorio: [Sucursal]
+
+  - matriz: [5]
+    hacer: diligenciar
+    campos:
+      - { campo: Sucursal, valor: "${dato:INI-GENERALES-MASIVO.sucursal}", tipo: lista }
+
+  - matriz: [6]
+    hacer: diligenciar
+    campos:
+      - { campo: Tipo de Radicación, valor: "${dato:INI-GENERALES-MASIVO.tipo_radicacion}", tipo: radio }
+    verificar:
+      - visible: Descripción de la Solicitud (Masiva/Múltiple)
+      - visible: Documentos Anexos
+
+  - matriz: [7]
+    hacer: verificar
+    verificar:
+      - texto_exacto: "Masivo: Solicitud asociada a más de una póliza."
+
+  - matriz: [8]
+    hacer: verificar
+    verificar:
+      - editable: [Descripción de la Solicitud (Masiva/Múltiple)]
+
+  - matriz: [9]
+    hacer: diligenciar
+    campos:
+      - { campo: Descripción de la Solicitud (Masiva/Múltiple), valor: "${dato:INI-GENERALES-MASIVO.narrativa} ${dato:INI-GENERALES-MASIVO.narrativa_polizas}", tipo: area }
+
+  - matriz: [9]
+    hacer: adjuntar_en_grilla
+    grilla: Documentos Anexos
+    tipo_documental: "${dato:DOCS-OBLIGATORIOS.tipos_generales_masivo}"
+    archivo: "${dato:DOC-SOPORTE.archivo}"
+
+  - matriz: [10]
+    hacer: pulsar
+    boton: Crear
+    capturar_numero_caso: true
+
+  - matriz: [11, 12]
+    hacer: verificar_ruta
+    actor: analista
+    llega_a: Estructurar información
+    no_llega_a: [Consultar Alertas Intermediario, Completar información de solicitud]
+    maximo_minutos: 15
+
+  - matriz: [12, 17]
+    hacer: integracion
+    nombre: Worker AI
+    esperado: Procesa la narrativa y estructura las pólizas asociadas; sin acceso a su traza/log no se verifica el procesamiento, solo su resultado visible.
+
+  - matriz: [13]
+    hacer: abrir_caso
+    actor: analista
+    actividad: Estructurar información
+    maximo_minutos: 5
+
+  - matriz: [14]
+    hacer: verificar
+    verificar:
+      - solo_lectura: [Número de Caso, Creador del Caso, Fecha de Creación, Línea, Ramo, Movimiento]
+      - valor: { campo: Línea, igual: "${dato:INI-GENERALES-MASIVO.linea}" }
+
+  - matriz: [15]
+    hacer: verificar
+    verificar:
+      - solo_lectura: [Tipo Radicación, Sucursal]
+      - valor: { campo: Tipo Radicación, igual: "${dato:INI-GENERALES-MASIVO.tipo_radicacion}" }
+
+  - matriz: [16]
+    hacer: verificar
+    verificar:
+      - visible: Información a Consultar
+      - solo_lectura: [Descripción Solicitud Masiva]
+
+  - matriz: [17]
+    hacer: tabla_verificar
+    tabla: Detalle Polizas Asociadas
+    minimo_filas: 1
+    columnas: [Forma Consulta, Tipo documento del Tomador, Número de Documento Tomador, Número Póliza]
+
+  # UI-10 (2026-10-13, caso 430): las etiquetas de P19–P25 NO coinciden con el pop-up real de Póliza Nueva ("Tipo documento del
+  # Tomador" no existe como etiqueta; "Número de Documento Tomador" aparece 2 veces; Forma Consulta muestra otro valor). Ejecutar
+  # P18–P26 así deja el caso inutilizable: NO cargar los NIT en el .env hasta calibrar esas etiquetas con QA.
+  # BUG-03 (2026-10-13): salir del pop-up sin "Guardar" deja el caso inutilizable. El pop-up SOLO se abre si están los datos
+  # con los que se podrá cerrar guardando (EST-FILA-GENERALES-PN); sin ellos P18–P26 quedan BLOCKED sin abrirlo.
+  - matriz: [18]
+    hacer: tabla_abrir_fila
+    formulario: detalle-polizas-pn-generales
+    requiere: [EST-FILA-GENERALES-PN]
+    tabla: Detalle Polizas Asociadas
+    fila: 1
+
+  - matriz: [19]
+    hacer: verificar
+    requiere: [EST-FILA-GENERALES-PN]
+    verificar:
+      - valor: { campo: Forma Consulta, igual: Identificación de Tomador }
+      - solo_lectura: [Forma Consulta]
+
+  - matriz: [20]
+    hacer: verificar
+    requiere: [EST-FILA-GENERALES-PN]
+    verificar:
+      - obligatorio: [Tipo documento del Tomador, Número de Documento Tomador]
+
+  - matriz: [21]
+    hacer: diligenciar
+    requiere: [EST-FILA-GENERALES-PN]
+    campos:
+      - { campo: Tipo documento del Tomador, valor: "${dato:EST-FILA-GENERALES-PN.tipo_documento}", tipo: lista }
+    verificar:
+      - visible: Dígito de Verificación
+      - solo_lectura: [Dígito de Verificación]
+
+  - matriz: [22]
+    hacer: dialogo_confirmar
+    requiere: [EST-FILA-GENERALES-PN]
+    espera: permanece_abierto
+
+  - matriz: [23]
+    hacer: diligenciar
+    requiere: [EST-FILA-GENERALES-PN]
+    campos:
+      - { campo: Número de Documento Tomador, valor: "${dato:EST-FILA-GENERALES-PN.numero_documento}", tipo: texto }
+
+  - matriz: [23]
+    hacer: dialogo_confirmar
+    requiere: [EST-FILA-GENERALES-PN]
+    espera: cierra
+    fila_resultante:
+      Número de Documento Tomador: "${dato:EST-FILA-GENERALES-PN.numero_documento}"
+
+  - matriz: [24]
+    hacer: tabla_agregar
+    formulario: detalle-polizas-pn-generales
+    requiere: [EST-FILA-GENERALES-PN]
+    tabla: Detalle Polizas Asociadas
+    verificar:
+      - valor: { campo: Forma Consulta, igual: Identificación de Tomador }
+
+  - matriz: [25]
+    hacer: diligenciar
+    requiere: [EST-FILA-GENERALES-PN]
+    campos:
+      - { campo: Tipo documento del Tomador, valor: "${dato:EST-FILA-GENERALES-PN.tipo_documento}", tipo: lista }
+      - { campo: Número de Documento Tomador, valor: "${dato:EST-FILA-GENERALES-PN.numero_documento_nueva_fila}", tipo: texto }
+
+  - matriz: [25]
+    hacer: dialogo_confirmar
+    requiere: [EST-FILA-GENERALES-PN]
+    espera: cierra
+    fila_resultante:
+      Número de Documento Tomador: "${dato:EST-FILA-GENERALES-PN.numero_documento_nueva_fila}"
+
+  - matriz: [26]
+    hacer: tabla_eliminar_fila
+    requiere: [EST-FILA-GENERALES-PN]
+    tabla: Detalle Polizas Asociadas
+    fila_con:
+      Número de Documento Tomador: "${dato:EST-FILA-GENERALES-PN.numero_documento_nueva_fila}"
+
+  - matriz: [27]
+    hacer: verificar
+    verificar:
+      - editable: [Observaciones]
+
+  - matriz: [28]
+    hacer: verificar
+    verificar:
+      - visible: Documentos de la solicitud
+      - visible: Seguimiento/Trazabilidad
+
+  - matriz: [28]
+    hacer: no_automatizado
+    razon: Contenido de las pestañas Documentos de la solicitud y Seguimiento/Trazabilidad (navegación por pestañas pendiente de capability UI-04).
+
+  - matriz: [29]
+    hacer: verificar
+    verificar:
+      - solo_lectura: [Línea, Ramo, Movimiento, Sucursal, Tipo Radicación]

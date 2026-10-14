@@ -1,0 +1,172 @@
+[
+    {
+        "paso":  "P02",
+        "accion":  "[DESKTOP] Desde un navegador en equipo de escritorio, ingresar al Portal de Afiliaciones (https://transacciones.colsubsidio.com/afiliaciones-en-linea/qa/), iniciar sesión y avanzar el flujo de \"Independiente\" hasta la pantalla \"Información de contacto\".",
+        "esperado":  "Se visualiza la pantalla de \"Información de contacto\" con la alerta territorial ubicada en la parte superior de la pantalla, debajo del subtítulo \"Información de localización de vivienda\"."
+    },
+    {
+        "paso":  "P03",
+        "accion":  "[DESKTOP] Hacer clic en el campo desplegable \"Departamento\" y seleccionar la opción \"Cundinamarca\".",
+        "esperado":  "El campo \"Ciudad de vivienda\" se habilita como lista desplegable (ya no está bloqueado)."
+    },
+    {
+        "paso":  "P04",
+        "accion":  "[DESKTOP] Hacer clic en el campo \"Ciudad de vivienda\" y revisar las opciones disponibles sin digitar texto aún.",
+        "esperado":  "El catálogo muestra únicamente los municipios pertenecientes al departamento de Cundinamarca configurados en la paramétrica Ciudad nacional. No se muestran ciudades de otros departamentos."
+    },
+    {
+        "paso":  "P05",
+        "accion":  "[DESKTOP] En el campo \"Ciudad de vivienda\", intentar digitar caracteres numéricos (ej. \"123\") y, luego, caracteres especiales (ej. \"@#$%\u0026*\").",
+        "esperado":  "El campo \"Ciudad de vivienda\" no acepta la entrada: ninguno de los caracteres numéricos ni especiales digitados se visualiza en el campo."
+    },
+    {
+        "paso":  "P06",
+        "accion":  "[DESKTOP] En el campo \"Ciudad de vivienda\", digitar un texto alfabético que no coincida con ningún municipio de la lista (ej. \"Zxyw\") y, sin seleccionar ninguna opción, hacer clic por fuera del campo para que pierda el foco.",
+        "esperado":  "El sistema no conserva el texto libre: limpia automáticamente el campo \"Ciudad de vivienda\", que queda vacío, debido a que el texto digitado no coincide de forma exacta con una opción válida de la lista desplegable."
+    },
+    {
+        "paso":  "P07",
+        "accion":  "[DESKTOP] Digitar caracteres alfabéticos en el campo \"Ciudad de vivienda\" (ej. \"Chi\").",
+        "esperado":  "El sistema aplica texto predictivo en tiempo real, mostrando solo los municipios de Cundinamarca que coincidan con \"Chi\" (ej. \"Chía\")."
+    },
+    {
+        "paso":  "P08",
+        "accion":  "[DESKTOP] Seleccionar de la lista el municipio coincidente (ej. \"Chía\"). A continuación, hacer clic nuevamente sobre el campo \"Ciudad de vivienda\" para volver a abrir la lista desplegable y cerrarla conservando el municipio seleccionado.",
+        "esperado":  "El municipio seleccionado queda registrado en el campo \"Ciudad de vivienda\". Al volver a abrir la lista se visualiza nuevamente el listado completo de municipios de Cundinamarca configurados en la paramétrica Ciudad nacional, sin quedar limitado a las coincidencias de la búsqueda anterior (\"Chi\") y sin mostrar ciudades de otros departamentos."
+    },
+    {
+        "paso":  "P09",
+        "accion":  "[DESKTOP] Cambiar el valor del campo \"Departamento\" a \"BOGOTÁ, D.C.\".",
+        "esperado":  "El sistema precarga automáticamente el valor \"BOGOTÁ, D.C.\" en el campo \"Ciudad de vivienda\" y lo bloquea en modo solo lectura, impidiendo su modificación manual."
+    },
+    {
+        "paso":  "P10",
+        "accion":  "[DESKTOP] Cambiar nuevamente el valor del campo \"Departamento\" a \"Cundinamarca\" y seleccionar otra vez el municipio (ej. \"Chía\") en \"Ciudad de vivienda\" mediante la búsqueda predictiva.",
+        "esperado":  "El campo \"Ciudad de vivienda\" se habilita nuevamente como lista desplegable (sin bloqueo), muestra únicamente municipios de Cundinamarca y permite seleccionar el municipio."
+    },
+    {
+        "paso":  "P11",
+        "accion":  "[DESKTOP] Si el municipio seleccionado habilita el campo \"Localidad\": hacer clic en \"Localidad\" e intentar digitar caracteres numéricos (ej. \"123\") y, luego, caracteres especiales (ej. \"@#$%\u0026*\").",
+        "esperado":  "El campo \"Localidad\" no acepta la entrada: ninguno de los caracteres numéricos ni especiales digitados se visualiza en el campo."
+    },
+    {
+        "paso":  "P12",
+        "accion":  "[DESKTOP] Si aplica el campo \"Localidad\": digitar un texto alfabético que no coincida con ninguna opción de la lista (ej. \"Zxyw\") y, sin seleccionar ninguna opción, hacer clic por fuera del campo para que pierda el foco.",
+        "esperado":  "El sistema no conserva el texto libre: limpia automáticamente el campo \"Localidad\", que queda vacío, debido a que el texto digitado no coincide de forma exacta con una opción válida de la lista desplegable."
+    },
+    {
+        "paso":  "P13",
+        "accion":  "[DESKTOP] Si aplica el campo \"Localidad\": digitar los primeros caracteres alfabéticos de una localidad válida, seleccionar la opción coincidente y volver a abrir la lista desplegable de \"Localidad\", cerrándola conservando la selección.",
+        "esperado":  "El campo \"Localidad\" realiza el filtrado dinámico en tiempo real mostrando las coincidencias exactas y permite la selección. Al volver a abrir la lista se visualiza nuevamente el listado completo de opciones de \"Localidad\", sin quedar limitado a la búsqueda anterior."
+    },
+    {
+        "paso":  "P14",
+        "accion":  "[DESKTOP] Hacer clic en el campo \"Barrio\" e intentar digitar caracteres numéricos (ej. \"123\") y, luego, caracteres especiales (ej. \"@#$%\u0026*\").",
+        "esperado":  "El campo \"Barrio\" no acepta la entrada: ninguno de los caracteres numéricos ni especiales digitados se visualiza en el campo."
+    },
+    {
+        "paso":  "P15",
+        "accion":  "[DESKTOP] Digitar en el campo \"Barrio\" los primeros caracteres alfabéticos de un barrio válido, seleccionar la opción coincidente y volver a abrir la lista desplegable de \"Barrio\", cerrándola conservando la selección.",
+        "esperado":  "El campo \"Barrio\" realiza el filtrado dinámico en tiempo real mostrando las coincidencias exactas y permite la selección. Al volver a abrir la lista se visualiza nuevamente el listado completo de opciones de \"Barrio\", sin quedar limitado a la búsqueda anterior."
+    },
+    {
+        "paso":  "P16",
+        "accion":  "[DESKTOP] Borrar el valor del campo \"Barrio\", digitar un texto alfabético que no coincida con ninguna opción de la lista (ej. \"Zxyw\") y, sin seleccionar ninguna opción, presionar el botón para avanzar/guardar la información de contacto.",
+        "esperado":  "El sistema impide avanzar de pantalla, limpia automáticamente el campo \"Barrio\" (queda vacío) y exige seleccionar una opción válida de la lista desplegable."
+    },
+    {
+        "paso":  "P17",
+        "accion":  "[DESKTOP] Seleccionar nuevamente en el campo \"Barrio\" una opción válida mediante la búsqueda predictiva y presionar el botón para avanzar/guardar la información de contacto.",
+        "esperado":  "El sistema permite continuar al siguiente paso del proceso."
+    },
+    {
+        "paso":  "P18",
+        "accion":  "[DESKTOP] Continuar diligenciando con datos válidos las pantallas siguientes del flujo de afiliación hasta visualizar el formulario final de la solicitud, donde en la fila correspondiente a la dirección de vivienda se muestran los campos “Dirección de vivienda”, “Municipio”, “Rural/Urbano”, “Departamento” y “Teléfono”.",
+        "esperado":  "Se visualiza el formulario final de la solicitud de afiliación con la información diligenciada en el Portal."
+    },
+    {
+        "paso":  "P19",
+        "accion":  "[DESKTOP] En el formulario final, ubicar el campo “Rural/Urbano” en la fila de dirección de vivienda, entre los campos “Municipio” y “Departamento”, y revisar su contenido.",
+        "esperado":  "En el formulario final se visualiza el campo “Rural/Urbano” ubicado entre “Municipio” y “Departamento”, y este aparece vacío, sin ningún valor diligenciado."
+    },
+    {
+        "paso":  "P20",
+        "accion":  "[MOBILE] Con el emulador Mobile activo, ingresar al Portal de Afiliaciones (https://transacciones.colsubsidio.com/afiliaciones-en-linea/qa/), iniciar sesión y avanzar el flujo de \"Independiente\" hasta la pantalla \"Información de contacto\".",
+        "esperado":  "La pantalla se adapta al viewport Mobile. La alerta amarilla territorial se visualiza en la parte superior de la pantalla, debajo del subtítulo \"Información de localización de vivienda\", con su texto completo legible dentro del recuadro, sin cortarse ni superponerse con otros elementos de la pantalla."
+    },
+    {
+        "paso":  "P21",
+        "accion":  "[MOBILE] Hacer tap en el campo \"Departamento\" y seleccionar \"Cundinamarca\".",
+        "esperado":  "Se despliega el selector nativo/adaptado Mobile y permite seleccionar \"Cundinamarca\", habilitando el campo \"Ciudad de vivienda\" como lista desplegable."
+    },
+    {
+        "paso":  "P22",
+        "accion":  "[MOBILE] Hacer tap en el campo \"Ciudad de vivienda\" y revisar las opciones disponibles sin digitar texto aún.",
+        "esperado":  "El catálogo muestra únicamente los municipios pertenecientes al departamento de Cundinamarca configurados en la paramétrica Ciudad nacional. No se muestran ciudades de otros departamentos."
+    },
+    {
+        "paso":  "P23",
+        "accion":  "[MOBILE] En el campo \"Ciudad de vivienda\", desplegar el teclado táctil e intentar digitar caracteres numéricos (ej. \"123\") y, luego, caracteres especiales (ej. \"@#$%\u0026*\").",
+        "esperado":  "El teclado/campo restringe el ingreso y solo plasma caracteres alfabéticos: ninguno de los números o caracteres especiales digitados se visualiza en el campo."
+    },
+    {
+        "paso":  "P24",
+        "accion":  "[MOBILE] En el campo \"Ciudad de vivienda\", digitar con el teclado táctil un texto alfabético que no coincida con ningún municipio de la lista (ej. \"Zxyw\") y, sin seleccionar ninguna opción, hacer tap por fuera del campo para que pierda el foco.",
+        "esperado":  "El sistema no conserva el texto libre: limpia automáticamente el campo \"Ciudad de vivienda\", que queda vacío, debido a que el texto digitado no coincide de forma exacta con una opción válida de la lista desplegable."
+    },
+    {
+        "paso":  "P25",
+        "accion":  "[MOBILE] Digitar un texto válido mediante el teclado táctil en el campo \"Ciudad de vivienda\" (ej. \"Soa\").",
+        "esperado":  "El sistema realiza el filtrado dinámico en tiempo real bajo las convenciones visuales de Mobile y permite hacer tap sobre la opción coincidente (ej. \"Soacha\")."
+    },
+    {
+        "paso":  "P26",
+        "accion":  "[MOBILE] Hacer tap sobre el municipio coincidente. A continuación, hacer tap nuevamente sobre el campo \"Ciudad de vivienda\" para volver a abrir la lista desplegable y cerrarla conservando el municipio seleccionado.",
+        "esperado":  "El municipio seleccionado queda registrado en el campo. Al volver a abrir la lista se visualiza nuevamente el listado completo de municipios de Cundinamarca, sin quedar limitado a las coincidencias de la búsqueda anterior (\"Soa\")."
+    },
+    {
+        "paso":  "P27",
+        "accion":  "[MOBILE] Cambiar el valor del campo \"Departamento\" a \"BOGOTÁ, D.C.\".",
+        "esperado":  "El sistema precarga automáticamente el valor \"BOGOTÁ, D.C.\" en el campo \"Ciudad de vivienda\" y lo bloquea en modo solo lectura, impidiendo su modificación manual."
+    },
+    {
+        "paso":  "P28",
+        "accion":  "[MOBILE] Cambiar nuevamente el valor del campo \"Departamento\" a \"Cundinamarca\" y seleccionar otra vez el municipio (ej. \"Soacha\") en \"Ciudad de vivienda\" mediante la búsqueda predictiva.",
+        "esperado":  "El campo \"Ciudad de vivienda\" se habilita nuevamente como lista desplegable (sin bloqueo), muestra únicamente municipios de Cundinamarca y permite seleccionar el municipio."
+    },
+    {
+        "paso":  "P29",
+        "accion":  "[MOBILE] Si el municipio seleccionado habilita el campo \"Localidad\": hacer tap en \"Localidad\" y, con el teclado táctil, intentar digitar caracteres numéricos (ej. \"123\") y, luego, caracteres especiales (ej. \"@#$%\u0026*\").",
+        "esperado":  "El campo \"Localidad\" restringe el ingreso y solo plasma caracteres alfabéticos: ninguno de los números o caracteres especiales digitados se visualiza en el campo."
+    },
+    {
+        "paso":  "P30",
+        "accion":  "[MOBILE] Si aplica el campo \"Localidad\": digitar con el teclado táctil un texto alfabético que no coincida con ninguna opción de la lista (ej. \"Zxyw\") y, sin seleccionar ninguna opción, hacer tap por fuera del campo para que pierda el foco.",
+        "esperado":  "El sistema no conserva el texto libre: limpia automáticamente el campo \"Localidad\", que queda vacío, debido a que el texto digitado no coincide de forma exacta con una opción válida de la lista desplegable."
+    },
+    {
+        "paso":  "P31",
+        "accion":  "[MOBILE] Si aplica el campo \"Localidad\": digitar con el teclado táctil los primeros caracteres alfabéticos de una localidad válida, hacer tap sobre la opción coincidente y volver a abrir la lista desplegable de \"Localidad\", cerrándola conservando la selección.",
+        "esperado":  "El campo \"Localidad\" realiza el filtrado dinámico en tiempo real bajo las convenciones visuales de Mobile y permite la selección. Al volver a abrir la lista se visualiza nuevamente el listado completo de opciones de \"Localidad\", sin quedar limitado a la búsqueda anterior."
+    },
+    {
+        "paso":  "P32",
+        "accion":  "[MOBILE] Hacer tap en el campo \"Barrio\" y, con el teclado táctil, intentar digitar caracteres numéricos (ej. \"123\") y, luego, caracteres especiales (ej. \"@#$%\u0026*\").",
+        "esperado":  "El campo \"Barrio\" restringe el ingreso y solo plasma caracteres alfabéticos: ninguno de los números o caracteres especiales digitados se visualiza en el campo."
+    },
+    {
+        "paso":  "P33",
+        "accion":  "[MOBILE] Digitar con el teclado táctil en el campo \"Barrio\" los primeros caracteres alfabéticos de un barrio válido, hacer tap sobre la opción coincidente y volver a abrir la lista desplegable de \"Barrio\", cerrándola conservando la selección.",
+        "esperado":  "El campo \"Barrio\" realiza el filtrado dinámico en tiempo real bajo las convenciones visuales de Mobile y permite la selección. Al volver a abrir la lista se visualiza nuevamente el listado completo de opciones de \"Barrio\", sin quedar limitado a la búsqueda anterior."
+    },
+    {
+        "paso":  "P34",
+        "accion":  "[MOBILE] Borrar el valor del campo \"Barrio\", digitar con el teclado táctil un texto alfabético que no coincida con ninguna opción de la lista (ej. \"Zxyw\") y, sin seleccionar ninguna opción, hacer tap en el botón para avanzar/guardar la información de contacto.",
+        "esperado":  "El sistema impide avanzar de pantalla, limpia automáticamente el campo \"Barrio\" (queda vacío) y exige seleccionar una opción válida de la lista desplegable."
+    },
+    {
+        "paso":  "P35",
+        "accion":  "[MOBILE] Seleccionar nuevamente en el campo \"Barrio\" una opción válida mediante la búsqueda predictiva y hacer tap en el botón para avanzar/guardar la información de contacto.",
+        "esperado":  "El sistema permite continuar al siguiente paso del proceso."
+    }
+]

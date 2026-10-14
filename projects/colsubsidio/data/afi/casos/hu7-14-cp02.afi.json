@@ -1,0 +1,1110 @@
+{
+  "version": 1,
+  "hu": "HU 7.14 y 7.14.1",
+  "caso": "CP02",
+  "nombre": "CLS - AFI - Empleador juridico visualiza el ajuste de los formularios del rep legal, contacto de caja y rep del portal cuando los datos vienen de Bizagi",
+  "fuente": {
+    "tipo": "diseno-qa",
+    "referencia": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx"
+  },
+  "perfil": "empresa",
+  "actorRef": "empresa-empleador-juridico-rues-sin-rep-legal",
+  "preparacion": {
+    "datosCaso": {
+      "tipoAportante": "Empleador"
+    },
+    "camposAsercion": [],
+    "etapas": [
+      "inicio-solicitud",
+      "informacion-empresa"
+    ]
+  },
+  "e2e": {
+    "version": 1,
+    "hoja": "CP02",
+    "sujetos": [
+      {
+        "rol": "representante-legal"
+      },
+      {
+        "rol": "contacto-caja"
+      },
+      {
+        "rol": "responsable-portal"
+      }
+    ],
+    "relaciones": [
+      {
+        "tipo": "distinto-sujeto",
+        "sujetos": [
+          "contacto-caja",
+          "representante-legal"
+        ]
+      },
+      {
+        "tipo": "distinto-sujeto",
+        "sujetos": [
+          "responsable-portal",
+          "representante-legal"
+        ]
+      }
+    ],
+    "precondiciones": [
+      {
+        "sujeto": "principal",
+        "id": "empleador-juridico-rues-sin-rep-legal",
+        "descripcion": "Aportante tipo Empleador Jurídico existente en RUES, no afiliado a Colsubsidio, para el que RUES no retorna representante legal."
+      },
+      {
+        "sujeto": "principal",
+        "id": "sin-solicitud-afiliacion-en-curso",
+        "descripcion": "Sin solicitud de afiliación en curso que impida crear un nuevo trámite."
+      },
+      {
+        "sujeto": "representante-legal",
+        "id": "persona-en-bizagi-con-verificacion-registraduria",
+        "descripcion": "Persona existente en la base de Bizagi con verificación de Registraduría (flag SI), de modo que no se consume Registraduría."
+      },
+      {
+        "sujeto": "contacto-caja",
+        "id": "persona-en-bizagi-con-verificacion-registraduria",
+        "descripcion": "Persona existente en la base de Bizagi con verificación de Registraduría (flag SI), de modo que no se consume Registraduría."
+      },
+      {
+        "sujeto": "responsable-portal",
+        "id": "persona-en-bizagi-con-verificacion-registraduria",
+        "descripcion": "Persona existente en la base de Bizagi con verificación de Registraduría (flag SI), de modo que no se consume Registraduría."
+      }
+    ],
+    "datos": [
+      {
+        "campo": "numeroIdentificacion",
+        "sujeto": "principal",
+        "uso": [
+          "SCENARIO"
+        ],
+        "resolucion": "TEST_DATA",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "correo",
+        "sujeto": "principal",
+        "uso": [
+          "SCENARIO"
+        ],
+        "resolucion": "TEST_DATA",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "tipoAportante",
+        "sujeto": "principal",
+        "uso": [
+          "SCENARIO"
+        ],
+        "resolucion": "CASE_LITERAL",
+        "valor": "Empleador",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "razonSocial",
+        "sujeto": "principal",
+        "uso": [],
+        "resolucion": "SYSTEM",
+        "fuenteSistema": "RUES",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "codigoCiiu",
+        "sujeto": "principal",
+        "uso": [],
+        "resolucion": "SYSTEM",
+        "fuenteSistema": "RUES",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "afiliadoPrimeraVez",
+        "sujeto": "principal",
+        "uso": [
+          "FILLER"
+        ],
+        "resolucion": "TEST_DATA",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "numeroTrabajadores",
+        "sujeto": "principal",
+        "uso": [
+          "FILLER"
+        ],
+        "resolucion": "TEST_DATA",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "valorNomina",
+        "sujeto": "principal",
+        "uso": [
+          "FILLER"
+        ],
+        "resolucion": "TEST_DATA",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "fechaInicioActividad",
+        "sujeto": "principal",
+        "uso": [
+          "FILLER"
+        ],
+        "resolucion": "TEST_DATA",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "numeroCelular",
+        "sujeto": "principal",
+        "uso": [
+          "FILLER"
+        ],
+        "resolucion": "TEST_DATA",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "numeroTelefonoFijo",
+        "sujeto": "principal",
+        "uso": [
+          "FILLER"
+        ],
+        "resolucion": "TEST_DATA",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "cajaCompensacionAnterior",
+        "sujeto": "principal",
+        "uso": [
+          "FILLER"
+        ],
+        "resolucion": "TEST_DATA",
+        "aplicabilidad": {
+          "cuando": {
+            "campo": "afiliadoPrimeraVez",
+            "operador": "igual",
+            "valor": "No"
+          }
+        }
+      },
+      {
+        "campo": "tipoIdentificacion",
+        "sujeto": "representante-legal",
+        "uso": [
+          "SCENARIO"
+        ],
+        "resolucion": "TEST_DATA",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "numeroIdentificacion",
+        "sujeto": "representante-legal",
+        "uso": [
+          "SCENARIO"
+        ],
+        "resolucion": "TEST_DATA",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "primerNombre",
+        "sujeto": "representante-legal",
+        "uso": [
+          "ASSERTION"
+        ],
+        "resolucion": "SYSTEM",
+        "fuenteSistema": "Bizagi",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "segundoNombre",
+        "sujeto": "representante-legal",
+        "uso": [
+          "ASSERTION"
+        ],
+        "resolucion": "SYSTEM",
+        "fuenteSistema": "Bizagi",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "primerApellido",
+        "sujeto": "representante-legal",
+        "uso": [
+          "ASSERTION"
+        ],
+        "resolucion": "SYSTEM",
+        "fuenteSistema": "Bizagi",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "segundoApellido",
+        "sujeto": "representante-legal",
+        "uso": [
+          "ASSERTION"
+        ],
+        "resolucion": "SYSTEM",
+        "fuenteSistema": "Bizagi",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "tipoIdentificacion",
+        "sujeto": "contacto-caja",
+        "uso": [
+          "SCENARIO"
+        ],
+        "resolucion": "CASE_LITERAL",
+        "valor": "Cédula de Ciudadanía",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "numeroIdentificacion",
+        "sujeto": "contacto-caja",
+        "uso": [
+          "SCENARIO"
+        ],
+        "resolucion": "TEST_DATA",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "primerNombre",
+        "sujeto": "contacto-caja",
+        "uso": [
+          "ASSERTION"
+        ],
+        "resolucion": "SYSTEM",
+        "fuenteSistema": "Bizagi",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "segundoNombre",
+        "sujeto": "contacto-caja",
+        "uso": [
+          "ASSERTION"
+        ],
+        "resolucion": "SYSTEM",
+        "fuenteSistema": "Bizagi",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "primerApellido",
+        "sujeto": "contacto-caja",
+        "uso": [
+          "ASSERTION"
+        ],
+        "resolucion": "SYSTEM",
+        "fuenteSistema": "Bizagi",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "segundoApellido",
+        "sujeto": "contacto-caja",
+        "uso": [
+          "ASSERTION"
+        ],
+        "resolucion": "SYSTEM",
+        "fuenteSistema": "Bizagi",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "correo",
+        "sujeto": "contacto-caja",
+        "uso": [
+          "FILLER"
+        ],
+        "resolucion": "TEST_DATA",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "tipoIdentificacion",
+        "sujeto": "responsable-portal",
+        "uso": [
+          "SCENARIO"
+        ],
+        "resolucion": "CASE_LITERAL",
+        "valor": "Cédula de Ciudadanía",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "numeroIdentificacion",
+        "sujeto": "responsable-portal",
+        "uso": [
+          "SCENARIO"
+        ],
+        "resolucion": "TEST_DATA",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "primerNombre",
+        "sujeto": "responsable-portal",
+        "uso": [
+          "ASSERTION"
+        ],
+        "resolucion": "SYSTEM",
+        "fuenteSistema": "Bizagi",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "segundoNombre",
+        "sujeto": "responsable-portal",
+        "uso": [
+          "ASSERTION"
+        ],
+        "resolucion": "SYSTEM",
+        "fuenteSistema": "Bizagi",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "primerApellido",
+        "sujeto": "responsable-portal",
+        "uso": [
+          "ASSERTION"
+        ],
+        "resolucion": "SYSTEM",
+        "fuenteSistema": "Bizagi",
+        "aplicabilidad": "siempre"
+      },
+      {
+        "campo": "segundoApellido",
+        "sujeto": "responsable-portal",
+        "uso": [
+          "ASSERTION"
+        ],
+        "resolucion": "SYSTEM",
+        "fuenteSistema": "Bizagi",
+        "aplicabilidad": "siempre"
+      }
+    ],
+    "pasos": [
+      {
+        "paso": 2,
+        "accion": "Ingrese al Portal de afiliaciones de test de Colsubsidio mediante el siguiente link \"https://transacciones.colsubsidio.com/afiliaciones-en-linea/qa/home\"",
+        "esperado": "El ambiente de pruebas carga correctamente permitiendo el inicio del trámite",
+        "verificaciones": [
+          {
+            "tipo": "portal-apertura"
+          }
+        ]
+      },
+      {
+        "paso": 3,
+        "accion": "Inicie un proceso de afiliación para un tipo de aportante \"Empleador\" juridico que exista en RUES y que NO este afiliado a colsubsidio",
+        "esperado": "Se debe iniciar el proceso con un número de caso enviado al correo electronico",
+        "verificaciones": [
+          {
+            "tipo": "portal-caso-creado"
+          },
+          {
+            "tipo": "condicion",
+            "entidad": {
+              "tipo": "notificacion",
+              "id": "notificacion-inicio-tramite-correo"
+            },
+            "expectativa": {
+              "tipo": "emitida"
+            }
+          }
+        ]
+      },
+      {
+        "paso": 4,
+        "accion": "El proceso iniciara las validaciones de GIASS y RUES",
+        "esperado": "Las validaciones deben ser correctas y la integración de GIASS obtendra la información correspondiente y  el proceso avanza correctamente \n\nEl proceso continuara correctamente y llegara a la actividad \"Registrar información del cliente\"",
+        "fidelidad": [
+          {
+            "fragmento": "la integración de GIASS obtendra la información correspondiente",
+            "representacion": "aproximada",
+            "motivo": "se verifica el resultado exitoso de la integración, no el contenido que obtiene"
+          }
+        ],
+        "verificaciones": [
+          {
+            "tipo": "condicion",
+            "entidad": {
+              "tipo": "integracion",
+              "id": "integracion-giass"
+            },
+            "expectativa": {
+              "tipo": "resultado",
+              "igual": "exito"
+            }
+          },
+          {
+            "tipo": "condicion",
+            "entidad": {
+              "tipo": "integracion",
+              "id": "integracion-rues"
+            },
+            "expectativa": {
+              "tipo": "resultado",
+              "igual": "exito"
+            }
+          },
+          {
+            "tipo": "condicion",
+            "entidad": {
+              "tipo": "actividad",
+              "id": "actividad-registrar-informacion-cliente"
+            },
+            "expectativa": {
+              "tipo": "alcanzada"
+            }
+          },
+          {
+            "tipo": "pantalla",
+            "pantalla": "pantalla-ingresa-informacion-empresa",
+            "expectativa": {
+              "titulo": {
+                "texto": "Ingresa la información de la empresa"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "paso": 5,
+        "accion": "En la actividad \"Registrar información cliente\" valide en la pantalla \"Representante legal\" la información del representante legal retornada de RUES",
+        "esperado": "El formulario NO precargara ningun número de identificación retornado de la integración, debido a que no encontro ningun representante legal en RUES\n\nSolo se visualiza los campos Tipo de identificación y Numero de identificación\n\nEl campo tipo de identificación y numero de identificación estaran vacio",
+        "notaFuente": "No se puede indicar en el caso que se busco una persona en bizagi que ya haya sido consultada en Registraduria , ya que de acuerdo al req, se prioriza primero, consultarlo en bizagi de acuerdo al FLAG tambien y si no lo encuentra en bizagi, que lo consulte en la registraduria, para este escenario se consulta una persona que si exista en bizagi y de acuerdo a eso se ahorre la consulta en la registraduria",
+        "verificaciones": [
+          {
+            "tipo": "accion",
+            "accion": "avanzar",
+            "hasta": "pantalla-representante-legal"
+          },
+          {
+            "tipo": "pantalla",
+            "pantalla": "pantalla-representante-legal",
+            "expectativa": {
+              "camposVisiblesExactos": [
+                "representante-legal-tipo-identificacion",
+                "representante-legal-numero-identificacion"
+              ],
+              "campos": [
+                {
+                  "campo": "representante-legal-tipo-identificacion",
+                  "vacio": true
+                },
+                {
+                  "campo": "representante-legal-numero-identificacion",
+                  "vacio": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "paso": 6,
+        "accion": "Valide la misma funcionalidad y diseño en la versión Mobile",
+        "esperado": "Se debe visualizar correctamente el prototipo en la versión Mobile",
+        "dispositivo": "mobile",
+        "verificaciones": [
+          {
+            "tipo": "pantalla",
+            "pantalla": "pantalla-representante-legal",
+            "expectativa": {
+              "camposVisiblesExactos": [
+                "representante-legal-tipo-identificacion",
+                "representante-legal-numero-identificacion"
+              ],
+              "campos": [
+                {
+                  "campo": "representante-legal-tipo-identificacion",
+                  "vacio": true
+                },
+                {
+                  "campo": "representante-legal-numero-identificacion",
+                  "vacio": true
+                }
+              ]
+            }
+          },
+          {
+            "tipo": "diseno",
+            "referencia": "figma"
+          }
+        ]
+      },
+      {
+        "paso": 7,
+        "accion": "En la pantalla \"Representante legal\" registre el numero de identificación y el tipo de identificación, realice la consulta de la persona correctamente\n\nAl consultar el sistema mostrara un spinner de cargar con un mensaje de espera\n\nEl mensaje sera: Estamos realizando algunas validaciones",
+        "esperado": "El sistema identifica que la información tiene el flag marcado como SI y por ende consultara la información en bizagi\n\nLos campos de nombres y apellidos precargaran la información correctamente\n\nEl campo de nombre completo sera eliminado y no sera visible\n\n El formulario precargara los valores encontrados de la bizagi correctamente, ahorrando asi una consulta a la registraduria",
+        "fidelidad": [
+          {
+            "fragmento": "Los campos de nombres y apellidos precargaran la información correctamente",
+            "representacion": "aproximada",
+            "motivo": "se verifica que los campos queden precargados (y no editables cuando el diseño lo dice); la igualdad con el valor de la fuente no es observable sin leer ese valor"
+          }
+        ],
+        "verificaciones": [
+          {
+            "tipo": "accion",
+            "accion": "consultar-persona",
+            "sujeto": "representante-legal",
+            "pantalla": "pantalla-representante-legal"
+          },
+          {
+            "tipo": "pantalla",
+            "pantalla": "pantalla-representante-legal",
+            "expectativa": {
+              "spinner": {
+                "texto": "Estamos realizando algunas validaciones"
+              },
+              "campos": [
+                {
+                  "campo": "representante-legal-primer-nombre",
+                  "precargado": true
+                },
+                {
+                  "campo": "representante-legal-segundo-nombre",
+                  "precargado": true
+                },
+                {
+                  "campo": "representante-legal-primer-apellido",
+                  "precargado": true
+                },
+                {
+                  "campo": "representante-legal-segundo-apellido",
+                  "precargado": true
+                }
+              ],
+              "camposAusentes": [
+                "representante-legal-nombre-completo"
+              ]
+            }
+          },
+          {
+            "tipo": "condicion",
+            "entidad": {
+              "tipo": "variable",
+              "id": "variable-flag-registraduria"
+            },
+            "expectativa": {
+              "tipo": "valor",
+              "igual": "SI"
+            }
+          },
+          {
+            "tipo": "condicion",
+            "entidad": {
+              "tipo": "integracion",
+              "id": "integracion-consulta-personas-bizagi"
+            },
+            "expectativa": {
+              "tipo": "resultado",
+              "igual": "exito"
+            }
+          },
+          {
+            "tipo": "condicion",
+            "entidad": {
+              "tipo": "integracion",
+              "id": "integracion-registraduria"
+            },
+            "expectativa": {
+              "tipo": "no-invocada"
+            }
+          }
+        ]
+      },
+      {
+        "paso": 8,
+        "accion": "Valide la misma funcionalidad y diseño en la versión Mobile",
+        "esperado": "Se debe visualizar correctamente el prototipo en la versión Mobile",
+        "dispositivo": "mobile",
+        "verificaciones": [
+          {
+            "tipo": "pantalla",
+            "pantalla": "pantalla-representante-legal",
+            "expectativa": {
+              "campos": [
+                {
+                  "campo": "representante-legal-primer-nombre",
+                  "precargado": true
+                },
+                {
+                  "campo": "representante-legal-segundo-nombre",
+                  "precargado": true
+                },
+                {
+                  "campo": "representante-legal-primer-apellido",
+                  "precargado": true
+                },
+                {
+                  "campo": "representante-legal-segundo-apellido",
+                  "precargado": true
+                }
+              ],
+              "camposAusentes": [
+                "representante-legal-nombre-completo"
+              ]
+            }
+          },
+          {
+            "tipo": "diseno",
+            "referencia": "figma"
+          }
+        ]
+      },
+      {
+        "paso": 9,
+        "accion": "En la pantalla \"Representante legal\" registre la información obligatoria y avance hasta el formulario de \"Ingresa información contacto con la caja\"",
+        "esperado": "Solo se visualizara los campos Tipo de identificación y Numero de identificación\n\nLos campos Tipo de identificación y Numero de identificación estaran vacios",
+        "verificaciones": [
+          {
+            "tipo": "accion",
+            "accion": "diligenciar-obligatorios",
+            "sujeto": "representante-legal",
+            "pantalla": "pantalla-representante-legal"
+          },
+          {
+            "tipo": "accion",
+            "accion": "avanzar",
+            "hasta": "pantalla-contacto-caja"
+          },
+          {
+            "tipo": "pantalla",
+            "pantalla": "pantalla-contacto-caja",
+            "expectativa": {
+              "camposVisiblesExactos": [
+                "contacto-caja-tipo-identificacion",
+                "contacto-caja-numero-identificacion"
+              ],
+              "campos": [
+                {
+                  "campo": "contacto-caja-tipo-identificacion",
+                  "vacio": true
+                },
+                {
+                  "campo": "contacto-caja-numero-identificacion",
+                  "vacio": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "paso": 10,
+        "accion": "Valide la misma funcionalidad y diseño en la versión Mobile",
+        "esperado": "Se debe visualizar correctamente el prototipo en la versión Mobile",
+        "dispositivo": "mobile",
+        "verificaciones": [
+          {
+            "tipo": "pantalla",
+            "pantalla": "pantalla-contacto-caja",
+            "expectativa": {
+              "camposVisiblesExactos": [
+                "contacto-caja-tipo-identificacion",
+                "contacto-caja-numero-identificacion"
+              ]
+            }
+          },
+          {
+            "tipo": "diseno",
+            "referencia": "figma"
+          }
+        ]
+      },
+      {
+        "paso": 11,
+        "accion": "En la pantalla \"Ingresa información contacto con la caja\" consulte un número de identificación con tipo de identificación \"Cedula de Ciudadania\" que exista en bizagi y valide el spinner de consulta",
+        "esperado": "Al consultar el sistema mostrara un spinner de cargar con un mensaje de espera\n\nEl mensaje sera: Estamos realizando algunas validaciones",
+        "verificaciones": [
+          {
+            "tipo": "accion",
+            "accion": "consultar-persona",
+            "sujeto": "contacto-caja",
+            "pantalla": "pantalla-contacto-caja",
+            "detalle": "Tipo de identificación Cédula de Ciudadanía, persona existente en Bizagi"
+          },
+          {
+            "tipo": "pantalla",
+            "pantalla": "pantalla-contacto-caja",
+            "expectativa": {
+              "spinner": {
+                "texto": "Estamos realizando algunas validaciones"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "paso": 12,
+        "accion": "En la pantalla \"Ingresa información contacto con la caja\" el sistema encontrara la persona en bizagi correctamente, precargando asi los nombres y apellidos de la persona, ahorrando asi una consulta en la registraduria",
+        "esperado": "El sistema identifica que la información tiene el flag marcado como SI y por ende consultara la información en bizagi, ahorrando asi una consulta a la registraduria, el portal precargara los nombres y apellidos correctamente, los cuales no seran editables\n\nLos campos que no retornen nombres, no tendran el tootip \"Escribe\"\n\nEl campo de nombre completo sera eliminado y no sera visible",
+        "fidelidad": [
+          {
+            "fragmento": "el portal precargara los nombres y apellidos correctamente",
+            "representacion": "aproximada",
+            "motivo": "se verifica que los campos queden precargados (y no editables cuando el diseño lo dice); la igualdad con el valor de la fuente no es observable sin leer ese valor"
+          },
+          {
+            "fragmento": "Los campos que no retornen nombres, no tendran el tootip \"Escribe\"",
+            "representacion": "no-representable",
+            "motivo": "expectativa condicional por campo según lo que retorne la fuente; el contrato no expresa condiciones sobre el resultado de una consulta"
+          }
+        ],
+        "verificaciones": [
+          {
+            "tipo": "pantalla",
+            "pantalla": "pantalla-contacto-caja",
+            "expectativa": {
+              "campos": [
+                {
+                  "campo": "contacto-caja-primer-nombre",
+                  "precargado": true,
+                  "editable": false
+                },
+                {
+                  "campo": "contacto-caja-segundo-nombre",
+                  "precargado": true,
+                  "editable": false
+                },
+                {
+                  "campo": "contacto-caja-primer-apellido",
+                  "precargado": true,
+                  "editable": false
+                },
+                {
+                  "campo": "contacto-caja-segundo-apellido",
+                  "precargado": true,
+                  "editable": false
+                }
+              ],
+              "camposAusentes": [
+                "contacto-caja-nombre-completo"
+              ]
+            }
+          },
+          {
+            "tipo": "condicion",
+            "entidad": {
+              "tipo": "variable",
+              "id": "variable-flag-registraduria"
+            },
+            "expectativa": {
+              "tipo": "valor",
+              "igual": "SI"
+            }
+          },
+          {
+            "tipo": "condicion",
+            "entidad": {
+              "tipo": "integracion",
+              "id": "integracion-consulta-personas-bizagi"
+            },
+            "expectativa": {
+              "tipo": "resultado",
+              "igual": "exito"
+            }
+          },
+          {
+            "tipo": "condicion",
+            "entidad": {
+              "tipo": "integracion",
+              "id": "integracion-registraduria"
+            },
+            "expectativa": {
+              "tipo": "no-invocada"
+            }
+          }
+        ]
+      },
+      {
+        "paso": 13,
+        "accion": "Valide la misma funcionalidad y diseño en la versión Mobile",
+        "esperado": "Se debe visualizar correctamente el prototipo en la versión Mobile",
+        "dispositivo": "mobile",
+        "verificaciones": [
+          {
+            "tipo": "pantalla",
+            "pantalla": "pantalla-contacto-caja",
+            "expectativa": {
+              "campos": [
+                {
+                  "campo": "contacto-caja-primer-nombre",
+                  "precargado": true,
+                  "editable": false
+                },
+                {
+                  "campo": "contacto-caja-segundo-nombre",
+                  "precargado": true,
+                  "editable": false
+                },
+                {
+                  "campo": "contacto-caja-primer-apellido",
+                  "precargado": true,
+                  "editable": false
+                },
+                {
+                  "campo": "contacto-caja-segundo-apellido",
+                  "precargado": true,
+                  "editable": false
+                }
+              ],
+              "camposAusentes": [
+                "contacto-caja-nombre-completo"
+              ]
+            }
+          },
+          {
+            "tipo": "diseno",
+            "referencia": "figma"
+          }
+        ]
+      },
+      {
+        "paso": 14,
+        "accion": "En la pantalla \"Ingresa información contacto con la caja\" registre la información obligatoria y avance hasta el formulario de \"Ingresa información responsable del portal\"",
+        "esperado": "Solo se visualizara los campos Tipo de identificación y Numero de identificación\n\nLos campos Tipo de identificación y Numero de identificación estaran vacios",
+        "verificaciones": [
+          {
+            "tipo": "accion",
+            "accion": "diligenciar-obligatorios",
+            "sujeto": "contacto-caja",
+            "pantalla": "pantalla-contacto-caja"
+          },
+          {
+            "tipo": "accion",
+            "accion": "avanzar",
+            "hasta": "pantalla-responsable-portal"
+          },
+          {
+            "tipo": "pantalla",
+            "pantalla": "pantalla-responsable-portal",
+            "expectativa": {
+              "camposVisiblesExactos": [
+                "responsable-portal-tipo-identificacion",
+                "responsable-portal-numero-identificacion"
+              ],
+              "campos": [
+                {
+                  "campo": "responsable-portal-tipo-identificacion",
+                  "vacio": true
+                },
+                {
+                  "campo": "responsable-portal-numero-identificacion",
+                  "vacio": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "paso": 15,
+        "accion": "Valide la misma funcionalidad y diseño en la versión Mobile",
+        "esperado": "Se debe visualizar correctamente el prototipo en la versión Mobile",
+        "dispositivo": "mobile",
+        "verificaciones": [
+          {
+            "tipo": "pantalla",
+            "pantalla": "pantalla-responsable-portal",
+            "expectativa": {
+              "camposVisiblesExactos": [
+                "responsable-portal-tipo-identificacion",
+                "responsable-portal-numero-identificacion"
+              ]
+            }
+          },
+          {
+            "tipo": "diseno",
+            "referencia": "figma"
+          }
+        ]
+      },
+      {
+        "paso": 16,
+        "accion": "En la pantalla \"Ingresa información responsable del portal\" consulte un número de identificación con tipo de identificación \"Cedula de Ciudadania\" que exista en bizagi y valide el spinner de consulta",
+        "esperado": "Al consultar el sistema mostrara un spinner de cargar con un mensaje de espera\n\nEl mensaje sera: Estamos realizando algunas validaciones",
+        "verificaciones": [
+          {
+            "tipo": "accion",
+            "accion": "consultar-persona",
+            "sujeto": "responsable-portal",
+            "pantalla": "pantalla-responsable-portal",
+            "detalle": "Tipo de identificación Cédula de Ciudadanía, persona existente en Bizagi"
+          },
+          {
+            "tipo": "pantalla",
+            "pantalla": "pantalla-responsable-portal",
+            "expectativa": {
+              "spinner": {
+                "texto": "Estamos realizando algunas validaciones"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "paso": 17,
+        "accion": "En la pantalla \"Ingresa información responsable del portal\" el sistema encontrara la persona en bizagi correctamente, precargando asi los nombres y apellidos de la persona, ahorrando asi una consulta en la registraduria",
+        "esperado": "El sistema identifica que la información tiene el flag marcado como SI y por ende consultara la información en bizagi, ahorrando asi una consulta a la registraduria, el portal precargara los nombres y apellidos correctamente, los cuales no seran editables\n\nLos campos que no retornen nombres, no tendran el tootip \"Escribe\"\n\nEl campo de nombre completo sera eliminado y no sera visible",
+        "fidelidad": [
+          {
+            "fragmento": "el portal precargara los nombres y apellidos correctamente",
+            "representacion": "aproximada",
+            "motivo": "se verifica que los campos queden precargados (y no editables cuando el diseño lo dice); la igualdad con el valor de la fuente no es observable sin leer ese valor"
+          },
+          {
+            "fragmento": "Los campos que no retornen nombres, no tendran el tootip \"Escribe\"",
+            "representacion": "no-representable",
+            "motivo": "expectativa condicional por campo según lo que retorne la fuente; el contrato no expresa condiciones sobre el resultado de una consulta"
+          }
+        ],
+        "verificaciones": [
+          {
+            "tipo": "pantalla",
+            "pantalla": "pantalla-responsable-portal",
+            "expectativa": {
+              "campos": [
+                {
+                  "campo": "responsable-portal-primer-nombre",
+                  "precargado": true,
+                  "editable": false
+                },
+                {
+                  "campo": "responsable-portal-segundo-nombre",
+                  "precargado": true,
+                  "editable": false
+                },
+                {
+                  "campo": "responsable-portal-primer-apellido",
+                  "precargado": true,
+                  "editable": false
+                },
+                {
+                  "campo": "responsable-portal-segundo-apellido",
+                  "precargado": true,
+                  "editable": false
+                }
+              ],
+              "camposAusentes": [
+                "responsable-portal-nombre-completo"
+              ]
+            }
+          },
+          {
+            "tipo": "condicion",
+            "entidad": {
+              "tipo": "variable",
+              "id": "variable-flag-registraduria"
+            },
+            "expectativa": {
+              "tipo": "valor",
+              "igual": "SI"
+            }
+          },
+          {
+            "tipo": "condicion",
+            "entidad": {
+              "tipo": "integracion",
+              "id": "integracion-consulta-personas-bizagi"
+            },
+            "expectativa": {
+              "tipo": "resultado",
+              "igual": "exito"
+            }
+          },
+          {
+            "tipo": "condicion",
+            "entidad": {
+              "tipo": "integracion",
+              "id": "integracion-registraduria"
+            },
+            "expectativa": {
+              "tipo": "no-invocada"
+            }
+          }
+        ]
+      },
+      {
+        "paso": 18,
+        "accion": "Valide la misma funcionalidad y diseño en la versión Mobile",
+        "esperado": "Se debe visualizar correctamente el prototipo en la versión Mobile",
+        "dispositivo": "mobile",
+        "verificaciones": [
+          {
+            "tipo": "pantalla",
+            "pantalla": "pantalla-responsable-portal",
+            "expectativa": {
+              "campos": [
+                {
+                  "campo": "responsable-portal-primer-nombre",
+                  "precargado": true,
+                  "editable": false
+                },
+                {
+                  "campo": "responsable-portal-segundo-nombre",
+                  "precargado": true,
+                  "editable": false
+                },
+                {
+                  "campo": "responsable-portal-primer-apellido",
+                  "precargado": true,
+                  "editable": false
+                },
+                {
+                  "campo": "responsable-portal-segundo-apellido",
+                  "precargado": true,
+                  "editable": false
+                }
+              ],
+              "camposAusentes": [
+                "responsable-portal-nombre-completo"
+              ]
+            }
+          },
+          {
+            "tipo": "diseno",
+            "referencia": "figma"
+          }
+        ]
+      },
+      {
+        "paso": 19,
+        "accion": "En la pantalla \"Ingresa información responsable del portal\" Registre la información obligatoria y avance hasta el formulario de \"Documentos\"\n\nEn la pantalla de documentos, descargue el formulario del tipo de aportante y valide la información para la persona de la caja y responsable del portal",
+        "esperado": "Se debera evidenciar en las columnas de la persona de contacto con la caja y el responsable del portal, tendran su respectiva persona registrada correctamente y no sera la misma que la del representante legal",
+        "verificaciones": [
+          {
+            "tipo": "accion",
+            "accion": "diligenciar-obligatorios",
+            "sujeto": "responsable-portal",
+            "pantalla": "pantalla-responsable-portal"
+          },
+          {
+            "tipo": "accion",
+            "accion": "avanzar",
+            "hasta": "pantalla-documentos"
+          },
+          {
+            "tipo": "accion",
+            "accion": "descargar-formulario",
+            "pantalla": "pantalla-documentos",
+            "detalle": "Columnas de contacto con la caja y responsable del portal: cada una con su persona, distinta del representante legal"
+          }
+        ]
+      },
+      {
+        "paso": 20,
+        "accion": "En la pantalla de documentos cargue los documentos obligatorios y avance la solicitud",
+        "esperado": "El sistema identifica que toda la información fue registrada correctamente y permite avanzar",
+        "verificaciones": [
+          {
+            "tipo": "accion",
+            "accion": "cargar-documentos",
+            "pantalla": "pantalla-documentos"
+          },
+          {
+            "tipo": "accion",
+            "accion": "avanzar",
+            "pantalla": "pantalla-documentos"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,700 @@
+{
+ "fuente": "Exploración QA Empleador PJ (runner oficial, caso propio cancelado; estructura sanitizada sin valores)",
+ "fecha": "2026-10-07",
+ "contactoDiligenciado": {
+  "botones": [
+   {
+    "id": "btn-empleador-pj-contacto-atras-bottom",
+    "texto": "Atrás",
+    "habilitado": true
+   },
+   {
+    "id": "btn-empleador-pj-contacto-continuar",
+    "texto": "Continuar",
+    "habilitado": false
+   }
+  ],
+  "controles": [
+   {
+    "identidad": "departamento",
+    "familia": "mat-select",
+    "requerido": true,
+    "deshabilitado": false,
+    "vacio": false,
+    "invalido": false
+   },
+   {
+    "identidad": "ciudadVivienda",
+    "familia": "mat-select",
+    "requerido": true,
+    "deshabilitado": false,
+    "vacio": false,
+    "invalido": false
+   },
+   {
+    "identidad": "numeroCelular",
+    "familia": "input",
+    "requerido": false,
+    "deshabilitado": false,
+    "vacio": false,
+    "invalido": false,
+    "etiqueta": "Celular *"
+   },
+   {
+    "identidad": "numeroTelefonoFijo",
+    "familia": "input",
+    "requerido": false,
+    "deshabilitado": false,
+    "vacio": false,
+    "invalido": false,
+    "etiqueta": "Número de teléfono fijo *"
+   },
+   {
+    "identidad": "correoElectronico",
+    "familia": "input",
+    "requerido": false,
+    "deshabilitado": false,
+    "vacio": false,
+    "invalido": false,
+    "etiqueta": "Correo electrónico *"
+   }
+  ]
+ },
+ "direccion": {
+  "encabezados": [
+   "Ingresa la información asociada a la dirección",
+   "Vía principal",
+   "Vía generadora",
+   "Características del predio"
+  ],
+  "botones": [
+   {
+    "id": "btn-empleador-pj-dir-atras-bottom",
+    "texto": "Atrás",
+    "habilitado": true
+   },
+   {
+    "id": "btn-empleador-pj-dir-continuar",
+    "texto": "Continuar",
+    "habilitado": false
+   }
+  ],
+  "controles": [
+   {
+    "identidad": "viaPrincipal",
+    "idDinamico": false,
+    "tag": "MAT-SELECT",
+    "placeholder": "Selecciona una opción",
+    "familia": "mat-select",
+    "requerido": true,
+    "deshabilitado": false,
+    "soloLectura": false,
+    "vacio": true,
+    "invalido": true
+   },
+   {
+    "identidad": "numeroVp",
+    "idDinamico": false,
+    "tag": "INPUT",
+    "tipo": "text",
+    "etiqueta": "Número *",
+    "placeholder": "Escribe",
+    "familia": "input",
+    "requerido": false,
+    "deshabilitado": false,
+    "soloLectura": false,
+    "vacio": true,
+    "invalido": true
+   },
+   {
+    "identidad": "letrasVp",
+    "idDinamico": false,
+    "tag": "MAT-SELECT",
+    "placeholder": "Selecciona una opción",
+    "familia": "mat-select",
+    "requerido": false,
+    "deshabilitado": false,
+    "soloLectura": false,
+    "vacio": true,
+    "invalido": false
+   },
+   {
+    "identidad": "sectorVp",
+    "idDinamico": false,
+    "tag": "MAT-SELECT",
+    "placeholder": "Selecciona una opción",
+    "familia": "mat-select",
+    "requerido": false,
+    "deshabilitado": false,
+    "soloLectura": false,
+    "vacio": true,
+    "invalido": false
+   },
+   {
+    "identidad": "numeroVg",
+    "idDinamico": false,
+    "tag": "INPUT",
+    "tipo": "text",
+    "etiqueta": "Número *",
+    "placeholder": "Escribe",
+    "familia": "input",
+    "requerido": false,
+    "deshabilitado": false,
+    "soloLectura": false,
+    "vacio": true,
+    "invalido": true
+   },
+   {
+    "identidad": "letrasVg",
+    "idDinamico": false,
+    "tag": "MAT-SELECT",
+    "placeholder": "Selecciona una opción",
+    "familia": "mat-select",
+    "requerido": false,
+    "deshabilitado": false,
+    "soloLectura": false,
+    "vacio": true,
+    "invalido": false
+   },
+   {
+    "identidad": "numeroPredio",
+    "idDinamico": false,
+    "tag": "INPUT",
+    "tipo": "text",
+    "etiqueta": "Número del Predio *",
+    "placeholder": "Escribe",
+    "familia": "input",
+    "requerido": false,
+    "deshabilitado": false,
+    "soloLectura": false,
+    "vacio": true,
+    "invalido": true
+   },
+   {
+    "identidad": "caracteristica",
+    "idDinamico": false,
+    "tag": "MAT-SELECT",
+    "placeholder": "Selecciona una opción",
+    "familia": "mat-select",
+    "requerido": false,
+    "deshabilitado": false,
+    "soloLectura": false,
+    "vacio": true,
+    "invalido": false
+   },
+   {
+    "identidad": "numeroCaract",
+    "idDinamico": false,
+    "tag": "INPUT",
+    "tipo": "text",
+    "etiqueta": "Número de características",
+    "placeholder": "Escribe",
+    "familia": "input",
+    "requerido": false,
+    "deshabilitado": false,
+    "soloLectura": false,
+    "vacio": true,
+    "invalido": false
+   },
+   {
+    "identidad": "informacion",
+    "idDinamico": false,
+    "tag": "INPUT",
+    "tipo": "text",
+    "etiqueta": "Información adicional",
+    "placeholder": "Escribe",
+    "familia": "input",
+    "requerido": false,
+    "deshabilitado": false,
+    "soloLectura": false,
+    "vacio": true,
+    "invalido": false
+   },
+   {
+    "identidad": "direccionCompleta",
+    "idDinamico": false,
+    "tag": "INPUT",
+    "tipo": "text",
+    "etiqueta": "Dirección completa",
+    "familia": "input",
+    "requerido": false,
+    "deshabilitado": false,
+    "soloLectura": true,
+    "vacio": true,
+    "invalido": false
+   }
+  ],
+  "restricciones": [
+   {
+    "identidad": "numeroVp",
+    "tipo": "text",
+    "maxlength": "3",
+    "minlength": null,
+    "pattern": null,
+    "inputmode": null,
+    "hint": null
+   },
+   {
+    "identidad": "numeroVg",
+    "tipo": "text",
+    "maxlength": "3",
+    "minlength": null,
+    "pattern": null,
+    "inputmode": null,
+    "hint": null
+   },
+   {
+    "identidad": "numeroPredio",
+    "tipo": "text",
+    "maxlength": "3",
+    "minlength": null,
+    "pattern": null,
+    "inputmode": null,
+    "hint": null
+   },
+   {
+    "identidad": "numeroCaract",
+    "tipo": "text",
+    "maxlength": "20",
+    "minlength": null,
+    "pattern": null,
+    "inputmode": null,
+    "hint": null
+   },
+   {
+    "identidad": "informacion",
+    "tipo": "text",
+    "maxlength": "50",
+    "minlength": null,
+    "pattern": null,
+    "inputmode": null,
+    "hint": null
+   },
+   {
+    "identidad": "direccionCompleta",
+    "tipo": "text",
+    "maxlength": null,
+    "minlength": null,
+    "pattern": null,
+    "inputmode": null,
+    "hint": null
+   }
+  ],
+  "catalogos": [
+   {
+    "identidad": "viaPrincipal",
+    "total": 15,
+    "opciones": [
+     "Autopista",
+     "Avenida",
+     "Avenida Calle",
+     "Avenida Carrera",
+     "Calle",
+     "Callejón",
+     "Carrera",
+     "Carretera",
+     "Circular",
+     "Circunvalar",
+     "Diagonal",
+     "Kilómetro",
+     "Manzana",
+     "Vereda",
+     "Vía"
+    ]
+   },
+   {
+    "identidad": "letrasVp",
+    "total": 28,
+    "opciones": [
+     "A",
+     "A BIS",
+     "B",
+     "BIS",
+     "C",
+     "D",
+     "E",
+     "F",
+     "G",
+     "H",
+     "I",
+     "J",
+     "K",
+     "L",
+     "M",
+     "N",
+     "O",
+     "P",
+     "Q",
+     "R",
+     "S",
+     "T",
+     "U",
+     "V",
+     "W",
+     "X",
+     "Y",
+     "Z"
+    ]
+   },
+   {
+    "identidad": "sectorVp",
+    "total": 4,
+    "opciones": [
+     "Este",
+     "Norte",
+     "Oeste",
+     "Sur"
+    ]
+   },
+   {
+    "identidad": "letrasVg",
+    "total": 28,
+    "opciones": [
+     "A",
+     "A BIS",
+     "B",
+     "BIS",
+     "C",
+     "D",
+     "E",
+     "F",
+     "G",
+     "H",
+     "I",
+     "J",
+     "K",
+     "L",
+     "M",
+     "N",
+     "O",
+     "P",
+     "Q",
+     "R",
+     "S",
+     "T",
+     "U",
+     "V",
+     "W",
+     "X",
+     "Y",
+     "Z"
+    ]
+   },
+   {
+    "identidad": "caracteristica",
+    "total": 71,
+    "opciones": [
+     "Administración",
+     "Agrupación",
+     "Altillo",
+     "Apartamento",
+     "Apartamento Sótano",
+     "Barrio",
+     "Bloque",
+     "Bodega",
+     "Cabecera Municipal",
+     "Camino",
+     "Casa",
+     "Caserío",
+     "Célula",
+     "Centro",
+     "Centro Comercial",
+     "Centro Urbano",
+     "Condominio",
+     "Conjunto",
+     "Consultorio",
+     "Corregimiento",
+     "Depósito",
+     "Depósito Sótano",
+     "Edificio",
+     "Entrada",
+     "Esquina",
+     "Etapa",
+     "Finca",
+     "Garaje",
+     "Garaje Sótano",
+     "Grada",
+     "Inferior",
+     "Inspección",
+     "Interior",
+     "Local",
+     "Local Mezzanine",
+     "Local Sótano",
+     "Lote",
+     "Manzana",
+     "Manzanita",
+     "Mejora",
+     "Mezzanine",
+     "Módulo",
+     "Municipio",
+     "Núcleo",
+     "Occidente",
+     "Oficina",
+     "Oficina Sótano",
+     "Parcela",
+     "Parcelación",
+     "Pasaje",
+     "Penthouse",
+     "Piso",
+     "Policía",
+     "Portería",
+     "Predio",
+     "Principal",
+     "Puente",
+     "Quebrada",
+     "Salón",
+     "Sector",
+     "Semisótano",
+     "Suite",
+     "Supermanzana",
+     "Terraza",
+     "Torre",
+     "Transversal",
+     "Troncal",
+     "Unidad",
+     "Urbanización",
+     "Vereda",
+     "Zona"
+    ]
+   }
+  ]
+ },
+ "diligencia": {
+  "nota": "Segunda exploración (única corrida autorizada): SOLO los 4 obligatorios con valores sintéticos deterministas (opcionDeDominio / enteroEnRango 10-99, semilla por campo); opcionales vacíos.",
+  "valores": {
+   "viaPrincipal": "Avenida Calle",
+   "numeroVp": "36",
+   "numeroVg": "75",
+   "numeroPredio": "33"
+  },
+  "continuarHabilitado": true,
+  "avanzo": true,
+  "direccionDiligenciada": {
+   "botones": [
+    {
+     "id": "btn-empleador-pj-dir-atras-bottom",
+     "texto": "Atrás",
+     "habilitado": true
+    },
+    {
+     "id": "btn-empleador-pj-dir-continuar",
+     "texto": "Continuar",
+     "habilitado": true
+    }
+   ],
+   "controles": [
+    {
+     "identidad": "viaPrincipal",
+     "idDinamico": false,
+     "tag": "MAT-SELECT",
+     "placeholder": "Selecciona una opción",
+     "familia": "mat-select",
+     "requerido": true,
+     "deshabilitado": false,
+     "soloLectura": false,
+     "vacio": false,
+     "invalido": false
+    },
+    {
+     "identidad": "numeroVp",
+     "idDinamico": false,
+     "tag": "INPUT",
+     "tipo": "text",
+     "etiqueta": "Número *",
+     "placeholder": "Escribe",
+     "familia": "input",
+     "requerido": false,
+     "deshabilitado": false,
+     "soloLectura": false,
+     "vacio": false,
+     "invalido": false
+    },
+    {
+     "identidad": "letrasVp",
+     "idDinamico": false,
+     "tag": "MAT-SELECT",
+     "placeholder": "Selecciona una opción",
+     "familia": "mat-select",
+     "requerido": false,
+     "deshabilitado": false,
+     "soloLectura": false,
+     "vacio": true,
+     "invalido": false
+    },
+    {
+     "identidad": "sectorVp",
+     "idDinamico": false,
+     "tag": "MAT-SELECT",
+     "placeholder": "Selecciona una opción",
+     "familia": "mat-select",
+     "requerido": false,
+     "deshabilitado": false,
+     "soloLectura": false,
+     "vacio": true,
+     "invalido": false
+    },
+    {
+     "identidad": "numeroVg",
+     "idDinamico": false,
+     "tag": "INPUT",
+     "tipo": "text",
+     "etiqueta": "Número *",
+     "placeholder": "Escribe",
+     "familia": "input",
+     "requerido": false,
+     "deshabilitado": false,
+     "soloLectura": false,
+     "vacio": false,
+     "invalido": false
+    },
+    {
+     "identidad": "letrasVg",
+     "idDinamico": false,
+     "tag": "MAT-SELECT",
+     "placeholder": "Selecciona una opción",
+     "familia": "mat-select",
+     "requerido": false,
+     "deshabilitado": false,
+     "soloLectura": false,
+     "vacio": true,
+     "invalido": false
+    },
+    {
+     "identidad": "numeroPredio",
+     "idDinamico": false,
+     "tag": "INPUT",
+     "tipo": "text",
+     "etiqueta": "Número del Predio *",
+     "placeholder": "Escribe",
+     "familia": "input",
+     "requerido": false,
+     "deshabilitado": false,
+     "soloLectura": false,
+     "vacio": false,
+     "invalido": false
+    },
+    {
+     "identidad": "caracteristica",
+     "idDinamico": false,
+     "tag": "MAT-SELECT",
+     "placeholder": "Selecciona una opción",
+     "familia": "mat-select",
+     "requerido": false,
+     "deshabilitado": false,
+     "soloLectura": false,
+     "vacio": true,
+     "invalido": false
+    },
+    {
+     "identidad": "numeroCaract",
+     "idDinamico": false,
+     "tag": "INPUT",
+     "tipo": "text",
+     "etiqueta": "Número de características",
+     "placeholder": "Escribe",
+     "familia": "input",
+     "requerido": false,
+     "deshabilitado": false,
+     "soloLectura": false,
+     "vacio": true,
+     "invalido": false
+    },
+    {
+     "identidad": "informacion",
+     "idDinamico": false,
+     "tag": "INPUT",
+     "tipo": "text",
+     "etiqueta": "Información adicional",
+     "placeholder": "Escribe",
+     "familia": "input",
+     "requerido": false,
+     "deshabilitado": false,
+     "soloLectura": false,
+     "vacio": true,
+     "invalido": false
+    },
+    {
+     "identidad": "direccionCompleta",
+     "idDinamico": false,
+     "tag": "INPUT",
+     "tipo": "text",
+     "etiqueta": "Dirección completa",
+     "familia": "input",
+     "requerido": false,
+     "deshabilitado": false,
+     "soloLectura": true,
+     "vacio": false,
+     "invalido": false
+    }
+   ]
+  }
+ },
+ "representanteLegal": {
+  "nota": "Solo observación: no se diligenció nada.",
+  "encabezados": [
+   "Representante legal"
+  ],
+  "migas": [],
+  "controles": [
+   {
+    "identidad": "tipoIdentificacion",
+    "idDinamico": false,
+    "tag": "MAT-SELECT",
+    "placeholder": "Selecciona una opción",
+    "familia": "mat-select",
+    "requerido": true,
+    "deshabilitado": false,
+    "soloLectura": false,
+    "vacio": true,
+    "invalido": true
+   },
+   {
+    "identidad": "numeroIdentificacion",
+    "idDinamico": false,
+    "tag": "INPUT",
+    "tipo": "text",
+    "etiqueta": "Número de identificación *",
+    "placeholder": "Ingresa número de identificación",
+    "familia": "input",
+    "requerido": false,
+    "deshabilitado": false,
+    "soloLectura": false,
+    "vacio": true,
+    "invalido": true
+   }
+  ],
+  "botones": [
+   {
+    "id": "btn-empleador-pj-rep-buscar-representante",
+    "texto": "Buscar representante",
+    "habilitado": false
+   },
+   {
+    "id": "btn-empleador-pj-rep-atras-bottom",
+    "texto": "Atrás",
+    "habilitado": true
+   },
+   {
+    "id": "btn-empleador-pj-rep-continuar",
+    "texto": "Continuar",
+    "habilitado": false
+   }
+  ],
+  "alertas": [],
+  "tooltips": [
+   "Selecciona el tipo de document"
+  ],
+  "spinners": [],
+  "restricciones": [
+   {
+    "identidad": "numeroIdentificacion",
+    "tipo": "text",
+    "maxlength": null,
+    "minlength": null,
+    "pattern": null,
+    "inputmode": null,
+    "hint": null
+   }
+  ]
+ }
+}

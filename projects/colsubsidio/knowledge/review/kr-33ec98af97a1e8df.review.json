@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "afi-knowledge-review/v1",
+  "batchId": "kr-33ec98af97a1e8df",
+  "revisionBase": 4,
+  "hashAlmacenBase": "22b6d1ac513185d54855f304874dc5b72c0598d7ee1cb8abd5c0f23a6e08fb21",
+  "hashEntrada": "e5e819108d88099942b45eebf87cff09feeea38a7b5319bc22780260cd5f01ec",
+  "nota": [
+    "Artefacto generado por la CLI a partir de una salida de agente NO confiable. No contiene decisiones.",
+    "Las decisiones se toman en el archivo de decisiones separado (proposalId + hash + revisionBase). Aprobar una pantalla o campo UI la vuelve conocida, no operable."
+  ],
+  "propuestas": [
+    {
+      "proposalId": "prop-completar-pantalla-representante-legal-observada",
+      "hash": "e054790a68a4d261fc3777c151084a3d6e034c6f58f83fb288b86237e9ef0ac5",
+      "entidad": "pantalla-ui:pantalla-representante-legal",
+      "dependeDe": [],
+      "propuesta": {
+        "schemaVersion": "afi-knowledge-proposal/v1",
+        "proposalId": "prop-completar-pantalla-representante-legal-observada",
+        "operacion": "completar",
+        "entidad": {
+          "tipo": "pantalla-ui",
+          "id": "pantalla-representante-legal",
+          "descripcion": "Pantalla 'Ingresa información representante legal' en el portal de afiliaciones.",
+          "titulo": "Representante legal",
+          "consulta": "Buscar representante"
+        },
+        "origen": {
+          "fuente": "Exploración QA Dirección Empleador PJ 2026-10-07 (estructura sanitizada, fixture estructura-direccion-pj-qa-observada)",
+          "ocurrencias": [
+            {
+              "hu": "HU 7.14",
+              "caso": "CP02",
+              "paso": "Paso 5"
+            },
+            {
+              "hu": "HU 7.14",
+              "caso": "CP01",
+              "paso": "Paso 12"
+            }
+          ]
+        },
+        "evidenciaSemantica": "Observado en QA tras Dirección: encabezado exacto \"Representante legal\" y botón de consulta \"Buscar representante\". Reemplaza la propuesta NEEDS_CHANGES del lote anterior, cuyo título tenía fuentes en conflicto.",
+        "estado": "PENDING_REVIEW",
+        "revisiones": []
+      }
+    }
+  ],
+  "rechazadas": [],
+  "posiblesDuplicados": [],
+  "solicitudesClasificacion": [],
+  "resumen": {
+    "knowledgeGapsRecibidos": 1,
+    "propuestasRecibidas": 1,
+    "validas": 1,
+    "rechazadas": 0,
+    "unicas": 1,
+    "posiblesDuplicados": 0,
+    "clasificacionesRecibidas": 0,
+    "clasificacionesPendientes": 0,
+    "entidadesPrevistas": 1,
+    "revisionBase": 4,
+    "runtimeChanges": 0
+  }
+}

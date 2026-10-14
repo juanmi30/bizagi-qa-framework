@@ -1,0 +1,43 @@
+SDE-CEL — Evidencia textual del sprint de consolidación (2026-10-13). Sin credenciales ni datos personales.
+Todo con --workers=1 y trace off. Salidas locales: test-results/seguros-del-estado/sde/diagnostico-docs-*.json, bloqueos-*.json.
+
+== Fuente autorizada: Plan Maestro y Matriz Data de Pruebas V4 (20261002)
+- "2. Matriz Data de Pruebas": HU06-CP01 pide "Tipo Doc. Tomador = NIT / Número Documento Tomador válido / Dígito de
+  Verificación", Datos de Cliente = N/A. CP02: "Placa válida alfanumérica de máximo 6". CP03/CP04: "Número de póliza válido".
+  No contiene valores concretos (ni NIT, ni pólizas, ni placas).
+- "3. Configuración del Entorno": rol "Radicador" (habilita la radicación; vinculado a la propiedad "Tipo de usuario":
+  1 Funcionario SDE, 2 Intermediario Principal, 3 Colaborador) y persona "PER - Intermediario" con Clave Intermediario
+  obligatoria. No incluye la paramétrica de tipos documentales.
+
+== Secuencia de documentos — acciones "naturales" tras guardar la fila (sin Crear)
+clic en la fila guardada → lista vacía · Adicionar otra fila → lista vacía · volver a marcar "Masiva" → lista vacía ·
+escribir la narrativa → lista vacía · cambiar Sucursal y restaurarla → Sarlaft | Solicitud de seguro | Otros.
+
+== Identificadores de los tipos documentales (DOM de la lista, tras el re-pintado)
+[{"texto":"-------------","data_value":""},{"texto":"Sarlaft","data_value":"2"},{"texto":"Solicitud de seguro","data_value":"3"},
+ {"texto":"Otros","data_value":"4"}]  → "Solicitud de seguro" = ID 3 (el ID que cita el mensaje de validación de Crear).
+
+== Prueba de eliminación del tipo 3 (se esperaba RECHAZO; no lo hubo)
+Tipo "Otros" (4) + archivo → Crear: CREATENEWCASE success → CASO 430.
+Tipo "Sarlaft" (2) + archivo → Crear: CREATENEWCASE success → CASO 431.
+→ BUG-06 (por confirmar): la validación acepta cualquier documento aunque exige el tipo 3.
+
+== Calibración de edición P18–P26 sobre el caso 430 (pasos del escenario oficial; NIT sintéticos con DV calculado)
+P13–P17 PASS · P18 PASS (pop-up abierto) · P19 FAIL (Forma Consulta no muestra "Identificación de Tomador")
+P20/P21 FAIL (no existe la etiqueta "Tipo documento del Tomador") · P22 PASS ("Guardar" sin obligatorios: el pop-up sigue abierto)
+P23 FAIL ("Número de Documento Tomador" aparece 2 veces) · cierre con "Guardar" FALLIDO.
+Reapertura de solo lectura: "Error Type: ArgumentException Error Message: Invalid scope action type" → CASO 430 INUTILIZABLE
+(BUG-03). Corrección aplicada: el ejecutor se detiene en el primer cierre fallido; el modo de edición exige
+SDE_CALIBRAR_EDICION=ACEPTO_RIESGO_BUG03; los NIT se retiraron del .env hasta calibrar las etiquetas (UI-10).
+
+== HU06-CP05 P9 — traza BPM visible desde el portal (analista, solo lectura; solo nombres de actividades/procesos)
+Caso 425 (Individual, cerrado): Subprocesses vacío; sin eventos de tareas automáticas.
+Caso 429 (Masiva, Worker AI SÍ ejecutado): Subprocesses vacío; Events: "Deshabilitar cancelación".
+→ El portal no expone la ejecución del Worker AI ni siquiera cuando ocurre: su ausencia en el Individual NO prueba nada.
+P9 permanece INTEGRATION_NOT_VERIFIED.
+
+== ENV-03 — comprobación de habilitación (tests/habilitacion.real.spec.ts)
+intermediario: FAIL (no recibe el proceso) · intermediario_alerta: FAIL · analista (control positivo): PASS.
+
+== Casos creados en este sprint (propios, registrados automáticamente)
+430 (diagnóstico; inutilizable por BUG-03) · 431 (diagnóstico).

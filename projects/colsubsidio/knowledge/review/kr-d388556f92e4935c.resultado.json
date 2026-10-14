@@ -1,0 +1,367 @@
+{
+  "estado": "APLICABLE",
+  "batchId": "kr-d388556f92e4935c",
+  "revisionAntes": 3,
+  "revisionDespues": 4,
+  "entidadesAnadidas": [
+    {
+      "proposalId": "prop-pantalla-direccion",
+      "entidad": "pantalla-ui:pantalla-direccion"
+    },
+    {
+      "proposalId": "prop-transicion-representante-legal-a-contacto-caja",
+      "entidad": "transicion-ui:transicion-representante-legal-a-contacto-caja"
+    },
+    {
+      "proposalId": "prop-transicion-contacto-caja-a-responsable-portal",
+      "entidad": "transicion-ui:transicion-contacto-caja-a-responsable-portal"
+    },
+    {
+      "proposalId": "prop-transicion-responsable-portal-a-documentos",
+      "entidad": "transicion-ui:transicion-responsable-portal-a-documentos"
+    },
+    {
+      "proposalId": "prop-completar-pantalla-documentos",
+      "entidad": "pantalla-ui:pantalla-documentos"
+    },
+    {
+      "proposalId": "prop-completar-representante-legal-tipo-identificacion",
+      "entidad": "campo-ui:representante-legal-tipo-identificacion"
+    },
+    {
+      "proposalId": "prop-completar-representante-legal-numero-identificacion",
+      "entidad": "campo-ui:representante-legal-numero-identificacion"
+    },
+    {
+      "proposalId": "prop-completar-representante-legal-primer-nombre",
+      "entidad": "campo-ui:representante-legal-primer-nombre"
+    },
+    {
+      "proposalId": "prop-completar-representante-legal-segundo-nombre",
+      "entidad": "campo-ui:representante-legal-segundo-nombre"
+    },
+    {
+      "proposalId": "prop-completar-representante-legal-primer-apellido",
+      "entidad": "campo-ui:representante-legal-primer-apellido"
+    },
+    {
+      "proposalId": "prop-completar-representante-legal-segundo-apellido",
+      "entidad": "campo-ui:representante-legal-segundo-apellido"
+    },
+    {
+      "proposalId": "prop-completar-contacto-caja-tipo-identificacion",
+      "entidad": "campo-ui:contacto-caja-tipo-identificacion"
+    },
+    {
+      "proposalId": "prop-completar-contacto-caja-numero-identificacion",
+      "entidad": "campo-ui:contacto-caja-numero-identificacion"
+    },
+    {
+      "proposalId": "prop-completar-contacto-caja-primer-nombre",
+      "entidad": "campo-ui:contacto-caja-primer-nombre"
+    },
+    {
+      "proposalId": "prop-completar-contacto-caja-segundo-nombre",
+      "entidad": "campo-ui:contacto-caja-segundo-nombre"
+    },
+    {
+      "proposalId": "prop-completar-contacto-caja-primer-apellido",
+      "entidad": "campo-ui:contacto-caja-primer-apellido"
+    },
+    {
+      "proposalId": "prop-completar-contacto-caja-segundo-apellido",
+      "entidad": "campo-ui:contacto-caja-segundo-apellido"
+    },
+    {
+      "proposalId": "prop-completar-contacto-caja-correo",
+      "entidad": "campo-ui:contacto-caja-correo"
+    },
+    {
+      "proposalId": "prop-completar-responsable-portal-tipo-identificacion",
+      "entidad": "campo-ui:responsable-portal-tipo-identificacion"
+    },
+    {
+      "proposalId": "prop-completar-responsable-portal-numero-identificacion",
+      "entidad": "campo-ui:responsable-portal-numero-identificacion"
+    },
+    {
+      "proposalId": "prop-completar-responsable-portal-primer-nombre",
+      "entidad": "campo-ui:responsable-portal-primer-nombre"
+    },
+    {
+      "proposalId": "prop-completar-responsable-portal-segundo-nombre",
+      "entidad": "campo-ui:responsable-portal-segundo-nombre"
+    },
+    {
+      "proposalId": "prop-completar-responsable-portal-primer-apellido",
+      "entidad": "campo-ui:responsable-portal-primer-apellido"
+    },
+    {
+      "proposalId": "prop-completar-responsable-portal-segundo-apellido",
+      "entidad": "campo-ui:responsable-portal-segundo-apellido"
+    },
+    {
+      "proposalId": "prop-transicion-contacto-a-direccion",
+      "entidad": "transicion-ui:transicion-contacto-a-direccion"
+    },
+    {
+      "proposalId": "prop-transicion-direccion-a-representante-legal",
+      "entidad": "transicion-ui:transicion-direccion-a-representante-legal"
+    }
+  ],
+  "decisiones": [
+    {
+      "proposalId": "prop-pantalla-direccion",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "84bdeb37fe8a4988f28fccfa65851821729d9bf5370d1749443a3fda2b0e724c",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-transicion-contacto-a-direccion",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "00e1cdbf261ea04c5b6cc8aa050bfc00643bce4ba17c3f550ea2cca14cbd5a02",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-transicion-direccion-a-representante-legal",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "d88523aafb38bcfe2e2be4b25fde4cd3b04ec1da1036e2835c1b59bf7ef8eebf",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-transicion-representante-legal-a-contacto-caja",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "ba801d1a6744e6c04fdb23b72e2a83205ad82653f95eb1c4d0d6ef3c976ff618",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-transicion-contacto-caja-a-responsable-portal",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "47d554047e38de0f1c2dbee8fd99c22dcc913966d3bfbcc83c84b309d5db2d1f",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-transicion-responsable-portal-a-documentos",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "f79b118ccdb251c2c32b42d79ce2a250f3eca50dc8c7ec27bdb27c5f5972b41b",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-completar-pantalla-representante-legal",
+      "decision": "NEEDS_CHANGES",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "d24537f3f12d77e4599716b15a0b70de69efbf46ead1dd7fdf2bde79eadb238c",
+      "comentario": "Observado en QA (exploración Dirección PJ, estructura sanitizada): el encabezado real es \"Representante legal\" y el botón de consulta es \"Buscar representante\" (no \"Buscar\"). Reenviar con titulo=\"Representante legal\" y consulta=\"Buscar representante\"."
+    },
+    {
+      "proposalId": "prop-completar-pantalla-contacto-caja",
+      "decision": "NEEDS_CHANGES",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "6882b68c7886c7b816ec66cff43683d4a543dce202eb686356306eae6d0349ce",
+      "comentario": "Titulo pendiente de observación QA (fuentes en conflicto). consulta=\"Buscar\" proviene del REQ 228332, pero en Representante legal el botón observado fue \"Buscar representante\": el texto exacto de la consulta de esta pantalla también debe observarse antes de reenviar."
+    },
+    {
+      "proposalId": "prop-completar-pantalla-responsable-portal",
+      "decision": "NEEDS_CHANGES",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "d62ce0b332debf15de8fd7e3df1cc8cbcc82633dc7456e8de7313fca9cd9ff8c",
+      "comentario": "Titulo pendiente de observación QA (fuentes en conflicto). consulta=\"Buscar\" proviene del REQ 228332, pero en Representante legal el botón observado fue \"Buscar representante\": el texto exacto de la consulta de esta pantalla también debe observarse antes de reenviar."
+    },
+    {
+      "proposalId": "prop-completar-pantalla-documentos",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "ffccd592cc704b2412d0f0708fcaa5a6c0fcf93599bebc46222a8e4158e7381f",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-completar-representante-legal-tipo-identificacion",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "3a72674561fb06f309748f5a276f74e09ffdc1c40d897ee3fe942f3f36309567",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-completar-representante-legal-numero-identificacion",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "e10aac2f1db35636634ba7d587aa13a47b4f5382e6eaa7e003712179c11ac690",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-completar-representante-legal-primer-nombre",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "85072543f5158375e9086c940644cf14920c7130a146c6769bcc281c5727b1e2",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-completar-representante-legal-segundo-nombre",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "77435ae9b3325c9d015493cb51ecc4e3ff658b88092ddb35984ac83d39ecf82d",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-completar-representante-legal-primer-apellido",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "7549e1f08730e4d2d880e809648131f0b24a7baa3546e1fbedfcadded90a8ac7",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-completar-representante-legal-segundo-apellido",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "e120cfe3ae7c993d5f17155438f4bfadfd1c95179451c1cdced6f574e512a73e",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-completar-contacto-caja-tipo-identificacion",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "39f3e67e284e81e8e7def79c6156a0ed2e754312361607943a1787c81548bf46",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-completar-contacto-caja-numero-identificacion",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "0020c3c12b97694cb76593da9ee4cf2aa0a036ef54482d42b221466e712ac465",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-completar-contacto-caja-primer-nombre",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "4a60f47d887c947a1aed3992a095205f833961d128a6092f68fbed0773311e0d",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-completar-contacto-caja-segundo-nombre",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "85b932d1270a84df9eb460347efadfcd84416b48e25c6a0e857a126b385f572f",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-completar-contacto-caja-primer-apellido",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "2001f2eb1be87f1ea15f889f6ef2eeb20319958887ced881bfa39d273b98ce91",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-completar-contacto-caja-segundo-apellido",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "cf893df704d783be01e95ecd0aabeb2909ad6c9aab354e60099d62b436a8546b",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-completar-contacto-caja-correo",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "e58d5e4ef9482437ad09d49e830c38219fd537942cd1b6e4a5544bb6a8dc77d6",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-completar-responsable-portal-tipo-identificacion",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "7cf282bca1abab0f82808777d80040a529af93b90a33e0f3e9f995bec13dcc0e",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-completar-responsable-portal-numero-identificacion",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "6434bf498753a9204a04a13d6690e0ffa3a4a149f08395d4edef97b49dad55bb",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-completar-responsable-portal-primer-nombre",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "aaed17121b1986f80de301bd43d6e429e03fc62cd3f87fff37e8277d1f1908d1",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-completar-responsable-portal-segundo-nombre",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "f1f9db67157177ab4e0b76a2b95b579d301490a0a2a8e31fac4bb26c89f9661b",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-completar-responsable-portal-primer-apellido",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "b3eb5635b175599c5959573f5b791d021f783918b4eddb6c8f1cd361c05a07b3",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    },
+    {
+      "proposalId": "prop-completar-responsable-portal-segundo-apellido",
+      "decision": "APPROVED",
+      "revisor": "qa",
+      "fecha": "2026-10-07",
+      "hash": "648e2bee59a72a688eef28ac9d74f54ea7621f871e8afe59c52ddc0ff5c4b568",
+      "comentario": "Revisión conceptual aprobada: solo agrega navegación/atributos respaldados por las fuentes citadas; no modifica conocimiento aprobado."
+    }
+  ],
+  "sinDecision": [],
+  "clasificadas": [],
+  "metricas": {
+    "knowledgeGapsRecibidos": 29,
+    "propuestasRecibidas": 29,
+    "validas": 29,
+    "rechazadasValidacion": 0,
+    "unicas": 29,
+    "posiblesDuplicados": 0,
+    "clasificacionesPendientes": 0,
+    "clasificadas": 0,
+    "aprobadas": 26,
+    "rechazadas": 0,
+    "cambiosSolicitados": 3,
+    "sinDecision": 0,
+    "entidadesPrevistas": 26,
+    "revisionAntes": 3,
+    "revisionDespues": 4,
+    "runtimeChanges": 0
+  },
+  "fecha": "2026-10-07"
+}

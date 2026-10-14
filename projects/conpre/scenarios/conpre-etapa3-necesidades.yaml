@@ -1,0 +1,53 @@
+proceso: Definición datos iniciales Contratos
+escenario: Diligenciar datos + agregar una Necesidad planeada (etapa 3)
+etiquetas: [smoke-real, conpre]
+
+inicio:
+  modo: crear-caso
+  usuario: admin
+  categoria: Gestión de contratos
+  proceso_a_crear: Definición datos iniciales Contratos
+
+pasos:
+  - actividad: Definir datos iniciales
+    llenar:
+      - { campo: Objeto contractual, valor: "Prueba automatizada etapa 3 ${unico}", tipo: área de texto }
+      - { campo: Fecha estimada de contratación, valor: "15/08/2026", tipo: fecha }
+      - { campo: Fecha inicio proceso de selección, valor: "20/08/2026", tipo: fecha }
+      - { campo: Dependencia ejecutora, valor: "Dirección Programación Presupuestal - DIPRE", tipo: lista }
+    tablas:
+      - tabla: Necesidades planeadas
+        filas:
+          # --- Ordenador del gasto y detalles (listas) ---
+          - llenar:
+              - { campo: Dependencia programadora, valor: "Dirección Programación Presupuestal", tipo: lista }
+              - { campo: Tipo de gasto, valor: "A - Funcionamiento", tipo: lista }
+              - { campo: Tipo de cuenta, valor: "02 - Adquisición de bienes y servicios", tipo: lista }
+              - { campo: Bien o servicio, valor: "BIENES", tipo: lista }
+              # --- Características del gasto ---
+              # Uso presupuestal / Código UNSPSC: buscadores de sugerencia (sin etiqueta accesible),
+              # por eso se ubican con localizador estable (data-render-xpath del render de Bizagi).
+              - campo: Uso presupuestal
+                valor: "02-02-02-008-005-01 - SERVICIOS DE EMPLEO"
+                tipo: búsqueda
+                localizador: '[data-render-xpath="kpUsoPresupuestal"] input.ui-bizagi-render-search'
+              - campo: Código UNSPSC
+                valor: "80110000 - Servicios de recursos humanos"
+                tipo: búsqueda
+                localizador: '[data-render-xpath="kpClasificacionUNSPSC"] input.ui-bizagi-render-search'
+              - { campo: Descripción, valor: "Necesidad de prueba automatizada ${unico}", tipo: área de texto }
+              - { campo: Recurso, valor: "R-10 - Recursos Corrientes", tipo: lista }
+              - { campo: ¿Requiere contrato?, valor: "No", tipo: radio }
+              # --- Cruces de adquisiciones ---
+              - { campo: ¿La dependencia ejecutora es diferente a la actual?, valor: "No", tipo: radio }
+              # --- Vigencia ---
+              - { campo: Vigencia, valor: "2026", tipo: texto }
+              # --- Información del Bien (aparece al elegir "Bien o servicio") ---
+              - { campo: Cantidad requerida, valor: "1", tipo: número }
+              - { campo: Cantidad asignada, valor: "1", tipo: número }
+              - { campo: Valor unitario, valor: "1000", tipo: número }
+    accion: Guardar        # guarda el caso (la fila ya se guardó al cerrar el pop-up)
+
+hazards:
+  - campo_tiene_valor: { campo: Objeto contractual, valor: "Prueba automatizada etapa 3 ${unico}" }
+  - la_tabla_tiene_filas: { tabla: Necesidades planeadas, minimo: 1 }

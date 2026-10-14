@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "afi-agent-intake/v1",
+  "knowledgeProposals": [],
+  "classificationRequests": [],
+  "testDataRequirements": [
+    {
+      "schemaVersion": "afi-test-data-requirement/v1",
+      "id": "HU-7.14-y-7.14.1-CP02-principal",
+      "perfil": "empresa",
+      "condiciones": [
+        {
+          "id": "empleador-juridico-rues-sin-rep-legal",
+          "descripcion": "Aportante tipo Empleador Jurídico existente en RUES, no afiliado a Colsubsidio, sin Representante Legal retornado por RUES."
+        },
+        {
+          "id": "sin-solicitud-afiliacion-en-curso",
+          "descripcion": "Sin solicitud de afiliación en curso que impida crear un nuevo trámite."
+        }
+      ],
+      "camposRequeridos": [
+        "numeroIdentificacion",
+        "correo",
+        "afiliadoPrimeraVez",
+        "numeroTrabajadores",
+        "valorNomina",
+        "fechaInicioActividad",
+        "numeroCelular",
+        "numeroTelefonoFijo"
+      ],
+      "camposCondicionales": [
+        {
+          "campo": "cajaCompensacionAnterior",
+          "cuando": {
+            "campo": "afiliadoPrimeraVez",
+            "operador": "igual",
+            "valor": "No"
+          }
+        }
+      ],
+      "ocurrencias": [
+        {
+          "hu": "HU 7.14 y 7.14.1",
+          "caso": "CP02"
+        }
+      ],
+      "reutilizable": true,
+      "actorSugerido": "empresa-empleador-juridico-rues-sin-rep-legal"
+    },
+    {
+      "schemaVersion": "afi-test-data-requirement/v1",
+      "id": "HU-7.14-y-7.14.1-CP02-representante-legal",
+      "rol": "representante-legal",
+      "condiciones": [
+        {
+          "id": "persona-en-bizagi-con-verificacion-registraduria",
+          "descripcion": "Persona existente en la base de Bizagi con verificación de Registraduría (flag SI), de modo que no se consume Registraduría."
+        }
+      ],
+      "camposRequeridos": [
+        "tipoIdentificacion",
+        "numeroIdentificacion"
+      ],
+      "distintoDe": [
+        "HU-7.14-y-7.14.1-CP02-contacto-caja",
+        "HU-7.14-y-7.14.1-CP02-responsable-portal"
+      ],
+      "ocurrencias": [
+        {
+          "hu": "HU 7.14 y 7.14.1",
+          "caso": "CP02",
+          "rol": "representante-legal"
+        }
+      ],
+      "reutilizable": true
+    },
+    {
+      "schemaVersion": "afi-test-data-requirement/v1",
+      "id": "HU-7.14-y-7.14.1-CP02-contacto-caja",
+      "rol": "contacto-caja",
+      "condiciones": [
+        {
+          "id": "persona-en-bizagi-con-verificacion-registraduria",
+          "descripcion": "Persona existente en la base de Bizagi con verificación de Registraduría (flag SI), de modo que no se consume Registraduría."
+        }
+      ],
+      "camposRequeridos": [
+        "numeroIdentificacion",
+        "correo"
+      ],
+      "distintoDe": [
+        "HU-7.14-y-7.14.1-CP02-representante-legal"
+      ],
+      "ocurrencias": [
+        {
+          "hu": "HU 7.14 y 7.14.1",
+          "caso": "CP02",
+          "rol": "contacto-caja"
+        }
+      ],
+      "reutilizable": true
+    },
+    {
+      "schemaVersion": "afi-test-data-requirement/v1",
+      "id": "HU-7.14-y-7.14.1-CP02-responsable-portal",
+      "rol": "responsable-portal",
+      "condiciones": [
+        {
+          "id": "persona-en-bizagi-con-verificacion-registraduria",
+          "descripcion": "Persona existente en la base de Bizagi con verificación de Registraduría (flag SI), de modo que no se consume Registraduría."
+        }
+      ],
+      "camposRequeridos": [
+        "numeroIdentificacion"
+      ],
+      "distintoDe": [
+        "HU-7.14-y-7.14.1-CP02-representante-legal"
+      ],
+      "ocurrencias": [
+        {
+          "hu": "HU 7.14 y 7.14.1",
+          "caso": "CP02",
+          "rol": "responsable-portal"
+        }
+      ],
+      "reutilizable": true
+    }
+  ]
+}

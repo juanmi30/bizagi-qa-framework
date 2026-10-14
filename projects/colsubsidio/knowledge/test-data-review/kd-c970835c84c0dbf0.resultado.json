@@ -1,0 +1,21 @@
+{
+  "estado": "APLICABLE",
+  "batchId": "kd-c970835c84c0dbf0",
+  "altas": [],
+  "reutilizaciones": [
+    {
+      "requisito": "empresa-juridica-rues-sin-rep-legal-datos-empresa",
+      "slot": "empresa-empleador-juridico-rues-sin-rep-legal"
+    },
+    {
+      "requisito": "empresa-juridica-rues-con-rep-legal-sin-solicitud-en-curso",
+      "slot": "empresa-empleador-juridico-rues-con-rep-legal"
+    }
+  ],
+  "rechazadas": [],
+  "cambiosSolicitados": [],
+  "sinDecision": [],
+  "revisionAntes": 10,
+  "revisionDespues": 11,
+  "fecha": "2026-10-06"
+}

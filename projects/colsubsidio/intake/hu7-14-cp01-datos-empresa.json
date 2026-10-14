@@ -1,0 +1,33 @@
+{
+  "testDataRequirements": [
+    {
+      "schemaVersion": "afi-test-data-requirement/v1",
+      "id": "empresa-juridica-rues-con-rep-legal-datos-empresa",
+      "perfil": "empresa",
+      "condiciones": [
+        {
+          "id": "empleador-juridico-rues-con-rep-legal",
+          "descripcion": "Aportante tipo Empleador Jurídico existente en RUES, no afiliado a Colsubsidio, con información/número del Representante Legal retornado por RUES."
+        },
+        {
+          "id": "sin-solicitud-afiliacion-en-curso",
+          "descripcion": "Sin solicitud de afiliación en curso que impida crear un nuevo trámite."
+        }
+      ],
+      "camposRequeridos": [
+        "fechaInicioActividad",
+        "valorNomina",
+        "numeroTrabajadores",
+        "afiliadoPrimeraVez"
+      ],
+      "ocurrencias": [
+        {
+          "hu": "HU 7.14",
+          "caso": "CP01"
+        }
+      ],
+      "reutilizable": true,
+      "actorSugerido": "empresa-empleador-juridico-rues-con-rep-legal"
+    }
+  ]
+}

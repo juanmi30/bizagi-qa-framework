@@ -1,0 +1,231 @@
+{
+  "cp": "HU06-CP05",
+  "escenario": "1-hu06-cp05.yaml",
+  "inicio": "2026-10-13T14:57:17.758Z",
+  "unico": "20261013-095717",
+  "cleanup": {
+    "politica": "CLEANUP_NOT_APPLICABLE",
+    "razon": "La radicación queda en el flujo de consulta unitaria como evidencia; desistir no es reversible y no es parte del CP."
+  },
+  "fin": "2026-10-13T14:57:43.454Z",
+  "estado": "REAL_PASS_PARCIAL",
+  "motivo": "Sesión y caso reales, sin fallos; 3 paso(s) de la matriz no verificados directamente: P1=NOT_AUTOMATED, P6=NOT_AUTOMATED, P9=INTEGRATION_NOT_VERIFIED",
+  "numero_caso": "427",
+  "actividades_observadas": [
+    "Máximo tiempo de radicación",
+    "Consultar Alertas Intermediario",
+    "Deshabilitar cancelación"
+  ],
+  "pasos": [
+    {
+      "indice": 1,
+      "hacer": "iniciar_sesion",
+      "matriz": [
+        2
+      ],
+      "estado": "PASS",
+      "detalle": "Sesión real iniciada como \"analista\".",
+      "ms": 7848,
+      "evidencia": "HU06-CP05_p01_iniciar_sesion"
+    },
+    {
+      "indice": 2,
+      "hacer": "nuevo_caso",
+      "matriz": [
+        2,
+        3
+      ],
+      "estado": "PASS",
+      "detalle": "Formulario de inicio de \"Gestión Solicitudes Centro Expedición\" abierto (ruta: App > Processes > Centro de Expedición) | ✔ etiquetas exactas presentes (1)",
+      "ms": 4617,
+      "evidencia": "HU06-CP05_p02_nuevo_caso"
+    },
+    {
+      "indice": 3,
+      "hacer": "diligenciar",
+      "matriz": [
+        3
+      ],
+      "estado": "PASS",
+      "detalle": "Diligenciado y confirmado: Línea=Autos; Ramo=AUTOMÓVILES LIVIANOS INDIVIDUAL | ✔ \"Tipo de Solicitud\" = Modificación (coincide)",
+      "ms": 2330,
+      "evidencia": "HU06-CP05_p03_diligenciar"
+    },
+    {
+      "indice": 4,
+      "hacer": "diligenciar",
+      "matriz": [
+        4
+      ],
+      "estado": "PASS",
+      "detalle": "Diligenciado y confirmado: Sucursal=BOGOTA",
+      "ms": 3825,
+      "evidencia": "HU06-CP05_p04_diligenciar"
+    },
+    {
+      "indice": 5,
+      "hacer": "diligenciar",
+      "matriz": [
+        5
+      ],
+      "estado": "PASS",
+      "detalle": "Diligenciado y confirmado: Tipo de Radicación=Individual | ✔ \"Descripción de la Solicitud (Masiva/Múltiple)\" no visible (encontrados 0) | ✔ \"Forma de Consulta Unitaria\" visible (1)",
+      "ms": 53,
+      "evidencia": "HU06-CP05_p05_diligenciar"
+    },
+    {
+      "indice": 6,
+      "hacer": "verificar",
+      "matriz": [
+        6
+      ],
+      "estado": "PASS",
+      "detalle": "✔ etiquetas exactas presentes (6)",
+      "ms": 1875,
+      "evidencia": "HU06-CP05_p06_verificar"
+    },
+    {
+      "indice": 7,
+      "hacer": "no_automatizado",
+      "matriz": [
+        6
+      ],
+      "estado": "NOT_AUTOMATED",
+      "detalle": "Ortografía/capitalización de TODOS los textos visibles: la matriz no trae glosario. Se verifican las etiquetas reales; las inconsistencias observadas en QA se reportan como hallazgos (OBS-01..04 en docs/REPORTE-FASE1B.md).",
+      "ms": 0,
+      "evidencia": "HU06-CP05_p07_no_automatizado"
+    },
+    {
+      "indice": 8,
+      "hacer": "diligenciar",
+      "matriz": [
+        7
+      ],
+      "estado": "PASS",
+      "detalle": "Diligenciado y confirmado: Forma de Consulta Unitaria=Número de póliza; Número de Póliza=«dato:INI-INDIVIDUAL-RUTA.criterio_valor» | ✔ \"Tipo de Radicación\" = Individual (coincide)",
+      "ms": 102,
+      "evidencia": "HU06-CP05_p08_diligenciar"
+    },
+    {
+      "indice": 9,
+      "hacer": "pulsar",
+      "matriz": [
+        7
+      ],
+      "estado": "PASS",
+      "detalle": "Botón \"Crear\" pulsado; Bizagi respondió CREATENEWCASE con CaseNumber 427 y la UI muestra \"Caso 427\"",
+      "ms": 2345,
+      "evidencia": "HU06-CP05_p09_pulsar"
+    },
+    {
+      "indice": 10,
+      "hacer": "verificar_ruta",
+      "matriz": [
+        8,
+        9
+      ],
+      "estado": "PASS",
+      "detalle": "Caso 427: Bizagi lista como actividad actual \"Consultar Alertas Intermediario\" (work items del caso en el buscador); actividades observadas Máximo tiempo de radicación → Consultar Alertas Intermediario → Deshabilitar cancelación; nunca en Estructurar información. Estado: Máximo tiempo de radicación | Consultar Alertas Intermediario | Deshabilitar cancelación",
+      "ms": 2398,
+      "evidencia": "HU06-CP05_p10_verificar_ruta"
+    },
+    {
+      "indice": 11,
+      "hacer": "integracion",
+      "matriz": [
+        9
+      ],
+      "estado": "INTEGRATION_NOT_VERIFIED",
+      "detalle": "Worker AI: sin acceso a traza/log/respuesta del servicio; esperado \"No es invocado para radicación Individual (la ausencia de invocación no es observable; la línea de tiempo del caso está vacía).\". Solo hay evidencia indirecta por UI.",
+      "ms": 0,
+      "evidencia": "HU06-CP05_p11_integracion"
+    }
+  ],
+  "matriz": [
+    {
+      "n": 1,
+      "accion": "Objetivo:",
+      "esperado": "Validar que una solicitud con Tipo de Radicación Individual tome la transición correspondiente en la compuerta ¿Masivo? y continúe por el flujo regular, sin ingresar a Estructurar Información.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 2,
+      "accion": "Ingresar al ambiente Bizagi mediante la URL: https://test-aiprocesos-sde.bizagi.com/",
+      "esperado": "El ambiente de pruebas se encuentra disponible y permite iniciar una nueva Radicación.",
+      "estado": "PASS",
+      "cubierto_por": [
+        1,
+        2
+      ]
+    },
+    {
+      "n": 3,
+      "accion": "Crear un nuevo caso y seleccionar una combinación válida de Línea, Ramo y Tipo de Solicitud.",
+      "esperado": "El formulario presenta la configuración correspondiente a los valores seleccionados.",
+      "estado": "PASS",
+      "cubierto_por": [
+        2,
+        3
+      ]
+    },
+    {
+      "n": 4,
+      "accion": "Seleccionar una Sucursal válida.",
+      "esperado": "La Sucursal queda registrada correctamente.",
+      "estado": "PASS",
+      "cubierto_por": [
+        4
+      ]
+    },
+    {
+      "n": 5,
+      "accion": "Seleccionar Tipo de Radicación = Individual.",
+      "esperado": "El formulario cambia a la modalidad Individual y no presenta los elementos exclusivos de la modalidad Masivo que no correspondan a esta ruta.",
+      "estado": "PASS",
+      "cubierto_por": [
+        5
+      ]
+    },
+    {
+      "n": 6,
+      "accion": "Validar el formulario de inicio.",
+      "esperado": "Los campos, etiquetas, opciones y textos visibles presentan correcta ortografía y capitalización.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": [
+        6,
+        7
+      ]
+    },
+    {
+      "n": 7,
+      "accion": "Diligenciar la información requerida para la radicación Individual y crear el caso.",
+      "esperado": "El caso es creado con Tipo de Radicación = Individual.",
+      "estado": "PASS",
+      "cubierto_por": [
+        8,
+        9
+      ]
+    },
+    {
+      "n": 8,
+      "accion": "Validar la compuerta ¿Masivo?.",
+      "esperado": "La compuerta identifica el valor Individual y selecciona la transición correspondiente al flujo regular.",
+      "estado": "PASS",
+      "cubierto_por": [
+        10
+      ]
+    },
+    {
+      "n": 9,
+      "accion": "Validar la actividad posterior a la compuerta.",
+      "esperado": "El caso continúa por el camino regular hacia el flujo de consulta unitaria y no es enviado al Worker AI ni a Estructurar Información.",
+      "estado": "INTEGRATION_NOT_VERIFIED",
+      "cubierto_por": [
+        10,
+        11
+      ]
+    }
+  ],
+  "bloqueos": []
+}

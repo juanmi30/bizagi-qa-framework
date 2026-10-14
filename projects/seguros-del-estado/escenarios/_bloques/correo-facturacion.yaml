@@ -1,0 +1,20 @@
+# Bloque HU03: regla "¿Requiere actualizar el correo electrónico?" de Completar información (Si → campo visible y
+# obligatorio; No → oculto). Etiquetas tomadas de la matriz [PENDIENTE de calibrar]. Opciones del radio "Si"/"No"
+# como las demás preguntas booleanas verificadas en QA.
+descripcion: Regla de actualización del correo de facturación.
+parametros: [p_correo]
+pasos:
+  - matriz: "${param:p_correo}"
+    hacer: diligenciar
+    campos:
+      - { campo: ¿Requiere actualizar el correo electrónico?, valor: Si, tipo: radio }
+    verificar:
+      - visible: Nuevo correo Electrónico de Facturación
+      - obligatorio: [Nuevo correo Electrónico de Facturación]
+
+  - matriz: "${param:p_correo}"
+    hacer: diligenciar
+    campos:
+      - { campo: ¿Requiere actualizar el correo electrónico?, valor: "No", tipo: radio }
+    verificar:
+      - no_visible: Nuevo correo Electrónico de Facturación

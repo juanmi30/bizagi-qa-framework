@@ -1,0 +1,16 @@
+# Bloque: sesión real del actor y formulario de inicio del proceso de radicación.
+# Calibrado contra el DOM real (2026-10-08 y 2026-10-13). Si el actor no tiene el proceso habilitado (ENV-03),
+# nuevo_caso lo detecta en la respuesta que recibe el portal y el paso queda BLOCKED (ambiente), no FAIL.
+descripcion: Iniciar sesión y abrir el formulario de inicio de "Gestión Solicitudes Centro Expedición".
+parametros: [actor, p_sesion, p_formulario]
+pasos:
+  - matriz: "${param:p_sesion}"
+    hacer: iniciar_sesion
+    actor: "${param:actor}"
+
+  - matriz: "${param:p_formulario}"
+    hacer: nuevo_caso
+    proceso: "${config:SDE_PROCESO_RADICACION}"
+    categoria: "${config:SDE_PROCESO_CATEGORIA}"
+    verificar:
+      - etiquetas: [Línea]

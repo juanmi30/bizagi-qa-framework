@@ -1,0 +1,88 @@
+{
+  "version": 1,
+  "hu": "AFI HU 14.12",
+  "caso": "228503",
+  "nombre": "CP04 Empresa",
+  "fuente": {
+    "tipo": "diseno-qa",
+    "referencia": "20260910_CLS_AFI_HU 14.12_V2_Casos_Prueba.xlsx"
+  },
+  "perfil": "empresa",
+  "preparacion": {
+    "datosCaso": {
+      "tipoAportante": "Empleador"
+    },
+    "camposAsercion": [],
+    "etapas": [
+      "inicio-solicitud",
+      "telefonos",
+      "informacion-adicional"
+    ]
+  },
+  "funcional": {
+    "caso": "228503 - CP04",
+    "pasos": [
+      {
+        "id": "P04",
+        "esperado": "No se muestra ninguna alerta amarilla de cobertura territorial.",
+        "operaciones": [
+          {
+            "tipo": "texto-ausente",
+            "texto": "Solo puedes afiliarte si resides en Bogotá o Cundinamarca. Si vives en otro departamento, debes buscar la caja correspondiente a tu región.",
+            "coincidencia": "exacta"
+          },
+          {
+            "tipo": "texto-ausente",
+            "texto": "Solo puedes afiliarte si resides en Bogotá o Cundinamarca",
+            "coincidencia": "contiene",
+            "evidencia": "CP04_P04_sin_alerta"
+          }
+        ]
+      },
+      {
+        "id": "P05",
+        "esperado": "El desplegable muestra todas las opciones nacionales paramétricas (No se restringe únicamente a Bogotá D.C. y Cundinamarca).",
+        "operaciones": [
+          {
+            "tipo": "catalogo-opcion-fuera-de",
+            "campo": "departamento",
+            "excluir": [
+              "BOGOTÁ, D.C.",
+              "CUNDINAMARCA"
+            ],
+            "normalizacion": "texto-es",
+            "evidencia": "CP04_P05_departamentos"
+          },
+          {
+            "tipo": "seleccionar-exacto",
+            "campo": "departamento",
+            "valor": "ANTIOQUIA"
+          }
+        ]
+      },
+      {
+        "id": "P06",
+        "esperado": "El campo de Ciudad de vivienda se comporta según las reglas originales de este tipo de aportante, sin las restricciones forzadas desarrolladas para Independientes.",
+        "operaciones": [
+          {
+            "tipo": "catalogo-no-vacio",
+            "campo": "ciudadVivienda",
+            "evidencia": "CP04_P06_ciudades"
+          },
+          {
+            "tipo": "catalogo-opcion-fuera-de",
+            "campo": "ciudadVivienda",
+            "excluir": [
+              "BOGOTÁ, D.C."
+            ],
+            "normalizacion": "texto-es"
+          },
+          {
+            "tipo": "cerrar-catalogo",
+            "campo": "ciudadVivienda"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+SDE-CEL — Exploración limitada de cuentas de intermediario (ENV-03), 2026-10-13. SOLO LECTURA; no se crearon casos.
+Fuente: archivo de QA "Intermedi y suc.xlsx" (raíz del workspace local; NO se incluye en el paquete exportable ni se copia aquí).
+Identificadores enmascarados INT-xxxxxx = prefijo de SHA-256 del usuario (no reversible a simple vista).
+
+== Excel (agregados, sin datos personales)
+Hoja INTERMEDIARIOS: 45 registros, 35 usuarios únicos, 10 registros duplicados, 35 claves intermediario distintas (ninguna
+compartida). Usuarios únicos por área: 55-PEREIRA 17, 51-AGENCIA SOGAMOSO 5, 49-AGENCIA CUCUTA 4, 11-BOGOTA 2, 53-AGENCIA
+MONTERIA 2, 45-CALI 2, 18-CHICO 1, 65-MEDELLIN 1, 56-AGENCIA MANDATARIA BARRANCABERMEJA 1. Hoja SUC: catálogo de sucursales
+(cod_suc, nombre); la columna "Sucursal / área" del listado NO se asumió equivalente a un código del catálogo.
+La cuenta "intermediario" usada hasta hoy pertenece al área 55-PEREIRA.
+
+== Selección: 3 candidatos de áreas distintas a la ya evaluada (11-BOGOTA, 51-AGENCIA SOGAMOSO, 53-AGENCIA MONTERIA).
+Comprobación: dominio "externos", clave de prueba común de la configuración local (no registrada en ningún artefacto).
+Se detiene en la primera cuenta habilitada → cuentas realmente comprobadas: 1.
+
+INT-013403 | 11-BOGOTA | autentica: sí | rol visible: CE_Intermediarios | menú: Home, Inbox, New, Buscar |
+           Rest/Processes/All entrega "Gestión Solicitudes Centro Expedición": sí | categoría visible en Nuevo Caso: sí
+INT-0301A8, INT-095A0F: no comprobadas (no fue necesario).
+
+== Confirmación posterior (tests/habilitacion.real.spec.ts, con la cuenta registrada como USUARIO_intermediario)
+intermediario: PASS · analista (control): PASS · intermediario_alerta: FAIL (cuenta original, no proviene del Excel).
+Login real de los 3 roles: 3/3.
+
+== Conclusión
+ENV-03 es POR USUARIO (asignación del rol CE_Intermediarios). La cuenta anterior no tiene rol; INT-013403 sí.
+HU03 queda desbloqueada en cuanto al actor. HU03-CP02 sigue BLOCKED por datos: póliza Autos vigente de la clave de INT-013403.

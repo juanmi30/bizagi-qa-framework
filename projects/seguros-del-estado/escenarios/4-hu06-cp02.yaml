@@ -1,0 +1,142 @@
+# HU06-CP02 — Radicación Masiva Autos y estructuración por Placa  (Fase 2, familia F-MASIVO-ESTRUCTURAR)
+# Fuente: fuentes/20260928_SDE_CEL_V1_Casos de Prueba_HU06.xlsx, hoja CP02 (22 pasos).
+# Actores según el manifest: radica el INTERMEDIARIO y estructura el ANALISTA. Con ENV-03 vigente (2026-10-13) el
+# intermediario no tiene el proceso: nuevo_caso queda BLOCKED (ambiente). No se sustituye por el analista.
+# Calibración:
+#  - formulario de inicio, ruta Masiva, Estructurar información, columnas de la grilla y pestañas: VERIFICADO en QA;
+#  - pop-up de la fila: abre (caso 426, Generales). Etiquetas propias de Autos ("Placa") [PENDIENTE];
+#  - pruebas negativas de Placa: la capability está probada en DOM sintético; el mecanismo real (truncado por
+#    maxlength o mensaje) [PENDIENTE]. ATENCIÓN BUG-03: si un paso falla con el pop-up abierto, el caso propio queda
+#    inutilizable (salir del pop-up sin Guardar). Es un riesgo aceptado sobre casos de la automatización.
+# "Documentos requeridos" (P7): Masiva/Modificación no exige documentos en QA (caso 343/426); la lista Tipo Documental de
+# las Masivas está vacía (BUG-01). No se adjunta nada.
+# UI-10 (2026-10-13): en el pop-up real las etiquetas NO siempre coinciden con las columnas de la grilla (caso 430). Calibrado:
+# "Forma Consulta" (solo visualización) y "Número Póliza" (input, maxlength 20) en Masiva Modificación (caso 426). SIN calibrar:
+# "Placa", "¿Requiere modificar RCE?", "Ramo RCE", "Número Póliza RCE". No ejecutar los pasos del pop-up hasta calibrarlos con QA
+# (una etiqueta errónea con el pop-up abierto deja el caso inutilizable, BUG-03). Datos: la Matriz Data pide formato válido,
+# "Datos de Cliente: N/A".
+id: HU06-CP02
+titulo: Masivo Autos — Worker AI, Estructurar información y reglas de Placa en Detalle Polizas Asociadas
+etiquetas: [hu06, fase2, masivo, autos, cp02]
+actores: [intermediario, analista]
+datasets: [CFG-PROCESO, INI-AUTOS-MASIVO]
+cleanup:
+  politica: CLEANUP_NOT_APPLICABLE
+  razon: El caso queda en Estructurar información con las filas editadas/agregadas por la prueba (identificable por ${unico}).
+pasos:
+  - incluir: sesion-y-formulario
+    con: { actor: intermediario, p_sesion: [2], p_formulario: [2, 3] }
+
+  - matriz: [3]
+    hacer: diligenciar
+    campos:
+      - { campo: Línea, valor: "${dato:INI-AUTOS-MASIVO.linea}", tipo: lista }
+      - { campo: Ramo, valor: "${dato:INI-AUTOS-MASIVO.ramo}", tipo: lista }
+    verificar:
+      # En Autos el Tipo de Solicitud se asigna solo (verificado en QA para Autos).
+      - valor: { campo: Tipo de Solicitud, igual: "${dato:INI-AUTOS-MASIVO.movimiento}" }
+
+  - matriz: [4]
+    hacer: diligenciar
+    campos:
+      - { campo: Sucursal, valor: "${dato:INI-AUTOS-MASIVO.sucursal}", tipo: lista }
+
+  - matriz: [5]
+    hacer: diligenciar
+    campos:
+      - { campo: Tipo de Radicación, valor: "${dato:INI-AUTOS-MASIVO.tipo_radicacion}", tipo: radio }
+    verificar:
+      - visible: Descripción de la Solicitud (Masiva/Múltiple)
+      - visible: Documentos Anexos
+
+  - matriz: [6]
+    hacer: verificar
+    verificar:
+      - texto_exacto: "Masivo: Solicitud asociada a más de una póliza."
+
+  - matriz: [7]
+    hacer: diligenciar
+    campos:
+      # Obligatorio en Masiva Autos aunque no esté en la matriz (OBS-08).
+      - { campo: ¿Su solicitud requiere cambio de intermediario?, valor: "No", tipo: radio }
+      - { campo: Descripción de la Solicitud (Masiva/Múltiple), valor: "${dato:INI-AUTOS-MASIVO.narrativa} ${dato:INI-AUTOS-MASIVO.narrativa_polizas}", tipo: area }
+
+  - incluir: masivo-hasta-estructurar
+    con: { p_crear: [8], p_compuerta: [9], p_worker: [9, 12], p_estructurar: [10] }
+
+  - matriz: [11]
+    hacer: verificar
+    verificar:
+      - solo_lectura: [Número de Caso, Creador del Caso, Fecha de Creación, Línea, Ramo, Movimiento, Tipo Radicación, Sucursal, Descripción Solicitud Masiva]
+      - valor: { campo: Tipo Radicación, igual: "${dato:INI-AUTOS-MASIVO.tipo_radicacion}" }
+      - visible: Información a Consultar
+
+  - matriz: [12]
+    hacer: tabla_verificar
+    tabla: Detalle Polizas Asociadas
+    minimo_filas: 1
+    columnas: [Forma Consulta, Placa, Número Póliza]
+
+  - matriz: [13]
+    hacer: tabla_abrir_fila
+    formulario: detalle-polizas-autos
+    tabla: Detalle Polizas Asociadas
+    fila: 1
+
+  - matriz: [14, 15]
+    hacer: verificar
+    verificar:
+      # [PENDIENTE] en Autos se espera la Forma de Consulta por Placa (la matriz la condiciona a la configuración del caso).
+      - valor: { campo: Forma Consulta, igual: Placa }
+      - visible: Placa
+      - no_visible: Número Póliza
+      - no_visible: Número de Documento Tomador
+
+  - matriz: [16]
+    hacer: intentar_diligenciar
+    campo: Placa
+    valor: ""
+    esperado_mostrado: ""
+
+  - matriz: [16]
+    hacer: dialogo_confirmar
+    espera: permanece_abierto
+
+  - matriz: [18]
+    hacer: intentar_diligenciar
+    campo: Placa
+    valor: ABC1234
+    esperado_mostrado: ABC123
+
+  - matriz: [17]
+    hacer: intentar_diligenciar
+    campo: Placa
+    valor: "${dato:INI-AUTOS-MASIVO.placa}"
+    esperado_mostrado: "${dato:INI-AUTOS-MASIVO.placa}"
+
+  - matriz: [17, 19]
+    hacer: dialogo_confirmar
+    espera: cierra
+    fila_resultante:
+      Placa: "${dato:INI-AUTOS-MASIVO.placa}"
+
+  - matriz: [20]
+    hacer: tabla_agregar
+    formulario: detalle-polizas-autos
+    tabla: Detalle Polizas Asociadas
+    verificar:
+      - visible: Forma Consulta
+
+  - matriz: [21]
+    hacer: diligenciar
+    campos:
+      - { campo: Placa, valor: "${dato:INI-AUTOS-MASIVO.placa_nueva_fila}", tipo: texto }
+
+  - matriz: [21]
+    hacer: dialogo_confirmar
+    espera: cierra
+    fila_resultante:
+      Placa: "${dato:INI-AUTOS-MASIVO.placa_nueva_fila}"
+
+  - incluir: estructurar-secciones
+    con: { p_pestanas: [22], p_observaciones: [22] }

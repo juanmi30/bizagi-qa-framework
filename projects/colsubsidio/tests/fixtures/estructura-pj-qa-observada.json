@@ -1,0 +1,176 @@
+{
+ "origen": "QA real 2026-10-06, exploracion-flujo-pj (actor sin-rep-legal; validación de framework, no evidencia CP01). Solo textos públicos y booleanos.",
+ "empresa": {
+  "encabezados": [
+   "Ingresa la información de la empresa"
+  ],
+  "migas": [],
+  "controles": [
+   {
+    "identidad": "razonSocial",
+    "familia": "input",
+    "etiqueta": "Razón social *",
+    "placeholder": "Escribe",
+    "requerido": false,
+    "deshabilitado": false
+   },
+   {
+    "identidad": "sigla",
+    "familia": "input",
+    "etiqueta": "Sigla Empresa",
+    "placeholder": "Escribe",
+    "requerido": false,
+    "deshabilitado": false
+   },
+   {
+    "identidad": "tipoIdentificacion",
+    "familia": "select",
+    "requerido": false,
+    "deshabilitado": true
+   },
+   {
+    "identidad": "nit",
+    "familia": "input",
+    "etiqueta": "Nit *",
+    "placeholder": "Escribe",
+    "requerido": false,
+    "deshabilitado": true
+   },
+   {
+    "identidad": "dv",
+    "familia": "input",
+    "etiqueta": "DV *",
+    "requerido": false,
+    "deshabilitado": true
+   },
+   {
+    "identidad": "naturaleza",
+    "familia": "mat-select",
+    "placeholder": "Selecciona una opción",
+    "requerido": true,
+    "deshabilitado": true
+   },
+   {
+    "identidad": "ciuu",
+    "familia": "autocomplete",
+    "etiqueta": "Número de CIIU",
+    "placeholder": "Selecciona una opción",
+    "requerido": true,
+    "deshabilitado": false
+   },
+   {
+    "identidad": "actividad",
+    "familia": "input",
+    "etiqueta": "Actividad económica *",
+    "requerido": false,
+    "deshabilitado": false
+   },
+   {
+    "identidad": "fechaInicio",
+    "familia": "input",
+    "requerido": false,
+    "deshabilitado": false
+   },
+   {
+    "identidad": "valorNomina",
+    "familia": "input",
+    "etiqueta": "Valor total de la nómina *",
+    "placeholder": "Escribe",
+    "requerido": false,
+    "deshabilitado": false
+   },
+   {
+    "identidad": "tipoOrganizacion",
+    "familia": "mat-select",
+    "placeholder": "Selecciona una opción",
+    "requerido": false,
+    "deshabilitado": false
+   },
+   {
+    "identidad": "claseEmpleador",
+    "familia": "mat-select",
+    "placeholder": "Selecciona una opción",
+    "requerido": true,
+    "deshabilitado": true
+   },
+   {
+    "identidad": "numeroTrabajadores",
+    "familia": "input",
+    "etiqueta": "Número de trabajadores *",
+    "placeholder": "Escribe",
+    "requerido": false,
+    "deshabilitado": false
+   },
+   {
+    "identidad": "claseAportante",
+    "familia": "select",
+    "etiqueta": "Clase aportante *",
+    "requerido": false,
+    "deshabilitado": true
+   },
+   {
+    "identidad": "afiliadoPrimeraVez",
+    "familia": "radio",
+    "etiqueta": "Si",
+    "requerido": false,
+    "deshabilitado": false
+   },
+   {
+    "identidad": "cajaCompensacion",
+    "familia": "autocomplete",
+    "etiqueta": "Caja de compensación anterior",
+    "placeholder": "Selecciona una opción",
+    "requerido": true,
+    "deshabilitado": false
+   }
+  ]
+ },
+ "contacto": {
+  "encabezados": [
+   "Ingresa tu información de contacto",
+   "Información de localización",
+   "Datos de contacto"
+  ],
+  "migas": [],
+  "controles": [
+   {
+    "identidad": "departamento",
+    "familia": "mat-select",
+    "placeholder": "Selecciona una opción",
+    "requerido": true,
+    "deshabilitado": false
+   },
+   {
+    "identidad": "ciudadVivienda",
+    "familia": "mat-select",
+    "placeholder": "Selecciona una opción",
+    "requerido": true,
+    "deshabilitado": false
+   },
+   {
+    "identidad": "numeroCelular",
+    "familia": "input",
+    "etiqueta": "Celular *",
+    "placeholder": "Escribe",
+    "requerido": false,
+    "deshabilitado": false
+   },
+   {
+    "identidad": "numeroTelefonoFijo",
+    "familia": "input",
+    "etiqueta": "Número de teléfono fijo *",
+    "placeholder": "Escribe",
+    "requerido": false,
+    "deshabilitado": false
+   },
+   {
+    "identidad": "correoElectronico",
+    "familia": "input",
+    "etiqueta": "Correo electrónico *",
+    "placeholder": "Escribe",
+    "requerido": false,
+    "deshabilitado": false
+   }
+  ]
+ }
+}

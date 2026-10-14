@@ -1,0 +1,581 @@
+{
+  "schemaVersion": "afi-test-data-registry/v1",
+  "revision": 14,
+  "slots": [
+    {
+      "id": "pensionado-no-registrado-sap",
+      "perfil": "pensionado",
+      "condiciones": [
+        {
+          "id": "pensionado-no-registrado-sap",
+          "descripcion": "Solicitante con perfil Pensionado que no existe en la base de datos ni servicio web de SAP (no registrado como cotizante titular ni como persona a cargo)."
+        }
+      ],
+      "campos": [
+        {
+          "campo": "numeroIdentificacion",
+          "fuente": "slot"
+        },
+        {
+          "campo": "correo",
+          "fuente": "base"
+        },
+        {
+          "campo": "numeroCelular",
+          "fuente": "base"
+        },
+        {
+          "campo": "numeroTelefonoFijo",
+          "fuente": "base"
+        }
+      ],
+      "origen": {
+        "requisitos": [
+          "req-actor-pensionado-no-registrado-sap"
+        ],
+        "ocurrencias": [
+          {
+            "hu": "HU 14.8",
+            "caso": "CP01",
+            "paso": "Paso 3"
+          }
+        ]
+      },
+      "estado": "provisionado"
+    },
+    {
+      "id": "independiente-beneficiario-conyuge-sap",
+      "perfil": "independiente",
+      "condiciones": [
+        {
+          "id": "independiente-beneficiario-conyuge-sap",
+          "descripcion": "Solicitante con perfil Independiente registrado en SAP exclusivamente como beneficiario o cónyuge (persona a cargo activa), sin estar afiliado como cotizante titular."
+        }
+      ],
+      "campos": [
+        {
+          "campo": "numeroIdentificacion",
+          "fuente": "slot"
+        },
+        {
+          "campo": "correo",
+          "fuente": "base"
+        },
+        {
+          "campo": "numeroCelular",
+          "fuente": "base"
+        },
+        {
+          "campo": "numeroTelefonoFijo",
+          "fuente": "base"
+        },
+        {
+          "campo": "actividad",
+          "fuente": "slot"
+        },
+        {
+          "campo": "ingresoMensual",
+          "fuente": "slot"
+        }
+      ],
+      "origen": {
+        "requisitos": [
+          "req-actor-independiente-beneficiario-conyuge-sap"
+        ],
+        "ocurrencias": [
+          {
+            "hu": "HU 14.8",
+            "caso": "CP02",
+            "paso": "Paso 3"
+          }
+        ]
+      },
+      "estado": "provisionado"
+    },
+    {
+      "id": "facultativo-cotizante-activo-sap",
+      "perfil": "facultativo",
+      "condiciones": [
+        {
+          "id": "facultativo-cotizante-activo-sap",
+          "descripcion": "Solicitante con perfil Facultativo registrado en SAP como afiliado cotizante titular con estado activo en Colsubsidio."
+        }
+      ],
+      "campos": [
+        {
+          "campo": "numeroIdentificacion",
+          "fuente": "slot"
+        },
+        {
+          "campo": "correo",
+          "fuente": "base"
+        },
+        {
+          "campo": "numeroCelular",
+          "fuente": "base"
+        },
+        {
+          "campo": "numeroTelefonoFijo",
+          "fuente": "base"
+        },
+        {
+          "campo": "salarioBasico",
+          "fuente": "slot"
+        }
+      ],
+      "origen": {
+        "requisitos": [
+          "req-actor-facultativo-cotizante-activo-sap"
+        ],
+        "ocurrencias": [
+          {
+            "hu": "HU 14.8",
+            "caso": "CP03",
+            "paso": "Paso 3"
+          }
+        ]
+      },
+      "estado": "provisionado"
+    },
+    {
+      "id": "pensionado-cotizante-inactivo-sap",
+      "perfil": "pensionado",
+      "condiciones": [
+        {
+          "id": "pensionado-cotizante-inactivo-sap",
+          "descripcion": "Solicitante con perfil Pensionado registrado en SAP como afiliado cotizante titular, pero con estado inactivo o con motivo de retiro registrado."
+        }
+      ],
+      "campos": [
+        {
+          "campo": "numeroIdentificacion",
+          "fuente": "slot"
+        },
+        {
+          "campo": "correo",
+          "fuente": "base"
+        },
+        {
+          "campo": "numeroCelular",
+          "fuente": "base"
+        },
+        {
+          "campo": "numeroTelefonoFijo",
+          "fuente": "base"
+        }
+      ],
+      "origen": {
+        "requisitos": [
+          "req-actor-pensionado-cotizante-inactivo-sap"
+        ],
+        "ocurrencias": [
+          {
+            "hu": "HU 14.8",
+            "caso": "CP04",
+            "paso": "Paso 3"
+          }
+        ]
+      },
+      "estado": "provisionado"
+    },
+    {
+      "id": "pensionado-activo-y-beneficiario-sap",
+      "perfil": "pensionado",
+      "condiciones": [
+        {
+          "id": "pensionado-activo-y-beneficiario-sap",
+          "descripcion": "Solicitante con perfil Pensionado registrado en SAP como afiliado cotizante titular activo y simultáneamente como beneficiario o cónyuge."
+        }
+      ],
+      "campos": [
+        {
+          "campo": "numeroIdentificacion",
+          "fuente": "slot"
+        },
+        {
+          "campo": "correo",
+          "fuente": "base"
+        },
+        {
+          "campo": "numeroCelular",
+          "fuente": "base"
+        },
+        {
+          "campo": "numeroTelefonoFijo",
+          "fuente": "base"
+        }
+      ],
+      "origen": {
+        "requisitos": [
+          "req-actor-pensionado-activo-y-beneficiario-sap"
+        ],
+        "ocurrencias": [
+          {
+            "hu": "HU 14.8",
+            "caso": "CP05",
+            "paso": "Paso 3"
+          }
+        ]
+      },
+      "estado": "provisionado"
+    },
+    {
+      "id": "empresa-empleador-juridico-rues-con-rep-legal",
+      "perfil": "empresa",
+      "condiciones": [
+        {
+          "id": "empleador-juridico-rues-con-rep-legal",
+          "descripcion": "Aportante tipo Empleador Jurídico existente en RUES, no afiliado a Colsubsidio, con información/número del Representante Legal retornado por RUES."
+        },
+        {
+          "id": "sin-solicitud-afiliacion-en-curso",
+          "descripcion": "Sin solicitud de afiliación en curso que impida crear un nuevo trámite."
+        }
+      ],
+      "campos": [
+        {
+          "campo": "numeroIdentificacion",
+          "fuente": "slot"
+        },
+        {
+          "campo": "correo",
+          "fuente": "slot"
+        }
+      ],
+      "origen": {
+        "requisitos": [
+          "empresa-juridica-rues-con-representante-legal",
+          "empresa-juridica-rues-con-rep-legal-sin-solicitud-en-curso"
+        ],
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP01"
+          }
+        ]
+      },
+      "estado": "provisionado"
+    },
+    {
+      "id": "empresa-empleador-juridico-rues-sin-rep-legal",
+      "perfil": "empresa",
+      "condiciones": [
+        {
+          "id": "empleador-juridico-rues-sin-rep-legal",
+          "descripcion": "Aportante tipo Empleador Jurídico existente en RUES, no afiliado a Colsubsidio, sin Representante Legal retornado por RUES."
+        },
+        {
+          "id": "sin-solicitud-afiliacion-en-curso",
+          "descripcion": "Sin solicitud de afiliación en curso que impida crear un nuevo trámite."
+        }
+      ],
+      "campos": [
+        {
+          "campo": "numeroIdentificacion",
+          "fuente": "slot"
+        },
+        {
+          "campo": "correo",
+          "fuente": "slot"
+        },
+        {
+          "campo": "codigoCiiu",
+          "fuente": "slot"
+        },
+        {
+          "campo": "razonSocial",
+          "fuente": "slot"
+        },
+        {
+          "campo": "actividadEconomicaEmpresa",
+          "fuente": "slot"
+        },
+        {
+          "campo": "fechaInicioActividad",
+          "fuente": "slot"
+        },
+        {
+          "campo": "valorNomina",
+          "fuente": "slot"
+        },
+        {
+          "campo": "numeroTrabajadores",
+          "fuente": "slot"
+        },
+        {
+          "campo": "afiliadoPrimeraVez",
+          "fuente": "slot"
+        },
+        {
+          "campo": "cajaCompensacionAnterior",
+          "fuente": "slot"
+        }
+      ],
+      "origen": {
+        "requisitos": [
+          "empresa-juridica-rues-sin-representante-legal",
+          "empresa-juridica-rues-sin-rep-legal-datos-empresa",
+          "empresa-juridica-rues-sin-rep-legal-caja-anterior"
+        ],
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14",
+            "caso": "CP02"
+          },
+          {
+            "hu": "HU 7.14",
+            "caso": "CP03"
+          },
+          {
+            "hu": "HU 7.14",
+            "caso": "CP04"
+          }
+        ]
+      },
+      "estado": "provisionado"
+    }
+  ],
+  "compartidos": [],
+  "historial": [
+    {
+      "revision": 2,
+      "fecha": "2026-10-01",
+      "slot": "pensionado-no-registrado-sap",
+      "accion": "correccion",
+      "propuesta": "ps-pensionado-pensionado-no-registrado-sap",
+      "hash": "d91d4edb146292cc1f82d1c5c145dff2a0d9f87a2bfde0708467d1dbf28b8eef",
+      "revisor": "qa-analista",
+      "requisitos": [
+        "req-actor-pensionado-no-registrado-sap"
+      ],
+      "lote": "kd-00d21d81c5c74d70"
+    },
+    {
+      "revision": 2,
+      "fecha": "2026-10-01",
+      "slot": "independiente-beneficiario-conyuge-sap",
+      "accion": "correccion",
+      "propuesta": "ps-independiente-independiente-beneficiario-conyuge-sap",
+      "hash": "bf6f8f60a5eab5ad3f6e512cb60ea0e3933f77a89aaf68ad602ba0a4e8f78f70",
+      "revisor": "qa-analista",
+      "requisitos": [
+        "req-actor-independiente-beneficiario-conyuge-sap"
+      ],
+      "lote": "kd-00d21d81c5c74d70"
+    },
+    {
+      "revision": 2,
+      "fecha": "2026-10-01",
+      "slot": "facultativo-cotizante-activo-sap",
+      "accion": "correccion",
+      "propuesta": "ps-facultativo-facultativo-cotizante-activo-sap",
+      "hash": "bd063920b5e08fa2abf8b952c800bb0319b4cc6bcf5223cd13b8386c635ac536",
+      "revisor": "qa-analista",
+      "requisitos": [
+        "req-actor-facultativo-cotizante-activo-sap"
+      ],
+      "lote": "kd-00d21d81c5c74d70"
+    },
+    {
+      "revision": 2,
+      "fecha": "2026-10-01",
+      "slot": "pensionado-cotizante-inactivo-sap",
+      "accion": "correccion",
+      "propuesta": "ps-pensionado-pensionado-cotizante-inactivo-sap",
+      "hash": "bf4b53d7cbfce40e61f23dfa23dd9ef725d8715ae7c62d4ce6ad112f0e1d36ee",
+      "revisor": "qa-analista",
+      "requisitos": [
+        "req-actor-pensionado-cotizante-inactivo-sap"
+      ],
+      "lote": "kd-00d21d81c5c74d70"
+    },
+    {
+      "revision": 2,
+      "fecha": "2026-10-01",
+      "slot": "pensionado-activo-y-beneficiario-sap",
+      "accion": "correccion",
+      "propuesta": "ps-pensionado-pensionado-activo-y-beneficiario-sap",
+      "hash": "c98744b919b4961a61016cec50e6c111e11d55f3dcdf01542693c64092244aca",
+      "revisor": "qa-analista",
+      "requisitos": [
+        "req-actor-pensionado-activo-y-beneficiario-sap"
+      ],
+      "lote": "kd-00d21d81c5c74d70"
+    },
+    {
+      "revision": 3,
+      "fecha": "2026-10-01",
+      "slot": "pensionado-no-registrado-sap",
+      "accion": "provision",
+      "propuesta": "prov-pensionado-no-registrado-sap",
+      "hash": "3d380456efe084e31fe99ea9d26f39d9f3a75cff00a370277296652600cee255",
+      "revisor": "qa-analista",
+      "requisitos": [
+        "req-actor-pensionado-no-registrado-sap"
+      ]
+    },
+    {
+      "revision": 4,
+      "fecha": "2026-10-01",
+      "slot": "independiente-beneficiario-conyuge-sap",
+      "accion": "provision",
+      "propuesta": "prov-independiente-beneficiario-conyuge-sap",
+      "hash": "515ccebbae20821b9c9fc0ffd53f1f725c531af02a438c71e9547e14b6bee971",
+      "revisor": "qa-analista",
+      "requisitos": [
+        "req-actor-independiente-beneficiario-conyuge-sap"
+      ]
+    },
+    {
+      "revision": 5,
+      "fecha": "2026-10-01",
+      "slot": "facultativo-cotizante-activo-sap",
+      "accion": "provision",
+      "propuesta": "prov-facultativo-cotizante-activo-sap",
+      "hash": "faef3aa58d27a2b6ff3a5ab940fa0552b96e5783d33c64c12f10fc268f4103e6",
+      "revisor": "qa-analista",
+      "requisitos": [
+        "req-actor-facultativo-cotizante-activo-sap"
+      ]
+    },
+    {
+      "revision": 6,
+      "fecha": "2026-10-01",
+      "slot": "pensionado-cotizante-inactivo-sap",
+      "accion": "provision",
+      "propuesta": "prov-pensionado-cotizante-inactivo-sap",
+      "hash": "afeaec0f64589d7b8548f466f1d05882154b3dcde99b8ea7406d8c3ad671c692",
+      "revisor": "qa-analista",
+      "requisitos": [
+        "req-actor-pensionado-cotizante-inactivo-sap"
+      ]
+    },
+    {
+      "revision": 7,
+      "fecha": "2026-10-01",
+      "slot": "pensionado-activo-y-beneficiario-sap",
+      "accion": "provision",
+      "propuesta": "prov-pensionado-activo-y-beneficiario-sap",
+      "hash": "121fb28c85253ac0f121c9e35cfadf84296753418568f48c2bb8e04291b56b67",
+      "revisor": "qa-analista",
+      "requisitos": [
+        "req-actor-pensionado-activo-y-beneficiario-sap"
+      ]
+    },
+    {
+      "revision": 8,
+      "fecha": "2026-10-05",
+      "slot": "empresa-empleador-juridico-rues-con-rep-legal",
+      "accion": "alta",
+      "propuesta": "ps-empresa-empleador-juridico-rues-con-rep-legal",
+      "hash": "c1dcc3e8c19a019e743cacfb2ea8f185a9d6dda01de8e05d5c0e9401cccfaf72",
+      "revisor": "qa",
+      "requisitos": [
+        "empresa-juridica-rues-con-representante-legal"
+      ],
+      "lote": "kd-dcc55b8df6d3478c"
+    },
+    {
+      "revision": 8,
+      "fecha": "2026-10-05",
+      "slot": "empresa-empleador-juridico-rues-sin-rep-legal",
+      "accion": "alta",
+      "propuesta": "ps-empresa-empleador-juridico-rues-sin-rep-legal",
+      "hash": "0305f84ce75cfe115103a3a7546fdbe8e24a4603192213cb6c32efb9c1cdc039",
+      "revisor": "qa",
+      "requisitos": [
+        "empresa-juridica-rues-sin-representante-legal"
+      ],
+      "lote": "kd-dcc55b8df6d3478c"
+    },
+    {
+      "revision": 9,
+      "fecha": "2026-10-05",
+      "slot": "empresa-empleador-juridico-rues-con-rep-legal",
+      "accion": "provision",
+      "propuesta": "prov-empresa-empleador-juridico-rues-con-rep-legal",
+      "hash": "4ba81aaeef8b0439046196dc00c8af61d9e946ef04d3f6d46ba40d943ecc30d1",
+      "revisor": "qa",
+      "requisitos": [
+        "empresa-juridica-rues-con-representante-legal"
+      ]
+    },
+    {
+      "revision": 10,
+      "fecha": "2026-10-05",
+      "slot": "empresa-empleador-juridico-rues-sin-rep-legal",
+      "accion": "provision",
+      "propuesta": "prov-empresa-empleador-juridico-rues-sin-rep-legal",
+      "hash": "04e0a9b581d64cf5fe3e549f18338d61e6035d3373af8da960661b5be60195f1",
+      "revisor": "wa",
+      "requisitos": [
+        "empresa-juridica-rues-sin-representante-legal"
+      ]
+    },
+    {
+      "revision": 11,
+      "fecha": "2026-10-06",
+      "slot": "empresa-empleador-juridico-rues-sin-rep-legal",
+      "accion": "reutilizacion",
+      "propuesta": "ps-empresa-empleador-juridico-rues-sin-rep-legal-2",
+      "hash": "9f672f3fc3b03c0b0bc0d1c3e0cfde588e537439d5553c9921da83f8c2f1aac4",
+      "revisor": "qa",
+      "requisitos": [
+        "empresa-juridica-rues-sin-rep-legal-datos-empresa"
+      ],
+      "lote": "kd-c970835c84c0dbf0"
+    },
+    {
+      "revision": 11,
+      "fecha": "2026-10-06",
+      "slot": "empresa-empleador-juridico-rues-con-rep-legal",
+      "accion": "reutilizacion",
+      "propuesta": "ps-empresa-empleador-juridico-rues-con-rep-legal-2",
+      "hash": "29b5a0c429911e1b9b1b84223a0bf8660014728710d0b459e4366ecb938aa0e3",
+      "revisor": "qa",
+      "requisitos": [
+        "empresa-juridica-rues-con-rep-legal-sin-solicitud-en-curso"
+      ],
+      "lote": "kd-c970835c84c0dbf0"
+    },
+    {
+      "revision": 12,
+      "fecha": "2026-10-06",
+      "slot": "empresa-empleador-juridico-rues-sin-rep-legal",
+      "accion": "provision",
+      "propuesta": "prov-empresa-empleador-juridico-rues-sin-rep-legal",
+      "hash": "2f7ba16f9e4ff38e415b6ee755642f354bef73f9409ffa33e0427bc1493744c4",
+      "revisor": "qa",
+      "requisitos": [
+        "empresa-juridica-rues-sin-representante-legal",
+        "empresa-juridica-rues-sin-rep-legal-datos-empresa"
+      ]
+    },
+    {
+      "revision": 13,
+      "fecha": "2026-10-06",
+      "slot": "empresa-empleador-juridico-rues-con-rep-legal",
+      "accion": "provision",
+      "propuesta": "prov-empresa-empleador-juridico-rues-con-rep-legal",
+      "hash": "56b01af00418f25f323197074b4cfa66fb7929898eb71d2b2791519f890b46e2",
+      "revisor": "qa",
+      "requisitos": [
+        "empresa-juridica-rues-con-representante-legal",
+        "empresa-juridica-rues-con-rep-legal-sin-solicitud-en-curso"
+      ]
+    },
+    {
+      "revision": 14,
+      "fecha": "2026-10-06",
+      "slot": "empresa-empleador-juridico-rues-sin-rep-legal",
+      "accion": "reutilizacion",
+      "propuesta": "ps-empresa-empleador-juridico-rues-sin-rep-legal-2",
+      "hash": "15e23e3a9f3573adbe02cc203fd3d97d7647cbff00619f0563f124fd6a0fb369",
+      "revisor": "qa",
+      "requisitos": [
+        "empresa-juridica-rues-sin-rep-legal-caja-anterior"
+      ],
+      "lote": "kd-06d8f9578f37ab19"
+    }
+  ]
+}

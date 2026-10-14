@@ -1,0 +1,41 @@
+SDE-CEL — Evidencia textual del sprint del 2026-10-13 (tarde). Sin credenciales ni datos personales.
+Fuentes locales: test-results/seguros-del-estado/sde/diagnostico-docs-*.json, bloqueos-*.json, VARIANTE_HU06-CP01_*.json,
+HU06-CP01_20261013-*.json. Todo con --workers=1 y trace off.
+
+== BUG-01 — diagnóstico de la secuencia de documentos (formulario de inicio Masiva / Generales / Póliza Nueva)
+1. "Adicionar" en Documentos Anexos: fila nueva sin llamada al servidor. Celdas: "Por favor guarde el registro antes de
+   subir el archivo" / "Por favor guarde el registro antes de hacer clic en el botón". Tipo Documental: solo "-------------".
+2. Guardar la fila (pie de la grilla): MultiAction ADDRELATIONWITHDATA = success. Pie: Adicionar/Eliminar. La fila NO se
+   refresca (mismo mensaje, lista vacía).
+3. Escribir la narrativa después de guardar: sin cambios (lista vacía).
+4. Re-pintar el formulario (cambiar Sucursal a MEDELLIN y volver a BOGOTA): la fila muestra su ID real, "No hay archivos",
+   el control de carga y Tipo Documental = Sarlaft | Solicitud de seguro | Otros.
+5. Tipo "Solicitud de seguro" → enlace de carga → diálogo "Subir un archivo" (botones Subir / Cancelar) → "Subir":
+   el archivo soporte-prueba.pdf (sintético, sin datos personales) aparece en la fila.
+6. "Crear": CREATENEWCASE success → CASO 428. Ruta: Máximo tiempo de radicación → Estructurar información.
+   Calibración de solo lectura del 428: P13–P17, P28 (pestañas) y P29 PASS; P27 FAIL (BUG-04).
+Notas técnicas: abrir la lista no llama al servidor (las opciones vienen del render del formulario). La tecla Escape cierra
+TODO el formulario de inicio (diálogo jQuery UI): la automatización no la usa.
+
+== Variante declarativa HU06-CP01 (escenarios/_variantes/hu06-cp01-secuencia-producto.yaml) — CASO 429
+P2–P11 PASS (incluye P9 con documento real y P10 creación), P12 INTEGRATION_NOT_VERIFIED, P13–P16 PASS, P17 tabla con columnas
+PASS, P18 BLOCKED sin abrir el pop-up (faltan los NIT), P28 PASS (la pestaña "Documentos de la solicitud" muestra
+soporte-prueba.pdf; Seguimiento muestra "Estructurar información"), P29 PASS, P27 FAIL (BUG-04).
+En el reporte guardado P28 figura como FAIL por un error de asignación del bloque (la verificación de Observaciones estaba
+asociada también a P28). Se corrigió el bloque (p_pestanas / p_observaciones); el detalle paso a paso del reporte muestra
+las dos pestañas en PASS.
+
+== HU06-CP01 oficial (secuencia de la matriz) — 12:08
+P2–P8 PASS; P9 FAIL: "el combo Tipo Documental no ofrece ninguna opción … en la secuencia de la matriz (la fila indica
+'Por favor guarde el registro antes de subir el archivo')". Sin caso (Bizagi no llega a Crear).
+
+== ENV-03 — comparación de roles (portal real, solo lectura)
+analista:      rol visible CE_Analista; menú Home, Inbox, New, Queries, Reports, QuickProcess, Admin;
+               Rest/Processes/All: App > Processes > Centro de Expedición > Gestión Solicitudes Centro Expedición.
+intermediario: SIN rol visible; menú solo Buscar, Inbox, New; Rest/Processes/All: "App" y "Procesos en Vivo" sin categorías;
+               RecentProcesses vacío. intermediario_alerta: igual.
+Conclusión: el proceso y la categoría existen; Bizagi los filtra por autorización. El usuario intermediario no tiene un rol
+con permiso para iniciar "Gestión Solicitudes Centro Expedición". Acción externa: administrador Bizagi (no se tocaron permisos).
+
+== Casos creados en el sprint (propios, registrados automáticamente)
+427 HU06-CP05 (ejecución no intencional, 09:57) · 428 diagnóstico BUG-01 · 429 variante HU06-CP01.

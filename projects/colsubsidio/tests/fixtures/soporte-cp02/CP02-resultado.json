@@ -1,0 +1,196 @@
+{
+  "metadata": {
+    "version": 1,
+    "hu": "AFI HU 14.12",
+    "caso": "CP02",
+    "nombre": "CP02 Independiente Cundinamarca Desktop"
+  },
+  "perfil": "independiente",
+  "numeroCaso": "312267",
+  "resultado": "PASS",
+  "pasosTecnicos": [
+    {
+      "id": "apertura-portal",
+      "esperado": "Pantalla de inicio visible.",
+      "resultado": "PASS"
+    },
+    {
+      "id": "preparacion",
+      "esperado": "La pantalla de Información de contacto carga exitosamente.",
+      "resultado": "PASS"
+    }
+  ],
+  "pasosFuncionales": [
+    {
+      "id": "P02",
+      "esperado": "Se visualiza la pantalla de \"Información de contacto\" con la alerta territorial ubicada en la parte superior de la pantalla, debajo del subtítulo \"Información de localización de vivienda\".",
+      "resultado": "PASS"
+    },
+    {
+      "id": "P03",
+      "esperado": "El campo \"Ciudad de vivienda\" se habilita como lista desplegable (ya no está bloqueado).",
+      "resultado": "PASS"
+    },
+    {
+      "id": "P04",
+      "esperado": "El catálogo muestra únicamente los municipios pertenecientes al departamento de Cundinamarca configurados en la paramétrica Ciudad nacional. No se muestran ciudades de otros departamentos.",
+      "resultado": "PASS"
+    },
+    {
+      "id": "P05",
+      "esperado": "El campo \"Ciudad de vivienda\" no acepta la entrada: ninguno de los caracteres numéricos ni especiales digitados se visualiza en el campo.",
+      "resultado": "PASS"
+    },
+    {
+      "id": "P06",
+      "esperado": "El sistema no conserva el texto libre: limpia automáticamente el campo \"Ciudad de vivienda\", que queda vacío, debido a que el texto digitado no coincide de forma exacta con una opción válida de la lista desplegable.",
+      "resultado": "PASS"
+    },
+    {
+      "id": "P07",
+      "esperado": "El sistema aplica texto predictivo en tiempo real, mostrando solo los municipios de Cundinamarca que coincidan con \"Chí\" (ej. \"Chía\").",
+      "resultado": "PASS"
+    },
+    {
+      "id": "P08",
+      "esperado": "El municipio seleccionado queda registrado en el campo \"Ciudad de vivienda\". Al volver a abrir la lista se visualiza nuevamente el listado completo de municipios de Cundinamarca configurados en la paramétrica Ciudad nacional, sin quedar limitado a las coincidencias de la búsqueda anterior (\"Chí\") y sin mostrar ciudades de otros departamentos.",
+      "resultado": "PASS"
+    },
+    {
+      "id": "P09",
+      "esperado": "El sistema precarga automáticamente el valor \"BOGOTÁ, D.C.\" en el campo \"Ciudad de vivienda\" y lo bloquea en modo solo lectura, impidiendo su modificación manual.",
+      "resultado": "PASS"
+    },
+    {
+      "id": "P10",
+      "esperado": "El campo \"Ciudad de vivienda\" se habilita nuevamente como lista desplegable (sin bloqueo), muestra únicamente municipios de Cundinamarca y permite seleccionar el municipio.",
+      "resultado": "PASS"
+    }
+  ],
+  "reconocimiento": "natural",
+  "cleanup": "exitoso",
+  "duracionSegundos": 248,
+  "etapasPreparacion": [
+    {
+      "etapa": "inicio-solicitud",
+      "declarada": true,
+      "resoluciones": 8,
+      "requerida": true,
+      "aplicada": true,
+      "resultado": "aplicada"
+    },
+    {
+      "etapa": "telefonos",
+      "declarada": true,
+      "resoluciones": 2,
+      "requerida": true,
+      "aplicada": true,
+      "resultado": "aplicada"
+    },
+    {
+      "etapa": "informacion-adicional",
+      "declarada": true,
+      "resoluciones": 3,
+      "requerida": true,
+      "aplicada": true,
+      "resultado": "aplicada"
+    }
+  ],
+  "trazaTecnica": [
+    {
+      "evento": "login-soporte",
+      "estado": "PASS"
+    },
+    {
+      "evento": "portal-abierto",
+      "estado": "PASS"
+    },
+    {
+      "evento": "etapa-preparacion",
+      "etapa": "inicio-solicitud",
+      "detalle": "8 resolución(es)",
+      "estado": "PASS"
+    },
+    {
+      "evento": "caso-creado",
+      "estado": "PASS"
+    },
+    {
+      "evento": "reconocimiento-natural",
+      "estado": "PASS"
+    },
+    {
+      "evento": "etapa-preparacion",
+      "etapa": "telefonos",
+      "detalle": "2 resolución(es)",
+      "estado": "PASS"
+    },
+    {
+      "evento": "transicion-preparacion",
+      "detalle": "btn-independiente-continuar",
+      "estado": "PASS"
+    },
+    {
+      "evento": "etapa-preparacion",
+      "etapa": "informacion-adicional",
+      "detalle": "3 resolución(es)",
+      "estado": "PASS"
+    },
+    {
+      "evento": "transicion-preparacion",
+      "detalle": "btn-independiente-info-ad-continuar",
+      "estado": "PASS"
+    },
+    {
+      "evento": "informacion-contacto-alcanzada",
+      "detalle": "2 transiciones",
+      "estado": "PASS"
+    },
+    {
+      "evento": "completitud-preparacion",
+      "estado": "PASS",
+      "detalle": "3 etapa(s) aplicada(s)"
+    },
+    {
+      "evento": "cleanup",
+      "estado": "PASS"
+    }
+  ],
+  "evidencia": {
+    "modo": "cliente",
+    "estado": "completa",
+    "capturasCliente": 17,
+    "adjuntosTecnicos": 14,
+    "erroresCaptura": 0,
+    "manifiesto": "CP02-evidencias.json"
+  },
+  "caso": "CP02",
+  "aportante": "independiente",
+  "pasos": {
+    "apertura-portal": "PASS",
+    "preparacion": "PASS",
+    "P02": "PASS",
+    "P03": "PASS",
+    "P04": "PASS",
+    "P05": "PASS",
+    "P06": "PASS",
+    "P07": "PASS",
+    "P08": "PASS",
+    "P09": "PASS",
+    "P10": "PASS"
+  },
+  "esperados": {
+    "apertura-portal": "Pantalla de inicio visible.",
+    "preparacion": "La pantalla de Información de contacto carga exitosamente.",
+    "P02": "Se visualiza la pantalla de \"Información de contacto\" con la alerta territorial ubicada en la parte superior de la pantalla, debajo del subtítulo \"Información de localización de vivienda\".",
+    "P03": "El campo \"Ciudad de vivienda\" se habilita como lista desplegable (ya no está bloqueado).",
+    "P04": "El catálogo muestra únicamente los municipios pertenecientes al departamento de Cundinamarca configurados en la paramétrica Ciudad nacional. No se muestran ciudades de otros departamentos.",
+    "P05": "El campo \"Ciudad de vivienda\" no acepta la entrada: ninguno de los caracteres numéricos ni especiales digitados se visualiza en el campo.",
+    "P06": "El sistema no conserva el texto libre: limpia automáticamente el campo \"Ciudad de vivienda\", que queda vacío, debido a que el texto digitado no coincide de forma exacta con una opción válida de la lista desplegable.",
+    "P07": "El sistema aplica texto predictivo en tiempo real, mostrando solo los municipios de Cundinamarca que coincidan con \"Chí\" (ej. \"Chía\").",
+    "P08": "El municipio seleccionado queda registrado en el campo \"Ciudad de vivienda\". Al volver a abrir la lista se visualiza nuevamente el listado completo de municipios de Cundinamarca configurados en la paramétrica Ciudad nacional, sin quedar limitado a las coincidencias de la búsqueda anterior (\"Chí\") y sin mostrar ciudades de otros departamentos.",
+    "P09": "El sistema precarga automáticamente el valor \"BOGOTÁ, D.C.\" en el campo \"Ciudad de vivienda\" y lo bloquea en modo solo lectura, impidiendo su modificación manual.",
+    "P10": "El campo \"Ciudad de vivienda\" se habilita nuevamente como lista desplegable (sin bloqueo), muestra únicamente municipios de Cundinamarca y permite seleccionar el municipio."
+  },
+  "preparacion": {}
+}

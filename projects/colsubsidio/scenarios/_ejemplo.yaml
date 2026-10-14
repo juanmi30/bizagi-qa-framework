@@ -1,0 +1,101 @@
+# ============================================================================
+#  PLANTILLA DE ESCENARIO (data-driven) — Bizagi
+#  Cómo usarla:
+#    1. Copia este archivo con un nombre real SIN el "_" del inicio,
+#       por ejemplo:  radicacion-web.yaml
+#    2. Llénalo leyendo tu documento de requerimientos.
+#    3. Córrelo:  npm test -- <tu-proyecto> --grep @plantilla
+#  Regla de oro: escribe las etiquetas de los campos TAL COMO SE VEN en pantalla.
+#  Los archivos que empiezan con "_" NO se ejecutan (son solo ejemplos).
+# ============================================================================
+
+# Nombre del proceso (informativo, para el reporte).
+proceso: Nombre del proceso como aparece en Bizagi
+
+# Nombre del caso de prueba (qué estás validando).
+escenario: Descripción corta de este escenario
+
+# Etiquetas -> se vuelven tags de Playwright (@regresion) para filtrar con --grep.
+# Opcional. Ejemplo:  etiquetas: [regresion, humo]
+etiquetas: [regresion]
+
+# --------- CÓMO EMPIEZA EL CASO ---------
+inicio:
+  # "crear-caso"  = el test crea el caso desde el Work Portal (menú Nuevo Caso).
+  # "bandeja"     = el caso YA existe y llega a la bandeja del usuario.
+  modo: crear-caso
+
+  # Usuario LÓGICO con el que inicia. La identidad real y la clave viven en el .env:
+  #   BIZAGI_LOGIN_MODO = lista | estandar | fichas
+  #   USUARIO_analista1 = domain\Analista1     (identidad real)
+  #   CLAVE_analista1   = ****                  (solo si el modo es "estandar")
+  usuario: analista1
+
+  # Opcional: si el Work Portal agrupa los procesos por CATEGORÍA, pon aquí el nombre
+  # del grupo; el motor hace el clic intermedio en esa categoría antes del proceso.
+  # categoria: Gestión de contratos
+
+  # Solo si modo = crear-caso: nombre VISIBLE del proceso a crear en el menú.
+  proceso_a_crear: Nombre del proceso a crear
+
+# --------- PASOS (una entrada por cada actividad) ---------
+pasos:
+  - actividad: Nombre de la primera actividad
+
+    # Opcional. Si esta actividad la toma OTRO usuario (asignación por rol), ponlo aquí:
+    # el motor hace logout + login con ese usuario y abre el caso en su bandeja.
+    # usuario: revisor1
+
+    # Opcional. Reglas "al entrar" a la actividad (antes de diligenciar).
+    verificar_al_entrar:
+      - campo: Observaciones
+        debe_estar: vacío          # o usa:  tiene_valor: <valor esperado>
+
+    # Campos a diligenciar. "tipo" es opcional (por defecto: texto).
+    # tipos válidos: texto | área de texto | fecha | número | lista | búsqueda | radio | checkbox
+    # Truco: escribe ${unico} en cualquier "valor" y se reemplaza por la fecha-hora de la
+    # corrida (ej. 20260707-143205), para identificar los casos y no chocar entre corridas.
+    llenar:
+      - campo: Fecha del evento
+        valor: "2026-06-15"
+        tipo: fecha
+      - campo: Ciudad
+        valor: Bogotá
+        tipo: búsqueda             # combos/lookups: se escribe y se elige de la lista
+      - campo: ¿Es el mismo solicitante?
+        valor: "Sí"
+        tipo: radio
+      - campo: Observaciones
+        valor: Prueba automatizada ${unico}
+        # tipo: texto  (se puede omitir)
+        # localizador: '...'       # ESCAPE de emergencia: si la etiqueta no basta, un
+                                    # selector de projects/<cliente>/baseObjects. Úsalo poco.
+
+    # Opcional: TABLAS / COLECCIONES (las que se llenan por un pop-up "Adicionar").
+    # Por cada fila el motor abre el pop-up, llena SUS campos (mismos tipos) y lo guarda.
+    # Los campos se buscan SOLO dentro del pop-up.
+    # tablas:
+    #   - tabla: Necesidades planeadas          # nombre visible de la tabla
+    #     filas:
+    #       - llenar:
+    #           - { campo: Tipo de gasto, valor: "A - Funcionamiento", tipo: lista }
+    #           - { campo: Cantidad, valor: "1", tipo: número }
+
+    # Texto del botón que avanza (Siguiente, Guardar, Aceptar...). Opcional.
+    accion: Siguiente
+
+  # - actividad: Segunda actividad
+  #   llenar:
+  #     - campo: Comentario
+  #       valor: Ok
+  #   accion: Guardar
+
+# --------- HAZARDS (lo que debe ser cierto AL TERMINAR) ---------
+# Usa los que apliquen. Al menos uno.
+hazards:
+  - el_caso_avanza_a: Nombre de la siguiente actividad
+  # - el_caso_ya_no_esta_en_bandeja_de: analista1
+  # - asignado_a: revisor1
+  # - campo_tiene_valor: { campo: Estado, valor: Radicado }
+  # - la_tabla_tiene_filas: { tabla: Necesidades planeadas, minimo: 1 }
+  # - el_caso_termina: true

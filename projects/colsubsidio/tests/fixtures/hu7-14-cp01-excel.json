@@ -1,0 +1,168 @@
+{
+ "archivo": "20260918_CLS_AFI_HU 7.14 y 7.14.1 V1_Casos de prueba.xlsx",
+ "hoja": "CP01",
+ "pasos": [
+  {
+   "paso": 1,
+   "accion": "Objetivo",
+   "esperado": "Validar el comportamiento de los formularios del rep legal, contacto de caja y rep del portal, cuando precarga los datos correctamente encontrados al consultar la registraduria, junto con la validación de la parametrica y la eliminación del punto de validación en el flujo, junto con las notificaciones y el ajuste del campo correo para la persona de contacto de la caja"
+  },
+  {
+   "paso": 2,
+   "accion": "Ingrese al ambiente de bizagi con un usuario con rol \"Coordinador\" para poder validar la parametrica \"Mensajes Site AFI\"",
+   "esperado": "Se debe cargar el ambiente correctamente"
+  },
+  {
+   "paso": 3,
+   "accion": "Valide en la parametrica \"Mensajes Site AFI\" y revise que las columnas de la parametrica correspondan correctamente",
+   "esperado": "Se debe visualizar las columnas en la parametrica correctamente:\n\nCódigo (Texto / String)\nMensaje (Texto / String largo)\nEstado (Booleano)"
+  },
+  {
+   "paso": 4,
+   "accion": "Valide en la parametrica \"Mensajes Site AFI\"  los mensajes a incluir y que sean los correctos",
+   "esperado": "Se debe visualizar los registros en la parametrica correctamente:\n\nBúsqueda no exitosa en ninguna fuente: \"No encontramos información en las fuentes de búsqueda. Puedes ingresar la información correspondiente para continuar con el proceso\".\n\nServicio no disponible o timeout: \"No pudimos consultar tu información en este momento. Puedes ingresar la información para continuar con el proceso\".\n\nMotivo cancelación registraduría: \"La cédula se encuentra cancelada. Verifca el documento ingresado o intenta con otra información\"."
+  },
+  {
+   "paso": 5,
+   "accion": "Ingrese al Portal de afiliaciones de test de Colsubsidio mediante el siguiente link \"https://transacciones.colsubsidio.com/afiliaciones-en-linea/qa/home\"",
+   "esperado": "El ambiente de pruebas carga correctamente permitiendo el inicio del trámite"
+  },
+  {
+   "paso": 6,
+   "accion": "Inicie un proceso de afiliación para un tipo de aportante \"Empleador\" juridico que exista en RUES y que NO este afiliado a colsubsidio",
+   "esperado": "Se debe iniciar el proceso con un número de caso enviado al correo electronico"
+  },
+  {
+   "paso": 7,
+   "accion": "El proceso iniciara las validaciones de GIASS y RUES",
+   "esperado": "Las validaciones deben ser correctas y la integración de GIASS obtendra la información correspondiente y  el proceso avanza correctamente \n\nEl proceso continuara correctamente y llegara a la actividad \"Registrar información del cliente\""
+  },
+  {
+   "paso": 8,
+   "accion": "En la actividad \"Registrar información cliente\" valide la correcta unificación de las pantallas \"Datos generales\" con la pantalla \"Ingresa la información de la empresa\"",
+   "esperado": "Se debera visualizar el correcto ajuste en el primer formulario de la actividad, evidenciando los campos correctos (Ver REQ)"
+  },
+  {
+   "paso": 9,
+   "accion": "En la actividad \"Registrar información cliente\" valide en la pantalla \"Ingresa la información de la empresa\" la eliminación del campo \"Tipo de sociedad\"",
+   "esperado": "Ya no se visualizara el campo en el primer formulario de la actividad correctamente"
+  },
+  {
+   "paso": 10,
+   "accion": "Valide la misma funcionalidad y diseño en la versión Mobile",
+   "esperado": "Se debe visualizar correctamente el prototipo en la versión Mobile"
+  },
+  {
+   "paso": 11,
+   "accion": "En la actividad \"Registrar información cliente\" valide el correcto ajuste de los formularios, hasta llegar a la actividad \"Representante legal\"",
+   "esperado": "Se debe visualizar el correcto orden de los formularios a mostrar, que seran lo siguientes:\n\nIngresa la información de la empresa (información de identificación e información economica)\nInformación de contacto\nIngresa la información asociada a la dirección\nRepresentante legal"
+  },
+  {
+   "paso": 12,
+   "accion": "En la actividad \"Registrar información cliente\" valide en la pantalla \"Representante legal\" la información del representante legal retornada de RUES",
+   "esperado": "El formulario precargara unicamente el número de identificación retornado de la integración y debera ser editable\n\nEl campo tendra un tooltip con el siguiente mensaje: \"Este dato proviene de fuentes oficiales y no requiere modificación manual.\"\n\nSolo se visualiza los campos Tipo de identificación y Numero de identificación\n\nEl campo tipo de identificación estara vacio"
+  },
+  {
+   "paso": 13,
+   "accion": "Valide la misma funcionalidad y diseño en la versión Mobile",
+   "esperado": "Se debe visualizar correctamente el prototipo en la versión Mobile"
+  },
+  {
+   "paso": 14,
+   "accion": "En la pantalla \"Representante legal\" seleccione el tipo de identificación DIFERENTE al retornado de RUES y realice la consulta de la persona correctamente\n\nAl consultar el sistema mostrara un spinner de cargar con un mensaje de espera\n\nEl mensaje sera: Estamos realizando algunas validaciones",
+   "esperado": "El sistema identifica que la información tiene el flag marcado como NO y por ende consultara la información en la Registraduria, al no encontrarla en bizagi\n\nLos campos de nombres y apellidos precargaran la información correctamente y NO seran editables\n\nEl campo de nombre completo sera eliminado y no sera visible"
+  },
+  {
+   "paso": 15,
+   "accion": "Valide la misma funcionalidad y diseño en la versión Mobile",
+   "esperado": "Se debe visualizar correctamente el prototipo en la versión Mobile"
+  },
+  {
+   "paso": 16,
+   "accion": "En la pantalla \"Representante legal\" intente avanzar la solicitud hasta el formulario de \"Ingresa información contacto con la caja\"",
+   "esperado": "El portal no permitira avanzar debido a que la información no correspondera a lo retornado por RUES y se resaltara en rojo los nombres y apellidos que sean incorrectos, junto con el tooltip de \"Este dato no coincide con las fuentes oficiales\""
+  },
+  {
+   "paso": 17,
+   "accion": "En la pantalla \"Representante legal\" valide el mensaje de alerta al tener los datos incorrectos para el representante legal",
+   "esperado": "se incluirá un mensaje de tipo alerta en contenido ubicado en la parte superior de la pantalla, con un icono de alerta, con un recuadro en tono rojo que despliegue el siguiente mensaje:\n\nTitulo: El nombre no coincide con los datos oficiales\nmensaje: Verifica que los nombres y apellidos coincidan exactamente con la información del representante legal registrado ante las entidades oficiales"
+  },
+  {
+   "paso": 18,
+   "accion": "En la pantalla \"Representante legal\" ajuste la información correctamente y avance hasta el formulario de \"Ingresa información contacto con la caja\"",
+   "esperado": "Al dar clic en Continuar el portal identificara que es el mismo representante legal retornado de RUES\n\nSolo se visualizara los campos Tipo de identificación y Numero de identificación\n\nLos campos Tipo de identificación y Numero de identificación estaran vacios"
+  },
+  {
+   "paso": 19,
+   "accion": "Valide la misma funcionalidad y diseño en la versión Mobile",
+   "esperado": "Se debe visualizar correctamente el prototipo en la versión Mobile"
+  },
+  {
+   "paso": 20,
+   "accion": "En la pantalla \"Ingresa información contacto con la caja\" consulte un número de identificación con tipo de identificación \"Cedula de Ciudadania\" que exista en la registraduria y valide el spinner de consulta",
+   "esperado": "Al consultar el sistema mostrara un spinner de cargar con un mensaje de espera\n\nEl mensaje sera: Estamos realizando algunas validaciones"
+  },
+  {
+   "paso": 21,
+   "accion": "En la pantalla \"Ingresa información contacto con la caja\" el sistema encontrara la persona en la registraduria correctamente, precargando asi los nombres y apellidos de la persona\n\n\nEl campo de correo electrónico no debe de venir precargado, el campo debe de venir vacío para poder diligenciarlo",
+   "esperado": "El sistema identifica que la información tiene el flag marcado como NO y por ende consultara la información en la Registraduria, al no encontrarla en bizagi, el portal precargara los nombres y apellidos correctamente, los cuales no seran editables\n\nLos campos que no retornen nombres, no tendran el tootip \"Escribe\"\n\nEl campo de nombre completo sera eliminado y no sera visible",
+   "nota": "campo a unificar"
+  },
+  {
+   "paso": 22,
+   "accion": "Valide la misma funcionalidad y diseño en la versión Mobile",
+   "esperado": "Se debe visualizar correctamente el prototipo en la versión Mobile"
+  },
+  {
+   "paso": 23,
+   "accion": "En la pantalla \"Ingresa información contacto con la caja\" registre la información obligatoria y avance hasta el formulario de \"Ingresa información responsable del portal\"",
+   "esperado": "Solo se visualizara los campos Tipo de identificación y Numero de identificación\n\nLos campos Tipo de identificación y Numero de identificación estaran vacios"
+  },
+  {
+   "paso": 24,
+   "accion": "Valide la misma funcionalidad y diseño en la versión Mobile",
+   "esperado": "Se debe visualizar correctamente el prototipo en la versión Mobile"
+  },
+  {
+   "paso": 25,
+   "accion": "En la pantalla \"Ingresa información responsable del portal\" consulte un número de identificación con tipo de identificación \"Cedula de Ciudadania\" que exista en la registraduria y valide el spinner de consulta",
+   "esperado": "Al consultar el sistema mostrara un spinner de cargar con un mensaje de espera\n\nEl mensaje sera: Estamos realizando algunas validaciones"
+  },
+  {
+   "paso": 26,
+   "accion": "En la pantalla \"Ingresa información responsable del portal\" el sistema encontrara la persona en la registraduria correctamente, precargando asi los nombres y apellidos de la persona",
+   "esperado": "El sistema identifica que la información tiene el flag marcado como NO y por ende consultara la información en la Registraduria, al no encontrarla en bizagi, el portal precargara los nombres y apellidos correctamente, los cuales no seran editables\n\nLos campos que no retornen nombres, no tendran el tootip \"Escribe\"\n\nEl campo de nombre completo sera eliminado y no sera visible",
+   "nota": "campo a unificar"
+  },
+  {
+   "paso": 27,
+   "accion": "Valide la misma funcionalidad y diseño en la versión Mobile",
+   "esperado": "Se debe visualizar correctamente el prototipo en la versión Mobile"
+  },
+  {
+   "paso": 28,
+   "accion": "En la pantalla \"Ingresa información responsable del portal\" Registre la información obligatoria y avance hasta el formulario de \"Documentos\"\n\nEn la pantalla de documentos, descargue el formulario del tipo de aportante y valide la información para la persona de la caja y responsable del portal",
+   "esperado": "Se debera evidenciar en las columnas de la persona de contacto con la caja y el responsable del portal, tendran su respectiva persona registrada correctamente y no sera la misma que la del representante legal"
+  },
+  {
+   "paso": 29,
+   "accion": "Valide en la consulta \"AFI_Consulta de Afiliaciones\" la información de la persona de contacto con la caja, el responsable del portal y representante legal, la cual se debe setear cada una con su respectiva persona, y no debera ser la misma que la del representante legal",
+   "esperado": "Se debera visualizar la correcta información en la consulta"
+  },
+  {
+   "paso": 30,
+   "accion": "En la pantalla de documentos cargue los documentos obligatorios y avance la solicitud",
+   "esperado": "El sistema identifica que toda la información fue registrada correctamente y permite avanzar"
+  },
+  {
+   "paso": 31,
+   "accion": "Ingrese al portal de bizagi y valide en el flujo, la eliminación de  la pantalla previa de doble confirmación de datos del representante legal, responsable del portal y contacto con la caja",
+   "esperado": "Se debera visualizar la correcta eliminación de la pantalla en el flujo de bizagi"
+  },
+  {
+   "paso": 32,
+   "accion": "Avance la solicitud hasta que sea aprobada la solicitud y valide el correcto envio de la not \"Notificación aprobación Empleador\"",
+   "esperado": "La notificación sera enviada al correo del representantel legal de acuerdo a la eliminación de la pantalla \"Ingresa información contacto con la caja\"\n\nLa Notificación debera ser enviada una sola vez al correo del presentante legal"
+  }
+ ]
+}

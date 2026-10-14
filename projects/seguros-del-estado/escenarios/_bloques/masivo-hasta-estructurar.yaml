@@ -1,0 +1,33 @@
+# Bloque HU06 (F-MASIVO-ESTRUCTURAR): "Crear" → compuerta ¿Masivo? → Worker AI → "Estructurar información" abierta por
+# el analista. Ruta y apertura calibradas contra QA (casos 343 y 426: Masiva llega a Estructurar en minutos).
+# El Worker AI no deja traza accesible: su ejecución se declara INTEGRATION_NOT_VERIFIED; solo se observa el resultado.
+descripcion: Crear la radicación Masiva y abrir Estructurar información como analista.
+parametros: [p_crear, p_compuerta, p_worker, p_estructurar]
+pasos:
+  - matriz: "${param:p_crear}"
+    hacer: pulsar
+    boton: Crear
+    capturar_numero_caso: true
+
+  # El analista trabaja Estructurar información (Requirement 230849): sesión propia en otro contexto del navegador.
+  - matriz: "${param:p_estructurar}"
+    hacer: iniciar_sesion
+    actor: analista
+
+  - matriz: "${param:p_compuerta}"
+    hacer: verificar_ruta
+    actor: analista
+    llega_a: Estructurar información
+    no_llega_a: [Consultar Alertas Intermediario, Completar información de solicitud]
+    maximo_minutos: 15
+
+  - matriz: "${param:p_worker}"
+    hacer: integracion
+    nombre: Worker AI
+    esperado: Procesa la narrativa y estructura las pólizas asociadas; sin acceso a su traza/log no se verifica el procesamiento, solo su resultado visible.
+
+  - matriz: "${param:p_estructurar}"
+    hacer: abrir_caso
+    actor: analista
+    actividad: Estructurar información
+    maximo_minutos: 5

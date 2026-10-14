@@ -1,0 +1,2136 @@
+{
+  "generado_desde": [
+    "20260928_SDE_CEL_V1_Casos de Prueba_HU06.xlsx",
+    "20261006_SDE_CEL_V2_Casos de Prueba_HU03.xlsx"
+  ],
+  "casos": [
+    {
+      "id": "HU06-CP01",
+      "hu": "HU06",
+      "cp": "CP01",
+      "archivo": "20260928_SDE_CEL_V1_Casos de Prueba_HU06.xlsx",
+      "titulo": "SDE - CEL - HU06 - Validar radicación Masiva para línea Generales y estructuración de información",
+      "descripcion": "Validar la radicación Masiva para la línea Generales, verificando las reglas del formulario inicial, la ruta de la compuerta ¿Masivo? y el comportamiento de la actividad Estructurar Información, incluyendo la visualización, edición y obligatoriedad de los campos de la tabla de pólizas asociadas.",
+      "requisitos": [
+        "Requirement 228991: SDE - CEL - RAD - HU06 - FRM - Inicio",
+        "Requirement 228992: SDE - CEL - RAD - HU06 - ACC - Inicio",
+        "Requirement 230836: SDE - CEL - RAD - HU06 - COM - ¿Masivo?",
+        "Requirement 230841: SDE - CEL - RAD - HU06 - ACC - Estructurar Información",
+        "Requirement 230842: SDE - CEL - RAD - HU06 - FRM - Estructurar Información",
+        "Requirement 230843: SDE - CEL - RAD - HU06 - USR - Estructurar Información",
+        "Requirement 230849: SDE - CEL - RAD - HU06 - ROL - Analista de Solicitudes"
+      ],
+      "pasos": [
+        {
+          "n": 1,
+          "accion": "Objetivo:",
+          "esperado": "Validar la radicación Masiva para la línea Generales, verificando las reglas del formulario inicial, la ruta de la compuerta ¿Masivo? y el comportamiento de la actividad Estructurar Información, incluyendo la visualización, edición y obligatoriedad de los campos de la tabla de pólizas asociadas."
+        },
+        {
+          "n": 2,
+          "accion": "Ingresar al ambiente Bizagi mediante la URL: https://test-aiprocesos-sde.bizagi.com/",
+          "esperado": "El ambiente de pruebas de Bizagi se encuentra disponible y permite iniciar la gestión de una nueva Radicación."
+        },
+        {
+          "n": 3,
+          "accion": "Crear un nuevo caso de Radicación y seleccionar Línea = Generales, junto con un Ramo y Tipo de Solicitud válidos para la prueba.",
+          "esperado": "El formulario presenta la información correspondiente a la Línea, Ramo y Tipo de Solicitud seleccionados."
+        },
+        {
+          "n": 4,
+          "accion": "Validar la sección de información inicial antes de seleccionar el tipo de radicación.",
+          "esperado": "Los campos Línea, Ramo, Tipo de Solicitud/Movimiento y Sucursal se presentan con las etiquetas, ortografía y capitalización definidas."
+        },
+        {
+          "n": 5,
+          "accion": "Seleccionar una Sucursal válida.",
+          "esperado": "La Sucursal queda registrada y se mantiene disponible como dato requerido para continuar con la radicación."
+        },
+        {
+          "n": 6,
+          "accion": "Seleccionar Tipo de Radicación = Masivo.",
+          "esperado": "Se habilitan los elementos correspondientes a la modalidad Masivo, incluyendo Descripción de la Solicitud (Masiva/Múltiple) y Documentos Anexos."
+        },
+        {
+          "n": 7,
+          "accion": "Validar el texto de ayuda presentado para Masivo.",
+          "esperado": "Para Generales se muestra: “Masivo: Solicitud asociada a más de una póliza.”, conservando ortografía, tildes y capitalización."
+        },
+        {
+          "n": 8,
+          "accion": "Validar la descripción de la solicitud.",
+          "esperado": "El campo Descripción de la Solicitud (Masiva/Múltiple) se encuentra disponible para ingresar la narrativa de la solicitud y permite registrar la información requerida."
+        },
+        {
+          "n": 9,
+          "accion": "Ingresar una narrativa que permita identificar más de una póliza y adjuntar los documentos obligatorios parametrizados.",
+          "esperado": "La narrativa y los documentos quedan registrados en el formulario sin errores de presentación, ortografía o capitalización."
+        },
+        {
+          "n": 10,
+          "accion": "Crear la solicitud.",
+          "esperado": "Se crea una única solicitud de radicación masiva y la información registrada queda asociada al caso."
+        },
+        {
+          "n": 11,
+          "accion": "Validar la compuerta ¿Masivo?.",
+          "esperado": "La compuerta evalúa el Tipo de Radicación Masivo y dirige el caso por la ruta correspondiente a la modalidad masiva."
+        },
+        {
+          "n": 12,
+          "accion": "Validar el procesamiento posterior a la compuerta.",
+          "esperado": "El caso continúa hacia el procesamiento automático del Worker AI y posteriormente hacia la actividad Estructurar Información."
+        },
+        {
+          "n": 13,
+          "accion": "Ingresar a la actividad Estructurar Información.",
+          "esperado": "La actividad se encuentra asignada al Analista Centro de Expedición y presenta la información del caso masivo."
+        },
+        {
+          "n": 14,
+          "accion": "Validar la sección Encabezado.",
+          "esperado": "Se muestran en solo lectura Número de Caso, Creador del Caso, Fecha de Creación, Línea, Ramo y Tipo de Movimiento."
+        },
+        {
+          "n": 15,
+          "accion": "Validar la sección Tipo de Consulta.",
+          "esperado": "Se muestran en solo lectura el Tipo de Radicación = Masivo y la Sucursal asociada al caso."
+        },
+        {
+          "n": 16,
+          "accion": "Validar la sección Información a Consultar.",
+          "esperado": "Se muestra la narrativa original registrada por el intermediario y el campo permanece no editable."
+        },
+        {
+          "n": 17,
+          "accion": "Validar la tabla Pólizas asociadas a la solicitud.",
+          "esperado": "La tabla se encuentra disponible y contiene la información estructurada por el Worker AI, incluyendo las columnas definidas para la actividad."
+        },
+        {
+          "n": 18,
+          "accion": "Validar la posibilidad de seleccionar un registro de la tabla para editarlo.",
+          "esperado": "Se habilita el formulario de edición correspondiente al registro seleccionado."
+        },
+        {
+          "n": 19,
+          "accion": "Validar el formulario de edición para Línea Generales – Movimiento Póliza Nueva.",
+          "esperado": "La Forma de Consulta se encuentra asignada automáticamente como Identificación de Tomador y no permite modificación."
+        },
+        {
+          "n": 20,
+          "accion": "Validar los campos disponibles en el formulario de edición.",
+          "esperado": "Se presentan como obligatorios Tipo de Documento Tomador y Número de Documento Tomador."
+        },
+        {
+          "n": 21,
+          "accion": "Seleccionar Tipo de Documento Tomador = NIT.",
+          "esperado": "Se muestra el campo Dígito de Verificación como campo no editable y asociado al tipo de identificación seleccionado."
+        },
+        {
+          "n": 22,
+          "accion": "Intentar cerrar/confirmar el formulario sin diligenciar los campos obligatorios.",
+          "esperado": "El sistema mantiene abierto el formulario y evita confirmar el registro mientras los campos obligatorios no se encuentren diligenciados."
+        },
+        {
+          "n": 23,
+          "accion": "Diligenciar los campos obligatorios y confirmar la edición.",
+          "esperado": "El registro queda actualizado en la tabla Pólizas asociadas a la solicitud con la información diligenciada."
+        },
+        {
+          "n": 24,
+          "accion": "Validar la opción para agregar un nuevo registro.",
+          "esperado": "Se presenta el formulario de adición con las reglas correspondientes a Línea Generales y al Tipo de Movimiento seleccionado."
+        },
+        {
+          "n": 25,
+          "accion": "Agregar un registro válido y confirmar.",
+          "esperado": "El nuevo registro queda incorporado en la colección Pólizas asociadas a la solicitud."
+        },
+        {
+          "n": 26,
+          "accion": "Seleccionar un registro y ejecutar la opción de eliminación.",
+          "esperado": "El registro seleccionado es eliminado de la colección de pólizas asociadas."
+        },
+        {
+          "n": 27,
+          "accion": "Validar el campo Observaciones.",
+          "esperado": "El analista dispone de un campo editable para registrar observaciones relacionadas con la estructuración del caso."
+        },
+        {
+          "n": 28,
+          "accion": "Validar las pestañas Documentos de la solicitud y Seguimiento.",
+          "esperado": "La pestaña de documentos permite consultar los soportes asociados y la pestaña Seguimiento presenta la trazabilidad del caso."
+        },
+        {
+          "n": 29,
+          "accion": "Intentar modificar Línea, Ramo, Tipo de Solicitud, Sucursal o Tipo de Radicación desde Estructurar Información.",
+          "esperado": "Los datos maestros permanecen en solo lectura y no pueden ser modificados por el analista."
+        }
+      ]
+    },
+    {
+      "id": "HU06-CP02",
+      "hu": "HU06",
+      "cp": "CP02",
+      "archivo": "20260928_SDE_CEL_V1_Casos de Prueba_HU06.xlsx",
+      "titulo": "SDE - CEL - HU06 - Validar radicación Masiva para línea Autos y estructuración por Placa",
+      "descripcion": "Validar la radicación Masiva para la línea Autos, verificando el formulario inicial, la ruta Masiva y las reglas de Estructurar Información relacionadas con la consulta por Placa.",
+      "requisitos": [
+        "Requirement 228991: SDE - CEL - RAD - HU06 - FRM - Inicio",
+        "Requirement 228992: SDE - CEL - RAD - HU06 - ACC - Inicio",
+        "Requirement 230836: SDE - CEL - RAD - HU06 - COM - ¿Masivo?",
+        "Requirement 230841: SDE - CEL - RAD - HU06 - ACC - Estructurar Información",
+        "Requirement 230842: SDE - CEL - RAD - HU06 - FRM - Estructurar Información",
+        "Requirement 230843: SDE - CEL - RAD - HU06 - USR - Estructurar Información",
+        "Requirement 230849: SDE - CEL - RAD - HU06 - ROL - Analista de Solicitudes"
+      ],
+      "pasos": [
+        {
+          "n": 1,
+          "accion": "Objetivo:",
+          "esperado": "Validar la radicación Masiva para la línea Autos, verificando el formulario inicial, la ruta Masiva y las reglas de Estructurar Información relacionadas con la consulta por Placa."
+        },
+        {
+          "n": 2,
+          "accion": "Ingresar al ambiente Bizagi mediante la URL: https://test-aiprocesos-sde.bizagi.com/",
+          "esperado": "El ambiente de pruebas se encuentra disponible y permite iniciar una nueva Radicación."
+        },
+        {
+          "n": 3,
+          "accion": "Crear un nuevo caso y seleccionar Línea = Autos, junto con un Ramo y Tipo de Solicitud válidos.",
+          "esperado": "El formulario presenta la información correspondiente a la configuración seleccionada."
+        },
+        {
+          "n": 4,
+          "accion": "Seleccionar una Sucursal válida.",
+          "esperado": "La Sucursal queda registrada y permite continuar con el diligenciamiento del formulario."
+        },
+        {
+          "n": 5,
+          "accion": "Seleccionar Tipo de Radicación = Masivo.",
+          "esperado": "Se habilitan la Descripción de la Solicitud (Masiva/Múltiple) y la sección Documentos Anexos."
+        },
+        {
+          "n": 6,
+          "accion": "Validar el texto de ayuda de Masivo.",
+          "esperado": "Se presenta el texto correspondiente a la modalidad Masivo para la línea Autos: “Masivo: Solicitud asociada a más de una póliza.”"
+        },
+        {
+          "n": 7,
+          "accion": "Diligenciar la narrativa, los campos obligatorios y los documentos requeridos.",
+          "esperado": "El formulario queda diligenciado y permite crear la solicitud."
+        },
+        {
+          "n": 8,
+          "accion": "Crear el caso.",
+          "esperado": "Se crea correctamente la solicitud masiva."
+        },
+        {
+          "n": 9,
+          "accion": "Validar la compuerta ¿Masivo?.",
+          "esperado": "El caso toma la transición Masivo y continúa hacia el procesamiento del Worker AI."
+        },
+        {
+          "n": 10,
+          "accion": "Validar la llegada a Estructurar Información.",
+          "esperado": "El caso queda disponible para el Analista Centro de Expedición en la actividad Estructurar Información."
+        },
+        {
+          "n": 11,
+          "accion": "Validar encabezado, Tipo de Consulta e Información a Consultar.",
+          "esperado": "Se muestran los datos maestros en solo lectura, Tipo de Radicación Masivo, Sucursal y narrativa original de la solicitud."
+        },
+        {
+          "n": 12,
+          "accion": "Validar la tabla Pólizas asociadas a la solicitud.",
+          "esperado": "La tabla presenta los registros estructurados por el Worker AI y las columnas correspondientes a la información de consulta."
+        },
+        {
+          "n": 13,
+          "accion": "Seleccionar un registro para editarlo.",
+          "esperado": "Se presenta el formulario de edición correspondiente al registro seleccionado."
+        },
+        {
+          "n": 14,
+          "accion": "Validar las opciones disponibles para la Forma de Consulta de acuerdo con la configuración del caso.",
+          "esperado": "La Forma de Consulta y sus campos se presentan de acuerdo con la Línea, Tipo de Solicitud/Movimiento y reglas configuradas."
+        },
+        {
+          "n": 15,
+          "accion": "Seleccionar la Forma de Consulta Placa, cuando la configuración del caso corresponda a esta opción.",
+          "esperado": "Se muestra únicamente el campo Placa para diligenciar la información de consulta."
+        },
+        {
+          "n": 16,
+          "accion": "Intentar confirmar el registro sin diligenciar Placa.",
+          "esperado": "El formulario no permite confirmar el registro mientras el campo obligatorio Placa se encuentre vacío."
+        },
+        {
+          "n": 17,
+          "accion": "Ingresar una Placa con caracteres alfanuméricos dentro de la longitud permitida.",
+          "esperado": "El valor ingresado es aceptado y el registro puede ser confirmado."
+        },
+        {
+          "n": 18,
+          "accion": "Ingresar una Placa que supere los 6 caracteres.",
+          "esperado": "El sistema impide registrar un valor que supere la longitud máxima definida para el campo Placa."
+        },
+        {
+          "n": 19,
+          "accion": "Confirmar la edición.",
+          "esperado": "La información de consulta queda actualizada en la tabla Pólizas asociadas a la solicitud."
+        },
+        {
+          "n": 20,
+          "accion": "Agregar un nuevo registro mediante el formulario de adición.",
+          "esperado": "El formulario presenta las mismas reglas de visibilidad y obligatoriedad correspondientes al caso."
+        },
+        {
+          "n": 21,
+          "accion": "Diligenciar y confirmar un registro válido.",
+          "esperado": "El nuevo registro queda almacenado en la tabla de pólizas asociadas."
+        },
+        {
+          "n": 22,
+          "accion": "Validar Observaciones, Documentos y Seguimiento.",
+          "esperado": "Las tres secciones presentan la información correspondiente al caso y la trazabilidad registrada."
+        }
+      ]
+    },
+    {
+      "id": "HU06-CP03",
+      "hu": "HU06",
+      "cp": "CP03",
+      "archivo": "20260928_SDE_CEL_V1_Casos de Prueba_HU06.xlsx",
+      "titulo": "SDE - CEL - HU06 - Validar radicación Masiva de Cumplimiento sin propiedad Póliza RCE",
+      "descripcion": "Validar la radicación Masiva de una solicitud de Cumplimiento cuyo Ramo no tenga la propiedad Póliza RCE, verificando que Estructurar Información presente la pregunta ¿Requiere modificar RCE? y aplique correctamente sus reglas de obligatoriedad.",
+      "requisitos": [
+        "Requirement 228991: SDE - CEL - RAD - HU06 - FRM - Inicio",
+        "Requirement 228992: SDE - CEL - RAD - HU06 - ACC - Inicio",
+        "Requirement 230836: SDE - CEL - RAD - HU06 - COM - ¿Masivo?",
+        "Requirement 230841: SDE - CEL - RAD - HU06 - ACC - Estructurar Información",
+        "Requirement 230842: SDE - CEL - RAD - HU06 - FRM - Estructurar Información",
+        "Requirement 230843: SDE - CEL - RAD - HU06 - USR - Estructurar Información",
+        "Requirement 230849: SDE - CEL - RAD - HU06 - ROL - Analista de Solicitudes"
+      ],
+      "pasos": [
+        {
+          "n": 1,
+          "accion": "Objetivo:",
+          "esperado": "Validar la radicación Masiva de una solicitud de Cumplimiento cuyo Ramo no tenga la propiedad Póliza RCE, verificando que Estructurar Información presente la pregunta ¿Requiere modificar RCE? y aplique correctamente sus reglas de obligatoriedad."
+        },
+        {
+          "n": 2,
+          "accion": "Ingresar al ambiente Bizagi mediante la URL: https://test-aiprocesos-sde.bizagi.com/",
+          "esperado": "El ambiente de pruebas se encuentra disponible y permite iniciar una nueva Radicación."
+        },
+        {
+          "n": 3,
+          "accion": "Crear un nuevo caso seleccionando Línea = Cumplimiento (Fianzas) y un Ramo sin propiedad Póliza RCE. Seleccionar un Tipo de Solicitud/Movimiento válido.",
+          "esperado": "El formulario presenta la configuración correspondiente al Ramo seleccionado."
+        },
+        {
+          "n": 4,
+          "accion": "Seleccionar una Sucursal válida.",
+          "esperado": "La Sucursal queda registrada y se habilita la continuación del formulario."
+        },
+        {
+          "n": 5,
+          "accion": "Seleccionar Tipo de Radicación = Masivo.",
+          "esperado": "Se habilitan los campos correspondientes a la modalidad Masivo."
+        },
+        {
+          "n": 6,
+          "accion": "Validar el texto de ayuda.",
+          "esperado": "Se presenta: “Masivo: Solicitud asociada a más de una póliza de cumplimiento y/o RCE.”"
+        },
+        {
+          "n": 7,
+          "accion": "Diligenciar la descripción narrativa y los documentos requeridos.",
+          "esperado": "La información queda registrada y el formulario permite crear el caso."
+        },
+        {
+          "n": 8,
+          "accion": "Crear la solicitud.",
+          "esperado": "Se crea correctamente una solicitud con Tipo de Radicación Masivo."
+        },
+        {
+          "n": 9,
+          "accion": "Validar la compuerta ¿Masivo?.",
+          "esperado": "La compuerta identifica Masivo y direcciona el caso hacia el Worker AI y posteriormente hacia Estructurar Información."
+        },
+        {
+          "n": 10,
+          "accion": "Ingresar a Estructurar Información.",
+          "esperado": "El caso se encuentra disponible para el Analista Centro de Expedición."
+        },
+        {
+          "n": 11,
+          "accion": "Validar los datos maestros.",
+          "esperado": "Línea, Ramo, Tipo de Movimiento, Sucursal y Tipo de Radicación se muestran correctamente y permanecen en solo lectura."
+        },
+        {
+          "n": 12,
+          "accion": "Seleccionar un registro de la tabla para editarlo.",
+          "esperado": "Se presenta el formulario de edición correspondiente a la configuración de Cumplimiento."
+        },
+        {
+          "n": 13,
+          "accion": "Validar la Forma de Consulta para Cumplimiento – Movimiento Modificación.",
+          "esperado": "La Forma de Consulta se establece como Número de póliza de acuerdo con las reglas documentadas."
+        },
+        {
+          "n": 14,
+          "accion": "Validar el campo Número de póliza.",
+          "esperado": "Se muestra el campo Número de póliza y este acepta únicamente valores numéricos con longitud entre 9 y 12 caracteres."
+        },
+        {
+          "n": 15,
+          "accion": "Intentar confirmar el registro sin diligenciar Número de póliza.",
+          "esperado": "El formulario impide confirmar el registro mientras el campo obligatorio permanezca vacío."
+        },
+        {
+          "n": 16,
+          "accion": "Validar la pregunta ¿Requiere modificar RCE?.",
+          "esperado": "Al tratarse de un Ramo sin propiedad Póliza RCE, se muestra la pregunta ¿Requiere modificar RCE?."
+        },
+        {
+          "n": 17,
+          "accion": "Seleccionar ¿Requiere modificar RCE? = No.",
+          "esperado": "Los campos Ramo RCE y Número de Póliza RCE no se muestran como campos requeridos para el registro."
+        },
+        {
+          "n": 18,
+          "accion": "Confirmar el registro con la respuesta No.",
+          "esperado": "El registro se guarda correctamente sin exigir Ramo RCE ni Número de Póliza RCE."
+        },
+        {
+          "n": 19,
+          "accion": "Editar nuevamente el registro y seleccionar ¿Requiere modificar RCE? = Sí.",
+          "esperado": "Se habilitan los campos Ramo RCE y Número de Póliza RCE como campos obligatorios."
+        },
+        {
+          "n": 20,
+          "accion": "Intentar confirmar sin diligenciar Ramo RCE y Número de Póliza RCE.",
+          "esperado": "El sistema impide cerrar/confirmar el formulario mientras los campos obligatorios no estén diligenciados."
+        },
+        {
+          "n": 21,
+          "accion": "Diligenciar Ramo RCE y un Número de Póliza RCE válido.",
+          "esperado": "Los campos quedan diligenciados y el registro puede ser confirmado."
+        },
+        {
+          "n": 22,
+          "accion": "Validar Número de Póliza RCE.",
+          "esperado": "El campo acepta únicamente valores numéricos con longitud entre 9 y 12 caracteres."
+        },
+        {
+          "n": 23,
+          "accion": "Confirmar el registro.",
+          "esperado": "El registro actualizado queda almacenado en la tabla Pólizas asociadas a la solicitud con la información de RCE."
+        },
+        {
+          "n": 24,
+          "accion": "Validar Observaciones.",
+          "esperado": "El analista puede ingresar texto libre en el campo Observaciones."
+        },
+        {
+          "n": 25,
+          "accion": "Validar Documentos de la solicitud y Seguimiento.",
+          "esperado": "Los documentos asociados y la trazabilidad del caso se encuentran disponibles para consulta."
+        }
+      ]
+    },
+    {
+      "id": "HU06-CP04",
+      "hu": "HU06",
+      "cp": "CP04",
+      "archivo": "20260928_SDE_CEL_V1_Casos de Prueba_HU06.xlsx",
+      "titulo": "SDE - CEL - HU06 - Validar radicación Masiva de Cumplimiento con propiedad Póliza RCE",
+      "descripcion": "Validar la radicación Masiva de una solicitud de Cumplimiento cuyo Ramo tenga la propiedad Póliza RCE, verificando que la actividad Estructurar Información aplique correctamente la condición de los campos asociados a RCE.",
+      "requisitos": [
+        "Requirement 228991: SDE - CEL - RAD - HU06 - FRM - Inicio",
+        "Requirement 228992: SDE - CEL - RAD - HU06 - ACC - Inicio",
+        "Requirement 230836: SDE - CEL - RAD - HU06 - COM - ¿Masivo?",
+        "Requirement 230841: SDE - CEL - RAD - HU06 - ACC - Estructurar Información",
+        "Requirement 230842: SDE - CEL - RAD - HU06 - FRM - Estructurar Información",
+        "Requirement 230843: SDE - CEL - RAD - HU06 - USR - Estructurar Información",
+        "Requirement 230849: SDE - CEL - RAD - HU06 - ROL - Analista de Solicitudes"
+      ],
+      "pasos": [
+        {
+          "n": 1,
+          "accion": "Objetivo:",
+          "esperado": "Validar la radicación Masiva de una solicitud de Cumplimiento cuyo Ramo tenga la propiedad Póliza RCE, verificando que la actividad Estructurar Información aplique correctamente la condición de los campos asociados a RCE."
+        },
+        {
+          "n": 2,
+          "accion": "Ingresar al ambiente Bizagi mediante la URL: https://test-aiprocesos-sde.bizagi.com/",
+          "esperado": "El ambiente de pruebas se encuentra disponible."
+        },
+        {
+          "n": 3,
+          "accion": "Crear un nuevo caso seleccionando Línea = Cumplimiento (Fianzas) y un Ramo con propiedad Póliza RCE.",
+          "esperado": "El formulario presenta la configuración correspondiente al Ramo seleccionado."
+        },
+        {
+          "n": 4,
+          "accion": "Seleccionar una Sucursal válida.",
+          "esperado": "La Sucursal queda registrada correctamente."
+        },
+        {
+          "n": 5,
+          "accion": "Seleccionar Tipo de Radicación = Masivo.",
+          "esperado": "Se habilitan los campos correspondientes a la modalidad Masivo."
+        },
+        {
+          "n": 6,
+          "accion": "Validar el texto de ayuda.",
+          "esperado": "Se muestra “Masivo: Solicitud asociada a más de una póliza de cumplimiento y/o RCE.”, con ortografía y capitalización correctas."
+        },
+        {
+          "n": 7,
+          "accion": "Diligenciar la narrativa y documentos requeridos.",
+          "esperado": "La información queda registrada y permite crear el caso."
+        },
+        {
+          "n": 8,
+          "accion": "Crear la solicitud.",
+          "esperado": "Se crea correctamente el caso de radicación Masiva."
+        },
+        {
+          "n": 9,
+          "accion": "Validar la compuerta ¿Masivo?.",
+          "esperado": "El caso toma la transición Masivo y continúa hacia el Worker AI."
+        },
+        {
+          "n": 10,
+          "accion": "Ingresar a Estructurar Información.",
+          "esperado": "El caso se encuentra disponible para el Analista Centro de Expedición."
+        },
+        {
+          "n": 11,
+          "accion": "Validar el encabezado y la información de radicación.",
+          "esperado": "Los datos maestros, Tipo de Radicación y Sucursal se visualizan correctamente y permanecen en solo lectura."
+        },
+        {
+          "n": 12,
+          "accion": "Seleccionar un registro de la tabla para editarlo.",
+          "esperado": "Se presenta el formulario de edición con las reglas correspondientes al Ramo y Movimiento seleccionados."
+        },
+        {
+          "n": 13,
+          "accion": "Validar la Forma de Consulta.",
+          "esperado": "La Forma de Consulta se presenta de acuerdo con la regla correspondiente a Línea Cumplimiento y Tipo de Movimiento."
+        },
+        {
+          "n": 14,
+          "accion": "Validar la información relacionada con RCE.",
+          "esperado": "Al corresponder a un Ramo con propiedad Póliza RCE, no se presenta la pregunta ¿Requiere modificar RCE? como condición para habilitar los campos RCE."
+        },
+        {
+          "n": 15,
+          "accion": "Validar los campos Ramo RCE y Número de Póliza RCE.",
+          "esperado": "Los campos se comportan de acuerdo con la condición de propiedad Póliza RCE definida para el Ramo y no se habilita una pregunta de modificación RCE que no corresponda a la configuración."
+        },
+        {
+          "n": 16,
+          "accion": "Validar Número de Póliza, cuando la Forma de Consulta corresponda a Número de póliza.",
+          "esperado": "El campo acepta únicamente valores numéricos con longitud entre 9 y 12 caracteres."
+        },
+        {
+          "n": 17,
+          "accion": "Ingresar un valor no numérico en Número de Póliza.",
+          "esperado": "El sistema impide registrar el valor no numérico en el campo."
+        },
+        {
+          "n": 18,
+          "accion": "Ingresar un Número de Póliza con longitud inferior o superior al rango permitido.",
+          "esperado": "El sistema impide confirmar el registro mientras el valor no cumpla la longitud de 9 a 12 caracteres."
+        },
+        {
+          "n": 19,
+          "accion": "Confirmar un registro válido.",
+          "esperado": "El registro queda almacenado correctamente en la tabla Pólizas asociadas a la solicitud."
+        },
+        {
+          "n": 20,
+          "accion": "Agregar un nuevo registro.",
+          "esperado": "El formulario de adición presenta las mismas reglas de visibilidad, obligatoriedad y validación correspondientes al caso."
+        },
+        {
+          "n": 21,
+          "accion": "Diligenciar un registro válido y confirmarlo.",
+          "esperado": "El nuevo registro queda incorporado a la colección de pólizas asociadas."
+        },
+        {
+          "n": 22,
+          "accion": "Validar la opción de eliminar un registro.",
+          "esperado": "El registro seleccionado puede ser eliminado de la tabla."
+        },
+        {
+          "n": 23,
+          "accion": "Validar Observaciones, Documentos y Seguimiento.",
+          "esperado": "Las secciones se encuentran disponibles y presentan la información correspondiente al caso."
+        }
+      ]
+    },
+    {
+      "id": "HU06-CP05",
+      "hu": "HU06",
+      "cp": "CP05",
+      "archivo": "20260928_SDE_CEL_V1_Casos de Prueba_HU06.xlsx",
+      "titulo": "SDE - CEL - HU06 - Validar radicación Individual y ruta de la compuerta ¿Masivo?",
+      "descripcion": "Validar que una solicitud con Tipo de Radicación Individual tome la transición correspondiente en la compuerta ¿Masivo? y continúe por el flujo regular, sin ingresar a Estructurar Información.",
+      "requisitos": [
+        "Requirement 228991: SDE - CEL - RAD - HU06 - FRM - Inicio",
+        "Feature 228994: SDE - CEL - RAD - HU06 - Flujo"
+      ],
+      "pasos": [
+        {
+          "n": 1,
+          "accion": "Objetivo:",
+          "esperado": "Validar que una solicitud con Tipo de Radicación Individual tome la transición correspondiente en la compuerta ¿Masivo? y continúe por el flujo regular, sin ingresar a Estructurar Información."
+        },
+        {
+          "n": 2,
+          "accion": "Ingresar al ambiente Bizagi mediante la URL: https://test-aiprocesos-sde.bizagi.com/",
+          "esperado": "El ambiente de pruebas se encuentra disponible y permite iniciar una nueva Radicación."
+        },
+        {
+          "n": 3,
+          "accion": "Crear un nuevo caso y seleccionar una combinación válida de Línea, Ramo y Tipo de Solicitud.",
+          "esperado": "El formulario presenta la configuración correspondiente a los valores seleccionados."
+        },
+        {
+          "n": 4,
+          "accion": "Seleccionar una Sucursal válida.",
+          "esperado": "La Sucursal queda registrada correctamente."
+        },
+        {
+          "n": 5,
+          "accion": "Seleccionar Tipo de Radicación = Individual.",
+          "esperado": "El formulario cambia a la modalidad Individual y no presenta los elementos exclusivos de la modalidad Masivo que no correspondan a esta ruta."
+        },
+        {
+          "n": 6,
+          "accion": "Validar el formulario de inicio.",
+          "esperado": "Los campos, etiquetas, opciones y textos visibles presentan correcta ortografía y capitalización."
+        },
+        {
+          "n": 7,
+          "accion": "Diligenciar la información requerida para la radicación Individual y crear el caso.",
+          "esperado": "El caso es creado con Tipo de Radicación = Individual."
+        },
+        {
+          "n": 8,
+          "accion": "Validar la compuerta ¿Masivo?.",
+          "esperado": "La compuerta identifica el valor Individual y selecciona la transición correspondiente al flujo regular."
+        },
+        {
+          "n": 9,
+          "accion": "Validar la actividad posterior a la compuerta.",
+          "esperado": "El caso continúa por el camino regular hacia el flujo de consulta unitaria y no es enviado al Worker AI ni a Estructurar Información."
+        }
+      ]
+    },
+    {
+      "id": "HU03-CP01",
+      "hu": "HU03",
+      "cp": "CP01",
+      "archivo": "20261006_SDE_CEL_V2_Casos de Prueba_HU03.xlsx",
+      "titulo": "SDE - CEL - HU03 - Validar radicación Individual de Autos mediante consulta por Placa",
+      "descripcion": "Validar la radicación Individual para la línea Autos mediante consulta por Placa, verificando la integración con SISE, consulta de alertas, selección de una única póliza cuando existan varios resultados y las reglas del formulario Completar Información.",
+      "requisitos": [
+        "Requirement 231435: SDE - CEL - RAD - GEN - Flujo",
+        "Requirement 231437: SDE - CEL - RAD - INT - Consultar SISE",
+        "Requirement 231510: SDE - CEL - RAD - SUB - Consultar información de la solicitud",
+        "Requirement 231440: SDE - CEL - RAD - INT - Consultar alertas intermediarios",
+        "Requirement 231442: SDE - CEL - RAD - FRM - Completar Información de la solicitud",
+        "Requirement 231443: SDE - CEL - RAD - ACC - Completar Información de la solicitud",
+        "Requirement 231506: SDE - CEL - RAD - COM - Acción a tomar"
+      ],
+      "pasos": [
+        {
+          "n": 1,
+          "accion": "Objetivo:",
+          "esperado": "Validar la radicación Individual para la línea Autos mediante consulta por Placa, verificando la integración con SISE, consulta de alertas, selección de una única póliza cuando existan varios resultados y las reglas del formulario Completar Información."
+        },
+        {
+          "n": 2,
+          "accion": "Ingresar al ambiente Bizagi mediante la URL https://test-aiprocesos-sde.bizagi.com/.",
+          "esperado": "El ambiente se encuentra disponible y permite autenticarse con un intermediario habilitado para la prueba."
+        },
+        {
+          "n": 3,
+          "accion": "Crear un nuevo caso de Radicación.",
+          "esperado": "El formulario de inicio se presenta correctamente y permite diligenciar una nueva solicitud."
+        },
+        {
+          "n": 4,
+          "accion": "Seleccionar Línea = Autos, Ramo, Tipo de Solicitud/Movimiento y Sucursal correspondientes a la data preparada para el caso.",
+          "esperado": "El formulario presenta las opciones parametrizadas correspondientes a Autos."
+        },
+        {
+          "n": 5,
+          "accion": "Seleccionar Tipo de Radicación = Individual y Forma de Consulta = Placa.",
+          "esperado": "El formulario habilita únicamente los campos correspondientes a la consulta individual por Placa."
+        },
+        {
+          "n": 6,
+          "accion": "Validar caracterización, ortografía y capitalización del formulario de inicio.",
+          "esperado": "Las etiquetas, mensajes, campos, obligatoriedades, tipos de control y textos se presentan conforme al requerimiento, sin errores ortográficos ni inconsistencias de mayúsculas/minúsculas."
+        },
+        {
+          "n": 7,
+          "accion": "Ingresar una Placa válida asociada a más de una póliza disponible en SISE y completar los campos/documentos obligatorios parametrizados.",
+          "esperado": "El formulario queda diligenciado con información válida y permite crear la solicitud."
+        },
+        {
+          "n": 8,
+          "accion": "Seleccionar Crear e identificar el número único del caso.",
+          "esperado": "Se genera correctamente un número de caso y la información registrada queda asociada a la radicación."
+        },
+        {
+          "n": 9,
+          "accion": "Validar el paso por la compuerta ¿Masivo?.",
+          "esperado": "Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información."
+        },
+        {
+          "n": 10,
+          "accion": "Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud.",
+          "esperado": "Se ejecuta la consulta correspondiente y se envía al servicio SISE la Placa registrada como criterio de búsqueda."
+        },
+        {
+          "n": 11,
+          "accion": "Validar la respuesta de la integración.",
+          "esperado": "SISE retorna las pólizas vigentes asociadas a la Placa y la información correspondiente queda almacenada para continuar el flujo."
+        },
+        {
+          "n": 12,
+          "accion": "Validar la ejecución de Consultar alertas Intermediarios.",
+          "esperado": "Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información."
+        },
+        {
+          "n": 13,
+          "accion": "Validar la asignación de Completar Información.",
+          "esperado": "La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud."
+        },
+        {
+          "n": 14,
+          "accion": "Validar la tabla Seleccione la póliza asociada a la solicitud.",
+          "esperado": "Se muestran todas las pólizas retornadas para la Placa y la tabla permite seleccionar únicamente un registro."
+        },
+        {
+          "n": 15,
+          "accion": "Seleccionar una de las pólizas retornadas.",
+          "esperado": "Se visualizan los datos de la póliza seleccionada, Tomador, Asegurado e Información del Vehículo correspondientes exclusivamente al registro seleccionado."
+        },
+        {
+          "n": 16,
+          "accion": "Validar editabilidad de la información precargada.",
+          "esperado": "Los datos retornados por SISE permanecen en solo lectura, excepto aquellos definidos expresamente como editables."
+        },
+        {
+          "n": 17,
+          "accion": "Validar la regla ¿Requiere actualizar el correo electrónico?.",
+          "esperado": "Al seleccionar Sí, se habilita Nuevo correo Electrónico de Facturación como obligatorio; al seleccionar No, no se exige un nuevo correo."
+        },
+        {
+          "n": 18,
+          "accion": "Validar Comentarios y tabla de documentos.",
+          "esperado": "El campo de comentarios se encuentra disponible y la tabla permite adicionar documentos según la parametrización correspondiente."
+        },
+        {
+          "n": 19,
+          "accion": "Validar ortografía, capitalización, etiquetas y estructura completa de Completar Información.",
+          "esperado": "Todos los grupos, campos, mensajes, botones y nombres visibles mantienen la nomenclatura funcional definida."
+        },
+        {
+          "n": 20,
+          "accion": "Validar los botones disponibles para el escenario exitoso.",
+          "esperado": "Se presentan únicamente Desistir Solicitud y Confirmar Radicación."
+        },
+        {
+          "n": 21,
+          "accion": "Seleccionar Confirmar Radicación.",
+          "esperado": "La información requerida queda almacenada y la decisión de continuar queda registrada."
+        },
+        {
+          "n": 22,
+          "accion": "Validar la compuerta Acción a tomar.",
+          "esperado": "La compuerta evalúa Continuar solicitud y direcciona el caso hacia la etapa de análisis."
+        }
+      ]
+    },
+    {
+      "id": "HU03-CP02",
+      "hu": "HU03",
+      "cp": "CP02",
+      "archivo": "20261006_SDE_CEL_V2_Casos de Prueba_HU03.xlsx",
+      "titulo": "SDE - CEL - HU03 - alidar radicación Individual de Autos mediante consulta por Póliza",
+      "descripcion": "Validar la consulta individual de una póliza de Autos, verificando la integración con SISE, precarga de información de póliza, Tomador, Asegurado y vehículo, y las reglas de Completar Información.",
+      "requisitos": [
+        "Requirement 231435: SDE - CEL - RAD - GEN - Flujo",
+        "Requirement 231437: SDE - CEL - RAD - INT - Consultar SISE",
+        "Requirement 231510: SDE - CEL - RAD - SUB - Consultar información de la solicitud",
+        "Requirement 231440: SDE - CEL - RAD - INT - Consultar alertas intermediarios",
+        "Requirement 231442: SDE - CEL - RAD - FRM - Completar Información de la solicitud",
+        "Requirement 231443: SDE - CEL - RAD - ACC - Completar Información de la solicitud",
+        "Requirement 231506: SDE - CEL - RAD - COM - Acción a tomar"
+      ],
+      "pasos": [
+        {
+          "n": 1,
+          "accion": "Objetivo:",
+          "esperado": "Validar la consulta individual de una póliza de Autos, verificando la integración con SISE, precarga de información de póliza, Tomador, Asegurado y vehículo, y las reglas de Completar Información."
+        },
+        {
+          "n": 2,
+          "accion": "Ingresar a Bizagi mediante https://test-aiprocesos-sde.bizagi.com/.",
+          "esperado": "El ambiente permite iniciar la radicación."
+        },
+        {
+          "n": 3,
+          "accion": "Crear un nuevo caso de Radicación.",
+          "esperado": "El formulario de inicio se presenta correctamente y permite diligenciar una nueva solicitud."
+        },
+        {
+          "n": 4,
+          "accion": "Seleccionar Línea = Autos, Ramo, Tipo de Solicitud/Movimiento y Sucursal correspondientes a la data preparada para el caso.",
+          "esperado": "El formulario presenta las opciones parametrizadas correspondientes a Autos."
+        },
+        {
+          "n": 5,
+          "accion": "Seleccionar Tipo de Radicación = Individual y Forma de Consulta = Numero de Poliza.",
+          "esperado": "Se habilita el campo Número de póliza y se presentan únicamente los campos aplicables al escenario."
+        },
+        {
+          "n": 6,
+          "accion": "Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización.",
+          "esperado": "El formulario presenta correctamente la caracterización funcional de cada campo."
+        },
+        {
+          "n": 7,
+          "accion": "Ingresar una póliza válida de Autos asociada al intermediario y completar los campos/documentos obligatorios parametrizados.",
+          "esperado": "El formulario queda diligenciado con información válida y permite crear la solicitud."
+        },
+        {
+          "n": 8,
+          "accion": "Seleccionar Crear e identificar el número único del caso.",
+          "esperado": "Se genera correctamente un número de caso y la información registrada queda asociada a la radicación."
+        },
+        {
+          "n": 9,
+          "accion": "Validar el paso por la compuerta ¿Masivo?.",
+          "esperado": "Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información."
+        },
+        {
+          "n": 10,
+          "accion": "Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud.",
+          "esperado": "Se ejecuta la consulta correspondiente y se envía al servicio SISE la poliza registrada como criterio de búsqueda."
+        },
+        {
+          "n": 11,
+          "accion": "Validar la respuesta de la integración.",
+          "esperado": "SISE retorna la póliza vigente y la información correspondiente queda almacenada para continuar el flujo."
+        },
+        {
+          "n": 12,
+          "accion": "Validar la ejecución de Consultar alertas Intermediarios.",
+          "esperado": "Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información."
+        },
+        {
+          "n": 13,
+          "accion": "Validar la asignación de Completar Información.",
+          "esperado": "La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud."
+        },
+        {
+          "n": 14,
+          "accion": "Validar Información de Póliza, Tomador y Asegurado.",
+          "esperado": "La información recuperada desde SISE es visible y permanece en solo lectura."
+        },
+        {
+          "n": 15,
+          "accion": "Validar Información del Vehículo.",
+          "esperado": "Se presentan Placa y demás datos del vehículo relacionados con la póliza consultada, de acuerdo con la respuesta de SISE."
+        },
+        {
+          "n": 16,
+          "accion": "Validar la actualización de correo electrónico.",
+          "esperado": "Si se selecciona actualizar correo, el nuevo correo se habilita y se vuelve obligatorio."
+        },
+        {
+          "n": 17,
+          "accion": "Validar Comentarios y documentos.",
+          "esperado": "Ambas secciones se encuentran disponibles y permiten registrar información según las reglas configuradas."
+        },
+        {
+          "n": 18,
+          "accion": "Validar ortografía, capitalización y presentación del formulario.",
+          "esperado": "Los nombres de campos, grupos, mensajes y botones presentan la nomenclatura definida."
+        },
+        {
+          "n": 19,
+          "accion": "Validar los botones disponibles para el escenario exitoso.",
+          "esperado": "Se presentan únicamente Desistir Solicitud y Confirmar Radicación."
+        },
+        {
+          "n": 20,
+          "accion": "Confirmar la radicación.",
+          "esperado": "La información queda almacenada y el caso toma la decisión Continuar solicitud."
+        },
+        {
+          "n": 21,
+          "accion": "Validar el avance del flujo.",
+          "esperado": "El caso continúa hacia Análisis."
+        }
+      ]
+    },
+    {
+      "id": "HU03-CP03",
+      "hu": "HU03",
+      "cp": "CP03",
+      "archivo": "20261006_SDE_CEL_V2_Casos de Prueba_HU03.xlsx",
+      "titulo": "SDE - CEL - HU03 - Validar radicación Individual de Generales mediante consulta por Póliza",
+      "descripcion": "Validar una radicación Individual de la línea Generales consultada por Número de póliza, comprobando la precarga de datos desde SISE y las reglas aplicables en Completar Información.",
+      "requisitos": [
+        "Requirement 231435: SDE - CEL - RAD - GEN - Flujo",
+        "Requirement 231437: SDE - CEL - RAD - INT - Consultar SISE",
+        "Requirement 231510: SDE - CEL - RAD - SUB - Consultar información de la solicitud",
+        "Requirement 231440: SDE - CEL - RAD - INT - Consultar alertas intermediarios",
+        "Requirement 231442: SDE - CEL - RAD - FRM - Completar Información de la solicitud",
+        "Requirement 231443: SDE - CEL - RAD - ACC - Completar Información de la solicitud",
+        "Requirement 231506: SDE - CEL - RAD - COM - Acción a tomar"
+      ],
+      "pasos": [
+        {
+          "n": 1,
+          "accion": "Objetivo:",
+          "esperado": "Validar una radicación Individual de la línea Generales consultada por Número de póliza, comprobando la precarga de datos desde SISE y las reglas aplicables en Completar Información."
+        },
+        {
+          "n": 2,
+          "accion": "Ingresar a Bizagi mediante https://test-aiprocesos-sde.bizagi.com/.",
+          "esperado": "El ambiente permite iniciar la radicación."
+        },
+        {
+          "n": 3,
+          "accion": "Crear un nuevo caso de Radicación.",
+          "esperado": "El formulario de inicio se presenta correctamente y permite diligenciar una nueva solicitud."
+        },
+        {
+          "n": 4,
+          "accion": "Seleccionar Línea = General, Ramo, Tipo de Solicitud/Movimiento = Modificacion. y Sucursal correspondientes a la data preparada para el caso.",
+          "esperado": "El formulario presenta las opciones parametrizadas correspondientes a Autos."
+        },
+        {
+          "n": 5,
+          "accion": "Seleccionar Tipo de Radicación = Individual.",
+          "esperado": "Se habilita el campo Número de póliza y se presentan únicamente los campos aplicables al escenario."
+        },
+        {
+          "n": 6,
+          "accion": "Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización.",
+          "esperado": "El formulario presenta correctamente la caracterización funcional de cada campo."
+        },
+        {
+          "n": 7,
+          "accion": "Ingresar una póliza existente asociada al intermediario y completar los campos/documentos obligatorios parametrizados.",
+          "esperado": "El formulario queda diligenciado con información válida y permite crear la solicitud."
+        },
+        {
+          "n": 8,
+          "accion": "Seleccionar Crear e identificar el número único del caso.",
+          "esperado": "Se genera correctamente un número de caso y la información registrada queda asociada a la radicación."
+        },
+        {
+          "n": 9,
+          "accion": "Validar el paso por la compuerta ¿Masivo?.",
+          "esperado": "Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información."
+        },
+        {
+          "n": 10,
+          "accion": "Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud.",
+          "esperado": "Se ejecuta la consulta correspondiente y se envía al servicio SISE la poliza registrada como criterio de búsqueda."
+        },
+        {
+          "n": 11,
+          "accion": "Validar la respuesta de la integración.",
+          "esperado": "SISE retorna las póliza vigente y la información correspondiente queda almacenada para continuar el flujo."
+        },
+        {
+          "n": 12,
+          "accion": "Validar la ejecución de Consultar alertas Intermediarios.",
+          "esperado": "Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información."
+        },
+        {
+          "n": 13,
+          "accion": "Validar la asignación de Completar Información.",
+          "esperado": "La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud."
+        },
+        {
+          "n": 14,
+          "accion": "Validar Información de Póliza, Tomador y Asegurado.",
+          "esperado": "Los datos se muestran correctamente y permanecen no editables."
+        },
+        {
+          "n": 15,
+          "accion": "Validar que no se presente información exclusiva de Autos.",
+          "esperado": "No se muestra el bloque de Información del Vehículo para la línea Generales."
+        },
+        {
+          "n": 16,
+          "accion": "Validar actualización del correo electrónico.",
+          "esperado": "Si se solicita actualización, el campo Nuevo correo Electrónico de Facturación queda visible y obligatorio."
+        },
+        {
+          "n": 17,
+          "accion": "Validar Comentarios y documentos.",
+          "esperado": "Las secciones permiten registrar la información correspondiente."
+        },
+        {
+          "n": 18,
+          "accion": "Validar etiquetas, textos, tildes y capitalización.",
+          "esperado": "El formulario no presenta inconsistencias de nomenclatura ni ortografía."
+        },
+        {
+          "n": 19,
+          "accion": "Validar los botones disponibles para el escenario exitoso.",
+          "esperado": "Se presentan únicamente Desistir Solicitud y Confirmar Radicación."
+        },
+        {
+          "n": 20,
+          "accion": "Confirmar la radicación.",
+          "esperado": "Se almacena la información y la decisión de continuar."
+        },
+        {
+          "n": 21,
+          "accion": "Validar Acción a tomar.",
+          "esperado": "El caso continúa hacia Análisis."
+        }
+      ]
+    },
+    {
+      "id": "HU03-CP04",
+      "hu": "HU03",
+      "cp": "CP04",
+      "archivo": "20261006_SDE_CEL_V2_Casos de Prueba_HU03.xlsx",
+      "titulo": "SDE - CEL - HU03 - Validar Póliza Nueva de Generales con Tomador existente",
+      "descripcion": "Validar una solicitud de Póliza Nueva de Generales cuando el Tomador consultado ya existe en SISE, comprobando la precarga de sus datos y las reglas de edición aplicables.",
+      "requisitos": [
+        "Requirement 231435: SDE - CEL - RAD - GEN - Flujo",
+        "Requirement 231437: SDE - CEL - RAD - INT - Consultar SISE",
+        "Requirement 231510: SDE - CEL - RAD - SUB - Consultar información de la solicitud",
+        "Requirement 231440: SDE - CEL - RAD - INT - Consultar alertas intermediarios",
+        "Requirement 231442: SDE - CEL - RAD - FRM - Completar Información de la solicitud",
+        "Requirement 231443: SDE - CEL - RAD - ACC - Completar Información de la solicitud",
+        "Requirement 231506: SDE - CEL - RAD - COM - Acción a tomar"
+      ],
+      "pasos": [
+        {
+          "n": 1,
+          "accion": "Objetivo:",
+          "esperado": "Validar una solicitud de Póliza Nueva de Generales cuando el Tomador consultado ya existe en SISE, comprobando la precarga de sus datos y las reglas de edición aplicables."
+        },
+        {
+          "n": 2,
+          "accion": "Ingresar a Bizagi mediante https://test-aiprocesos-sde.bizagi.com/.",
+          "esperado": "El ambiente permite iniciar la radicación."
+        },
+        {
+          "n": 3,
+          "accion": "Crear un nuevo caso de Radicación.",
+          "esperado": "El formulario de inicio se presenta correctamente y permite diligenciar una nueva solicitud."
+        },
+        {
+          "n": 4,
+          "accion": "Seleccionar Línea = General, Ramo, Tipo de Solicitud/Movimiento = Nueva Poliza. y Sucursal correspondientes a la data preparada para el caso.",
+          "esperado": "El formulario presenta las opciones parametrizadas correspondientes a Autos."
+        },
+        {
+          "n": 5,
+          "accion": "Seleccionar Tipo de Radicación = Individual.",
+          "esperado": "Se habilita el campo Número de póliza y se presentan únicamente los campos aplicables al escenario."
+        },
+        {
+          "n": 6,
+          "accion": "Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización.",
+          "esperado": "El formulario presenta correctamente la caracterización funcional de cada campo."
+        },
+        {
+          "n": 7,
+          "accion": "Ingresar Tipo y Número de Documento pertenecientes a un Tomador existente y completar los campos/documentos obligatorios parametrizados.",
+          "esperado": "El formulario queda diligenciado con información válida y permite crear la solicitud."
+        },
+        {
+          "n": 8,
+          "accion": "Seleccionar Crear e identificar el número único del caso.",
+          "esperado": "Se genera correctamente un número de caso y la información registrada queda asociada a la radicación."
+        },
+        {
+          "n": 9,
+          "accion": "Validar el paso por la compuerta ¿Masivo?.",
+          "esperado": "Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información."
+        },
+        {
+          "n": 10,
+          "accion": "Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud.",
+          "esperado": "Se ejecuta la consulta correspondiente y se envía al servicio SISE El numero de identificacion del tomador registrado como criterio de búsqueda."
+        },
+        {
+          "n": 11,
+          "accion": "Validar la respuesta de la integración.",
+          "esperado": "SISE retorna los datos del tomador y la información correspondiente queda almacenada para continuar el flujo."
+        },
+        {
+          "n": 12,
+          "accion": "Validar la ejecución de Consultar alertas Intermediarios.",
+          "esperado": "Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información."
+        },
+        {
+          "n": 13,
+          "accion": "Validar la asignación de Completar Información.",
+          "esperado": "La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud."
+        },
+        {
+          "n": 14,
+          "accion": "Validar el comportamiento de ¿Requiere editar datos del tomador? conforme a la configuración de Póliza Nueva.",
+          "esperado": "Al habilitar la edición se muestran como editables únicamente los datos autorizados para el escenario; al no habilitarla, la información permanece precargada."
+        },
+        {
+          "n": 15,
+          "accion": "Validar documentos requeridos para Póliza Nueva.",
+          "esperado": "La tabla presenta los tipos documentales parametrizados y exige aquellos configurados como obligatorios."
+        },
+        {
+          "n": 16,
+          "accion": "Validar Comentarios.",
+          "esperado": "El campo se encuentra disponible para diligenciamiento."
+        },
+        {
+          "n": 17,
+          "accion": "Validar etiquetas, textos, tildes y capitalización.",
+          "esperado": "El formulario no presenta inconsistencias de nomenclatura ni ortografía."
+        },
+        {
+          "n": 18,
+          "accion": "Validar los botones disponibles para el escenario exitoso.",
+          "esperado": "Se presentan únicamente Desistir Solicitud y Confirmar Radicación."
+        },
+        {
+          "n": 19,
+          "accion": "Confirmar la radicación.",
+          "esperado": "Se almacena la información y la decisión de continuar."
+        },
+        {
+          "n": 20,
+          "accion": "Validar Acción a tomar.",
+          "esperado": "El caso continúa hacia Análisis."
+        }
+      ]
+    },
+    {
+      "id": "HU03-CP05",
+      "hu": "HU03",
+      "cp": "CP05",
+      "archivo": "20261006_SDE_CEL_V2_Casos de Prueba_HU03.xlsx",
+      "titulo": "SDE - CEL - HU03 - Validar Póliza Nueva de Generales con Tomador no existente",
+      "descripcion": "Validar una solicitud de Póliza Nueva cuando el Tomador no existe en SISE, comprobando el comportamiento del formulario, edición de información y documentos requeridos.",
+      "requisitos": [
+        "Requirement 231435: SDE - CEL - RAD - GEN - Flujo",
+        "Requirement 231437: SDE - CEL - RAD - INT - Consultar SISE",
+        "Requirement 231510: SDE - CEL - RAD - SUB - Consultar información de la solicitud",
+        "Requirement 231440: SDE - CEL - RAD - INT - Consultar alertas intermediarios",
+        "Requirement 231442: SDE - CEL - RAD - FRM - Completar Información de la solicitud",
+        "Requirement 231443: SDE - CEL - RAD - ACC - Completar Información de la solicitud",
+        "Requirement 231506: SDE - CEL - RAD - COM - Acción a tomar"
+      ],
+      "pasos": [
+        {
+          "n": 1,
+          "accion": "Objetivo:",
+          "esperado": "Validar una solicitud de Póliza Nueva cuando el Tomador no existe en SISE, comprobando el comportamiento del formulario, edición de información y documentos requeridos."
+        },
+        {
+          "n": 2,
+          "accion": "Ingresar a Bizagi mediante https://test-aiprocesos-sde.bizagi.com/.",
+          "esperado": "El ambiente permite iniciar la radicación."
+        },
+        {
+          "n": 3,
+          "accion": "Crear un nuevo caso de Radicación.",
+          "esperado": "El formulario de inicio se presenta correctamente y permite diligenciar una nueva solicitud."
+        },
+        {
+          "n": 4,
+          "accion": "Seleccionar Línea = General, Ramo, Tipo de Solicitud/Movimiento = Nueva Poliza. y Sucursal correspondientes a la data preparada para el caso.",
+          "esperado": "El formulario presenta las opciones parametrizadas correspondientes a Autos."
+        },
+        {
+          "n": 5,
+          "accion": "Seleccionar Tipo de Radicación = Individual.",
+          "esperado": "Se habilita el campo Número de póliza y se presentan únicamente los campos aplicables al escenario."
+        },
+        {
+          "n": 6,
+          "accion": "Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización.",
+          "esperado": "El formulario presenta correctamente la caracterización funcional de cada campo."
+        },
+        {
+          "n": 7,
+          "accion": "Ingresar Tipo y Número de Documento correspondiente a una persona no existente en SISE. y completar los campos/documentos obligatorios parametrizados.",
+          "esperado": "El formulario queda diligenciado con información válida y permite crear la solicitud."
+        },
+        {
+          "n": 8,
+          "accion": "Seleccionar Crear e identificar el número único del caso.",
+          "esperado": "Se genera correctamente un número de caso y la información registrada queda asociada a la radicación."
+        },
+        {
+          "n": 9,
+          "accion": "Validar el paso por la compuerta ¿Masivo?.",
+          "esperado": "Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información."
+        },
+        {
+          "n": 10,
+          "accion": "Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud.",
+          "esperado": "Se ejecuta la consulta correspondiente y se envía al servicio SISE El numero de identificacion del tomador registrado como criterio de búsqueda."
+        },
+        {
+          "n": 11,
+          "accion": "Validar la respuesta de la integración.",
+          "esperado": "SISE no retorna informacion de la Persona."
+        },
+        {
+          "n": 12,
+          "accion": "Validar la ejecución de Consultar alertas Intermediarios.",
+          "esperado": "Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información."
+        },
+        {
+          "n": 13,
+          "accion": "Validar la asignación de Completar Información.",
+          "esperado": "La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud."
+        },
+        {
+          "n": 14,
+          "accion": "Validar la activiad Completar Información para Póliza Nueva sin Tomador existente.",
+          "esperado": "Se presenta la información disponible del formulario inicial y los campos permitidos para completar/ajustar los datos del Tomador."
+        },
+        {
+          "n": 15,
+          "accion": "Validar el comportamiento de ¿Requiere editar datos del tomador? conforme a la configuración de Póliza Nueva.",
+          "esperado": "Al habilitar la edición se muestran como editables únicamente los datos autorizados para el escenario; al no habilitarla, la información permanece precargada."
+        },
+        {
+          "n": 16,
+          "accion": "Validar documentos requeridos para Póliza Nueva.",
+          "esperado": "La tabla presenta los tipos documentales parametrizados y exige aquellos configurados como obligatorios."
+        },
+        {
+          "n": 17,
+          "accion": "Validar Comentarios.",
+          "esperado": "El campo se encuentra disponible para diligenciamiento."
+        },
+        {
+          "n": 18,
+          "accion": "Validar etiquetas, textos, tildes y capitalización.",
+          "esperado": "El formulario no presenta inconsistencias de nomenclatura ni ortografía."
+        },
+        {
+          "n": 19,
+          "accion": "Validar los botones disponibles para el escenario exitoso.",
+          "esperado": "Se presentan únicamente Desistir Solicitud y Confirmar Radicación."
+        },
+        {
+          "n": 20,
+          "accion": "Confirmar la radicación.",
+          "esperado": "Se almacena la información y la decisión de continuar."
+        },
+        {
+          "n": 21,
+          "accion": "Validar Acción a tomar.",
+          "esperado": "El caso continúa hacia Análisis."
+        }
+      ]
+    },
+    {
+      "id": "HU03-CP06",
+      "hu": "HU03",
+      "cp": "CP06",
+      "archivo": "20261006_SDE_CEL_V2_Casos de Prueba_HU03.xlsx",
+      "titulo": "SDE - CEL - HU03 - Validar Cumplimiento con Ramo asociado a Póliza RCE",
+      "descripcion": "Validar la radicación Individual de Cumplimiento cuando el Ramo contempla Póliza RCE, verificando las consultas independientes de póliza principal y RCE y la precarga de ambas informaciones.",
+      "requisitos": [
+        "Requirement 231435: SDE - CEL - RAD - GEN - Flujo",
+        "Requirement 231437: SDE - CEL - RAD - INT - Consultar SISE",
+        "Requirement 231510: SDE - CEL - RAD - SUB - Consultar información de la solicitud",
+        "Requirement 231440: SDE - CEL - RAD - INT - Consultar alertas intermediarios",
+        "Requirement 231442: SDE - CEL - RAD - FRM - Completar Información de la solicitud",
+        "Requirement 231443: SDE - CEL - RAD - ACC - Completar Información de la solicitud",
+        "Requirement 231506: SDE - CEL - RAD - COM - Acción a tomar"
+      ],
+      "pasos": [
+        {
+          "n": 1,
+          "accion": "Objetivo:",
+          "esperado": "Validar la radicación Individual de Cumplimiento cuando el Ramo contempla Póliza RCE, verificando las consultas independientes de póliza principal y RCE y la precarga de ambas informaciones."
+        },
+        {
+          "n": 2,
+          "accion": "Ingresar a Bizagi mediante https://test-aiprocesos-sde.bizagi.com/.",
+          "esperado": "El ambiente permite iniciar la radicación."
+        },
+        {
+          "n": 3,
+          "accion": "Crear un nuevo caso de Radicación.",
+          "esperado": "El formulario de inicio se presenta correctamente y permite diligenciar una nueva solicitud."
+        },
+        {
+          "n": 4,
+          "accion": "Seleccionar Línea = Cumpimiento, Ramo = Poliza RCE, Tipo de Solicitud/Movimiento y Sucursal correspondientes a la data preparada para el caso.",
+          "esperado": "El formulario presenta las opciones parametrizadas correspondientes a Autos."
+        },
+        {
+          "n": 5,
+          "accion": "Seleccionar Tipo de Radicación = Individual.",
+          "esperado": "Se habilita el campo Número de póliza y se presentan únicamente los campos aplicables al escenario."
+        },
+        {
+          "n": 6,
+          "accion": "Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización.",
+          "esperado": "El formulario presenta correctamente la caracterización funcional de cada campo."
+        },
+        {
+          "n": 7,
+          "accion": "Ingresar Número de Póliza principal y completar los campos/documentos obligatorios parametrizados.",
+          "esperado": "El formulario queda diligenciado con información válida y permite crear la solicitud."
+        },
+        {
+          "n": 8,
+          "accion": "Seleccionar Crear e identificar el número único del caso.",
+          "esperado": "Se genera correctamente un número de caso y la información registrada queda asociada a la radicación."
+        },
+        {
+          "n": 9,
+          "accion": "Validar el paso por la compuerta ¿Masivo?.",
+          "esperado": "Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información."
+        },
+        {
+          "n": 10,
+          "accion": "Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud.",
+          "esperado": "Se ejecuta la consulta correspondiente y se envía al servicio SISE la poliza registrada como criterio de búsqueda."
+        },
+        {
+          "n": 11,
+          "accion": "Validar la respuesta de la integración.",
+          "esperado": "SISE retorna la póliza vigente y la información correspondiente queda almacenada para continuar el flujo."
+        },
+        {
+          "n": 12,
+          "accion": "Validar la ejecución de Consultar alertas Intermediarios.",
+          "esperado": "Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información."
+        },
+        {
+          "n": 13,
+          "accion": "Validar la asignación de Completar Información.",
+          "esperado": "La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud."
+        },
+        {
+          "n": 14,
+          "accion": "Validar información de la Póliza principal.",
+          "esperado": "Tomador, Asegurado y datos de póliza se encuentran precargados y en solo lectura."
+        },
+        {
+          "n": 15,
+          "accion": "Validar el bloque Póliza RCE.",
+          "esperado": "Se presenta la información retornada para la Póliza RCE y permanece en solo lectura."
+        },
+        {
+          "n": 16,
+          "accion": "Validar actualización del correo electrónico.",
+          "esperado": "Si se solicita actualización, el campo Nuevo correo Electrónico de Facturación queda visible y obligatorio."
+        },
+        {
+          "n": 17,
+          "accion": "Validar Comentarios y documentos.",
+          "esperado": "Las secciones permiten registrar la información correspondiente."
+        },
+        {
+          "n": 18,
+          "accion": "Validar etiquetas, textos, tildes y capitalización.",
+          "esperado": "El formulario no presenta inconsistencias de nomenclatura ni ortografía."
+        },
+        {
+          "n": 19,
+          "accion": "Validar los botones disponibles para el escenario exitoso.",
+          "esperado": "Se presentan únicamente Desistir Solicitud y Confirmar Radicación."
+        },
+        {
+          "n": 20,
+          "accion": "Confirmar la radicación.",
+          "esperado": "Se almacena la información y la decisión de continuar."
+        },
+        {
+          "n": 21,
+          "accion": "Validar Acción a tomar.",
+          "esperado": "El caso continúa hacia Análisis."
+        }
+      ]
+    },
+    {
+      "id": "HU03-CP07",
+      "hu": "HU03",
+      "cp": "CP07",
+      "archivo": "20261006_SDE_CEL_V2_Casos de Prueba_HU03.xlsx",
+      "titulo": "SDE - CEL - HU03 - Validar Cumplimiento sin Ramo RCE que requiere RCE",
+      "descripcion": "Validar una solicitud de Cumplimiento cuyo Ramo principal no corresponde a RCE pero la solicitud requiere información adicional de Póliza RCE.",
+      "requisitos": [
+        "Requirement 231435: SDE - CEL - RAD - GEN - Flujo",
+        "Requirement 231437: SDE - CEL - RAD - INT - Consultar SISE",
+        "Requirement 231510: SDE - CEL - RAD - SUB - Consultar información de la solicitud",
+        "Requirement 231440: SDE - CEL - RAD - INT - Consultar alertas intermediarios",
+        "Requirement 231442: SDE - CEL - RAD - FRM - Completar Información de la solicitud",
+        "Requirement 231443: SDE - CEL - RAD - ACC - Completar Información de la solicitud",
+        "Requirement 231506: SDE - CEL - RAD - COM - Acción a tomar"
+      ],
+      "pasos": [
+        {
+          "n": 1,
+          "accion": "Objetivo:",
+          "esperado": "Validar una solicitud de Cumplimiento cuyo Ramo principal no corresponde a RCE pero la solicitud requiere información adicional de Póliza RCE."
+        },
+        {
+          "n": 2,
+          "accion": "Ingresar a Bizagi mediante https://test-aiprocesos-sde.bizagi.com/.",
+          "esperado": "El ambiente permite iniciar la radicación."
+        },
+        {
+          "n": 3,
+          "accion": "Crear un nuevo caso de Radicación.",
+          "esperado": "El formulario de inicio se presenta correctamente y permite diligenciar una nueva solicitud."
+        },
+        {
+          "n": 4,
+          "accion": "Seleccionar Línea = Cumpimiento, Ramo = Poliza sin RCE, Tipo de Solicitud/Movimiento y Sucursal correspondientes a la data preparada para el caso.",
+          "esperado": "El formulario presenta las opciones parametrizadas correspondientes a Autos."
+        },
+        {
+          "n": 5,
+          "accion": "Seleccionar Tipo de Radicación = Individual.",
+          "esperado": "Se habilita el campo Número de póliza y se presentan únicamente los campos aplicables al escenario."
+        },
+        {
+          "n": 6,
+          "accion": "Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización.",
+          "esperado": "El formulario presenta correctamente la caracterización funcional de cada campo."
+        },
+        {
+          "n": 7,
+          "accion": "Seleccionar que la solicitud requiere RCE y diligenciar la Póliza principal y Póliza RCE, adicioal completar los campos/documentos obligatorios parametrizados.",
+          "esperado": "El formulario queda diligenciado con información válida y permite crear la solicitud."
+        },
+        {
+          "n": 8,
+          "accion": "Seleccionar Crear e identificar el número único del caso.",
+          "esperado": "Se genera correctamente un número de caso y la información registrada queda asociada a la radicación."
+        },
+        {
+          "n": 9,
+          "accion": "Validar el paso por la compuerta ¿Masivo?.",
+          "esperado": "Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información."
+        },
+        {
+          "n": 10,
+          "accion": "Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud.",
+          "esperado": "Se ejecuta la consulta correspondiente y se envía al servicio SISE la poliza registrada como criterio de búsqueda."
+        },
+        {
+          "n": 11,
+          "accion": "Validar la respuesta de la integración.",
+          "esperado": "SISE retorna la póliza vigente y la información correspondiente queda almacenada para continuar el flujo."
+        },
+        {
+          "n": 12,
+          "accion": "Validar la ejecución de Consultar alertas Intermediarios.",
+          "esperado": "Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información."
+        },
+        {
+          "n": 13,
+          "accion": "Validar la asignación de Completar Información.",
+          "esperado": "La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud."
+        },
+        {
+          "n": 14,
+          "accion": "Validar información de la Póliza principal.",
+          "esperado": "Tomador, Asegurado y datos de póliza se encuentran precargados y en solo lectura."
+        },
+        {
+          "n": 15,
+          "accion": "Validar el bloque Póliza RCE.",
+          "esperado": "Se presenta la información retornada para la Póliza RCE y permanece en solo lectura."
+        },
+        {
+          "n": 16,
+          "accion": "Validar actualización del correo electrónico.",
+          "esperado": "Si se solicita actualización, el campo Nuevo correo Electrónico de Facturación queda visible y obligatorio."
+        },
+        {
+          "n": 17,
+          "accion": "Validar Comentarios y documentos.",
+          "esperado": "Las secciones permiten registrar la información correspondiente."
+        },
+        {
+          "n": 18,
+          "accion": "Validar etiquetas, textos, tildes y capitalización.",
+          "esperado": "El formulario no presenta inconsistencias de nomenclatura ni ortografía."
+        },
+        {
+          "n": 19,
+          "accion": "Validar los botones disponibles para el escenario exitoso.",
+          "esperado": "Se presentan únicamente Desistir Solicitud y Confirmar Radicación."
+        },
+        {
+          "n": 20,
+          "accion": "Confirmar la radicación.",
+          "esperado": "Se almacena la información y la decisión de continuar."
+        },
+        {
+          "n": 21,
+          "accion": "Validar Acción a tomar.",
+          "esperado": "El caso continúa hacia Análisis."
+        }
+      ]
+    },
+    {
+      "id": "HU03-CP08",
+      "hu": "HU03",
+      "cp": "CP08",
+      "archivo": "20261006_SDE_CEL_V2_Casos de Prueba_HU03.xlsx",
+      "titulo": "SDE - CEL - HU03 - Validar Cumplimiento sin Ramo RCE que no requiere RCE",
+      "descripcion": "Validar una radicación Individual de Cumplimiento que no requiere Póliza RCE, comprobando que únicamente se consulte y presente la información de la póliza principal.",
+      "requisitos": [
+        "Requirement 231435: SDE - CEL - RAD - GEN - Flujo",
+        "Requirement 231437: SDE - CEL - RAD - INT - Consultar SISE",
+        "Requirement 231510: SDE - CEL - RAD - SUB - Consultar información de la solicitud",
+        "Requirement 231440: SDE - CEL - RAD - INT - Consultar alertas intermediarios",
+        "Requirement 231442: SDE - CEL - RAD - FRM - Completar Información de la solicitud",
+        "Requirement 231443: SDE - CEL - RAD - ACC - Completar Información de la solicitud",
+        "Requirement 231506: SDE - CEL - RAD - COM - Acción a tomar"
+      ],
+      "pasos": [
+        {
+          "n": 1,
+          "accion": "Objetivo:",
+          "esperado": "Validar una radicación Individual de Cumplimiento que no requiere Póliza RCE, comprobando que únicamente se consulte y presente la información de la póliza principal."
+        },
+        {
+          "n": 2,
+          "accion": "Ingresar a Bizagi mediante https://test-aiprocesos-sde.bizagi.com/.",
+          "esperado": "El ambiente permite iniciar la radicación."
+        },
+        {
+          "n": 3,
+          "accion": "Crear un nuevo caso de Radicación.",
+          "esperado": "El formulario de inicio se presenta correctamente y permite diligenciar una nueva solicitud."
+        },
+        {
+          "n": 4,
+          "accion": "Seleccionar Línea = Cumpimiento, Ramo = Poliza sin RCE, Tipo de Solicitud/Movimiento y Sucursal correspondientes a la data preparada para el caso.",
+          "esperado": "El formulario presenta las opciones parametrizadas correspondientes a Autos."
+        },
+        {
+          "n": 5,
+          "accion": "Seleccionar Tipo de Radicación = Individual.",
+          "esperado": "Se habilita el campo Número de póliza y se presentan únicamente los campos aplicables al escenario."
+        },
+        {
+          "n": 6,
+          "accion": "Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización.",
+          "esperado": "El formulario presenta correctamente la caracterización funcional de cada campo."
+        },
+        {
+          "n": 7,
+          "accion": "Seleccionar que no requiere RCE y diligenciar únicamente la Póliza principal y completar los campos/documentos obligatorios parametrizados.",
+          "esperado": "El formulario queda diligenciado con información válida y permite crear la solicitud."
+        },
+        {
+          "n": 8,
+          "accion": "Seleccionar Crear e identificar el número único del caso.",
+          "esperado": "Se genera correctamente un número de caso y la información registrada queda asociada a la radicación."
+        },
+        {
+          "n": 9,
+          "accion": "Validar el paso por la compuerta ¿Masivo?.",
+          "esperado": "Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información."
+        },
+        {
+          "n": 10,
+          "accion": "Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud.",
+          "esperado": "Se ejecuta la consulta correspondiente y se envía al servicio SISE la poliza registrada como criterio de búsqueda."
+        },
+        {
+          "n": 11,
+          "accion": "Validar la respuesta de la integración.",
+          "esperado": "SISE retorna la póliza vigente y la información correspondiente queda almacenada para continuar el flujo."
+        },
+        {
+          "n": 12,
+          "accion": "Validar la ejecución de Consultar alertas Intermediarios.",
+          "esperado": "Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información."
+        },
+        {
+          "n": 13,
+          "accion": "Validar la asignación de Completar Información.",
+          "esperado": "La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud."
+        },
+        {
+          "n": 14,
+          "accion": "Validar información de la Póliza principal.",
+          "esperado": "Tomador, Asegurado y datos de póliza se encuentran precargados y en solo lectura."
+        },
+        {
+          "n": 15,
+          "accion": "Validar que no se muestre información RCE.",
+          "esperado": "No se presenta un bloque de Póliza RCE al no haber sido requerida."
+        },
+        {
+          "n": 16,
+          "accion": "Validar actualización del correo electrónico.",
+          "esperado": "Si se solicita actualización, el campo Nuevo correo Electrónico de Facturación queda visible y obligatorio."
+        },
+        {
+          "n": 17,
+          "accion": "Validar Comentarios y documentos.",
+          "esperado": "Las secciones permiten registrar la información correspondiente."
+        },
+        {
+          "n": 18,
+          "accion": "Validar etiquetas, textos, tildes y capitalización.",
+          "esperado": "El formulario no presenta inconsistencias de nomenclatura ni ortografía."
+        },
+        {
+          "n": 19,
+          "accion": "Validar los botones disponibles para el escenario exitoso.",
+          "esperado": "Se presentan únicamente Desistir Solicitud y Confirmar Radicación."
+        },
+        {
+          "n": 20,
+          "accion": "Confirmar la radicación.",
+          "esperado": "Se almacena la información y la decisión de continuar."
+        },
+        {
+          "n": 21,
+          "accion": "Validar Acción a tomar.",
+          "esperado": "El caso continúa hacia Análisis."
+        }
+      ]
+    },
+    {
+      "id": "HU03-CP09",
+      "hu": "HU03",
+      "cp": "CP09",
+      "archivo": "20261006_SDE_CEL_V2_Casos de Prueba_HU03.xlsx",
+      "titulo": "SDE - CEL - HU03 - Validar intermediario con alerta bloqueante",
+      "descripcion": "Validar que una radicación realizada por un intermediario con alerta bloqueante no pueda continuar y que Completar Información presente únicamente las opciones permitidas para este escenario.",
+      "requisitos": [
+        "Requirement 231435: SDE - CEL - RAD - GEN - Flujo",
+        "Requirement 231437: SDE - CEL - RAD - INT - Consultar SISE",
+        "Requirement 231510: SDE - CEL - RAD - SUB - Consultar información de la solicitud",
+        "Requirement 231440: SDE - CEL - RAD - INT - Consultar alertas intermediarios",
+        "Requirement 231442: SDE - CEL - RAD - FRM - Completar Información de la solicitud",
+        "Requirement 231443: SDE - CEL - RAD - ACC - Completar Información de la solicitud",
+        "Requirement 231506: SDE - CEL - RAD - COM - Acción a tomar"
+      ],
+      "pasos": [
+        {
+          "n": 1,
+          "accion": "Objetivo:",
+          "esperado": "Validar que una radicación realizada por un intermediario con alerta bloqueante no pueda continuar y que Completar Información presente únicamente las opciones permitidas para este escenario."
+        },
+        {
+          "n": 2,
+          "accion": "Ingresar con un intermediario cuya data genere una alerta bloqueante.",
+          "esperado": "El usuario puede iniciar la radicación."
+        },
+        {
+          "n": 3,
+          "accion": "Crear una radicación Individual con información válida.",
+          "esperado": "El caso queda creado correctamente."
+        },
+        {
+          "n": 4,
+          "accion": "Validar formulario inicial, reglas, ortografía y capitalización.",
+          "esperado": "Los elementos se muestran correctamente."
+        },
+        {
+          "n": 5,
+          "accion": "Validar la compuerta ¿Masivo?.",
+          "esperado": "El caso toma la ruta Individual."
+        },
+        {
+          "n": 6,
+          "accion": "Validar la consulta correspondiente a SISE.",
+          "esperado": "La información de la solicitud es consultada."
+        },
+        {
+          "n": 7,
+          "accion": "Validar Consultar alertas Intermediarios.",
+          "esperado": "El servicio recibe la clave del intermediario y retorna una alerta bloqueante."
+        },
+        {
+          "n": 8,
+          "accion": "Ejecutar el escenario para cualquiera de los códigos bloqueantes definidos: EN PROCESO DE CANCELACIÓN, SIN IDONEIDAD, SIN SARLAFT o SIN CONTRATO.",
+          "esperado": "El sistema identifica la alerta como bloqueante."
+        },
+        {
+          "n": 9,
+          "accion": "Ingresar a Completar Información.",
+          "esperado": "Se presenta el mensaje: “Para continuar con tu solicitud, se requiere una aprobación previa. Comunícate con tu gestor comercial para solicitarla y conocer los pasos a seguir.”"
+        },
+        {
+          "n": 10,
+          "accion": "Validar visibilidad del formulario.",
+          "esperado": "La información operativa para continuar la radicación no queda disponible para gestión."
+        },
+        {
+          "n": 11,
+          "accion": "Validar botones.",
+          "esperado": "Únicamente se muestra Desistir Solicitud."
+        },
+        {
+          "n": 12,
+          "accion": "Validar ortografía y capitalización del mensaje y botón.",
+          "esperado": "El texto corresponde exactamente a la definición funcional."
+        },
+        {
+          "n": 13,
+          "accion": "Seleccionar Desistir Solicitud.",
+          "esperado": "El sistema no ejecuta validaciones adicionales de información y registra la decisión de finalizar."
+        },
+        {
+          "n": 14,
+          "accion": "Validar Acción a tomar.",
+          "esperado": "La compuerta toma Finalizar solicitud y dirige el caso al evento terminal."
+        }
+      ]
+    },
+    {
+      "id": "HU03-CP10",
+      "hu": "HU03",
+      "cp": "CP10",
+      "archivo": "20261006_SDE_CEL_V2_Casos de Prueba_HU03.xlsx",
+      "titulo": "SDE - CEL - HU03 - Validar póliza asociada a otro intermediario y Carta de nombramiento",
+      "descripcion": "Validar que cuando la clave asociada a la póliza sea diferente a la clave del intermediario que radica la solicitud, el sistema exija una Carta de nombramiento antes de permitir confirmar la radicación.",
+      "requisitos": [
+        "Requirement 231435: SDE - CEL - RAD - GEN - Flujo",
+        "Requirement 231437: SDE - CEL - RAD - INT - Consultar SISE",
+        "Requirement 231510: SDE - CEL - RAD - SUB - Consultar información de la solicitud",
+        "Requirement 231440: SDE - CEL - RAD - INT - Consultar alertas intermediarios",
+        "Requirement 231442: SDE - CEL - RAD - FRM - Completar Información de la solicitud",
+        "Requirement 231443: SDE - CEL - RAD - ACC - Completar Información de la solicitud",
+        "Requirement 231506: SDE - CEL - RAD - COM - Acción a tomar"
+      ],
+      "pasos": [
+        {
+          "n": 1,
+          "accion": "Objetivo:",
+          "esperado": "Validar que cuando la clave asociada a la póliza sea diferente a la clave del intermediario que radica la solicitud, el sistema exija una Carta de nombramiento antes de permitir confirmar la radicación."
+        },
+        {
+          "n": 2,
+          "accion": "Ingresar con un intermediario habilitado.",
+          "esperado": "El usuario accede correctamente."
+        },
+        {
+          "n": 3,
+          "accion": "Crear una radicación Individual utilizando una póliza perteneciente a otro intermediario.",
+          "esperado": "El caso queda registrado."
+        },
+        {
+          "n": 4,
+          "accion": "Validar formulario inicial, reglas, ortografía y capitalización.",
+          "esperado": "La información se presenta correctamente."
+        },
+        {
+          "n": 5,
+          "accion": "Validar ruta Individual.",
+          "esperado": "El caso continúa hacia las consultas."
+        },
+        {
+          "n": 6,
+          "accion": "Validar consulta a SISE.",
+          "esperado": "El servicio retorna la información de póliza incluyendo la Clave del intermediario asociada."
+        },
+        {
+          "n": 7,
+          "accion": "Validar comparación de claves.",
+          "esperado": "El sistema identifica que la clave de la póliza es diferente de la clave del intermediario que realiza la radicación."
+        },
+        {
+          "n": 8,
+          "accion": "Validar consulta de alertas.",
+          "esperado": "La consulta se ejecuta sin una alerta bloqueante adicional para aislar el escenario."
+        },
+        {
+          "n": 9,
+          "accion": "Ingresar a Completar Información.",
+          "esperado": "Se presenta el mensaje “La información de la póliza no coincide con tu clave. Para realizar el movimiento, adjunta la carta de nombramiento.”"
+        },
+        {
+          "n": 10,
+          "accion": "Validar visibilidad del formulario.",
+          "esperado": "Los demás campos permanecen ocultos excepto Comentarios y Documentos."
+        },
+        {
+          "n": 11,
+          "accion": "Validar tabla de documentos.",
+          "esperado": "Existe un registro obligatorio para Carta de nombramiento y se permite cargar los documentos correspondientes."
+        },
+        {
+          "n": 12,
+          "accion": "Intentar confirmar sin adjuntar Carta de nombramiento.",
+          "esperado": "El sistema no permite completar correctamente la radicación mientras falte el documento obligatorio."
+        },
+        {
+          "n": 13,
+          "accion": "Adjuntar una Carta de nombramiento válida.",
+          "esperado": "El documento queda almacenado y vinculado al caso."
+        },
+        {
+          "n": 14,
+          "accion": "Validar botones visibles.",
+          "esperado": "Se presentan únicamente Desistir Solicitud y Confirmar Radicación."
+        },
+        {
+          "n": 15,
+          "accion": "Validar ortografía, capitalización y mensaje.",
+          "esperado": "Los textos corresponden a la definición funcional."
+        },
+        {
+          "n": 16,
+          "accion": "Seleccionar Confirmar Radicación.",
+          "esperado": "La solicitud queda confirmada con la Carta de nombramiento asociada."
+        },
+        {
+          "n": 17,
+          "accion": "Validar Acción a tomar.",
+          "esperado": "El caso toma Continuar solicitud y avanza hacia Análisis."
+        }
+      ]
+    },
+    {
+      "id": "HU03-CP11",
+      "hu": "HU03",
+      "cp": "CP11",
+      "archivo": "20261006_SDE_CEL_V2_Casos de Prueba_HU03.xlsx",
+      "titulo": "SDE - CEL - HU03 - Validar póliza inexistente y reconsulta por datos no encontrados",
+      "descripcion": "Validar el comportamiento de una radicación cuando la consulta no encuentra información en SISE, permitiendo corregir el criterio utilizado y ejecutar una nueva consulta antes de continuar.",
+      "requisitos": [
+        "Requirement 231435: SDE - CEL - RAD - GEN - Flujo",
+        "Requirement 231437: SDE - CEL - RAD - INT - Consultar SISE",
+        "Requirement 231510: SDE - CEL - RAD - SUB - Consultar información de la solicitud",
+        "Requirement 231440: SDE - CEL - RAD - INT - Consultar alertas intermediarios",
+        "Requirement 231442: SDE - CEL - RAD - FRM - Completar Información de la solicitud",
+        "Requirement 231443: SDE - CEL - RAD - ACC - Completar Información de la solicitud",
+        "Requirement 231506: SDE - CEL - RAD - COM - Acción a tomar"
+      ],
+      "pasos": [
+        {
+          "n": 1,
+          "accion": "Objetivo:",
+          "esperado": "Validar el comportamiento de una radicación cuando la consulta no encuentra información en SISE, permitiendo corregir el criterio utilizado y ejecutar una nueva consulta antes de continuar."
+        },
+        {
+          "n": 2,
+          "accion": "Ingresar al ambiente Bizagi.",
+          "esperado": "El ambiente está disponible."
+        },
+        {
+          "n": 3,
+          "accion": "Crear una radicación Individual utilizando Forma de Consulta Número de póliza.",
+          "esperado": "Se habilita el campo correspondiente."
+        },
+        {
+          "n": 4,
+          "accion": "Ingresar deliberadamente un Número de póliza válido en formato pero inexistente en SISE.",
+          "esperado": "El formulario acepta el valor para la consulta."
+        },
+        {
+          "n": 5,
+          "accion": "Validar reglas, caracterización, ortografía y capitalización y crear el caso.",
+          "esperado": "Se genera el número único del caso."
+        },
+        {
+          "n": 6,
+          "accion": "Validar ruta Individual.",
+          "esperado": "El flujo continúa hacia Realizar consultas."
+        },
+        {
+          "n": 7,
+          "accion": "Validar consumo de SISE.",
+          "esperado": "El servicio recibe el Número de póliza registrado."
+        },
+        {
+          "n": 8,
+          "accion": "Validar resultado sin información.",
+          "esperado": "El servicio retorna un resultado que indica que no se encontraron registros."
+        },
+        {
+          "n": 9,
+          "accion": "Validar la actividad Completar Información.",
+          "esperado": "Se presenta el mensaje “Los datos ingresados no coinciden con la información registrada. Revísalos y, si necesitas ayuda, tu gestor comercial podrá orientarte.”"
+        },
+        {
+          "n": 10,
+          "accion": "Validar campos visibles.",
+          "esperado": "Se muestra únicamente el criterio utilizado para la consulta, en este caso Número de póliza, con el valor original precargado y editable."
+        },
+        {
+          "n": 11,
+          "accion": "Validar botones visibles.",
+          "esperado": "Se muestran únicamente Desistir Solicitud y Nueva Consulta."
+        },
+        {
+          "n": 12,
+          "accion": "Validar que no se presenten los bloques de información de póliza, Tomador o Asegurado.",
+          "esperado": "No se muestran datos que no hayan sido retornados por SISE."
+        },
+        {
+          "n": 13,
+          "accion": "Corregir el Número de póliza utilizando una póliza existente.",
+          "esperado": "El nuevo valor queda registrado como criterio para la reconsulta."
+        },
+        {
+          "n": 14,
+          "accion": "Seleccionar Nueva Consulta.",
+          "esperado": "La decisión Reconsultar queda registrada."
+        },
+        {
+          "n": 15,
+          "accion": "Validar la compuerta Acción a tomar.",
+          "esperado": "El caso vuelve al subproceso Consultar información de la solicitud por el camino Reconsultar."
+        },
+        {
+          "n": 16,
+          "accion": "Validar el nuevo consumo de SISE.",
+          "esperado": "El servicio utiliza el Número de póliza corregido, no el valor anterior."
+        },
+        {
+          "n": 17,
+          "accion": "Validar resultado exitoso.",
+          "esperado": "La nueva consulta retorna y almacena la información correspondiente a la póliza válida."
+        },
+        {
+          "n": 18,
+          "accion": "Validar nuevamente Consulta de alertas y Completar Información.",
+          "esperado": "El flujo continúa con la información actualizada y presenta el formulario correspondiente a una consulta exitosa."
+        },
+        {
+          "n": 19,
+          "accion": "Validar reglas internas, campos precargados y solo lectura.",
+          "esperado": "La información recuperada se muestra correctamente conforme a Línea y Movimiento."
+        },
+        {
+          "n": 20,
+          "accion": "Confirmar Radicación.",
+          "esperado": "La solicitud queda completa y almacenada."
+        },
+        {
+          "n": 21,
+          "accion": "Validar Acción a tomar.",
+          "esperado": "El caso toma Continuar solicitud y avanza hacia Análisis."
+        }
+      ]
+    },
+    {
+      "id": "HU03-CP12",
+      "hu": "HU03",
+      "cp": "CP12",
+      "archivo": "20261006_SDE_CEL_V2_Casos de Prueba_HU03.xlsx",
+      "titulo": "SDE - CEL - HU03 - Línea Cumplimiento con RCE requerido y Póliza RCE sin información",
+      "descripcion": "Validar el flujo de una radicación de Línea Cumplimiento con un ramo que no tiene marcada la propiedad Póliza RCE, seleccionando “Sí” en ¿Requiere modificar RCE?, donde la póliza principal retorna información correctamente, pero la Póliza RCE consultada no retorna información, verificando el comportamiento del formulario, las reglas de validación, la edición de los datos y la ejecución de una nueva consulta con un número de Póliza RCE válido.",
+      "requisitos": [
+        "Requirement 231435: SDE - CEL - RAD - GEN - Flujo",
+        "Requirement 231437: SDE - CEL - RAD - INT - Consultar SISE",
+        "Requirement 231510: SDE - CEL - RAD - SUB - Consultar información de la solicitud",
+        "Requirement 231440: SDE - CEL - RAD - INT - Consultar alertas intermediarios",
+        "Requirement 231442: SDE - CEL - RAD - FRM - Completar Información de la solicitud",
+        "Requirement 231443: SDE - CEL - RAD - ACC - Completar Información de la solicitud",
+        "Requirement 231506: SDE - CEL - RAD - COM - Acción a tomar"
+      ],
+      "pasos": [
+        {
+          "n": 1,
+          "accion": "Objetivo:",
+          "esperado": "Validar el flujo de una radicación de Línea Cumplimiento con un ramo que no tiene marcada la propiedad Póliza RCE, seleccionando “Sí” en ¿Requiere modificar RCE?, donde la póliza principal retorna información correctamente, pero la Póliza RCE consultada no retorna información, verificando el comportamiento del formulario, las reglas de validación, la edición de los datos y la ejecución de una nueva consulta con un número de Póliza RCE válido."
+        },
+        {
+          "n": 2,
+          "accion": "Ingresar al ambiente de Bizagi mediante la URL: https://test-aiprocesos-sde.bizagi.com/",
+          "esperado": "El ambiente de Bizagi se encuentra disponible y permite el acceso al usuario autorizado para ejecutar la prueba."
+        },
+        {
+          "n": 3,
+          "accion": "Iniciar una nueva radicación y acceder al Formulario de Inicio.",
+          "esperado": "Se presenta el formulario de inicio con los campos configurados para realizar una nueva radicación."
+        },
+        {
+          "n": 4,
+          "accion": "Seleccionar la Línea Cumplimiento.",
+          "esperado": "La Línea seleccionada corresponde a Cumplimiento y se muestran los campos y opciones asociados a dicha línea."
+        },
+        {
+          "n": 5,
+          "accion": "Seleccionar un Ramo de Cumplimiento que NO tenga marcada la propiedad “Póliza RCE”.",
+          "esperado": "El Ramo seleccionado corresponde al escenario de prueba y no tiene configurada la propiedad Póliza RCE."
+        },
+        {
+          "n": 6,
+          "accion": "Seleccionar el Tipo de Solicitud/Movimiento correspondiente a Modificación.",
+          "esperado": "El formulario presenta la configuración correspondiente a una modificación de póliza de Cumplimiento."
+        },
+        {
+          "n": 7,
+          "accion": "Seleccionar una Sucursal válida y diligenciar los demás campos obligatorios del formulario de inicio.",
+          "esperado": "Todos los campos obligatorios quedan diligenciados y el formulario permite continuar con la selección del tipo de radicación."
+        },
+        {
+          "n": 8,
+          "accion": "Seleccionar Tipo de Radicación: Individual.",
+          "esperado": "El formulario refleja correctamente la selección de radicación Individual y mantiene la información previamente diligenciada."
+        },
+        {
+          "n": 9,
+          "accion": "Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización.",
+          "esperado": "El formulario presenta correctamente la caracterización funcional de cada campo."
+        },
+        {
+          "n": 10,
+          "accion": "Seleccionar que la solicitud requiere RCE y diligenciar la Póliza principal y Póliza RCE, adicioal completar los campos/documentos obligatorios parametrizados.",
+          "esperado": "El formulario queda diligenciado con información válida y permite crear la solicitud."
+        },
+        {
+          "n": 11,
+          "accion": "Seleccionar Crear e identificar el número único del caso.",
+          "esperado": "Se genera correctamente un número de caso y la información registrada queda asociada a la radicación."
+        },
+        {
+          "n": 12,
+          "accion": "Validar el paso por la compuerta ¿Masivo?.",
+          "esperado": "Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información."
+        },
+        {
+          "n": 13,
+          "accion": "Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud.",
+          "esperado": "Se ejecuta la consulta correspondiente y se envía al servicio SISE la poliza registrada como criterio de búsqueda."
+        },
+        {
+          "n": 14,
+          "accion": "Validar la respuesta de la integración.",
+          "esperado": "SISE retorna la póliza vigente y la información correspondiente queda almacenada para continuar el flujo."
+        },
+        {
+          "n": 15,
+          "accion": "Validar la ejecución de Consultar alertas Intermediarios.",
+          "esperado": "Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información."
+        },
+        {
+          "n": 16,
+          "accion": "Validar la asignación de Completar Información.",
+          "esperado": "La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud."
+        },
+        {
+          "n": 17,
+          "accion": "Validar información de la Póliza principal.",
+          "esperado": "Tomador, Asegurado y datos de póliza se encuentran precargados y en solo lectura."
+        },
+        {
+          "n": 18,
+          "accion": "Validar el mensaje presentado para la consulta de la Póliza RCE sin información.",
+          "esperado": "Se presenta el mensaje definido para una consulta sin resultados: “Los datos ingresados no coinciden con la información registrada. Revísalos y, si necesitas ayuda, tu gestor comercial podrá orientarte.”"
+        },
+        {
+          "n": 19,
+          "accion": "Validar el bloque Póliza RCE.",
+          "esperado": "Los campos correspondientes a la consulta de la Póliza RCE quedan disponibles para revisión/modificación según la regla aplicable y permiten corregir el dato utilizado para la consulta."
+        },
+        {
+          "n": 20,
+          "accion": "Validar la visibilidad de los botones disponibles después de la consulta sin información.",
+          "esperado": "Se encuentran disponibles Desistir Solicitud y Nueva Consulta, sin permitir continuar con la radicación hasta completar correctamente la información requerida."
+        },
+        {
+          "n": 21,
+          "accion": "Validar que los campos de la póliza principal que sí retornaron información permanezcan correctamente diligenciados y no editables.",
+          "esperado": "La información válida de la póliza principal se conserva sin modificaciones y los campos maestros mantienen su condición de solo lectura."
+        },
+        {
+          "n": 22,
+          "accion": "Validar la ortografía, capitalización, etiquetas y textos de ayuda del formulario después de la consulta sin información.",
+          "esperado": "Los textos del formulario, mensajes, etiquetas y botones presentan ortografía correcta y capitalización consistente con el estándar definido."
+        },
+        {
+          "n": 23,
+          "accion": "Modificar el Número de Póliza RCE ingresando el número de una Póliza RCE válida existente en SISE.",
+          "esperado": "El nuevo número de Póliza RCE es aceptado de acuerdo con las reglas de validación del campo: únicamente valores numéricos y longitud entre 9 y 12 caracteres."
+        },
+        {
+          "n": 24,
+          "accion": "Validar las reglas del campo Número de Póliza RCE utilizando valores inválidos, como caracteres alfabéticos o una longitud fuera del rango permitido.",
+          "esperado": "El formulario rechaza los valores que no cumplen las reglas de formato y no permite realizar la consulta hasta ingresar un número válido."
+        },
+        {
+          "n": 25,
+          "accion": "Seleccionar Nueva Consulta.",
+          "esperado": "El caso retorna al proceso de consulta por el camino Reconsultar, utilizando los datos modificados para ejecutar la nueva consulta."
+        },
+        {
+          "n": 26,
+          "accion": "Validar que se ejecute nuevamente la consulta utilizando el nuevo número de Póliza RCE.",
+          "esperado": "El servicio es invocado nuevamente con el número de Póliza RCE corregido."
+        },
+        {
+          "n": 27,
+          "accion": "Validar la respuesta de la nueva consulta.",
+          "esperado": "La nueva consulta retorna la información correspondiente a la Póliza RCE válida."
+        },
+        {
+          "n": 28,
+          "accion": "Validar la precarga de la información de la Póliza RCE después de la reconsulta exitosa.",
+          "esperado": "La información del Tomador y Asegurado de la Póliza RCE queda visible y no editable, conforme a la información retornada por el servicio."
+        },
+        {
+          "n": 29,
+          "accion": "Validar que la información de la póliza principal permanezca sin alteraciones después de la reconsulta.",
+          "esperado": "La información previamente obtenida de la póliza principal permanece consistente y asociada al caso."
+        },
+        {
+          "n": 30,
+          "accion": "Validar nuevamente la caracterización de los campos, etiquetas, mensajes, ortografía y capitalización del formulario después de la reconsulta.",
+          "esperado": "El formulario presenta textos, etiquetas, mensajes y nombres de campos correctamente escritos y capitalizados, sin alteraciones ni inconsistencias después de la nueva consulta."
+        },
+        {
+          "n": 31,
+          "accion": "Cargar un documento válido en la tabla de documentos y registrar una observación de prueba.",
+          "esperado": "El documento queda asociado a la solicitud y la observación queda registrada correctamente."
+        },
+        {
+          "n": 32,
+          "accion": "Validar las pestañas Documentos de la solicitud y Seguimiento/Trazabilidad.",
+          "esperado": "Los documentos cargados y la trazabilidad del caso se encuentran disponibles y asociados al número único de caso."
+        },
+        {
+          "n": 33,
+          "accion": "Seleccionar Confirmar Radicación una vez completada correctamente la información requerida.",
+          "esperado": "La solicitud supera las validaciones necesarias y puede continuar por el camino Continuar solicitud hacia la siguiente etapa del proceso."
+        },
+        {
+          "n": 34,
+          "accion": "Validar el estado final del caso y la persistencia de la información.",
+          "esperado": "El caso continúa correctamente en el flujo de análisis, conservando la información de la póliza principal, la Póliza RCE obtenida mediante reconsulta, documentos, observaciones y demás información asociada al número único de caso."
+        }
+      ]
+    }
+  ]
+}

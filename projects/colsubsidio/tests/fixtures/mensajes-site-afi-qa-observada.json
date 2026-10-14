@@ -1,0 +1,47 @@
+{
+ "origen": "QA real 2026-10-06, lectura de solo lectura (contenido paramétrico público)",
+ "columnas": [
+  "idP_MensajesSiteAFI",
+  "Código",
+  "Mensaje",
+  "Tipo mensaje",
+  "Deshabilitada"
+ ],
+ "filas": [
+  [
+   "1",
+   "independiente_informacion_contacto_alerta",
+   "Solo puedes afiliarte si resides en Bogotá o Cundinamarca. Si vives en otro departamento, debes buscar la caja correspondiente a tu región.",
+   "",
+   ""
+  ],
+  [
+   "51",
+   "registraduria_persona_no _encontrada",
+   "La siguiente información no se encuentra disponible en nuestras fuentes de consulta. Debes ingresarla para continuar con la solicitud.",
+   "Warning",
+   ""
+  ],
+  [
+   "52",
+   "registraduria_ejecucion_con_novedad",
+   "No fue posible verificar la siguiente información en este momento. Debes ingresarla para continuar con la solicitud.",
+   "Info",
+   ""
+  ],
+  [
+   "53",
+   "registraduria_rechazo",
+   "La cédula ingresada se encuentra cancelada. Verifica la información ingresada para continuar con la solicitud.",
+   "Error",
+   ""
+  ],
+  [
+   "54",
+   "representante_nombre_no_coincide",
+   "Verifica que los nombres y apellidos coincidan exactamente con la información del representante legal registrado ante las entidades oficiales.",
+   "Error",
+   ""
+  ]
+ ]
+}

@@ -1,0 +1,248 @@
+{
+  "schemaVersion": "afi-test-data-review/v1",
+  "batchId": "kd-98e1e32d879f26af",
+  "revisionBase": 14,
+  "hashRegistroBase": "f0f31489c7b1a1032850853e3403d49882648d59391abe3f514b7ada37688af0",
+  "nota": [
+    "Artefacto generado a partir de una salida de agente NO confiable. No contiene decisiones ni valores.",
+    "Los nombres de variables los deriva el framework al aprobar; las decisiones van en el archivo de decisiones separado."
+  ],
+  "propuestas": [
+    {
+      "proposalId": "ps-empresa-empleador-juridico-rues-sin-rep-legal-2",
+      "hash": "6da710b312db09ad9f74f84da06130405928ebf57a3ce3b0eef8106ed3e4511d",
+      "propuesta": {
+        "schemaVersion": "afi-actor-slot-proposal/v1",
+        "proposalId": "ps-empresa-empleador-juridico-rues-sin-rep-legal-2",
+        "slot": {
+          "id": "empresa-empleador-juridico-rues-sin-rep-legal-2",
+          "perfil": "empresa",
+          "condiciones": [
+            {
+              "id": "empleador-juridico-rues-sin-rep-legal",
+              "descripcion": "Aportante tipo Empleador Jurídico existente en RUES, no afiliado a Colsubsidio, sin Representante Legal retornado por RUES."
+            },
+            {
+              "id": "sin-solicitud-afiliacion-en-curso",
+              "descripcion": "Sin solicitud de afiliación en curso que impida crear un nuevo trámite."
+            }
+          ],
+          "campos": [
+            {
+              "campo": "numeroIdentificacion",
+              "fuente": "slot"
+            },
+            {
+              "campo": "correo",
+              "fuente": "slot"
+            },
+            {
+              "campo": "afiliadoPrimeraVez",
+              "fuente": "slot"
+            },
+            {
+              "campo": "numeroTrabajadores",
+              "fuente": "slot"
+            },
+            {
+              "campo": "valorNomina",
+              "fuente": "slot"
+            },
+            {
+              "campo": "fechaInicioActividad",
+              "fuente": "slot"
+            },
+            {
+              "campo": "numeroCelular",
+              "fuente": "slot"
+            },
+            {
+              "campo": "numeroTelefonoFijo",
+              "fuente": "slot"
+            },
+            {
+              "campo": "cajaCompensacionAnterior",
+              "fuente": "slot",
+              "cuando": {
+                "campo": "afiliadoPrimeraVez",
+                "operador": "igual",
+                "valor": "No"
+              }
+            }
+          ]
+        },
+        "requisitos": [
+          "HU-7.14-y-7.14.1-CP02-principal"
+        ],
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14 y 7.14.1",
+            "caso": "CP02"
+          }
+        ],
+        "reutilizable": true,
+        "estado": "PENDING_REVIEW"
+      }
+    },
+    {
+      "proposalId": "ps-representante-legal-persona-en-bizagi-con-verificacion",
+      "hash": "8d78673e277f11920f60ea30b2c3a02337925e4a9183d8d7dad837c532c8a31e",
+      "propuesta": {
+        "schemaVersion": "afi-actor-slot-proposal/v1",
+        "proposalId": "ps-representante-legal-persona-en-bizagi-con-verificacion",
+        "slot": {
+          "id": "representante-legal-persona-en-bizagi-con-verificacion",
+          "sujeto": "participante",
+          "condiciones": [
+            {
+              "id": "persona-en-bizagi-con-verificacion-registraduria",
+              "descripcion": "Persona existente en la base de Bizagi con verificación de Registraduría (flag SI), de modo que no se consume Registraduría."
+            }
+          ],
+          "campos": [
+            {
+              "campo": "tipoIdentificacion",
+              "fuente": "slot"
+            },
+            {
+              "campo": "numeroIdentificacion",
+              "fuente": "slot"
+            }
+          ]
+        },
+        "requisitos": [
+          "HU-7.14-y-7.14.1-CP02-representante-legal"
+        ],
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14 y 7.14.1",
+            "caso": "CP02",
+            "rol": "representante-legal"
+          }
+        ],
+        "reutilizable": true,
+        "distintoDe": [
+          "HU-7.14-y-7.14.1-CP02-contacto-caja",
+          "HU-7.14-y-7.14.1-CP02-responsable-portal"
+        ],
+        "estado": "PENDING_REVIEW"
+      }
+    },
+    {
+      "proposalId": "ps-contacto-caja-persona-en-bizagi-con-verificacion",
+      "hash": "23f18aef23a5dbe6679db8e08ec19d9520576a5a6ce4f47675c26d5d84fcafc8",
+      "propuesta": {
+        "schemaVersion": "afi-actor-slot-proposal/v1",
+        "proposalId": "ps-contacto-caja-persona-en-bizagi-con-verificacion",
+        "slot": {
+          "id": "contacto-caja-persona-en-bizagi-con-verificacion",
+          "sujeto": "participante",
+          "condiciones": [
+            {
+              "id": "persona-en-bizagi-con-verificacion-registraduria",
+              "descripcion": "Persona existente en la base de Bizagi con verificación de Registraduría (flag SI), de modo que no se consume Registraduría."
+            }
+          ],
+          "campos": [
+            {
+              "campo": "numeroIdentificacion",
+              "fuente": "slot"
+            },
+            {
+              "campo": "correo",
+              "fuente": "slot"
+            }
+          ]
+        },
+        "requisitos": [
+          "HU-7.14-y-7.14.1-CP02-contacto-caja"
+        ],
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14 y 7.14.1",
+            "caso": "CP02",
+            "rol": "contacto-caja"
+          }
+        ],
+        "reutilizable": true,
+        "distintoDe": [
+          "HU-7.14-y-7.14.1-CP02-representante-legal"
+        ],
+        "estado": "PENDING_REVIEW"
+      }
+    },
+    {
+      "proposalId": "ps-responsable-portal-persona-en-bizagi-con-verificacion",
+      "hash": "a88db31da8d76aecd3b29ad3c870621cadaf58d164c3bf564bf55a2380bbd775",
+      "propuesta": {
+        "schemaVersion": "afi-actor-slot-proposal/v1",
+        "proposalId": "ps-responsable-portal-persona-en-bizagi-con-verificacion",
+        "slot": {
+          "id": "responsable-portal-persona-en-bizagi-con-verificacion",
+          "sujeto": "participante",
+          "condiciones": [
+            {
+              "id": "persona-en-bizagi-con-verificacion-registraduria",
+              "descripcion": "Persona existente en la base de Bizagi con verificación de Registraduría (flag SI), de modo que no se consume Registraduría."
+            }
+          ],
+          "campos": [
+            {
+              "campo": "numeroIdentificacion",
+              "fuente": "slot"
+            }
+          ]
+        },
+        "requisitos": [
+          "HU-7.14-y-7.14.1-CP02-responsable-portal"
+        ],
+        "ocurrencias": [
+          {
+            "hu": "HU 7.14 y 7.14.1",
+            "caso": "CP02",
+            "rol": "responsable-portal"
+          }
+        ],
+        "reutilizable": true,
+        "distintoDe": [
+          "HU-7.14-y-7.14.1-CP02-representante-legal"
+        ],
+        "estado": "PENDING_REVIEW"
+      }
+    }
+  ],
+  "reutilizados": [],
+  "posiblesDuplicados": [
+    {
+      "a": "ps-empresa-empleador-juridico-rues-sin-rep-legal-2",
+      "b": "empresa-empleador-juridico-rues-sin-rep-legal",
+      "motivo": "campos-no-cubiertos"
+    },
+    {
+      "a": "ps-representante-legal-persona-en-bizagi-con-verificacion",
+      "b": "ps-contacto-caja-persona-en-bizagi-con-verificacion",
+      "motivo": "condiciones-relacionadas"
+    },
+    {
+      "a": "ps-representante-legal-persona-en-bizagi-con-verificacion",
+      "b": "ps-responsable-portal-persona-en-bizagi-con-verificacion",
+      "motivo": "condiciones-relacionadas"
+    },
+    {
+      "a": "ps-contacto-caja-persona-en-bizagi-con-verificacion",
+      "b": "ps-responsable-portal-persona-en-bizagi-con-verificacion",
+      "motivo": "condiciones-relacionadas"
+    }
+  ],
+  "rechazados": [],
+  "resumen": {
+    "requisitosRecibidos": 4,
+    "validos": 4,
+    "rechazados": 0,
+    "reutilizados": 0,
+    "propuestas": 4,
+    "posiblesDuplicados": 4,
+    "revisionBase": 14,
+    "runtimeChanges": 0
+  }
+}

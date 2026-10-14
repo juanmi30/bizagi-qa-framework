@@ -1,0 +1,58 @@
+SDE-CEL — Evidencia textual de calibración y defectos (2026-10-08). Sin credenciales ni PII.
+Las capturas de pantalla quedan solo en local (el panel lateral del Work Portal muestra nombre y correo del usuario QA).
+
+== Calibración real de "Estructurar información" — caso propio 343 (tests/calibracion.real.spec.ts, SDE_CALIBRAR_CASO=343)
+#1 iniciar_sesion [PASS] P2 :: Sesión real iniciada como "analista".
+#2 abrir_caso [PASS] P13 :: Caso 343 abierto por "analista" en "Estructurar información"
+#3 verificar [PASS] P14 :: ✔ solo_lectura: Número de Caso, Creador del Caso, Fecha de Creación, Línea, Ramo, Movimiento
+#4 verificar [PASS] P15 :: ✔ solo_lectura: Tipo Radicación, Sucursal | ✔ "Tipo Radicación" = Masiva (coincide)
+#5 verificar [PASS] P16 :: ✔ "Información a Consultar" visible (1) | ✔ solo_lectura: Descripción Solicitud Masiva
+#6 tabla_verificar [PASS] P17 :: "Detalle Polizas Asociadas": 0 fila(s); columnas [id, Forma Consulta, Tipo documento del Tomador, Número de Documento Tomador, Placa, Número Póliza, ¿Requiere modificar RCE?, Ramo RCE, Número Póliza RCE]
+#7 verificar [PASS] P28 :: ✔ "Documentos de la solicitud" visible (1) | ✔ "Seguimiento/Trazabilidad" visible (1)
+#8 verificar [PASS] P29 :: ✔ solo_lectura: Línea, Ramo, Movimiento, Sucursal, Tipo Radicación
+#9 verificar [FAIL] P27 :: No se encontró visible: la etiqueta "Observaciones"      ← BUG-04 (la UI dice "Observaciónes")
+
+== BUG-01 — Masivo Póliza Nueva sin tipos documentales (corrida oficial HU06-CP01 + exploración)
+Corrida oficial (verticales.spec.ts, HU06-CP01):
+  #10 adjuntar_en_grilla [FAIL] :: "Documentos Anexos": el combo "Tipo Documental" no ofrece ninguna opción (solo "-------------"); no es posible adjuntar el documento obligatorio.
+Exploración (sin adjuntar), respuesta real de Bizagi a "Crear":
+  POST /Rest/Handlers/MultiAction → {"type":"validationMessages","action":"CREATENEWCASE","messages":["Debe agregar y adjuntar al menos un archivo para cada tipo documental obligatorio pendiente. ID de tipos documentales: 3."]}
+Combinaciones Masiva con la lista "Tipo Documental" vacía: Autos/AUTOMÓVILES LIVIANOS INDIVIDUAL; Generales/RC MEDICO PROFESIONAL INDIVIDUAL con Póliza Nueva, Modificación y Renovación.
+Solo Póliza Nueva EXIGE el documento: Generales/Modificación Masiva se creó sin documentos (caso 343).
+
+== BUG-02 — Individual radicado por CE_Analista detenido en "Consultar Alertas Intermediario"
+Actividades actuales (buscador, sesión nueva por caso; 2026-10-08 15:42 UTC):
+  336 | creado 2:36 pm | Máximo tiempo de radicación [Yellow] ; Consultar Alertas Intermediario [Red] ; Deshabilitar cancelación [Green]
+  345 | creado 3:15 pm | Consultar Alertas Intermediario [Red] ...
+  346 | creado 3:18 pm | Consultar Alertas Intermediario [Red] ...
+  347 | creado 3:28 pm | Consultar Alertas Intermediario [Red] ...
+  348 | creado 3:40 pm | Consultar Alertas Intermediario [Red] ...
+  (caso 337, de OTRO equipo, creado 2:37 pm, sí avanzó a "Completar información de solicitud")
+La tarea no tiene asignado de usuario (WorkItems vacío) y su color es Red (vencida). Confirmar si el proceso
+admite radicación por CE_Analista o si la consulta de alertas requiere la clave de un intermediario.
+
+== BUG-03 — Cancelar el pop-up de "Detalle Polizas Asociadas" deja el caso inutilizable
+Caso 342: Editar fila → Cancelar → al reabrir: "Error Type: ArgumentException / Error Message: Invalid scope action type".
+Reproducción independiente en caso NUEVO 350 (explora28):
+  1) apertura → formulario: true  error: 0
+  2) "Adicionar Detalle Polizas Asociadas" → Cancelar
+  3) reapertura → formulario: false error: 1   (mismo mensaje)
+El caso 343 (nunca se abrió el pop-up) sigue abriendo sin error.
+
+== ENV-03 — Intermediarios sin procesos habilitados
+GET /Rest/Processes/All (sesión intermediario e intermediario_alerta) → applications App y "Procesos en Vivo" con categories: [].
+GET /Rest/Processes/All (sesión CE_Analista) → App > Processes > Centro de Expedición > "Gestión Solicitudes Centro Expedición" (id 4, hasStartForm: true).
+
+== OBS — Nomenclatura observada vs matriz (no bloqueante; confirmar con funcional)
+OBS-01 Grupo "Informacion a Consultar" sin tilde en el formulario de inicio (en Estructurar información sí: "Información a Consultar").
+OBS-02 Radio "Masiva" vs texto de ayuda y matriz "Masivo".
+OBS-03 Etiqueta "Ramo :" con espacio antes de los dos puntos (resto: "Línea:").
+OBS-04 Grilla "Detalle Polizas Asociadas" (sin tilde; matriz: "Pólizas asociadas a la solicitud").
+OBS-05 Descripción de la actividad Estructurar información: "El objetivo de la actividad es interpretan el requerimiento…".
+OBS-06 Mensaje de validación muestra "ID de tipos documentales: 3" en lugar del nombre del tipo documental.
+OBS-07 Etiquetas reales distintas a la matriz: "Tipo de Solicitud" (no "Tipo de Solicitud/Movimiento"), "Movimiento" (no "Tipo de Movimiento"),
+       "Tipo Radicación" (no "Tipo de Radicación") en Estructurar, "Forma de Consulta Unitaria", "Seguimiento/Trazabilidad",
+       actividad "Completar información de solicitud" (no "Completar Información"), "Estructurar información" (minúscula).
+OBS-08 Campo obligatorio no descrito en la matriz: "¿Su solicitud requiere cambio de intermediario?" (Masiva Autos y Generales/Modificación).
+OBS-09 Bizagi muestra al usuario "Debe revisar lo siguiente: Hay acciones que están realizando llamadas iterativas al servidor…
+       EXECUTERULE y SUBMITDATA" al diligenciar el formulario de inicio (reglas encadenadas; la forma se re-renderiza en bucle).

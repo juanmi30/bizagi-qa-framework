@@ -105,7 +105,7 @@ test.describe('H6 — exclusión entre procesos (histórico y ejecuciones reales
     const hijo = spawn(process.execPath, ['-e', `
       const fs = require('fs'); const os = require('os');
       const fd = fs.openSync(${JSON.stringify(ruta)}, 'wx');
-      fs.writeSync(fd, JSON.stringify({ pid: process.pid, equipo: os.hostname(), inicio: new Date().toISOString(), descripcion: 'hijo' }));
+      fs.writeSync(fd, JSON.stringify({ pid: process.pid, equipo: os.hostname(), inicio: new Date().toISOString(), descripcion: 'hijo', token: 'hijo-' + process.pid }));
       fs.closeSync(fd); setInterval(() => {}, 1000);`], { stdio: 'ignore' });
     try {
       for (let i = 0; i < 100 && !existsSync(ruta); i++) await dormir(50);
@@ -123,16 +123,18 @@ test.describe('H6 — exclusión entre procesos (histórico y ejecuciones reales
     expect(existsSync(ruta)).toBe(false);
   });
 
-  test('se libera aunque la operación falle; no borra el bloqueo de otro dueño; caduca por antigüedad', async ({}, testInfo) => {
+  test('se libera aunque la operación falle; no borra el bloqueo de otro dueño; la antigüedad sola no lo retira', async ({}, testInfo) => {
     const ruta = testInfo.outputPath('y.lock');
     await expect(conBloqueo(ruta, async () => { throw new Error('falla'); })).rejects.toThrow('falla');
     expect(existsSync(ruta)).toBe(false);
     const mio = intentarBloqueo(ruta)!;
-    writeFileSync(ruta, JSON.stringify({ pid: process.pid + 1, equipo: 'otro-equipo', inicio: new Date().toISOString(), descripcion: '' }));
+    writeFileSync(ruta, JSON.stringify({ pid: process.pid + 1, equipo: 'otro-equipo', inicio: new Date().toISOString(), descripcion: '', token: 'ajeno' }));
     mio.liberar();
     expect(existsSync(ruta), 'el archivo ya era de otro dueño: no se toca').toBe(true);
     expect(intentarBloqueo(ruta, { pidVivo: () => true })).toBeNull();
-    expect(intentarBloqueo(ruta, { caducidadMs: 1000, ahora: () => Date.now() + 5000 })).not.toBeNull();
+    // P0 (auditoría Work): un bloqueo antiguo de otro equipo no se retira automáticamente (fallo cerrado).
+    expect(intentarBloqueo(ruta, { caducidadMs: 1000, ahora: () => Date.now() + 5000 })).toBeNull();
+    expect(existsSync(ruta)).toBe(true);
   });
 
   test('el bloqueo de ejecución real de SDE vive en test-results (nunca se versiona)', () => {

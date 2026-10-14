@@ -1,17 +1,17 @@
 # Estado actual del framework
 
-**Actualizado: 2026-10-13 (noche), por Claude Code.** Repositorio: `juanmi30/bizagi-qa-framework` (privado). `main` = línea base auditada `551b84e`. Esta página describe la rama `fix/sde-confiabilidad-resultados` (PR en borrador, sin fusionar); checkpoint `docs/orquestacion/checkpoints/2026-10-13-confiabilidad-sde.md`. Todo dato de esta página se verificó en esta sesión, salvo lo marcado como *no auditado*.
+**Actualizado: 2026-10-14, por Claude Code (correcciones de la auditoría de Work sobre el PR #1).** Repositorio: `juanmi30/bizagi-qa-framework` (privado). `main` = línea base auditada `551b84e`. Esta página describe la rama `fix/sde-confiabilidad-resultados` (PR en borrador, sin fusionar); checkpoints `docs/orquestacion/checkpoints/2026-10-13-confiabilidad-sde.md` y `2026-10-14-correcciones-auditoria-pr1.md`. Todo dato de esta página se verificó en esta sesión, salvo lo marcado como *no auditado*.
 
 ## Verificaciones técnicas de esta fecha (rama de confiabilidad)
 
 | Control | Resultado |
 |---|---|
 | `npx tsc --noEmit` | Sin errores |
-| SDE `@unit` | **130/130** (112 anteriores + 18 nuevas: H1, H4, H6, H7 y runner) |
+| SDE `@unit` | **155/155**: 112 de la línea base, 18 de H1/H4/H6/H7 y 25 de las correcciones de Work (P0 bloqueo, P1 veredicto y P2 runner) |
 | Demo (regresión) | 48 aprobadas / 4 fallidas: los mismos 4 fallos históricos de plantilla sin URL real |
-| Colsubsidio | `lifecycle-casos.unit` 12/12 (usa el histórico con bloqueo) · `contrato-create-case` 3/3 · `login-navegacion.unit` 6/6 · `afi-soporte.unit` 32/32 |
-| CONPRE | Sin cambios en esta fase; no se ejecutó |
-| E2E | **1 ejecución real ACCIDENTAL** (incidente): HU06-CP05 creó el caso **434**. Ningún pop-up abierto. Ver «Incidente» abajo |
+| Colsubsidio | `lifecycle-casos.unit`, `contrato-create-case`, `login-navegacion.unit` y `afi-soporte.unit`: **53/53** (el histórico usa el bloqueo nuevo) |
+| CONPRE | Sin cambios; `--list` 6 pruebas en 3 archivos (no se ejecuta porque hace login real) |
+| E2E | Correcciones de Work: **ninguna**. Fase anterior: **1 ejecución real ACCIDENTAL** (incidente), en la que HU06-CP05 creó el caso **434**; ningún pop-up abierto. Ver «Incidente» abajo |
 | Escaneo de credenciales y PII | Diff de la rama revisado (ver checkpoint) |
 
 **Historial de ejecuciones:** las métricas de abajo salen de `test-results/` (local) y de `docs/evidencia/` (versionada). En un equipo recién clonado solo existe la segunda y da el mismo resultado (ejecutada 2/17, aprobada 0/17; prueba `portabilidad.unit`).
@@ -47,6 +47,11 @@
 **Incidente 2026-10-13 (Claude Code):** al correr una prueba unitaria con `--grep "no se pisan"` desde Git Bash, `tools/run.mjs` partió el filtro por los espacios (se lanzaba con shell sin entrecomillar) y Playwright seleccionó pruebas reales. Se ejecutó **HU06-CP05 contra QA y se creó el caso 434** (REAL_PASS_PARCIAL, mismo resultado que 427; sin pop-ups ni acciones destructivas); HU03-CP08 quedó BLOCKED en preflight. Causa raíz corregida en `tools/run.mjs` con prueba de regresión. Pendiente de Juan Miguel: qué hacer con el caso 434 (P-07) y si las E2E reales deben exigir una activación explícita (P-06).
 
 **Confiabilidad (esta rama):** H1 veredicto E2E y JUnit con estado, causa y atribución · H4 causas estructuradas en preflight y ejecución · H6 bloqueo entre procesos para el histórico y las ejecuciones reales · H7 pendientes estructurales y «máximo alcanzable» por CP. Detalle en el checkpoint.
+
+**Correcciones de la auditoría de Work (PR #1):**
+- **P0 (D-27):** bloqueo sin carreras. Se publica de forma atómica por enlace, se recupera solo un huérfano demostrable y todo lo demás falla cerrado. Recuperación manual en `RECUPERACION-BLOQUEOS.md`; alcance: un mismo equipo.
+- **P1 (D-28):** una certificación solo es satisfactoria con todos los CP en REAL_PASS. REAL_PASS + BLOCKED termina ahora con código distinto de cero. Diagnóstico, precreación y exploración solo aplican con `SDE_TIPO_EJECUCION` explícito.
+- **P2 (D-29):** el runner ya no pasa por un shell, así que los argumentos llegan literales y `%VARIABLE%` no se expande.
 
 **Decisiones pendientes:** control de cambios de documentos, BUG-05/BUG-06, FUNC-10 (actor de HU06), ticket de BUG-03, datos SISE y mapeo de UI-10. Ver `DECISIONES.md`.
 

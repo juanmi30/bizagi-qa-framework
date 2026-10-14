@@ -15,6 +15,7 @@ const base = (cp: string, estado: ReporteCp['estado'], extra: Partial<ReporteCp>
 
 const CASOS: Record<string, ReporteCp> = {
   REAL_PASS: base('SIN-PASS', 'REAL_PASS', { numero_caso: '1', causas: [], atribucion: 'NO_APLICA' }),
+  REAL_PASS_2: base('SIN-PASS-2', 'REAL_PASS', { numero_caso: '6', causas: [], atribucion: 'NO_APLICA' }),
   PARCIAL: base('SIN-PARCIAL', 'REAL_PASS_PARCIAL', { numero_caso: '2', causas: ['INTEGRACION_NO_VERIFICADA'], atribucion: 'NO_APLICA' }),
   BLOCKED_PREFLIGHT: base('SIN-BLOQ-PRE', 'BLOCKED', { bloqueos: ['CREDENCIALES actor "analista": faltan USUARIO_analista'], causas: ['CONFIGURACION'], atribucion: 'NO_APLICA' }),
   BLOCKED_EJECUCION: base('SIN-BLOQ-EJE', 'BLOCKED', { numero_caso: '3', causas: ['AMBIENTE'], atribucion: 'NO_APLICA' }),
@@ -22,7 +23,12 @@ const CASOS: Record<string, ReporteCp> = {
   FAIL_PRODUCTO: base('SIN-FAIL-PRO', 'FAIL', { numero_caso: '5', causas: ['PRODUCTO_POR_CONFIRMAR'], atribucion: 'PRODUCTO_POR_CONFIRMAR' }),
 };
 
-for (const k of (process.env.SDE_SINTETICO_CASOS || Object.keys(CASOS).join(',')).split(',')) {
+/** Sin SDE_SINTETICO_CASOS: un CP de cada representación. REAL_PASS_2 y AUXILIAR solo se usan cuando se piden. */
+const POR_DEFECTO = ['REAL_PASS', 'PARCIAL', 'BLOCKED_PREFLIGHT', 'BLOCKED_EJECUCION', 'FAIL_AUTOMATIZACION', 'FAIL_PRODUCTO'];
+
+for (const k of (process.env.SDE_SINTETICO_CASOS || POR_DEFECTO.join(',')).split(',')) {
+  // AUXILIAR: prueba que NO es un CP (sin @e2e), para simular una corrida sin CP seleccionados.
+  if (k === 'AUXILIAR') { test('AUXILIAR sin CP', () => {}); continue; }
   test(`${k} @sde @e2e`, async ({}, testInfo) => {
     aplicarResultado(CASOS[k], testInfo);
   });

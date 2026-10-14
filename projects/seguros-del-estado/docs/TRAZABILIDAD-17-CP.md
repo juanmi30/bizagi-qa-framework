@@ -6,7 +6,7 @@
 > (sesión real) de `test-results/seguros-del-estado/sde/`; un intento BLOCKED en preflight se muestra aparte y no tapa
 > la evidencia. Sin reporte ejecutado: estado del manifest. Ningún estado verde sin reporte.
 
-> **Fuentes de ejecución:** historial local `test-results/`: 52 reporte(s) · evidencia versionada `docs/evidencia/`: 6 reporte(s). Si un reporte está en ambas, prevalece la copia local.
+> **Fuentes de ejecución:** historial local `test-results/`: 54 reporte(s) · evidencia versionada `docs/evidencia/`: 7 reporte(s). Si un reporte está en ambas, prevalece la copia local.
 
 ## Cobertura (tres indicadores independientes)
 
@@ -26,7 +26,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | HU06-CP02 | F-MASIVO-ESTRUCTURAR | 2 | 4-hu06-cp02.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-AUTOS-MASIVO: MISSING | PARCIAL (19/2/0/0/0 de 21) | NO EJECUTADO<br>último intento: BLOCKED (HU06-CP02_20261013-095835.json) | **BLOCKED** | no |
 | HU06-CP03 | F-MASIVO-ESTRUCTURAR | 2 | 5-hu06-cp03.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-CUMPL-MASIVO-SIN-RCE: MISSING | PARCIAL (23/1/0/0/0 de 24) | NO EJECUTADO<br>último intento: BLOCKED (HU06-CP03_20261013-095835.json) | **BLOCKED** | no |
 | HU06-CP04 | F-MASIVO-ESTRUCTURAR | 2 | 6-hu06-cp04.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-CUMPL-MASIVO-CON-RCE: MISSING | PARCIAL (20/1/0/1/0 de 22) | NO EJECUTADO<br>último intento: BLOCKED (HU06-CP04_20261013-095835.json) | **BLOCKED** | no |
-| HU06-CP05 | F-INDIVIDUAL-RUTA | 1 | 1-hu06-cp05.yaml | analista: READY | CFG-PROCESO: READY<br>INI-INDIVIDUAL-RUTA: READY | PARCIAL (6/2/0/0/0 de 8) | HU06-CP05_20261013-095717.json (caso 427) | **REAL_PASS_PARCIAL** | no |
+| HU06-CP05 | F-INDIVIDUAL-RUTA | 1 | 1-hu06-cp05.yaml | analista: READY | CFG-PROCESO: READY<br>INI-INDIVIDUAL-RUTA: READY | PARCIAL (6/2/0/0/0 de 8) | HU06-CP05_20261013-231227.json (caso 434) | **REAL_PASS_PARCIAL** | no |
 | HU03-CP01 | F-INDIVIDUAL-CONSULTA | 2 | 7-hu03-cp01.yaml | intermediario: READY | CFG-PROCESO: READY<br>PLACA-MULTIPOLIZA: MISSING | PARCIAL (13/4/3/1/0 de 21) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP01_20261013-095835.json) | **BLOCKED** | no |
 | HU03-CP02 | F-INDIVIDUAL-CONSULTA | 1 | 2-hu03-cp02.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-AUTOS-VIGENTE: MISSING | PARCIAL (13/4/2/1/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP02_20261013-155239.json) | **BLOCKED** | no |
 | HU03-CP03 | F-INDIVIDUAL-CONSULTA | 2 | 8-hu03-cp03.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-GENERALES-VIGENTE: MISSING | PARCIAL (12/4/3/1/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP03_20261013-095835.json) | **BLOCKED** | no |
@@ -34,7 +34,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | HU03-CP05 | F-INDIVIDUAL-CONSULTA | 2 | 10-hu03-cp05.yaml | intermediario: READY | CFG-PROCESO: READY<br>TOMADOR-INEXISTENTE: MISSING | PARCIAL (10/5/3/2/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP05_20261013-095836.json) | **BLOCKED** | no |
 | HU03-CP06 | F-INDIVIDUAL-CONSULTA | 2 | 11-hu03-cp06.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-CUMPL-RCE: MISSING | PARCIAL (12/4/3/1/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP06_20261013-095836.json) | **BLOCKED** | no |
 | HU03-CP07 | F-INDIVIDUAL-CONSULTA | 2 | 12-hu03-cp07.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-CUMPL-RCE: MISSING | PARCIAL (12/4/3/1/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP07_20261013-095836.json) | **BLOCKED** | no |
-| HU03-CP08 | F-INDIVIDUAL-CONSULTA | 2 | 13-hu03-cp08.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-CUMPL-RCE: MISSING | PARCIAL (12/4/3/1/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP08_20261013-095836.json) | **BLOCKED** | no |
+| HU03-CP08 | F-INDIVIDUAL-CONSULTA | 2 | 13-hu03-cp08.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-CUMPL-RCE: MISSING | PARCIAL (12/4/3/1/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP08_20261013-231254.json) | **BLOCKED** | no |
 | HU03-CP09 | F-EXCEPCIONES | 3 | — | intermediario_alerta: READY | CFG-PROCESO: READY<br>POL-AUTOS-VIGENTE: MISSING | NO_IMPLEMENTADA (0/0/0/0/13 de 13) | NO EJECUTADO | **PREPARADO** | no |
 | HU03-CP10 | F-EXCEPCIONES | 3 | — | intermediario: READY | CFG-PROCESO: READY<br>POL-OTRO-INTERMEDIARIO: MISSING<br>DOC-SOPORTE: READY | NO_IMPLEMENTADA (0/0/0/0/16 de 16) | NO EJECUTADO | **PREPARADO** | no |
 | HU03-CP11 | F-EXCEPCIONES | 3 | — | intermediario: READY | CFG-PROCESO: READY<br>POL-INEXISTENTE-RECONSULTA: MISSING | NO_IMPLEMENTADA (0/0/0/0/20 de 20) | NO EJECUTADO | **PREPARADO** | no |
@@ -45,7 +45,8 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Requisitos:** Requirement 228991: SDE - CEL - RAD - HU06 - FRM - Inicio; Requirement 228992: SDE - CEL - RAD - HU06 - ACC - Inicio; Requirement 230836: SDE - CEL - RAD - HU06 - COM - ¿Masivo?; Requirement 230841: SDE - CEL - RAD - HU06 - ACC - Estructurar Información; Requirement 230842: SDE - CEL - RAD - HU06 - FRM - Estructurar Información; Requirement 230843: SDE - CEL - RAD - HU06 - USR - Estructurar Información; Requirement 230849: SDE - CEL - RAD - HU06 - ROL - Analista de Solicitudes
 - **Familia:** F-MASIVO-ESTRUCTURAR · **Fase:** 1 · **Prioridad:** P1
 - **Escenario:** `escenarios/3-hu06-cp01.yaml`
-- **Brechas:** BUG-01 (FUNCTIONAL_AMBIGUITY), BUG-05 (FUNCTIONAL_DEFECT), BUG-06 (FUNCTIONAL_DEFECT), BUG-03 (FUNCTIONAL_DEFECT), BUG-04 (FUNCTIONAL_DEFECT), UI-10 (UI_CAPABILITY_GAP), DATA-03 (TEST_DATA_GAP), UI-03 (UI_CAPABILITY_GAP), INT-02 (INTEGRATION_VISIBILITY_GAP), FUNC-04 (FUNCTIONAL_AMBIGUITY), FUNC-06 (FUNCTIONAL_AMBIGUITY), FUNC-10 (FUNCTIONAL_AMBIGUITY)
+- **Brechas:** BUG-01 (FUNCTIONAL_AMBIGUITY), BUG-05 (FUNCTIONAL_DEFECT), BUG-06 (FUNCTIONAL_DEFECT), BUG-03 (FUNCTIONAL_DEFECT), BUG-04 (FUNCTIONAL_DEFECT), UI-10 (UI_CAPABILITY_GAP), DATA-03 (TEST_DATA_GAP), UI-03 (UI_CAPABILITY_GAP), UI-04 (UI_CAPABILITY_GAP), INT-02 (INTEGRATION_VISIBILITY_GAP), FUNC-04 (FUNCTIONAL_AMBIGUITY), FUNC-06 (FUNCTIONAL_AMBIGUITY), FUNC-10 (FUNCTIONAL_AMBIGUITY)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P12 (mixto), P17 (mixto), P28 (mixto)
 - **Estado:** FAIL — Al menos un paso de la matriz falló.
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -86,6 +87,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-MASIVO-ESTRUCTURAR · **Fase:** 2 · **Prioridad:** P2
 - **Escenario:** `escenarios/4-hu06-cp02.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-01 (FUNCTIONAL_AMBIGUITY), BUG-03 (FUNCTIONAL_DEFECT), BUG-04 (FUNCTIONAL_DEFECT), DATA-06 (TEST_DATA_GAP), UI-03 (UI_CAPABILITY_GAP), UI-05 (UI_CAPABILITY_GAP), INT-02 (INTEGRATION_VISIBILITY_GAP), FUNC-10 (FUNCTIONAL_AMBIGUITY), UI-10 (UI_CAPABILITY_GAP)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P9 (mixto), P12 (mixto)
 - **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA INI-AUTOS-MASIVO: faltan SDE_AUTOS_MASIVO_MOVIMIENTO, SDE_AUTOS_PLACA, SDE_AUTOS_PLACA_2
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -119,6 +121,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-MASIVO-ESTRUCTURAR · **Fase:** 2 · **Prioridad:** P2
 - **Escenario:** `escenarios/5-hu06-cp03.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-03 (FUNCTIONAL_DEFECT), BUG-04 (FUNCTIONAL_DEFECT), DATA-07 (TEST_DATA_GAP), UI-03 (UI_CAPABILITY_GAP), UI-05 (UI_CAPABILITY_GAP), INT-02 (INTEGRATION_VISIBILITY_GAP), FUNC-02 (FUNCTIONAL_AMBIGUITY), OBS-11 (FUNCTIONAL_AMBIGUITY), FUNC-10 (FUNCTIONAL_AMBIGUITY), UI-10 (UI_CAPABILITY_GAP)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P9 (mixto)
 - **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA INI-CUMPL-MASIVO-SIN-RCE: faltan SDE_CUMPL_RAMO_SIN_RCE, SDE_CUMPL_POLIZA_SIN_RCE, SDE_CUMPL_RAMO_RCE, SDE_CUMPL_POLIZA_RCE
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -155,6 +158,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-MASIVO-ESTRUCTURAR · **Fase:** 2 · **Prioridad:** P2
 - **Escenario:** `escenarios/6-hu06-cp04.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-03 (FUNCTIONAL_DEFECT), BUG-04 (FUNCTIONAL_DEFECT), DATA-07 (TEST_DATA_GAP), UI-03 (UI_CAPABILITY_GAP), UI-05 (UI_CAPABILITY_GAP), INT-02 (INTEGRATION_VISIBILITY_GAP), FUNC-02 (FUNCTIONAL_AMBIGUITY), FUNC-05 (FUNCTIONAL_AMBIGUITY), OBS-11 (FUNCTIONAL_AMBIGUITY), FUNC-10 (FUNCTIONAL_AMBIGUITY), UI-10 (UI_CAPABILITY_GAP)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P9 (mixto), P15 (no automatizado)
 - **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA INI-CUMPL-MASIVO-CON-RCE: faltan SDE_CUMPL_RAMO_CON_RCE, SDE_CUMPL_MOVIMIENTO, SDE_CUMPL_POLIZA_CON_RCE, SDE_CUMPL_POLIZA_CON_RCE_2
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -189,6 +193,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-INDIVIDUAL-RUTA · **Fase:** 1 · **Prioridad:** P1
 - **Escenario:** `escenarios/1-hu06-cp05.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-10 (FUNCTIONAL_AMBIGUITY)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P9 (mixto)
 - **Estado:** REAL_PASS_PARCIAL — Sesión y caso reales, sin fallos; 3 paso(s) de la matriz no verificados directamente: P1=NOT_AUTOMATED, P6=NOT_AUTOMATED, P9=INTEGRATION_NOT_VERIFIED
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -209,6 +214,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-INDIVIDUAL-CONSULTA · **Fase:** 2 · **Prioridad:** P2
 - **Escenario:** `escenarios/7-hu03-cp01.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), DATA-08 (TEST_DATA_GAP), UI-06 (UI_CAPABILITY_GAP), UI-09 (UI_CAPABILITY_GAP), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-03 (FUNCTIONAL_AMBIGUITY)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P18 (mixto), P19 (no automatizado), P21 (mixto), P22 (mixto)
 - **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA PLACA-MULTIPOLIZA: faltan SDE_PLACA_MULTIPOLIZA, SDE_PLACA_MULTIPOLIZA_N
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -242,6 +248,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-INDIVIDUAL-CONSULTA · **Fase:** 1 · **Prioridad:** P1
 - **Escenario:** `escenarios/2-hu03-cp02.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), DATA-09 (TEST_DATA_GAP), DATA-05 (TEST_DATA_GAP), UI-01 (UI_CAPABILITY_GAP), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-03 (FUNCTIONAL_AMBIGUITY)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (mixto), P12 (integracion), P17 (mixto), P18 (no automatizado), P20 (mixto)
 - **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA POL-AUTOS-VIGENTE: faltan SDE_AUTOS_POLIZA
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -274,6 +281,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-INDIVIDUAL-CONSULTA · **Fase:** 2 · **Prioridad:** P2
 - **Escenario:** `escenarios/8-hu03-cp03.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), DATA-10 (TEST_DATA_GAP), UI-09 (UI_CAPABILITY_GAP), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-03 (FUNCTIONAL_AMBIGUITY), FUNC-08 (FUNCTIONAL_AMBIGUITY)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P17 (mixto), P18 (no automatizado), P20 (mixto), P21 (mixto)
 - **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA POL-GENERALES-VIGENTE: faltan SDE_GEN_POLIZA
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -306,6 +314,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-INDIVIDUAL-CONSULTA · **Fase:** 2 · **Prioridad:** P2
 - **Escenario:** `escenarios/9-hu03-cp04.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), DATA-11 (TEST_DATA_GAP), DATA-05 (TEST_DATA_GAP), UI-09 (UI_CAPABILITY_GAP), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-03 (FUNCTIONAL_AMBIGUITY), FUNC-08 (FUNCTIONAL_AMBIGUITY), FUNC-09 (FUNCTIONAL_AMBIGUITY)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P14 (mixto), P15 (no automatizado), P17 (no automatizado), P19 (mixto), P20 (mixto)
 - **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA TOMADOR-EXISTENTE: faltan SDE_TOMADOR_EXISTENTE_TIPO, SDE_TOMADOR_EXISTENTE_NUM
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -337,6 +346,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-INDIVIDUAL-CONSULTA · **Fase:** 2 · **Prioridad:** P2
 - **Escenario:** `escenarios/10-hu03-cp05.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), DATA-12 (TEST_DATA_GAP), DATA-05 (TEST_DATA_GAP), UI-09 (UI_CAPABILITY_GAP), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-03 (FUNCTIONAL_AMBIGUITY), FUNC-08 (FUNCTIONAL_AMBIGUITY), FUNC-09 (FUNCTIONAL_AMBIGUITY)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P14 (mixto), P15 (mixto), P16 (no automatizado), P18 (no automatizado), P20 (mixto), P21 (mixto)
 - **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA TOMADOR-INEXISTENTE: faltan SDE_TOMADOR_INEXISTENTE_TIPO, SDE_TOMADOR_INEXISTENTE_NUM
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -369,6 +379,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-INDIVIDUAL-CONSULTA · **Fase:** 2 · **Prioridad:** P2
 - **Escenario:** `escenarios/11-hu03-cp06.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), DATA-13 (TEST_DATA_GAP), UI-09 (UI_CAPABILITY_GAP), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-02 (FUNCTIONAL_AMBIGUITY), FUNC-03 (FUNCTIONAL_AMBIGUITY), FUNC-08 (FUNCTIONAL_AMBIGUITY)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P17 (mixto), P18 (no automatizado), P20 (mixto), P21 (mixto)
 - **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA POL-CUMPL-RCE: faltan SDE_CUMPL_MOVIMIENTO, SDE_CUMPL_RAMO_RCE, SDE_CUMPL_RAMO_CON_RCE, SDE_CUMPL_POLIZA_CON_RCE, SDE_CUMPL_RAMO_SIN_RCE, SDE_CUMPL_POLIZA_SIN_RCE, SDE_CUMPL_POLIZA_RCE
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -401,6 +412,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-INDIVIDUAL-CONSULTA · **Fase:** 2 · **Prioridad:** P2
 - **Escenario:** `escenarios/12-hu03-cp07.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), DATA-13 (TEST_DATA_GAP), UI-09 (UI_CAPABILITY_GAP), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-02 (FUNCTIONAL_AMBIGUITY), FUNC-03 (FUNCTIONAL_AMBIGUITY), FUNC-08 (FUNCTIONAL_AMBIGUITY)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P17 (mixto), P18 (no automatizado), P20 (mixto), P21 (mixto)
 - **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA POL-CUMPL-RCE: faltan SDE_CUMPL_MOVIMIENTO, SDE_CUMPL_RAMO_RCE, SDE_CUMPL_RAMO_CON_RCE, SDE_CUMPL_POLIZA_CON_RCE, SDE_CUMPL_RAMO_SIN_RCE, SDE_CUMPL_POLIZA_SIN_RCE, SDE_CUMPL_POLIZA_RCE
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -433,7 +445,8 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-INDIVIDUAL-CONSULTA · **Fase:** 2 · **Prioridad:** P2
 - **Escenario:** `escenarios/13-hu03-cp08.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), DATA-13 (TEST_DATA_GAP), UI-09 (UI_CAPABILITY_GAP), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-02 (FUNCTIONAL_AMBIGUITY), FUNC-03 (FUNCTIONAL_AMBIGUITY), FUNC-08 (FUNCTIONAL_AMBIGUITY)
-- **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA POL-CUMPL-RCE: faltan SDE_CUMPL_MOVIMIENTO, SDE_CUMPL_RAMO_RCE, SDE_CUMPL_RAMO_CON_RCE, SDE_CUMPL_POLIZA_CON_RCE, SDE_CUMPL_RAMO_SIN_RCE, SDE_CUMPL_POLIZA_SIN_RCE, SDE_CUMPL_POLIZA_RCE
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P17 (mixto), P18 (no automatizado), P20 (mixto), P21 (mixto)
+- **Estado:** BLOCKED (no ejecutado) — No ejecutado (causa: DATO; no es un resultado del producto). Ver bloqueos. TEST_DATA POL-CUMPL-RCE: faltan SDE_CUMPL_MOVIMIENTO, SDE_CUMPL_RAMO_RCE, SDE_CUMPL_RAMO_CON_RCE, SDE_CUMPL_POLIZA_CON_RCE, SDE_CUMPL_RAMO_SIN_RCE, SDE_CUMPL_POLIZA_SIN_RCE, SDE_CUMPL_POLIZA_RCE
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
 |---|---|---|---|---|
@@ -465,6 +478,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-EXCEPCIONES · **Fase:** 3 · **Prioridad:** P3
 - **Escenario:** sin escenario (PREPARADO: no se crea un stub)
 - **Brechas:** DATA-14 (TEST_DATA_GAP), UI-01 (UI_CAPABILITY_GAP), UI-07 (UI_CAPABILITY_GAP), INT-01 (INTEGRATION_VISIBILITY_GAP)
+- **Máximo alcanzable hoy:** SIN_ESCENARIO
 - **Estado:** PREPARADO
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -490,6 +504,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-EXCEPCIONES · **Fase:** 3 · **Prioridad:** P3
 - **Escenario:** sin escenario (PREPARADO: no se crea un stub)
 - **Brechas:** DATA-15 (TEST_DATA_GAP), UI-01 (UI_CAPABILITY_GAP), UI-08 (UI_CAPABILITY_GAP), INT-01 (INTEGRATION_VISIBILITY_GAP)
+- **Máximo alcanzable hoy:** SIN_ESCENARIO
 - **Estado:** PREPARADO
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -518,6 +533,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-EXCEPCIONES · **Fase:** 3 · **Prioridad:** P3
 - **Escenario:** sin escenario (PREPARADO: no se crea un stub)
 - **Brechas:** DATA-16 (TEST_DATA_GAP), UI-01 (UI_CAPABILITY_GAP), INT-01 (INTEGRATION_VISIBILITY_GAP), INT-03 (INTEGRATION_VISIBILITY_GAP)
+- **Máximo alcanzable hoy:** SIN_ESCENARIO
 - **Estado:** PREPARADO
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -550,6 +566,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-EXCEPCIONES · **Fase:** 3 · **Prioridad:** P3
 - **Escenario:** sin escenario (PREPARADO: no se crea un stub)
 - **Brechas:** DATA-13 (TEST_DATA_GAP), UI-01 (UI_CAPABILITY_GAP), UI-05 (UI_CAPABILITY_GAP), INT-01 (INTEGRATION_VISIBILITY_GAP), INT-03 (INTEGRATION_VISIBILITY_GAP), FUNC-02 (FUNCTIONAL_AMBIGUITY)
+- **Máximo alcanzable hoy:** SIN_ESCENARIO
 - **Estado:** PREPARADO
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |

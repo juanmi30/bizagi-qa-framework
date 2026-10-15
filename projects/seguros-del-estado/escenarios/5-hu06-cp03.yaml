@@ -62,59 +62,72 @@ pasos:
       - solo_lectura: [Línea, Ramo, Tipo de Solicitud, Sucursal, Tipo Radicación]
       - valor: { campo: Línea, igual: "${dato:INI-CUMPL-MASIVO-SIN-RCE.linea}" }
 
+  # Pop-up de la fila (P12–P23): requiere los datos de EST-FILA-CUMPL-SIN-RCE (pólizas de QA). Sin ellos cada paso queda BLOCKED por
+  # dato SIN abrir el pop-up y el recorrido sigue con las secciones (mismo patrón que HU06-CP01). Aunque lleguen los datos,
+  # la barrera UI-10/BUG-03 impide abrirlo mientras su formulario siga sin calibrar.
   - matriz: [12]
     hacer: tabla_abrir_fila
+    requiere: [EST-FILA-CUMPL-SIN-RCE]
     formulario: detalle-polizas-cumplimiento
     tabla: Detalle Polizas Asociadas
     fila: 1
 
   - matriz: [13]
     hacer: verificar
+    requiere: [EST-FILA-CUMPL-SIN-RCE]
     verificar:
       # Valor de la opción tal como se ve en el formulario de inicio ("Número de póliza", FUNC-07).
       - valor: { campo: Forma Consulta, igual: Número de póliza }
 
   - matriz: [14]
     hacer: intentar_diligenciar
+    requiere: [EST-FILA-CUMPL-SIN-RCE]
     campo: Número Póliza
     valor: ABCDEFGHI
     esperado_mostrado: ""
 
   - matriz: [15]
     hacer: intentar_diligenciar
+    requiere: [EST-FILA-CUMPL-SIN-RCE]
     campo: Número Póliza
     valor: ""
     esperado_mostrado: ""
 
   - matriz: [15]
     hacer: dialogo_confirmar
+    requiere: [EST-FILA-CUMPL-SIN-RCE]
     espera: permanece_abierto
 
   - matriz: [16]
     hacer: verificar
+    requiere: [EST-FILA-CUMPL-SIN-RCE]
     verificar:
       - visible: ¿Requiere modificar RCE?
 
   - matriz: [17, 18]
     hacer: diligenciar
+    requiere: [EST-FILA-CUMPL-SIN-RCE]
     campos:
-      - { campo: Número Póliza, valor: "${dato:INI-CUMPL-MASIVO-SIN-RCE.poliza}", tipo: texto }
+      - { campo: Número Póliza, valor: "${dato:EST-FILA-CUMPL-SIN-RCE.poliza}", tipo: texto }
       - { campo: ¿Requiere modificar RCE?, valor: "No", tipo: radio }
 
   - matriz: [18]
     hacer: dialogo_confirmar
+    requiere: [EST-FILA-CUMPL-SIN-RCE]
     espera: cierra
     fila_resultante:
-      Número Póliza: "${dato:INI-CUMPL-MASIVO-SIN-RCE.poliza}"
+      Número Póliza: "${dato:EST-FILA-CUMPL-SIN-RCE.poliza}"
 
   - matriz: [19]
     hacer: tabla_abrir_fila
+    requiere: [EST-FILA-CUMPL-SIN-RCE]
     formulario: detalle-polizas-cumplimiento
     tabla: Detalle Polizas Asociadas
     fila: 1
 
   - matriz: [19]
     hacer: diligenciar
+    requiere: [EST-FILA-CUMPL-SIN-RCE]
     campos:
       - { campo: ¿Requiere modificar RCE?, valor: Si, tipo: radio }
     verificar:
@@ -122,30 +135,35 @@ pasos:
 
   - matriz: [20]
     hacer: dialogo_confirmar
+    requiere: [EST-FILA-CUMPL-SIN-RCE]
     espera: permanece_abierto
 
   - matriz: [21]
     hacer: diligenciar
+    requiere: [EST-FILA-CUMPL-SIN-RCE]
     campos:
-      - { campo: Ramo RCE, valor: "${dato:INI-CUMPL-MASIVO-SIN-RCE.ramo_rce}", tipo: lista }
+      - { campo: Ramo RCE, valor: "${dato:EST-FILA-CUMPL-SIN-RCE.ramo_rce}", tipo: lista }
 
   - matriz: [22]
     hacer: intentar_diligenciar
+    requiere: [EST-FILA-CUMPL-SIN-RCE]
     campo: Número Póliza RCE
     valor: ABCDEFGHI
     esperado_mostrado: ""
 
   - matriz: [21]
     hacer: diligenciar
+    requiere: [EST-FILA-CUMPL-SIN-RCE]
     campos:
-      - { campo: Número Póliza RCE, valor: "${dato:INI-CUMPL-MASIVO-SIN-RCE.poliza_rce}", tipo: texto }
+      - { campo: Número Póliza RCE, valor: "${dato:EST-FILA-CUMPL-SIN-RCE.poliza_rce}", tipo: texto }
 
   - matriz: [23]
     hacer: dialogo_confirmar
+    requiere: [EST-FILA-CUMPL-SIN-RCE]
     espera: cierra
     fila_resultante:
-      Número Póliza RCE: "${dato:INI-CUMPL-MASIVO-SIN-RCE.poliza_rce}"
-      Ramo RCE: "${dato:INI-CUMPL-MASIVO-SIN-RCE.ramo_rce}"
+      Número Póliza RCE: "${dato:EST-FILA-CUMPL-SIN-RCE.poliza_rce}"
+      Ramo RCE: "${dato:EST-FILA-CUMPL-SIN-RCE.ramo_rce}"
 
   - incluir: estructurar-secciones
     con: { p_pestanas: [25], p_observaciones: [24] }

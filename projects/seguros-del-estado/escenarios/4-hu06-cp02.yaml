@@ -1,7 +1,7 @@
 # HU06-CP02 — Radicación Masiva Autos y estructuración por Placa  (Fase 2, familia F-MASIVO-ESTRUCTURAR)
 # Fuente: fuentes/20260928_SDE_CEL_V1_Casos de Prueba_HU06.xlsx, hoja CP02 (22 pasos).
-# Actores según el manifest: radica el INTERMEDIARIO y estructura el ANALISTA. Con ENV-03 vigente (2026-10-13) el
-# intermediario no tiene el proceso: nuevo_caso queda BLOCKED (ambiente). No se sustituye por el analista.
+# Actores según el manifest: radica el INTERMEDIARIO y estructura el ANALISTA. ENV-03 resuelto para INT-013403 (verificado
+# el 2026-10-15 con @habilitacion): el intermediario sí inicia el proceso.
 # Calibración:
 #  - formulario de inicio, ruta Masiva, Estructurar información, columnas de la grilla y pestañas: VERIFICADO en QA;
 #  - pop-up de la fila: abre (caso 426, Generales). Etiquetas propias de Autos ("Placa") [PENDIENTE];
@@ -71,20 +71,33 @@ pasos:
       - valor: { campo: Tipo Radicación, igual: "${dato:INI-AUTOS-MASIVO.tipo_radicacion}" }
       - visible: Información a Consultar
 
+  # Estructura de la grilla: siempre. Que el Worker AI deje filas estructuradas exige una narrativa con pólizas REALES de QA
+  # (NARRATIVA-REAL-AUTOS); con la narrativa sintética el resultado no es concluyente (2026-10-15: caso 637 con 1 fila, 638 con 0).
+  # Sin ese dato el paso queda BLOCKED por dato (no FAIL) y el recorrido sigue.
   - matriz: [12]
     hacer: tabla_verificar
     tabla: Detalle Polizas Asociadas
-    minimo_filas: 1
     columnas: [Forma Consulta, Placa, Número Póliza]
 
+  - matriz: [12]
+    hacer: tabla_verificar
+    requiere: [NARRATIVA-REAL-AUTOS]
+    tabla: Detalle Polizas Asociadas
+    minimo_filas: 1
+
+  # Pop-up de la fila (P13–P21): requiere los datos de EST-FILA-AUTOS-PLACA (placas de QA). Sin ellos cada paso queda
+  # BLOCKED por dato SIN abrir el pop-up y el recorrido sigue con P22 (mismo patrón que HU06-CP01). Aunque lleguen los datos,
+  # la barrera UI-10/BUG-03 impide abrirlo mientras detalle-polizas-autos siga sin calibrar.
   - matriz: [13]
     hacer: tabla_abrir_fila
+    requiere: [EST-FILA-AUTOS-PLACA]
     formulario: detalle-polizas-autos
     tabla: Detalle Polizas Asociadas
     fila: 1
 
   - matriz: [14, 15]
     hacer: verificar
+    requiere: [EST-FILA-AUTOS-PLACA]
     verificar:
       # [PENDIENTE] en Autos se espera la Forma de Consulta por Placa (la matriz la condiciona a la configuración del caso).
       - valor: { campo: Forma Consulta, igual: Placa }
@@ -94,34 +107,40 @@ pasos:
 
   - matriz: [16]
     hacer: intentar_diligenciar
+    requiere: [EST-FILA-AUTOS-PLACA]
     campo: Placa
     valor: ""
     esperado_mostrado: ""
 
   - matriz: [16]
     hacer: dialogo_confirmar
+    requiere: [EST-FILA-AUTOS-PLACA]
     espera: permanece_abierto
 
   - matriz: [18]
     hacer: intentar_diligenciar
+    requiere: [EST-FILA-AUTOS-PLACA]
     campo: Placa
     valor: ABC1234
     esperado_mostrado: ABC123
 
   - matriz: [17]
     hacer: intentar_diligenciar
+    requiere: [EST-FILA-AUTOS-PLACA]
     campo: Placa
-    valor: "${dato:INI-AUTOS-MASIVO.placa}"
-    esperado_mostrado: "${dato:INI-AUTOS-MASIVO.placa}"
+    valor: "${dato:EST-FILA-AUTOS-PLACA.placa}"
+    esperado_mostrado: "${dato:EST-FILA-AUTOS-PLACA.placa}"
 
   - matriz: [17, 19]
     hacer: dialogo_confirmar
+    requiere: [EST-FILA-AUTOS-PLACA]
     espera: cierra
     fila_resultante:
-      Placa: "${dato:INI-AUTOS-MASIVO.placa}"
+      Placa: "${dato:EST-FILA-AUTOS-PLACA.placa}"
 
   - matriz: [20]
     hacer: tabla_agregar
+    requiere: [EST-FILA-AUTOS-PLACA]
     formulario: detalle-polizas-autos
     tabla: Detalle Polizas Asociadas
     verificar:
@@ -129,14 +148,16 @@ pasos:
 
   - matriz: [21]
     hacer: diligenciar
+    requiere: [EST-FILA-AUTOS-PLACA]
     campos:
-      - { campo: Placa, valor: "${dato:INI-AUTOS-MASIVO.placa_nueva_fila}", tipo: texto }
+      - { campo: Placa, valor: "${dato:EST-FILA-AUTOS-PLACA.placa_nueva_fila}", tipo: texto }
 
   - matriz: [21]
     hacer: dialogo_confirmar
+    requiere: [EST-FILA-AUTOS-PLACA]
     espera: cierra
     fila_resultante:
-      Placa: "${dato:INI-AUTOS-MASIVO.placa_nueva_fila}"
+      Placa: "${dato:EST-FILA-AUTOS-PLACA.placa_nueva_fila}"
 
   - incluir: estructurar-secciones
     con: { p_pestanas: [22], p_observaciones: [22] }

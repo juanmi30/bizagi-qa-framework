@@ -1,6 +1,8 @@
 import { test, expect, type TestInfo } from '@playwright/test';
+import { resolve } from 'node:path';
 import { generarUnico } from '../../../shared/runner/scenarioLoader';
 import { adquirirBloqueo, BloqueoOcupadoError, type Bloqueo } from '../../../shared/utils/BloqueoArchivo';
+import { HistorialCasos } from '../../../shared/utils/HistorialCasos';
 import { cargarRegistro } from './datos';
 import { cargarEscenario, EscenarioError } from './escenario';
 import { crearContexto, ejecutarEscenario, preflight, reporteBloqueado } from './ejecutor';
@@ -76,6 +78,21 @@ export function activacionE2e(env: Record<string, string | undefined>): string[]
     : ['ENVIRONMENT: SDE_E2E=1 no definida — las verticales reales crean casos en QA y exigen activación explícita (P-06).'];
 }
 
+/**
+ * P-17, contra la acumulación: mientras el cierre de casos SDE no esté validado, cada caso creado queda pendiente. Con
+ * SDE_MAX_CASOS_PENDIENTES=<n> una vertical NO crea otro caso si ya hay n o más pendientes propios (BLOCKED por
+ * CONFIGURACION antes de tocar QA). Sin la variable solo se informa: el umbral lo acuerda QA. Valor inválido → bloquea.
+ */
+export function limiteCasosPendientes(env: Record<string, string | undefined>, pendientes: number): string[] {
+  const valor = env.SDE_MAX_CASOS_PENDIENTES?.trim();
+  if (!valor) return [];
+  const limite = Number(valor);
+  if (!Number.isInteger(limite) || limite < 0) return [`ENVIRONMENT: SDE_MAX_CASOS_PENDIENTES="${valor}" no es un entero >= 0 (P-17).`];
+  return pendientes >= limite
+    ? [`ENVIRONMENT: hay ${pendientes} casos SDE propios pendientes de cierre y el límite es ${limite} (SDE_MAX_CASOS_PENDIENTES, P-17): no se crean más hasta el cleanup.`]
+    : [];
+}
+
 export interface OpcionesVerticales { titulo: string; etiquetas: string[]; prefijoReporte: string; prefijoMotivo: string }
 
 export function registrarVerticales(rutas: string[], o: OpcionesVerticales = { titulo: '[SDE]', etiquetas: [], prefijoReporte: '', prefijoMotivo: '' }): void {
@@ -105,6 +122,10 @@ export function registrarVerticales(rutas: string[], o: OpcionesVerticales = { t
       };
       const faltantes = [...activacionE2e(process.env), ...preflight(s, registro, process.env)];
       if (faltantes.length) return bloqueados(faltantes);
+      const pendientes = (await new HistorialCasos({ proyecto: 'seguros-del-estado', directorioBase: resolve(__dirname, '..', '..', '..') }).listarPendientes()).length;
+      testInfo.annotations.push({ type: 'P-17', description: `Casos SDE propios pendientes de cierre antes de esta corrida: ${pendientes}` });
+      const excesoPendientes = limiteCasosPendientes(process.env, pendientes);
+      if (excesoPendientes.length) return bloqueados(excesoPendientes);
 
       // H6: una sola ejecución real de SDE a la vez (casos reales, histórico y reportes compartidos), aunque se pase
       // --workers>1 o se abran dos terminales. Por defecto no espera: el CP queda BLOCKED por CONCURRENCIA.

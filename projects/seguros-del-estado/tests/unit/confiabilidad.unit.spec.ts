@@ -13,7 +13,7 @@ import { cargarManifest } from '../../sde/manifest';
 import { maximoAlcanzable, pendientesParaRealPass } from '../../sde/metricas';
 import { RUTA_BLOQUEO_EJECUCION_REAL } from '../../sde/registro';
 import { generarTrazabilidad } from '../../sde/trazabilidad';
-import { activacionE2e } from '../../sde/verticales';
+import { activacionE2e, limiteCasosPendientes } from '../../sde/verticales';
 
 /** Fase "confiabilidad SDE-CEL": H4 (causas), H6 (concurrencia) y H7 (pendientes de REAL_PASS). Sin QA ni navegador. */
 
@@ -181,6 +181,27 @@ test.describe('P-06 — activación explícita de las verticales reales (aprobad
     // registrarVerticales es la última función del archivo: su adquisición del bloqueo es la última aparición.
     expect(iActivacion).toBeLessThan(fuente.lastIndexOf('adquirirBloqueo(RUTA_BLOQUEO_EJECUCION_REAL'));
     expect(fuente).toContain('const faltantes = [...activacionE2e(process.env), ...preflight(s, registro, process.env)];');
+  });
+});
+
+test.describe('P-17 — límite contra la acumulación de casos pendientes @unit', () => {
+  test('sin SDE_MAX_CASOS_PENDIENTES solo se informa; con el límite alcanzado la vertical queda BLOCKED por CONFIGURACION', () => {
+    expect(limiteCasosPendientes({}, 500)).toEqual([]);
+    expect(limiteCasosPendientes({ SDE_MAX_CASOS_PENDIENTES: '20' }, 19)).toEqual([]);
+    for (const [env, n] of [[{ SDE_MAX_CASOS_PENDIENTES: '20' }, 20], [{ SDE_MAX_CASOS_PENDIENTES: ' 0 ' }, 0], [{ SDE_MAX_CASOS_PENDIENTES: 'x' }, 0], [{ SDE_MAX_CASOS_PENDIENTES: '-1' }, 0]] as const) {
+      const b = limiteCasosPendientes(env, n);
+      expect(b, JSON.stringify(env)).toHaveLength(1);
+      expect(causaDeBloqueo(b[0])).toBe('CONFIGURACION');
+    }
+    const r = reporteBloqueado(cp05, crearContexto(reg, ENV, 'u'), limiteCasosPendientes({ SDE_MAX_CASOS_PENDIENTES: '1' }, 19));
+    expect(r).toMatchObject({ estado: 'BLOCKED', causas: ['CONFIGURACION'], numero_caso: null });
+  });
+
+  test('el runner aplica el límite DESPUÉS de P-06/preflight y ANTES del bloqueo de ejecución real (no crea casos)', () => {
+    const fuente = readFileSync(resolve(__dirname, '..', '..', 'sde', 'verticales.ts'), 'utf8');
+    const iLimite = fuente.indexOf('limiteCasosPendientes(process.env, pendientes)');
+    expect(iLimite).toBeGreaterThan(fuente.indexOf('...activacionE2e(process.env)'));
+    expect(iLimite).toBeLessThan(fuente.lastIndexOf('adquirirBloqueo(RUTA_BLOQUEO_EJECUCION_REAL'));
   });
 });
 

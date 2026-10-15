@@ -1,4 +1,5 @@
-import type { BrowserContext, Page } from '@playwright/test';
+import type { BrowserContext, Page, Route } from '@playwright/test';
+import { randomUUID } from 'node:crypto';
 import { SdeObjects } from '../baseObjects/sde.objects';
 
 /**
@@ -90,8 +91,29 @@ export interface RegistroSoloLectura {
   red: string[];
   /** Nombres de acciones permitidas dentro del formulario de inicio identificado (para calibrar; sin datos). */
   observadas: string[];
-  /** Estado compartido con las capacidades: true solo con evidencia positiva de estar en el formulario de inicio. */
-  estado: { formularioInicio: boolean };
+  estado: {
+    /**
+     * Instalación de la protección (hallazgo B): solo 'completa' cuando TODAS las partes quedaron instaladas. En
+     * 'instalando' o 'fallida' la red aborta toda acción y las capacidades se niegan a operar (fallo cerrado).
+     */
+    proteccion: 'instalando' | 'completa' | 'fallida';
+    /**
+     * Permiso TEMPORAL de precreación (hallazgo A): token puesto en el elemento EXACTO del diálogo de inicio identificado.
+     * Solo vale mientras ESE elemento siga conectado, visible y siendo el diálogo de inicio; se comprueba en cada solicitud.
+     * null = sin permiso. Una vez revocado no se reutiliza: volver a un formulario exige una nueva identificación.
+     */
+    precreacion: { token: string } | null;
+  };
+  /** Interceptores de red registrados en el contexto (debe ser 1: sin duplicados aunque se reintente la instalación). */
+  rutas: number;
+}
+
+/** La protección de solo lectura no quedó instalada por completo: la inspección no puede continuar (nunca es un defecto de Bizagi). */
+export class ProteccionNoInstaladaError extends Error {
+  constructor(detalle: string) {
+    super(`PROTECCIÓN SOLO LECTURA NO INSTALADA: ${detalle}`);
+    this.name = 'ProteccionNoInstaladaError';
+  }
 }
 
 /** Nombres de acción (MAYÚSCULAS) presentes en el cuerpo de una petición de acciones de Bizagi. Nunca devuelve valores. */
@@ -151,37 +173,99 @@ export async function bloqueosDom(page: Page): Promise<string[]> {
   return page.evaluate(() => (window as unknown as { __sdeSoloLectura?: { bloqueados: string[] } }).__sdeSoloLectura?.bloqueados ?? []);
 }
 
-/**
- * Protege un CONTEXTO del navegador en solo lectura: guardia DOM para todas sus páginas (presentes y futuras) y guardia de
- * red sobre las acciones de Bizagi. Devuelve el registro (abortadas, observadas) y el estado compartido de evidencia.
- */
 const registros = new WeakMap<BrowserContext, RegistroSoloLectura>();
+const enCurso = new WeakMap<BrowserContext, Promise<RegistroSoloLectura>>();
+const conScriptDeInicio = new WeakSet<BrowserContext>();
+const ATRIBUTO_PRECREACION = 'data-sde-precreacion';
 
-/** Registro de solo lectura de un contexto protegido (undefined si el contexto no está en solo lectura). */
+/** Registro de solo lectura de un contexto (undefined si nunca se intentó protegerlo). */
 export function registroDe(contexto: BrowserContext): RegistroSoloLectura | undefined {
   return registros.get(contexto);
 }
 
+/**
+ * ¿Sigue vigente el permiso de precreación EN ESTE MOMENTO? Exige que el elemento exacto marcado al identificar el formulario
+ * siga en el documento, visible y siendo el diálogo de inicio. Cualquier otra cosa (navegación, diálogo cerrado u oculto,
+ * contenido de la SPA reemplazado, error al comprobar) lo REVOCA de forma definitiva y devuelve false (hallazgo A).
+ */
+export async function precreacionVigente(page: Page, registro: RegistroSoloLectura): Promise<boolean> {
+  const permiso = registro.estado.precreacion;
+  if (!permiso) return false;
+  const vigente = await page.evaluate(({ atributo, token, selector }) => {
+    const el = document.querySelector(`[${atributo}="${token}"]`);
+    if (!el || !el.isConnected || !el.matches(selector)) return false;
+    const r = el.getBoundingClientRect();
+    const st = getComputedStyle(el);
+    return r.width > 0 && r.height > 0 && st.visibility !== 'hidden' && st.display !== 'none';
+  }, { atributo: ATRIBUTO_PRECREACION, token: permiso.token, selector: SdeObjects.dialogoInicio }).catch(() => false);
+  if (!vigente && registro.estado.precreacion === permiso) registro.estado.precreacion = null;
+  return vigente;
+}
+
+/** Concede un permiso NUEVO de precreación al diálogo de inicio visible y único de la página (token propio, no reutilizable). */
+export async function concederPrecreacion(page: Page, registro: RegistroSoloLectura): Promise<void> {
+  registro.estado.precreacion = null;
+  const dialogos = page.locator(SdeObjects.dialogoInicio).filter({ visible: true });
+  if ((await dialogos.count()) !== 1) throw new Error('No hay evidencia del formulario de inicio: su diálogo no está visible o no es único.');
+  const token = randomUUID();
+  await dialogos.first().evaluate((el, [atributo, t]) => el.setAttribute(atributo, t), [ATRIBUTO_PRECREACION, token] as const);
+  registro.estado.precreacion = { token };
+}
+
+/**
+ * Protege un CONTEXTO del navegador en solo lectura: guardia de red sobre las acciones de Bizagi y guardia DOM para sus
+ * páginas (presentes y futuras). Instalación CONSISTENTE (hallazgo B): el interceptor de red es lo primero y se registra una
+ * sola vez; mientras la protección no esté 'completa' ese interceptor aborta toda acción. Solo se marca 'completa' al
+ * terminar TODAS las partes; si una falla queda 'fallida' (la red sigue abortando) y se lanza ProteccionNoInstaladaError.
+ * Un reintento completa lo que faltó sin duplicar el interceptor; una protección ya completa se devuelve tal cual.
+ */
 export async function protegerSoloLectura(contexto: BrowserContext): Promise<RegistroSoloLectura> {
   const previo = registros.get(contexto);
-  if (previo) return previo;
-  const registro: RegistroSoloLectura = { red: [], observadas: [], estado: { formularioInicio: false } };
-  registros.set(contexto, registro);
-  await contexto.addInitScript(guardiaDom, SELECTOR_ESCRITURA);
-  for (const p of contexto.pages()) await instalarGuardiaDom(p).catch(() => undefined); // página sin documento aún: la cubre el script de inicio
-  await contexto.route(`**${SdeObjects.rutaAcciones}*`, async (route) => {
-    if (route.request().method() === 'GET') return route.fallback();
-    const cuerpo = route.request().postData() ?? '';
-    const acciones = accionesDeCuerpo(cuerpo);
-    const prohibida = ACCIONES_RED_ESCRITURA.find((a) => cuerpo.includes(a));
-    // Fuera del formulario de inicio identificado, TODA acción se aborta: SUBMITDATA sobre un caso existente persiste y
-    // una acción desconocida no se presume segura (F1). Dentro, solo las escrituras verificadas.
-    if (prohibida || !registro.estado.formularioInicio) {
-      registro.red.push(...(prohibida ? [prohibida] : acciones.length ? acciones : ['SIN_NOMBRE']));
-      return route.abort('blockedbyclient');
+  if (previo?.estado.proteccion === 'completa') return previo;
+  const pendiente = enCurso.get(contexto);
+  if (pendiente) return pendiente;
+  const intento = instalar(contexto, previo).finally(() => enCurso.delete(contexto));
+  enCurso.set(contexto, intento);
+  return intento;
+}
+
+async function instalar(contexto: BrowserContext, previo: RegistroSoloLectura | undefined): Promise<RegistroSoloLectura> {
+  const registro: RegistroSoloLectura = previo ?? { red: [], observadas: [], estado: { proteccion: 'instalando', precreacion: null }, rutas: 0 };
+  registro.estado.proteccion = 'instalando';
+  registros.set(contexto, registro); // visible como NO completa: capacidades y red fallan cerrado durante la instalación
+  try {
+    if (registro.rutas === 0) {
+      await contexto.route(`**${SdeObjects.rutaAcciones}*`, (route) => interceptar(route, registro));
+      registro.rutas++;
     }
-    for (const a of acciones) if (!registro.observadas.includes(a)) registro.observadas.push(a);
-    return route.fallback();
-  });
-  return registro;
+    if (!conScriptDeInicio.has(contexto)) {
+      await contexto.addInitScript(guardiaDom, SELECTOR_ESCRITURA);
+      conScriptDeInicio.add(contexto);
+    }
+    for (const p of contexto.pages()) await instalarGuardiaDom(p);
+    registro.estado.proteccion = 'completa';
+    return registro;
+  } catch (e) {
+    registro.estado.proteccion = 'fallida';
+    throw new ProteccionNoInstaladaError(`${(e as Error).message.split('\n')[0]} — el contexto queda NO protegido: la red aborta toda acción y la inspección de solo lectura se detiene.`);
+  }
+}
+
+async function interceptar(route: Route, registro: RegistroSoloLectura): Promise<void> {
+  if (route.request().method() === 'GET') return route.fallback();
+  const cuerpo = route.request().postData() ?? '';
+  const acciones = accionesDeCuerpo(cuerpo);
+  const abortar = (motivo: string[]) => { registro.red.push(...motivo); return route.abort('blockedbyclient'); };
+  const nombres = acciones.length ? acciones : ['SIN_NOMBRE'];
+  // Instalación incompleta o fallida: nada pasa (hallazgo B).
+  if (registro.estado.proteccion !== 'completa') return abortar(nombres);
+  const prohibida = ACCIONES_RED_ESCRITURA.find((a) => cuerpo.includes(a));
+  if (prohibida) return abortar([prohibida]);
+  // Fuera del formulario de inicio VIGENTE (comprobado ahora, en la página que hace la solicitud), toda acción se aborta:
+  // SUBMITDATA sobre un caso existente persiste y una acción desconocida no se presume segura (F1, hallazgo A).
+  let pagina: Page | undefined;
+  try { pagina = route.request().frame().page(); } catch { pagina = undefined; }
+  if (!pagina || !(await precreacionVigente(pagina, registro))) return abortar(nombres);
+  for (const a of acciones) if (!registro.observadas.includes(a)) registro.observadas.push(a);
+  return route.fallback();
 }

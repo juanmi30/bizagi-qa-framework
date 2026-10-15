@@ -59,6 +59,8 @@ export function causaDeExcepcion(e: unknown): CausaPaso {
   if (/^NO VERIFICABLE:/.test(m)) return 'AUTOMATIZACION';
   // Verificación sin evidencia suficiente (pantalla no identificada o vacía): nunca aprobada ni atribuida al producto (R1).
   if (nombre === 'NoConcluyenteError' || /^NO CONCLUYENTE:/.test(m)) return 'AUTOMATIZACION';
+  // La protección de solo lectura no quedó instalada: la inspección se detiene (falla técnica, nunca defecto de Bizagi).
+  if (nombre === 'ProteccionNoInstaladaError' || /^PROTECCIÓN SOLO LECTURA NO INSTALADA:/.test(m)) return 'AUTOMATIZACION';
   if (/Bizagi rechazó|no ofrece ninguna opción|ruta NO esperada|no quedó marcada|el formulario muestra .* tras diligenciar|se confirmó sin los campos obligatorios|no muestra "/.test(m)) return 'PRODUCTO_POR_CONFIRMAR';
   return 'NO_CLASIFICADO';
 }

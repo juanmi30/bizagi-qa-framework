@@ -9,7 +9,9 @@ import type { CampoSde, PasoSde, Verificacion } from './escenario';
 import { EntornoError, type Capacidad, type ContextoEjecucion, type Verificador } from './ejecutor';
 import { autorizarAperturaPopup, cargarPopups, type RegistroPopups } from './popups';
 import { cargarPresentacion } from './presentacion';
-import { exigirSoloLectura, OPERACIONES, protegerSoloLectura, registroDe, type RegistroSoloLectura } from './soloLectura';
+import {
+  concederPrecreacion, exigirSoloLectura, OPERACIONES, precreacionVigente, ProteccionNoInstaladaError, protegerSoloLectura, registroDe, type RegistroSoloLectura,
+} from './soloLectura';
 import { aplicarReglasOrtograficas, compararConAprobado, revisarOrden } from '../../../shared/utils/ValidacionesPresentacion';
 import {
   CalibracionError, NoConcluyenteError, adjuntar, botonesVisibles, campo, diligenciar, esObligatorio, esperarCarga, estaSoloLectura,
@@ -55,22 +57,23 @@ const ambitoActual = (ui: UiEntorno): Ambito => ui.dialogo ?? paginaActual(ui);
 
 /**
  * Evidencia POSITIVA de estar en el formulario de inicio sin caso (P-15/F2). Solo se marca si el diálogo de inicio está
- * visible y es único; la comparten el contexto de ejecución (capa de capacidades) y la guardia de red del navegador.
+ * visible y es único. En solo lectura concede un permiso NUEVO ligado a ESE elemento del diálogo (token): la guardia de red y
+ * la capa de capacidades lo revalidan en cada uso y caduca en cuanto el diálogo deja de estar (hallazgo A).
  */
 export async function marcarFormularioInicio(page: Page, ctx: { formularioInicio?: boolean }): Promise<void> {
   if ((await page.locator(SdeObjects.dialogoInicio).filter({ visible: true }).count()) !== 1) {
     throw new Error('No hay evidencia del formulario de inicio: su diálogo no está visible (no se marca precreación).');
   }
-  ctx.formularioInicio = true;
   const registro = registroDe(page.context());
-  if (registro) registro.estado.formularioInicio = true;
+  if (registro) await concederPrecreacion(page, registro);
+  ctx.formularioInicio = true;
 }
 
-/** Retira la evidencia: a partir de aquí no se está en el formulario de inicio (red y capacidades vuelven a denegar). */
+/** Retira la evidencia y el permiso: a partir de aquí no se está en el formulario de inicio (red y capacidades deniegan). */
 export function salirDeFormularioInicio(page: Page, ctx: { formularioInicio?: boolean }): void {
   ctx.formularioInicio = false;
   const registro = registroDe(page.context());
-  if (registro) registro.estado.formularioInicio = false;
+  if (registro) registro.estado.precreacion = null;
 }
 
 /**
@@ -187,7 +190,6 @@ async function confirmarDialogo(dialogo: Locator): Promise<void> {
 }
 
 export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string, Capacidad>; verificar: Verificador } {
-  const protegidos = new WeakSet<BrowserContext>();
   const verificar: Verificador = async (v: Verificacion, ctx: ContextoEjecucion) => {
     const amb = ambitoActual(ui);
     const page = paginaActual(ui);
@@ -305,9 +307,11 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
         }
         ui.paginas.set(actor, page);
       }
-      if (ui.soloLectura && !protegidos.has(page.context())) {
-        protegidos.add(page.context());
-        (ui.registroSoloLectura ??= []).push(await protegerSoloLectura(page.context()));
+      if (ui.soloLectura) {
+        // Instalación consistente (hallazgo B): si falla, ProteccionNoInstaladaError detiene la inspección ANTES del login;
+        // el contexto solo cuenta como protegido cuando la protección quedó completa (un reintento la completa).
+        const registro = await protegerSoloLectura(page.context());
+        if (!(ui.registroSoloLectura ??= []).includes(registro)) ui.registroSoloLectura.push(registro);
       }
       rastrearAcciones(page); // habilita la espera de "forma quieta" (re-ejecución de reglas Bizagi)
       salirDeFormularioInicio(page, ctx); // una sesión nueva no está en ningún formulario de inicio
@@ -727,11 +731,18 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
   if (ui.soloLectura) {
     for (const [nombre, cap] of Object.entries(capacidades)) {
       capacidades[nombre] = async (p, ctx) => {
-        // Escribir en el formulario de inicio exige que la evidencia siga vigente: el diálogo de inicio debe estar visible.
-        // Ante la duda (se cerró, otra pantalla), se retira la evidencia y la política deniega (F2).
-        if (OPERACIONES[nombre]?.clase === 'formulario_inicio' && ctx.formularioInicio) {
+        if (nombre !== 'iniciar_sesion') {
+          // Ninguna capacidad corre sobre un contexto cuya protección no quedó COMPLETA (hallazgo B): se detiene.
           const pagina = paginaActual(ui);
-          if ((await pagina.locator(SdeObjects.dialogoInicio).filter({ visible: true }).count()) !== 1) salirDeFormularioInicio(pagina, ctx);
+          const registro = registroDe(pagina.context());
+          if (registro?.estado.proteccion !== 'completa') {
+            throw new ProteccionNoInstaladaError(`estado "${registro?.estado.proteccion ?? 'sin instalar'}" del contexto; "${nombre}" no se ejecuta.`);
+          }
+          // Escribir en el formulario de inicio exige el permiso VIGENTE (mismo diálogo, visible, ahora). Si caducó, se
+          // retira la evidencia y la política deniega (F2, hallazgo A).
+          if (OPERACIONES[nombre]?.clase === 'formulario_inicio' && ctx.formularioInicio && !(await precreacionVigente(pagina, registro))) {
+            salirDeFormularioInicio(pagina, ctx);
+          }
         }
         exigirSoloLectura(nombre, ctx);
         return cap(p, ctx);

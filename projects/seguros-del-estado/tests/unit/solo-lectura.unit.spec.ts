@@ -5,7 +5,7 @@ import { cargarRegistro } from '../../sde/datos';
 import { CAPACIDADES, type EscenarioSde, type PasoSde } from '../../sde/escenario';
 import { crearContexto, ejecutarEscenario, CAPACIDADES_DECLARATIVAS } from '../../sde/ejecutor';
 import { crearCapacidadesUi, marcarFormularioInicio, type UiEntorno } from '../../sde/capacidades';
-import { bloqueosDom, exigirSoloLectura, OPERACIONES, protegerSoloLectura, SoloLecturaError, type RegistroSoloLectura } from '../../sde/soloLectura';
+import { bloqueosDom, exigirSoloLectura, OPERACIONES, ProteccionNoInstaladaError, protegerSoloLectura, registroDe, SoloLecturaError, type RegistroSoloLectura } from '../../sde/soloLectura';
 
 /**
  * P-15 corregido (auditoría de Work del PR #3, F1–F4). Dos modalidades: inspección de SOLO LECTURA (estricta) y ejecución
@@ -122,7 +122,7 @@ test.describe('P-15 — F2: evidencia positiva del formulario de inicio @unit', 
     const ctx = crearContexto(reg, ENV, 'u');
     await marcarFormularioInicio(page, ctx); // lo que hace nuevo_caso al confirmar el diálogo
     expect(ctx.formularioInicio).toBe(true);
-    expect(registro!.estado.formularioInicio).toBe(true);
+    expect(registro!.estado.precreacion).not.toBeNull();
     await capacidades.diligenciar(P([4], 'diligenciar', { campos: [{ campo: 'Línea', valor: 'Autos' }] }), ctx);
     await expect.poll(() => servidor.filter((c) => c.includes('SUBMITDATA')).length).toBe(1);
     expect(await post(page, JSON.stringify([{ action: 'CREATENEWCASE' }]))).toBe('BLOQUEADO');
@@ -131,7 +131,7 @@ test.describe('P-15 — F2: evidencia positiva del formulario de inicio @unit', 
     // El diálogo desaparece (otra pantalla): la evidencia caduca y la política vuelve a denegar.
     await page.evaluate(() => document.querySelector('.ui-bizagi-start-form-dialog')!.remove());
     await expect(capacidades.diligenciar(P([4], 'diligenciar', { campos: [{ campo: 'Línea', valor: 'X' }] }), ctx)).rejects.toThrow(/sin evidencia positiva/);
-    expect(registro!.estado.formularioInicio).toBe(false);
+    expect(registro!.estado.precreacion).toBeNull();
   });
 });
 
@@ -254,7 +254,189 @@ test.describe('P-15 — F3: la modalidad declarada coincide con la protección i
 
   test('iniciar_sesion instala la protección efectiva (DOM + red) cuando el UI es de solo lectura', () => {
     const fuente = readFileSync(resolve(__dirname, '..', '..', 'sde', 'capacidades.ts'), 'utf8');
-    expect(fuente).toMatch(/if \(ui\.soloLectura && !protegidos\.has\(page\.context\(\)\)\) \{[\s\S]{0,200}protegerSoloLectura\(page\.context\(\)\)/);
+    expect(fuente).toMatch(/if \(ui\.soloLectura\) \{[\s\S]{0,300}const registro = await protegerSoloLectura\(page\.context\(\)\);/);
     expect(fuente).toContain('await marcarFormularioInicio(page, ctx); // evidencia POSITIVA de precreación');
+  });
+});
+
+// ------------------------------------------------------------------------------------------------------------------------
+// Auditoría final de Work sobre el PR #3. Las ediciones salen de Playwright DIRECTO (sin pasar por ninguna capacidad): la
+// guardia de red debe decidir con la evidencia ACTUAL del formulario de inicio y con una instalación COMPLETA.
+const submits = (servidor: string[]) => servidor.filter((c) => c.includes('SUBMITDATA')).length;
+const FORM_ACTIVIDAD = FORMULARIO.replace(/id="(linea|ramo|archivo)"/g, 'id="$1-caso"');
+
+test.describe('P-15 — hallazgo A: el permiso de precreación depende de la evidencia ACTUAL @unit', () => {
+  test('A1. precreación válida con el diálogo presente: el autoguardado sale; Crear y alta de filas siguen bloqueados', async ({ page, context }) => {
+    const { servidor } = await portal(context, page, { protegido: true, html: INICIO });
+    await marcarFormularioInicio(page, crearContexto(reg, ENV, 'u'));
+    await page.locator('#linea').fill('Autos');
+    await page.locator('#linea').press('Tab');
+    await expect.poll(() => submits(servidor)).toBe(1);
+    expect(await post(page, JSON.stringify([{ action: 'CREATENEWCASE' }]))).toBe('BLOQUEADO');
+    expect(await post(page, JSON.stringify([{ action: 'ADDRELATIONWITHDATA' }]))).toBe('BLOQUEADO');
+  });
+
+  test('A2. navegación a un caso existente y fill directo con autoguardado: SUBMITDATA NO llega (antes llegaba)', async ({ page, context }) => {
+    const { servidor, registro } = await portal(context, page, { protegido: true, html: INICIO });
+    await marcarFormularioInicio(page, crearContexto(reg, ENV, 'u'));
+    await context.route(`${ORIGEN}caso/571`, (r) => r.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: ACTIVIDAD }));
+    await page.goto(`${ORIGEN}caso/571`);
+    await page.locator('#linea').fill('Autos');
+    await page.locator('#linea').press('Tab');
+    await expect.poll(() => efectos(page)).toEqual(['submit-abortado']);
+    expect(submits(servidor)).toBe(0);
+    expect(registro!.estado.precreacion).toBeNull();
+  });
+
+  test('A3. el diálogo desaparece SIN navegación y selectOption directo: SUBMITDATA bloqueado', async ({ page, context }) => {
+    const { servidor, registro } = await portal(context, page, { protegido: true, html: INICIO });
+    await marcarFormularioInicio(page, crearContexto(reg, ENV, 'u'));
+    await page.evaluate((html) => { document.querySelector('.ui-bizagi-start-form-dialog')!.remove(); document.body.insertAdjacentHTML('beforeend', html); }, FORM_ACTIVIDAD);
+    await page.locator('#ramo-caso').selectOption({ label: '48 - AUTOMÓVILES LIVIANOS INDIVIDUAL' });
+    await expect.poll(() => efectos(page)).toEqual(['submit-abortado']);
+    expect(submits(servidor)).toBe(0);
+    expect(registro!.estado.precreacion).toBeNull();
+  });
+
+  test('A4. la SPA reemplaza el contenido (nuevo diálogo idéntico, sin recarga): el permiso anterior queda invalidado', async ({ page, context }) => {
+    const { servidor } = await portal(context, page, { protegido: true, html: INICIO });
+    await marcarFormularioInicio(page, crearContexto(reg, ENV, 'u'));
+    await page.evaluate(() => { const d = document.querySelector('.ui-bizagi-start-form-dialog')!; d.outerHTML = d.outerHTML.replace(/ data-sde-precreacion="[^"]+"/, ''); });
+    expect(await page.locator('.ui-bizagi-start-form-dialog').count()).toBe(1);
+    await page.locator('#linea').fill('Autos');
+    await page.locator('#linea').press('Tab');
+    await expect.poll(() => efectos(page)).toEqual(['submit-abortado']);
+    expect(submits(servidor)).toBe(0);
+  });
+
+  test('A5. sin evidencia (nunca identificado) o con el diálogo oculto: la escritura se rechaza en red y en capacidades', async ({ page, context }) => {
+    const { servidor } = await portal(context, page, { protegido: true, html: INICIO });
+    await page.locator('#linea').fill('Autos');
+    await page.locator('#linea').press('Tab');
+    await expect.poll(() => efectos(page)).toEqual(['submit-abortado']);
+    const ctx = crearContexto(reg, ENV, 'u');
+    await marcarFormularioInicio(page, ctx);
+    await page.evaluate(() => { (document.querySelector('.ui-bizagi-start-form-dialog') as HTMLElement).style.display = 'none'; });
+    await expect(crearCapacidadesUi(uiDe(page, true)).capacidades.diligenciar(P([4], 'diligenciar', { campos: [{ campo: 'Línea', valor: 'X' }] }), ctx)).rejects.toThrow(/sin evidencia positiva/);
+    expect(ctx.formularioInicio).toBe(false);
+    expect(submits(servidor)).toBe(0);
+  });
+
+  test('A6. salir y volver legítimamente: no se reutiliza el permiso anterior; solo una nueva identificación concede otro', async ({ page, context }) => {
+    const { servidor, registro } = await portal(context, page, { protegido: true, html: INICIO });
+    const ctx = crearContexto(reg, ENV, 'u');
+    await marcarFormularioInicio(page, ctx);
+    const anterior = registro!.estado.precreacion!.token;
+    await page.evaluate(() => { const d = document.querySelector('.ui-bizagi-start-form-dialog')!; const html = d.outerHTML.replace(/ data-sde-precreacion="[^"]+"/, ''); d.remove(); document.body.insertAdjacentHTML('beforeend', html); });
+    await page.locator('#linea').fill('Autos');
+    await page.locator('#linea').press('Tab');
+    await expect.poll(() => efectos(page)).toEqual(['submit-abortado']);
+    expect(registro!.estado.precreacion).toBeNull();
+    await marcarFormularioInicio(page, ctx); // nueva identificación positiva
+    expect(registro!.estado.precreacion!.token).not.toBe(anterior);
+    await page.locator('#linea').fill('Generales');
+    await page.locator('#linea').press('Tab');
+    await expect.poll(() => submits(servidor)).toBe(1);
+  });
+});
+
+/** Contexto envoltorio que hace fallar "route" o "addInitScript" las veces indicadas (fallo transitorio o persistente). */
+function contextoConFallos(real: BrowserContext, fallos: { route?: number; addInitScript?: number }): BrowserContext {
+  return new Proxy(real, {
+    get(objetivo, prop) {
+      if ((prop === 'route' || prop === 'addInitScript') && (fallos[prop] ?? 0) > 0) {
+        return async () => { fallos[prop]!--; throw new Error(`fallo inyectado en ${prop}`); };
+      }
+      const v = Reflect.get(objetivo, prop);
+      return typeof v === 'function' ? v.bind(objetivo) : v;
+    },
+  }) as BrowserContext;
+}
+
+async function portalSinProteger(context: BrowserContext, page: Page, html = ACTIVIDAD) {
+  const servidor: string[] = [];
+  await context.route(`${ORIGEN}**`, (route) => {
+    const cuerpo = route.request().postData();
+    if (cuerpo) servidor.push(cuerpo);
+    return route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: html });
+  });
+  await page.goto(ORIGEN);
+  return servidor;
+}
+const autoguardar = async (page: Page) => { await page.locator('#linea').fill('Autos'); await page.locator('#linea').press('Tab'); };
+
+test.describe('P-15 — hallazgo B: instalación consistente de la protección @unit', () => {
+  test('B1. instalación completa: estado "completa", un interceptor, guardia DOM activa y autoguardado bloqueado', async ({ page, context }) => {
+    const servidor = await portalSinProteger(context, page);
+    const registro = await protegerSoloLectura(context);
+    expect(registro.estado.proteccion).toBe('completa');
+    expect(registro.rutas).toBe(1);
+    await page.getByRole('button', { name: 'Guardar', exact: true }).click();
+    expect(await bloqueosDom(page)).toEqual(['click:Guardar']); // guardia DOM activa en la página ya cargada
+    await autoguardar(page);
+    await expect.poll(() => efectos(page)).toEqual(['submit-abortado']);
+    expect(submits(servidor)).toBe(0);
+  });
+
+  test('B2 y B4. error durante la instalación: NO queda protegida; entre el fallo y el reintento nada sale y las capacidades se detienen', async ({ page, context }) => {
+    const servidor = await portalSinProteger(context, page);
+    const conFallos = contextoConFallos(context, { addInitScript: 1 });
+    await expect(protegerSoloLectura(conFallos)).rejects.toBeInstanceOf(ProteccionNoInstaladaError);
+    expect(registroDe(conFallos)!.estado.proteccion).toBe('fallida');
+    // B4: el interceptor quedó instalado y falla cerrado mientras la protección no está completa.
+    await autoguardar(page);
+    await expect.poll(() => efectos(page)).toEqual(['submit-abortado']);
+    expect(submits(servidor)).toBe(0);
+    // Y ninguna capacidad corre sobre un contexto no protegido por completo.
+    await expect(crearCapacidadesUi(uiDe(page, true)).capacidades.tabla_verificar(P([6], 'tabla_verificar', { tabla: 'Documentos Anexos' }), crearContexto(reg, ENV, 'u')))
+      .rejects.toBeInstanceOf(ProteccionNoInstaladaError);
+  });
+
+  test('B3 y B5. reintento tras un fallo transitorio: queda completa sin duplicar el interceptor; repetir es idempotente', async ({ page, context }) => {
+    await portalSinProteger(context, page);
+    const conFallos = contextoConFallos(context, { addInitScript: 1 });
+    await expect(protegerSoloLectura(conFallos)).rejects.toBeInstanceOf(ProteccionNoInstaladaError);
+    const registro = await protegerSoloLectura(conFallos);
+    expect(registro.estado.proteccion).toBe('completa');
+    expect(registro.rutas).toBe(1);
+    const [a, b] = await Promise.all([protegerSoloLectura(conFallos), protegerSoloLectura(conFallos)]);
+    expect(a).toBe(registro);
+    expect(b).toBe(registro);
+    expect(registro.rutas).toBe(1);
+    const real = await protegerSoloLectura(context);
+    expect(await protegerSoloLectura(context)).toBe(real);
+    expect(real.rutas).toBe(1);
+  });
+
+  test('B4 (variante). si falla el propio interceptor, la protección NO se da por instalada y el reintento lo registra una sola vez', async ({ page, context }) => {
+    await portalSinProteger(context, page);
+    const conFallos = contextoConFallos(context, { route: 1 });
+    await expect(protegerSoloLectura(conFallos)).rejects.toThrow(/PROTECCIÓN SOLO LECTURA NO INSTALADA: fallo inyectado en route/);
+    expect(registroDe(conFallos)!.estado.proteccion).toBe('fallida');
+    expect(registroDe(conFallos)!.rutas).toBe(0);
+    const registro = await protegerSoloLectura(conFallos);
+    expect(registro).toMatchObject({ rutas: 1, estado: { proteccion: 'completa' } });
+  });
+
+  test('B6. fallo persistente: detención segura con causa explícita (AUTOMATIZACION), sin ningún PASS', async ({ page, context }) => {
+    await portalSinProteger(context, page);
+    const conFallos = contextoConFallos(context, { route: Infinity });
+    let pulsaciones = 0;
+    const esc: EscenarioSde = { id: 'HU06-CP05', titulo: 't', etiquetas: [], actores: ['analista'], datasets: [], cleanup: { politica: 'CLEANUP_NOT_APPLICABLE', razon: 'r' }, archivo: 'sint',
+      pasos: [P([2], 'iniciar_sesion', { actor: 'analista' }), P([6], 'verificar', { verificar: [{ etiquetas: ['Línea'] }] }), P([7], 'pulsar', { boton: 'Guardar' })] };
+    const r = await ejecutarEscenario(esc, {
+      capacidades: {
+        iniciar_sesion: async (_p, c) => { await protegerSoloLectura(conFallos); c.sesiones.add('analista'); },
+        verificar: async () => ({}), pulsar: async () => { pulsaciones++; },
+      },
+      verificar: async () => ({ ok: true, detalle: '' }), evidencia: async () => undefined, soloLectura: true,
+    }, crearContexto(reg, ENV, 'u'));
+    expect(r.pasos[0]).toMatchObject({ estado: 'FAIL', causa: 'AUTOMATIZACION' });
+    expect(r.pasos[0].detalle).toMatch(/^PROTECCIÓN SOLO LECTURA NO INSTALADA/);
+    expect(r.pasos.slice(1).map((p) => p.estado)).toEqual(['NOT_RUN', 'NOT_RUN']);
+    expect(r).toMatchObject({ estado: 'FAIL', atribucion: 'NO_ATRIBUIBLE_AL_PRODUCTO' });
+    expect(r.pasos.some((p) => p.estado === 'PASS')).toBe(false);
+    expect(pulsaciones).toBe(0);
+    await expect(protegerSoloLectura(conFallos)).rejects.toBeInstanceOf(ProteccionNoInstaladaError);
   });
 });

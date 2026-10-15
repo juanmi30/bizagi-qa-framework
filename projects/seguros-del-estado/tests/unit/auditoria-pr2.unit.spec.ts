@@ -146,7 +146,7 @@ test.describe('R2 — un defecto observado sobrevive a una excepción posterior 
     expect(p.detalle).toContain('⚠ INCIDENTE posterior (AMBIENTE; no sustituye lo observado): page.goto: net::ERR_CONNECTION_RESET');
     // La tercera verificación nunca ocurrió: no se informa como observada.
     expect(p.detalle).not.toContain('PASS-3');
-    expect(p.detalle).toContain('Verificaciones ejecutadas: 1 de 3');
+    expect(p.detalle).toContain('Comprobaciones del paso completadas: 1 de 3 declaradas (verificaciones elementales ejecutadas: 1)');
     expect(r.estado).toBe('FAIL'); // antes: BLOCKED y el defecto desaparecía
     expect(r.atribucion).toBe('PRODUCTO_POR_CONFIRMAR');
     expect(r.causas).toEqual(expect.arrayContaining(['PRODUCTO_POR_CONFIRMAR', 'AMBIENTE']));
@@ -176,6 +176,22 @@ test.describe('R2 — un defecto observado sobrevive a una excepción posterior 
     expect(r.pasos[1].detalle).toContain('✔ observado PASS-1');
     expect(r.estado).toBe('BLOCKED');
     expect(r.atribucion).toBe('NO_APLICA');
+  });
+
+  test('conteo homogéneo (observación BAJA de Work): una expectativa con 3 verificaciones cuenta como 1 comprobación, no "3 de 2"', async () => {
+    const catalogo: CatalogoPresentacion = { pantallas: {}, reglas_ortograficas: [], conocidos: {}, expectativas: {
+      TRES: { descripcion: 'd', estado: 'aprobada', fuente: 'Matriz HU06-CP05 P6', verificar: [{ etiquetas: ['FALLA'] }, { etiquetas: ['PASS-b'] }, { etiquetas: ['PASS-c'] }] } } };
+    const r = await ejecutarEscenario(escenario([P([2], 'iniciar_sesion', { actor: 'analista' }),
+      P([6], 'verificar', { verificar: [{ expectativa: 'TRES' }, { etiquetas: ['AMBIENTE'] }] })]), {
+      capacidades: { iniciar_sesion: async (_p, c) => { c.sesiones.add('analista'); }, verificar: async () => ({}) },
+      verificar: verificarSintetico, evidencia: async () => undefined, presentacion: catalogo,
+    }, crearContexto(reg, ENV, 'u'));
+    const d = r.pasos[1].detalle;
+    expect(d).toContain('Comprobaciones del paso completadas: 1 de 2 declaradas (verificaciones elementales ejecutadas: 3)');
+    expect(d).not.toMatch(/3 de 2/);
+    // El detalle y la evidencia funcional se conservan: las tres observaciones de la expectativa y el incidente.
+    expect(d.split('[TRES · fuente: Matriz HU06-CP05 P6]').length - 1).toBe(3);
+    expect(r.pasos[1]).toMatchObject({ estado: 'FAIL', causa: 'PRODUCTO_POR_CONFIRMAR', incidente: { causa: 'AMBIENTE' } });
   });
 
   test('dos FAIL funcionales en el mismo paso: ambos se informan', async () => {

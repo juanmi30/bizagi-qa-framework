@@ -9,6 +9,9 @@ import type { CampoSde, PasoSde, Verificacion } from './escenario';
 import { EntornoError, type Capacidad, type ContextoEjecucion, type Verificador } from './ejecutor';
 import { autorizarAperturaPopup, cargarPopups, type RegistroPopups } from './popups';
 import { cargarPresentacion } from './presentacion';
+import {
+  concederPrecreacion, exigirSoloLectura, OPERACIONES, precreacionVigente, ProteccionNoInstaladaError, protegerSoloLectura, registroDe, type RegistroSoloLectura,
+} from './soloLectura';
 import { aplicarReglasOrtograficas, compararConAprobado, revisarOrden } from '../../../shared/utils/ValidacionesPresentacion';
 import {
   CalibracionError, NoConcluyenteError, adjuntar, botonesVisibles, campo, diligenciar, esObligatorio, esperarCarga, estaSoloLectura,
@@ -21,20 +24,6 @@ import {
  * Un actor = un BrowserContext propio: el cambio de usuario no depende del logout del portal.
  */
 
-/**
- * MODO SOLO LECTURA (diagnósticos y calibraciones): ninguna petición que cree un caso llega a Bizagi. Se instala en el
- * CONTEXTO del navegador (todas sus páginas) y aborta cualquier POST a la ruta de acciones cuyo cuerpo contenga
- * CREATENEWCASE, sin importar qué prueba o filtro lo disparó. Devuelve el contador de intentos bloqueados.
- */
-export async function protegerContraCreacion(contexto: BrowserContext): Promise<{ bloqueados: () => number }> {
-  let n = 0;
-  await contexto.route(`**${SdeObjects.rutaAcciones}*`, async (route) => {
-    if ((route.request().postData() ?? '').includes('CREATENEWCASE')) { n++; return route.abort('blockedbyclient'); }
-    return route.fallback();
-  });
-  return { bloqueados: () => n };
-}
-
 export interface UiEntorno {
   browser: Browser;
   paginaInicial: Page;
@@ -44,8 +33,13 @@ export interface UiEntorno {
   dialogo?: Locator;                                   // pop-up abierto (edición/adición de filas)
   tabla?: { tabla: string; fila: number | null; filasAntes: number; contenidoFila?: string[] };
   registrarCaso: (numero: string, actor: string) => Promise<void> | void;
-  /** true: el escenario NO puede crear casos (pulsar "Crear" falla antes del clic y la red bloquea CREATENEWCASE). */
+  /**
+   * true: SOLO LECTURA (P-15, sde/soloLectura.ts). Las capacidades de escritura se rechazan antes de ejecutarse, la guardia DOM
+   * neutraliza clics y cargas en componentes que persisten datos y la red aborta las acciones de escritura verificadas.
+   */
   soloLectura?: boolean;
+  /** Registro por contexto protegido: acciones de red abortadas y nombres de acciones observadas (sin datos). */
+  registroSoloLectura?: RegistroSoloLectura[];
   /** Registro de formularios de pop-up (por defecto data/popups-calibrados.yaml). Solo las pruebas sintéticas lo sustituyen. */
   popupsCalibrados?: RegistroPopups;
 }
@@ -60,6 +54,27 @@ function paginaActual(ui: UiEntorno): Page {
   return p;
 }
 const ambitoActual = (ui: UiEntorno): Ambito => ui.dialogo ?? paginaActual(ui);
+
+/**
+ * Evidencia POSITIVA de estar en el formulario de inicio sin caso (P-15/F2). Solo se marca si el diálogo de inicio está
+ * visible y es único. En solo lectura concede un permiso NUEVO ligado a ESE elemento del diálogo (token): la guardia de red y
+ * la capa de capacidades lo revalidan en cada uso y caduca en cuanto el diálogo deja de estar (hallazgo A).
+ */
+export async function marcarFormularioInicio(page: Page, ctx: { formularioInicio?: boolean }): Promise<void> {
+  if ((await page.locator(SdeObjects.dialogoInicio).filter({ visible: true }).count()) !== 1) {
+    throw new Error('No hay evidencia del formulario de inicio: su diálogo no está visible (no se marca precreación).');
+  }
+  const registro = registroDe(page.context());
+  if (registro) await concederPrecreacion(page, registro);
+  ctx.formularioInicio = true;
+}
+
+/** Retira la evidencia y el permiso: a partir de aquí no se está en el formulario de inicio (red y capacidades deniegan). */
+export function salirDeFormularioInicio(page: Page, ctx: { formularioInicio?: boolean }): void {
+  ctx.formularioInicio = false;
+  const registro = registroDe(page.context());
+  if (registro) registro.estado.precreacion = null;
+}
 
 /**
  * Pulsa el botón que crea el caso y obtiene el número desde la RESPUESTA REAL de Bizagi
@@ -175,7 +190,6 @@ async function confirmarDialogo(dialogo: Locator): Promise<void> {
 }
 
 export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string, Capacidad>; verificar: Verificador } {
-  const protegidos = new WeakSet<BrowserContext>();
   const verificar: Verificador = async (v: Verificacion, ctx: ContextoEjecucion) => {
     const amb = ambitoActual(ui);
     const page = paginaActual(ui);
@@ -293,8 +307,14 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
         }
         ui.paginas.set(actor, page);
       }
-      if (ui.soloLectura && !protegidos.has(page.context())) { protegidos.add(page.context()); await protegerContraCreacion(page.context()); }
+      if (ui.soloLectura) {
+        // Instalación consistente (hallazgo B): si falla, ProteccionNoInstaladaError detiene la inspección ANTES del login;
+        // el contexto solo cuenta como protegido cuando la protección quedó completa (un reintento la completa).
+        const registro = await protegerSoloLectura(page.context());
+        if (!(ui.registroSoloLectura ??= []).includes(registro)) ui.registroSoloLectura.push(registro);
+      }
       rastrearAcciones(page); // habilita la espera de "forma quieta" (re-ejecución de reglas Bizagi)
+      salirDeFormularioInicio(page, ctx); // una sesión nueva no está en ningún formulario de inicio
       const usuario = ctx.env[`USUARIO_${actor}`] ?? '';
       const clave = ctx.env[`CLAVE_${actor}`] ?? '';
       try {
@@ -346,6 +366,7 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       await (await unicoVisible(item, `el proceso "${proceso}"`, 20_000)).click();
       // Formulario de inicio (hasStartForm): diálogo propio; el caso NO existe hasta "Crear".
       await unicoVisible(page.locator(SdeObjects.dialogoInicio), 'el formulario de inicio (SdeObjects.dialogoInicio)', 60_000);
+      await marcarFormularioInicio(page, ctx); // evidencia POSITIVA de precreación (P-15/F2)
       await esperarCarga(page);
       return { detalle: `Formulario de inicio de "${proceso}" abierto (ruta: ${ruta.join(' > ') || '—'})` };
     },
@@ -446,10 +467,8 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
 
     pulsar: async (p, ctx) => {
       const page = paginaActual(ui);
+      salirDeFormularioInicio(page, ctx); // un botón puede crear el caso o cambiar de pantalla
       const notas = [`Botón "${p.boton}" pulsado`];
-      if (ui.soloLectura && (p.capturar_numero_caso || /^crear$/i.test(String(p.boton).trim()))) {
-        throw new Error(`MODO SOLO LECTURA: se impidió pulsar "${p.boton}" (crearía un caso).`);
-      }
       if (p.capturar_numero_caso) {
         const numero = await pulsarYCapturarCaso(page, () => pulsar(ambitoActual(ui), p.boton as string), async (n) => {
           ctx.numeroCaso = n;
@@ -474,6 +493,7 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       if (!ctx.numeroCaso) throw new Error('No hay número de caso capturado: no se puede verificar la ruta.');
       const page = ui.paginas.get(p.actor as string);
       if (!page) throw new Error(`El actor "${p.actor}" no tiene sesión.`);
+      salirDeFormularioInicio(page, ctx); // el buscador recarga el portal: el formulario de inicio ya no está
       const destinos = (Array.isArray(p.llega_a) ? p.llega_a as string[] : [p.llega_a as string]).map(normaliza);
       const prohibidas = ((p.no_llega_a as string[]) ?? []).map(normaliza);
       const limite = Date.now() + ((p.maximo_minutos as number) ?? 8) * 60_000;
@@ -508,6 +528,7 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       if (!ctx.numeroCaso) throw new Error('No hay número de caso capturado.');
       const page = ui.paginas.get(p.actor as string);
       if (!page) throw new Error(`El actor "${p.actor}" no tiene sesión.`);
+      salirDeFormularioInicio(page, ctx); // se trabaja sobre un caso EXISTENTE
       const actividad = normaliza(p.actividad as string);
       const limite = Date.now() + ((p.maximo_minutos as number) ?? 8) * 60_000;
       let e: EstadoCaso;
@@ -705,5 +726,28 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       return { detalle: notas.join('; ') };
     },
   };
+  // P-15: la política de solo lectura se aplica en UN solo lugar, antes de ejecutar cualquier capacidad (incluidas las que
+  // un spec invoque directamente). Lo no clasificado se deniega (sde/soloLectura.ts).
+  if (ui.soloLectura) {
+    for (const [nombre, cap] of Object.entries(capacidades)) {
+      capacidades[nombre] = async (p, ctx) => {
+        if (nombre !== 'iniciar_sesion') {
+          // Ninguna capacidad corre sobre un contexto cuya protección no quedó COMPLETA (hallazgo B): se detiene.
+          const pagina = paginaActual(ui);
+          const registro = registroDe(pagina.context());
+          if (registro?.estado.proteccion !== 'completa') {
+            throw new ProteccionNoInstaladaError(`estado "${registro?.estado.proteccion ?? 'sin instalar'}" del contexto; "${nombre}" no se ejecuta.`);
+          }
+          // Escribir en el formulario de inicio exige el permiso VIGENTE (mismo diálogo, visible, ahora). Si caducó, se
+          // retira la evidencia y la política deniega (F2, hallazgo A).
+          if (OPERACIONES[nombre]?.clase === 'formulario_inicio' && ctx.formularioInicio && !(await precreacionVigente(pagina, registro))) {
+            salirDeFormularioInicio(pagina, ctx);
+          }
+        }
+        exigirSoloLectura(nombre, ctx);
+        return cap(p, ctx);
+      };
+    }
+  }
   return { capacidades, verificar };
 }

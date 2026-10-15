@@ -1,13 +1,13 @@
 # Estado actual del framework
 
-**Actualizado: 2026-10-14 (noche), por Claude Code — fase de validaciones funcionales tras la reunión QA del 14/10.** Repositorio: `juanmi30/bizagi-qa-framework` (privado). `main` = `f40bde7` (merge del PR #1 + deuda P-08..P-10). Esta página describe la rama `feat/sde-validaciones-funcionales` (PR en borrador, sin fusionar); checkpoint `docs/orquestacion/checkpoints/2026-10-14-validaciones-funcionales.md`. Migración a otro equipo (qué no viaja por Git y variables P-14): `2026-10-14-cierre-jornada.md`. Correcciones de la auditoría de Work (R1, R2): `2026-10-15-correcciones-auditoria-pr2.md`. Matriz de oportunidades: `projects/seguros-del-estado/docs/MATRIZ-OPORTUNIDADES-2026-10-14.md`. Todo dato de esta página se verificó en esta sesión, salvo lo marcado como *no auditado*.
+**Actualizado: 2026-10-15, por Claude Code — fase P-15 corregida tras la auditoría de Work del PR #3 (F1–F4).** Repositorio: `juanmi30/bizagi-qa-framework` (privado). `main` = `dd7b3ec` (merge del PR #2). Esta página describe la rama `fix/sde-solo-lectura-segura` (PR en borrador, sin fusionar); checkpoints `docs/orquestacion/checkpoints/2026-10-15-solo-lectura-segura.md` y `2026-10-15-correcciones-auditoria-pr3.md`; modalidades de ejecución y casos creados: `docs/orquestacion/SEGURIDAD-SOLO-LECTURA.md`. Fases anteriores: `2026-10-14-validaciones-funcionales.md`, `2026-10-14-cierre-jornada.md` (migración a otro equipo) y `2026-10-15-correcciones-auditoria-pr2.md`. Matriz de oportunidades: `projects/seguros-del-estado/docs/MATRIZ-OPORTUNIDADES-2026-10-14.md`. Todo dato de esta página se verificó en esta sesión, salvo lo marcado como *no auditado*.
 
 ## Verificaciones técnicas de esta fecha (rama de validaciones funcionales)
 
 | Control | Resultado |
 |---|---|
 | `npx tsc --noEmit` | Sin errores |
-| SDE `@unit` | **191/191**: 155 anteriores + 20 de la fase del 14/10 + 16 regresiones de la auditoría de Work (R1 ortografía sin evidencia, R2 defecto conservado ante excepción) |
+| SDE `@unit` | **204/204**: 198 anteriores − 9 pruebas de solo lectura reemplazadas + 15 de la corrección F1–F4 (autoguardado, red, evidencia positiva, abrir_caso, modalidad de las specs reales, control funcional) |
 | Demo (regresión) | 48 aprobadas / 4 fallidas: los mismos 4 fallos históricos de plantilla sin URL real |
 | Colsubsidio | `lifecycle-casos.unit`, `contrato-create-case`, `login-navegacion.unit` y `afi-soporte.unit`: **53/53** |
 | CONPRE | Sin cambios; `--list` 6 pruebas en 3 archivos (no se ejecuta porque hace login real) |
@@ -60,7 +60,9 @@
 - P-09: el veredicto global no aparece en los tableros que solo leen JUnit.
 - P-10: falta un estado final explícito en `veredicto-e2e.json`.
 
-**Validaciones de presentación (esta fase, D-30 a D-35):** catálogo `data/expectativas-presentacion.yaml` con fuente por expectativa; ortografía por norma RAE/DLE en inicio, Estructurar y Completar; orden, obligatoriedad y capitalización **pendientes de definición** (P-11), nunca verdes. P-06 implementada: las verticales reales exigen `SDE_E2E=1`.
+**Modalidades (D-40):** *solo lectura* (P-15: capacidades por efecto, red que aborta toda acción fuera del formulario de inicio identificado, guardia DOM; rechazo = BLOCKED `POLITICA_SOLO_LECTURA`) y *ejecución funcional controlada* (por defecto; crea y modifica lo que el escenario exige bajo P-06, H6 y UI-10). **Casos creados (D-41):** registro y seguimiento implementados (18 casos SDE pendientes en el histórico local); cierre o limpieza física en SDE **no implementado ni validado** (P-17). Detalle en `SEGURIDAD-SOLO-LECTURA.md`.
+
+**Validaciones de presentación (fase del 14/10, D-30 a D-35):** catálogo `data/expectativas-presentacion.yaml` con fuente por expectativa; ortografía por norma RAE/DLE en inicio, Estructurar y Completar; orden, obligatoriedad y capitalización **pendientes de definición** (P-11), nunca verdes. P-06 implementada: las verticales reales exigen `SDE_E2E=1`.
 
 **Decisiones pendientes:** P-11 (fuente de orden/obligatoriedad/capitalización), P-12 (masivos con Iván), P-13 (integraciones caídas), P-14 (formato de Ramo/Sucursal), control de cambios de documentos, BUG-05/BUG-06, FUNC-10 (actor de HU06), ticket de BUG-03, datos SISE y mapeo de UI-10. Ver `DECISIONES.md`.
 

@@ -96,7 +96,9 @@ test('calibración Estructurar información sobre caso propio @calibracion', asy
   const ui: UiEntorno = {
     browser, paginaInicial: page, paginas: new Map(), contextos: [],
     registrarCaso: (n, actor) => registrarCasoCreado({ cp: 'CALIBRACION Estructurar (Masiva Generales/Modificación)', numero: n, actor, unico, cleanup: 'CLEANUP_NOT_APPLICABLE' }),
-    soloLectura: !nuevo, // con un número de caso existente la calibración NO puede crear casos (red + capability)
+    // Funcional controlada (P-15/F4): abre la actividad de un caso propio (efecto no determinado) y, en modo "nuevo", crea
+    // un caso. No se presenta como solo lectura; sus pasos no guardan ni avanzan (salvo los modos destructivos explícitos).
+    soloLectura: false,
   };
   const { capacidades, verificar } = crearCapacidadesUi(ui);
   // Inventario de presentación de Estructurar al abrir la actividad (propuesta para QA; sin valores del caso).
@@ -113,7 +115,7 @@ test('calibración Estructurar información sobre caso propio @calibracion', asy
           campos: await inventarioCampos(pg), hallazgos_ortograficos: aplicarReglasOrtograficas(textos, cat.reglas_ortograficas, cat.conocidos), textos_revisados: textos };
       }
       return salida;
-    } }, verificar,
+    } }, verificar, soloLectura: ui.soloLectura,
     evidencia: async (n) => { const f = await page.screenshot({ fullPage: true }).catch(() => null); if (f) await testInfo.attach(n, { body: f, contentType: 'image/png' }); return n; },
   }, ctx);
   if (presentacion) {

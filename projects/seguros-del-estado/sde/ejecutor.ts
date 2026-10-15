@@ -2,6 +2,7 @@ import { casoMatriz } from './matriz';
 import { estadoActor, estadoDataset, resolverTexto, DatoFaltanteError, type Registro, type Entorno } from './datos';
 import type { EscenarioSde, PasoSde, Verificacion } from './escenario';
 import { cargarPresentacion, type CatalogoPresentacion } from './presentacion';
+import { exigirSoloLectura } from './soloLectura';
 import { peorEstado, type CausaPaso, type EstadoPaso, type EstadoCp, type ReporteCp, type ResultadoPaso, type ResultadoPasoMatriz } from './modelo';
 
 /**
@@ -19,6 +20,11 @@ export interface ContextoEjecucion {
   sesiones: Set<string>;      // actores con sesión real iniciada
   /** Hay un pop-up de fila abierto (lo marcan las capabilities de tabla). Salir de él sin Guardar destruye el caso (BUG-03). */
   dialogoAbierto: boolean;
+  /**
+   * Evidencia POSITIVA de estar en el formulario de inicio sin caso (P-15/F2): la pone nuevo_caso al confirmar el diálogo y
+   * la retiran las capacidades que salen de él. La ausencia de número de caso NO es evidencia de precreación.
+   */
+  formularioInicio?: boolean;
   secretos: string[];         // valores que jamás deben aparecer en reportes
   /** Resuelve ${dato:..}/${config:..}/${unico}; lanza DatoFaltanteError si falta. */
   resolver(texto: string): string;
@@ -48,9 +54,13 @@ export function causaDeExcepcion(e: unknown): CausaPaso {
   if (/net::ERR_|ECONNREFUSED|ECONNRESET|ENOTFOUND|EAI_AGAIN|ETIMEDOUT|page\.goto: Timeout|navigating to .* waiting until/i.test(m)) return 'AMBIENTE';
   if (nombre === 'CalibracionError' || nombre === 'BarreraPopupError' || /^\[calibrar /.test(m)) return 'AUTOMATIZACION';
   if (/No se encontró visible|Se esperaba exactamente 1|Ambigüedad|locator\.|Timeout \d+ms exceeded|intercepts pointer|no está dentro de/.test(m)) return 'AUTOMATIZACION';
-  if (/MODO SOLO LECTURA|^NO VERIFICABLE:/.test(m)) return 'AUTOMATIZACION';
+  // Acción rechazada por la política de solo lectura (P-15): no es un defecto ni una falla de automatización.
+  if (nombre === 'SoloLecturaError' || /^POLÍTICA SOLO LECTURA:/.test(m)) return 'POLITICA_SOLO_LECTURA';
+  if (/^NO VERIFICABLE:/.test(m)) return 'AUTOMATIZACION';
   // Verificación sin evidencia suficiente (pantalla no identificada o vacía): nunca aprobada ni atribuida al producto (R1).
   if (nombre === 'NoConcluyenteError' || /^NO CONCLUYENTE:/.test(m)) return 'AUTOMATIZACION';
+  // La protección de solo lectura no quedó instalada: la inspección se detiene (falla técnica, nunca defecto de Bizagi).
+  if (nombre === 'ProteccionNoInstaladaError' || /^PROTECCIÓN SOLO LECTURA NO INSTALADA:/.test(m)) return 'AUTOMATIZACION';
   if (/Bizagi rechazó|no ofrece ninguna opción|ruta NO esperada|no quedó marcada|el formulario muestra .* tras diligenciar|se confirmó sin los campos obligatorios|no muestra "/.test(m)) return 'PRODUCTO_POR_CONFIRMAR';
   return 'NO_CLASIFICADO';
 }
@@ -79,6 +89,8 @@ export interface Dependencias {
   ahora?: () => Date;
   /** Catálogo de expectativas de presentación (por defecto data/expectativas-presentacion.yaml). */
   presentacion?: CatalogoPresentacion;
+  /** P-15: la ejecución es de solo lectura; el ejecutor rechaza las capacidades de escritura antes de invocarlas. */
+  soloLectura?: boolean;
 }
 
 /** Capabilities que no tocan la UI: declaran honestamente lo que no se puede comprobar. */
@@ -252,10 +264,16 @@ export async function ejecutarEscenario(esc: EscenarioSde, deps: Dependencias, c
     const notas: string[] = [];
     let ok = true;
     let fallas = 0;
-    let verificadas = 0;
+    // Dos unidades distintas, nunca mezcladas (observación BAJA de Work, PR #2): "completadas" cuenta las COMPROBACIONES
+    // declaradas en el paso (cada entrada de "verificar", una expectativa cuenta como una) que terminaron; "individuales"
+    // cuenta las verificaciones elementales ejecutadas (una expectativa aprobada puede contener varias).
+    let completadas = 0;
+    let individuales = 0;
     const pendientes: string[] = [];
     let incidente = false;
     try {
+      // P-15: en solo lectura la política se aplica ANTES de buscar la capacidad (también a las inyectadas o sustituidas).
+      if (deps.soloLectura) exigirSoloLectura(paso.hacer, ctx);
       const cap = deps.capacidades[paso.hacer] ?? CAPACIDADES_DECLARATIVAS[paso.hacer];
       if (!cap) throw new Error(`capability "${paso.hacer}" no implementada en este ejecutor`);
       const salida = (await cap(paso, ctx)) ?? {};
@@ -267,17 +285,19 @@ export async function ejecutarEscenario(esc: EscenarioSde, deps: Dependencias, c
           const id = v.expectativa;
           const e = (deps.presentacion ?? cargarPresentacion()).expectativas[id];
           if (!e) throw new Error(`expectativa "${id}" no existe en el catálogo de presentación`);
-          if (e.estado !== 'aprobada') { pendientes.push(id); notas.push(`… ${id} PENDIENTE DE DEFINICIÓN (${e.responsable}): ${e.pendiente}`); continue; }
+          if (e.estado !== 'aprobada') { pendientes.push(id); notas.push(`… ${id} PENDIENTE DE DEFINICIÓN (${e.responsable}): ${e.pendiente}`); completadas++; continue; }
           for (const sub of e.verificar as Verificacion[]) {
             const res = await deps.verificar(sub, ctx);
-            verificadas++;
+            individuales++;
             notas.push(`${res.ok ? '✔' : '✘'} [${id} · fuente: ${e.fuente}] ${res.detalle}`);
             if (!res.ok) { ok = false; fallas++; }
           }
+          completadas++;
           continue;
         }
         const res = await deps.verificar(v, ctx);
-        verificadas++;
+        individuales++;
+        completadas++;
         notas.push(`${res.ok ? '✔' : '✘'} ${res.detalle}`);
         if (!res.ok) { ok = false; fallas++; }
       }
@@ -298,11 +318,12 @@ export async function ejecutarEscenario(esc: EscenarioSde, deps: Dependencias, c
         r.incidente = { causa, detalle: sanitizar(mensaje, ctx.secretos) };
         incidente = true;
         r.detalle = `${previas}⚠ INCIDENTE posterior (${causa}; no sustituye lo observado): ${mensaje}` +
-          ` | Verificaciones ejecutadas: ${verificadas} de ${total} (las demás no se ejecutaron).`;
+          ` | Comprobaciones del paso completadas: ${completadas} de ${total} declaradas (verificaciones elementales ejecutadas: ${individuales}); las restantes no se ejecutaron.`;
       } else {
         // Sin defecto previo: comportamiento anterior (BLOCKED o FAIL técnico según la causa), conservando lo observado.
+        // Un rechazo de la política de solo lectura (P-15) es BLOCKED: ni defecto del producto ni de la automatización.
         r.causa = causa;
-        r.estado = causa === 'DATO' || causa === 'AMBIENTE' || (e as Error)?.name === 'BarreraPopupError' ? 'BLOCKED' : 'FAIL';
+        r.estado = causa === 'DATO' || causa === 'AMBIENTE' || causa === 'POLITICA_SOLO_LECTURA' || (e as Error)?.name === 'BarreraPopupError' ? 'BLOCKED' : 'FAIL';
         r.detalle = `${previas}${mensaje}`;
       }
     }

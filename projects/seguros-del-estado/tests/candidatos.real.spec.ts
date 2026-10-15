@@ -8,6 +8,7 @@ import { crearContexto, sanitizar } from '../sde/ejecutor';
 import { DIR_SALIDA } from '../sde/registro';
 import { esperarCarga, regexExacto } from '../sde/ui';
 import { VIEWPORT_SDE } from '../sde/capacidades';
+import { protegerSoloLectura } from '../sde/soloLectura';
 
 /**
  * EXPLORACIÓN LIMITADA de cuentas de intermediario entregadas por QA (ENV-03). SOLO LECTURA: inicia sesión, lee rol visible y
@@ -38,6 +39,7 @@ test('ENV-03: cuentas de intermediario candidatas (máx. 3, solo lectura) @candi
 
   for (const c of candidatos) {
     const contexto = await browser.newContext({ baseURL: env.BIZAGI_BASE_URL, ignoreHTTPSErrors: true, viewport: VIEWPORT_SDE });
+    await protegerSoloLectura(contexto); // P-15: declarada de solo lectura → protección efectiva (DOM + red)
     const page = await contexto.newPage();
     const r: Record<string, unknown> = { id: c.id, area: c.area };
     try {

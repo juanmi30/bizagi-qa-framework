@@ -81,13 +81,17 @@ async function estadoGrilla(page: Page, grilla: Locator): Promise<Record<string,
 
 test('diagnóstico BUG-01: secuencia guardar registro → tipos documentales (sin Crear) @diagnostico', async ({ page, browser }, testInfo) => {
   test.skip(process.env.SDE_DIAGNOSTICO_DOCS !== '1', 'Diagnóstico: SDE_DIAGNOSTICO_DOCS=1.');
+  // P-15: este diagnóstico agrega y guarda filas de grilla y sube archivos (escritura), aunque no pulse "Crear". En solo
+  // lectura la guardia DOM los neutralizaría: se declara en vez de ejecutarlo a medias. Requiere autorización de escritura.
+  test.skip(process.env.SDE_DIAG_CREAR !== '1',
+    'P-15: el diagnóstico de documentos escribe (filas de grilla y cargas); en solo lectura no se ejecuta. Requiere SDE_DIAG_CREAR=1 (crea un caso; autorización explícita).');
   testInfo.setTimeout(15 * 60_000);
   const registro = cargarRegistro();
   const ctx = crearContexto(registro, process.env, 'diag');
   const ui: UiEntorno = {
     browser, paginaInicial: page, paginas: new Map(), contextos: [],
     registrarCaso: (n, actor) => registrarCasoCreado({ cp: 'DIAGNOSTICO BUG-01 secuencia producto (no es resultado de CP)', numero: n, actor, unico: 'diag', cleanup: 'CLEANUP_NOT_APPLICABLE' }),
-    soloLectura: process.env.SDE_DIAG_CREAR !== '1', // solo crea si se pide explícitamente
+    soloLectura: false, // funcional controlada: escribe (filas y cargas); solo corre con SDE_DIAG_CREAR=1
   };
   const { capacidades } = crearCapacidadesUi(ui);
   const obs: Record<string, unknown>[] = [];

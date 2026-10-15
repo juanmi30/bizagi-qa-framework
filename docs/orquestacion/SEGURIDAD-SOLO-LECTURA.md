@@ -63,6 +63,7 @@ La ausencia de número de caso **no** es evidencia de precreación: un formulari
 | `bloqueos.real` · ENV-03 ×2, BUG-02, BANDEJA, HISTÓRICO | Solo lectura |
 | `bloqueos.real` · BUG-01 | Funcional controlada: agrega una fila en el formulario de inicio y nunca pulsa «Crear» |
 | `bloqueos.real` · BUG-03, TRAZA, UI-10 | Funcional controlada: abren actividades y nunca guardan |
+| `cleanup-diagnostico.real` (P-17) | Solo lectura: menús de administración, búsqueda por número y buscador global; nunca pulsa «Cancelar casos» ni «Terminar» (además en la guardia DOM). Solo con `SDE_DIAG_CLEANUP=1` |
 | `calibracion.real` | Funcional controlada: abre la actividad de un caso propio; en modo «nuevo» crea un caso |
 | `diagnostico-documentos.real` | Funcional controlada: escribe; solo corre con `SDE_DIAG_CREAR=1` |
 | Verticales (`sde/verticales.ts`) | Funcional controlada, con P-06 |
@@ -107,9 +108,27 @@ Toda ejecución que cree un caso debe:
 
 ### Estado real
 
-- **Registro y seguimiento:** **implementados**. El histórico local tiene hoy 18 casos SDE «Pendiente de depurar», incluidos 434 y 571.
+- **Registro y seguimiento:** **implementados**. El histórico local tiene 18 casos SDE históricos «Pendiente de depurar» (incluidos 434 y 571) más los creados en la fase del 15/10.
 - **Cierre o limpieza física en SDE:** **NO implementado ni validado**.
 - **Casos preexistentes:** no se cierra ni se cancela ninguno (434, 571 u otro) sin confirmar su propiedad y el procedimiento permitido (P-07).
+
+### Diagnóstico en QA (2026-10-15, `tests/cleanup-diagnostico.real.spec.ts`, solo lectura)
+
+El diagnóstico solo navega menús y consulta. No crea, no abre, no modifica ni cancela casos. Los botones de administración que escriben están en la guardia DOM.
+
+| Pregunta | Resultado observado |
+|---|---|
+| ¿El intermediario tiene administración de casos? | **No**: sin menú Admin |
+| ¿El analista tiene administración de casos? | Ve Admin → «Administración de procesos» → «Casos», con búsqueda por número, y los botones «Cancelar casos» (`#btn-admin-cases-invalidate`; en Colsubsidio el id es otro), «Terminar» (`#btn-admin-case-finish`) y «Copiar/Revocar permisos» |
+| ¿Puede encontrar los casos propios? | **No**: `Rest/Queries/SearchCases` responde 200 con `records=0` para los casos 336 y 429 |
+| Estado actual de los casos propios (buscador global, sin abrir) | Los **18 históricos** aparecen en una fila **sin actividad actual ni vencimiento pendiente**. Solo los casos nuevos tienen actividades (temporizador «Máximo tiempo de radicación» y el subproceso de consulta) |
+
+**Lectura (hipótesis, NO decisión):** los casos históricos parecen **cerrados por el propio proceso**, posiblemente al vencer el temporizador «Máximo tiempo de radicación». Eso explicaría además que la búsqueda administrativa no los encuentre. Debe confirmarlo QA (P-17).
+
+**Consecuencias:**
+- No se valida ni se implementa una cancelación administrativa: ningún actor configurado puede encontrar los casos.
+- No se creó un caso desechable solo para probar el cierre.
+- Se implementó la **barrera contra la acumulación** (punto 5 de la propuesta): cada vertical informa los casos propios pendientes. Con `SDE_MAX_CASOS_PENDIENTES=<n>`, la vertical queda BLOCKED por CONFIGURACION antes de crear otro caso si ya hay n o más pendientes. El umbral lo acuerda QA; sin la variable, solo se informa.
 
 ### Propuesta operativa (requiere a QA, P-17)
 

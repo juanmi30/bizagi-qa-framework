@@ -1,0 +1,175 @@
+{
+  "fecha": "2026-10-15",
+  "modalidad": "solo lectura (tests/cleanup-diagnostico.real.spec.ts): sin crear, abrir, modificar ni cancelar casos",
+  "administracion": {
+    "analista": {
+      "actor": "analista",
+      "menuAdmin": true,
+      "entradasAdmin": [],
+      "administracionProcesos": true,
+      "categoriaCasos": true,
+      "dialogoCasos": true,
+      "busqueda": true,
+      "invalidar": 1,
+      "accionesRedAbortadas": [],
+      "casoConsultado": "429",
+      "casoSeleccionable": 0,
+      "invalidarTrasBusqueda": 0,
+      "filasCaseAdmin": 0,
+      "botonesDialogo": [
+        "btn-admin-case-back:Volver",
+        "btn-admin-case-search-clear:Limpiar",
+        "btn-admin-case-search:Buscar",
+        "btn-admin-case-finish:Terminar",
+        "btn-admin-cases-invalidate:Cancelar casos",
+        "btn-searchUserSource:",
+        "btn-searchUserTarget:",
+        "btn-copyPermissions:Copiar permisos",
+        "btn-revokePermissions:Revocar permisos"
+      ],
+      "mensajesDialogo": [],
+      "filasCaseAdminPagina": 0,
+      "seleccionableEnPagina": 0,
+      "estructuraBusqueda": [
+        "headers=[4]",
+        "rows=[0]",
+        "records=0",
+        "total=1",
+        "page=1"
+      ]
+    },
+    "intermediario": {
+      "actor": "intermediario",
+      "menuAdmin": false,
+      "entradasAdmin": [],
+      "administracionProcesos": false,
+      "categoriaCasos": false,
+      "dialogoCasos": false,
+      "busqueda": false,
+      "invalidar": 0,
+      "accionesRedAbortadas": [],
+      "casoConsultado": null,
+      "casoSeleccionable": 0,
+      "invalidarTrasBusqueda": 0,
+      "filasCaseAdmin": 0,
+      "botonesDialogo": [],
+      "mensajesDialogo": [],
+      "textoDialogo": "",
+      "filasCaseAdminPagina": 0,
+      "seleccionableEnPagina": 0,
+      "estructuraBusqueda": []
+    }
+  },
+  "estado_casos_propios_buscador_global": {
+    "336": {
+      "filas": 1,
+      "actividades": [],
+      "celdas": " | 336 | «env:SDE_PROCESO_RADICACION» |  | 8/10/2026 9:36 am |  | 8/10/2026 11:36 am"
+    },
+    "342": {
+      "filas": 1,
+      "actividades": [],
+      "celdas": " | 342 | «env:SDE_PROCESO_RADICACION» |  | 8/10/2026 10:04 am |  | 8/10/2026 12:04 pm"
+    },
+    "343": {
+      "filas": 1,
+      "actividades": [],
+      "celdas": " | 343 | «env:SDE_PROCESO_RADICACION» |  | 8/10/2026 10:09 am |  | 8/10/2026 12:09 pm"
+    },
+    "345": {
+      "filas": 1,
+      "actividades": [],
+      "celdas": " | 345 | «env:SDE_PROCESO_RADICACION» |  | 8/10/2026 10:15 am |  | 8/10/2026 12:15 pm"
+    },
+    "346": {
+      "filas": 1,
+      "actividades": [],
+      "celdas": " | 346 | «env:SDE_PROCESO_RADICACION» |  | 8/10/2026 10:18 am |  | 8/10/2026 12:18 pm"
+    },
+    "347": {
+      "filas": 1,
+      "actividades": [],
+      "celdas": " | 347 | «env:SDE_PROCESO_RADICACION» |  | 8/10/2026 10:28 am |  | 8/10/2026 12:28 pm"
+    },
+    "348": {
+      "filas": 1,
+      "actividades": [],
+      "celdas": " | 348 | «env:SDE_PROCESO_RADICACION» |  | 8/10/2026 10:40 am |  | 8/10/2026 12:40 pm"
+    },
+    "350": {
+      "filas": 1,
+      "actividades": [],
+      "celdas": " | 350 | «env:SDE_PROCESO_RADICACION» |  | 8/10/2026 10:54 am |  | 8/10/2026 12:54 pm"
+    },
+    "352": {
+      "filas": 1,
+      "actividades": [],
+      "celdas": " | 352 | «env:SDE_PROCESO_RADICACION» |  | 8/10/2026 11:09 am |  | 9/10/2026 3:09 am"
+    },
+    "425": {
+      "filas": 1,
+      "actividades": [],
+      "celdas": " | 425 | «env:SDE_PROCESO_RADICACION» |  | 13/10/2026 9:12 am |  | 13/10/2026 11:12 am"
+    },
+    "426": {
+      "filas": 1,
+      "actividades": [],
+      "celdas": " | 426 | «env:SDE_PROCESO_RADICACION» |  | 13/10/2026 9:20 am |  | 13/10/2026 11:20 am"
+    },
+    "427": {
+      "filas": 1,
+      "actividades": [],
+      "celdas": " | 427 | «env:SDE_PROCESO_RADICACION» |  | 13/10/2026 9:57 am |  | 13/10/2026 11:57 am"
+    },
+    "428": {
+      "filas": 1,
+      "actividades": [],
+      "celdas": " | 428 | «env:SDE_PROCESO_RADICACION» |  | 13/10/2026 11:45 am |  | 14/10/2026 3:45 am"
+    },
+    "429": {
+      "filas": 1,
+      "actividades": [],
+      "celdas": " | 429 | «env:SDE_PROCESO_RADICACION» |  | 13/10/2026 11:52 am |  | 14/10/2026 3:52 am"
+    },
+    "430": {
+      "filas": 1,
+      "actividades": [],
+      "celdas": " | 430 | «env:SDE_PROCESO_RADICACION» |  | 13/10/2026 12:23 pm |  | 14/10/2026 4:23 am"
+    },
+    "431": {
+      "filas": 1,
+      "actividades": [],
+      "celdas": " | 431 | «env:SDE_PROCESO_RADICACION» |  | 13/10/2026 12:25 pm |  | 14/10/2026 4:25 am"
+    },
+    "434": {
+      "filas": 1,
+      "actividades": [],
+      "celdas": " | 434 | «env:SDE_PROCESO_RADICACION» |  | 13/10/2026 11:12 pm |  | 14/10/2026 5:00 am"
+    },
+    "571": {
+      "filas": 1,
+      "actividades": [],
+      "celdas": " | 571 | «env:SDE_PROCESO_RADICACION» |  | 14/10/2026 6:12 pm |  | 15/10/2026 5:00 am"
+    },
+    "628": {
+      "filas": 2,
+      "actividades": [
+        "Máximo tiempo de radicación",
+        "Consultar información de solicitud",
+        "Deshabilitar cancelación",
+        "Consultar SISE"
+      ],
+      "celdas": " | 628 | «env:SDE_PROCESO_RADICACION» | Máximo tiempo de radicación Consultar información de solicitud Deshabilitar cancelación | 15/10/2026 3:04 pm | 16/10/2026 5:00 am 15/10/2026 3:04 pm | 15/10/2026 3:04 pm"
+    },
+    "630": {
+      "filas": 2,
+      "actividades": [
+        "Máximo tiempo de radicación",
+        "Consultar información de solicitud",
+        "Deshabilitar cancelación",
+        "Consultar SISE"
+      ],
+      "celdas": " | 630 | «env:SDE_PROCESO_RADICACION» | Máximo tiempo de radicación Consultar información de solicitud Deshabilitar cancelación | 15/10/2026 3:12 pm | 16/10/2026 5:00 am 15/10/2026 3:12 pm | 15/10/2026 3:12 pm"
+    }
+  }
+}

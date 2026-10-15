@@ -91,7 +91,7 @@
 
 ## 8. Riesgos conocidos
 
-- Las reglas ortográficas son normativas, pero QA puede vetarlas (D-31). La regla de «Sí» puede tocar un texto por defecto de la plataforma.
+- Las reglas ortográficas son normativas, pero QA puede vetarlas (D-31). La regla de «Sí» se retiró el 15/10 (observación de Work) y quedó como expectativa pendiente.
 - `opcional` y `obligatorio` solo son concluyentes con el campo vacío (Bizagi quita la marca). El inventario lo indica con `conValor`.
 - La parametrización de QA cambia sin aviso (P-14). La selección exacta lo detecta como falla de dato, no del producto.
 - Los datos locales `.env` cambiaron (Ramo y Sucursal). Otro equipo necesita el mismo ajuste.

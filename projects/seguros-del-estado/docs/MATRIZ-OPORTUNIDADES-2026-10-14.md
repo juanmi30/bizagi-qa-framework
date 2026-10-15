@@ -20,16 +20,16 @@ Una prueba unitaria aprobada nunca es evidencia funcional.
 
 | CP | Pasos (sin Objetivo) | Implementados UI / mixtos | Verificado como CP (último reporte) | Observado hoy (no cuenta) | Integración | No automatizado / sin cubrir | Bloqueado por dato | Máximo alcanzable |
 |---|---|---|---|---|---|---|---|---|
-| HU06-CP01 | 28 | 24 / 4 (P4, P12, P17, P28) | P2–P8 (13/10, FAIL en P9) | Inicio P2–P3, P5–P9 (precreación); Estructurar P13–P17, P27–P29 (caso 571, Masiva Modificación) | P12, P17 (Worker AI, en pasos mixtos) | — | P18–P26 (NIT de prueba; además UI-10/BUG-03) | REAL_PASS_PARCIAL |
+| HU06-CP01 | 28 | 24 / 4 (P4, P12, P17, P28) | P2–P8 (13/10, FAIL en P9) | Inicio P2, P3, P5–P8 (precreación), P4 mixto, P9 solo narrativa; Estructurar P13–P17, P27–P29 (caso 571, Masiva Modificación) | P12, P17 (Worker AI, en pasos mixtos) | — | P18–P26 (NIT de prueba; además UI-10/BUG-03) | REAL_PASS_PARCIAL |
 | HU06-CP02 | 21 | 19 / 2 | — | — | P9, P12 (mixtos) | — | P3–P5, P7, P11, P17, P19, P21 | REAL_PASS_PARCIAL |
 | HU06-CP03 | 24 | 23 / 1 | — | — | P9 (mixto) | — | P3–P5, P7, P11, P17, P18, P21, P23 | REAL_PASS_PARCIAL |
 | HU06-CP04 | 22 | 20 / 1 | — | — | P9 (mixto) | P15 (FUNC-05) | P3–P5, P7, P19, P21, P22 | REAL_PASS_PARCIAL |
-| HU06-CP05 | 8 | 6 / 2 (P6, P9) | P2 (14/10 14:51, FAIL en P3 por cambio de formato del Ramo) · antes REAL_PASS_PARCIAL (caso 434) | P2–P5, P7 (precreación); P6 con presentación evaluada | P9 (mixto) | — | — | REAL_PASS_PARCIAL |
-| HU03-CP01 | 21 | 13 / 5 | — | P2–P5; P6 presentación evaluada | P10–P12 | — | P4, P5, P7, P13 (placa con varias pólizas) | REAL_PASS_PARCIAL |
-| HU03-CP02 | 20 | 13 / 5 | — | P2–P5; P6 presentación evaluada | P10, P12 (+P11 mixto) | — | P4, P5, P7, P11, P13, P14 (póliza Autos) | REAL_PASS_PARCIAL |
-| HU03-CP03 | 20 | 12 / 5 | — | P2–P5; P6 presentación evaluada | P10–P12 | — | P4, P5, P7, P13, P14 (póliza Generales) | REAL_PASS_PARCIAL |
-| HU03-CP04 | 19 | 10 / 5 | — | P2–P5; P6 presentación evaluada | P10–P12 | P15 (docs PN) | P4–P7, P13 (tomador existente) | REAL_PASS_PARCIAL |
-| HU03-CP05 | 20 | 10 / 6 | — | P2–P5; P6 presentación evaluada | P10–P12 | P16 (docs PN) | P4–P7, P13 (tomador inexistente) | REAL_PASS_PARCIAL |
+| HU06-CP05 | 8 | 6 / 2 (P6, P9) | P2 (14/10 14:51, FAIL en P3 por cambio de formato del Ramo) · antes REAL_PASS_PARCIAL (caso 434) | P2–P5, P7 (precreación); P6 mixto (UI + pendientes) | P9 (mixto) | — | — | REAL_PASS_PARCIAL |
+| HU03-CP01 | 21 | 13 / 5 | — | P2–P5; P6 mixto (UI + pendientes) | P10–P12 | — | P4, P5, P7, P13 (placa con varias pólizas) | REAL_PASS_PARCIAL |
+| HU03-CP02 | 20 | 13 / 5 | — | P2–P5; P6 mixto (UI + pendientes) | P10, P12 (+P11 mixto) | — | P4, P5, P7, P11, P13, P14 (póliza Autos) | REAL_PASS_PARCIAL |
+| HU03-CP03 | 20 | 12 / 5 | — | P2–P5; P6 mixto (UI + pendientes) | P10–P12 | — | P4, P5, P7, P13, P14 (póliza Generales) | REAL_PASS_PARCIAL |
+| HU03-CP04 | 19 | 10 / 5 | — | P2–P5; P6 mixto (UI + pendientes) | P10–P12 | P15 (docs PN) | P4–P7, P13 (tomador existente) | REAL_PASS_PARCIAL |
+| HU03-CP05 | 20 | 10 / 6 | — | P2–P5; P6 mixto (UI + pendientes) | P10–P12 | P16 (docs PN) | P4–P7, P13 (tomador inexistente) | REAL_PASS_PARCIAL |
 | HU03-CP06 | 20 | 12 / 5 | — | P2–P3 | P10–P12 | — | P4–P7, P13, P14 (ramo Cumplimiento con RCE) | REAL_PASS_PARCIAL |
 | HU03-CP07 | 20 | 12 / 5 | — | P2–P3 | P10–P12 | — | P4–P7, P13, P14 (ramo sin RCE) | REAL_PASS_PARCIAL |
 | HU03-CP08 | 20 | 12 / 5 | — | P2–P3 | P10–P12 | — | P4–P7, P13, P14 (ramo sin RCE) | REAL_PASS_PARCIAL |

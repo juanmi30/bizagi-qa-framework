@@ -1,13 +1,13 @@
 # Estado actual del framework
 
-**Actualizado: 2026-10-14 (noche), por Claude Code — fase de validaciones funcionales tras la reunión QA del 14/10.** Repositorio: `juanmi30/bizagi-qa-framework` (privado). `main` = `f40bde7` (merge del PR #1 + deuda P-08..P-10). Esta página describe la rama `feat/sde-validaciones-funcionales` (PR en borrador, sin fusionar); checkpoint `docs/orquestacion/checkpoints/2026-10-14-validaciones-funcionales.md`. Migración a otro equipo (qué no viaja por Git y variables P-14): `2026-10-14-cierre-jornada.md`. Matriz de oportunidades: `projects/seguros-del-estado/docs/MATRIZ-OPORTUNIDADES-2026-10-14.md`. Todo dato de esta página se verificó en esta sesión, salvo lo marcado como *no auditado*.
+**Actualizado: 2026-10-14 (noche), por Claude Code — fase de validaciones funcionales tras la reunión QA del 14/10.** Repositorio: `juanmi30/bizagi-qa-framework` (privado). `main` = `f40bde7` (merge del PR #1 + deuda P-08..P-10). Esta página describe la rama `feat/sde-validaciones-funcionales` (PR en borrador, sin fusionar); checkpoint `docs/orquestacion/checkpoints/2026-10-14-validaciones-funcionales.md`. Migración a otro equipo (qué no viaja por Git y variables P-14): `2026-10-14-cierre-jornada.md`. Correcciones de la auditoría de Work (R1, R2): `2026-10-15-correcciones-auditoria-pr2.md`. Matriz de oportunidades: `projects/seguros-del-estado/docs/MATRIZ-OPORTUNIDADES-2026-10-14.md`. Todo dato de esta página se verificó en esta sesión, salvo lo marcado como *no auditado*.
 
 ## Verificaciones técnicas de esta fecha (rama de validaciones funcionales)
 
 | Control | Resultado |
 |---|---|
 | `npx tsc --noEmit` | Sin errores |
-| SDE `@unit` | **175/175**: 155 anteriores + 20 de esta fase (validaciones de presentación, P-06 y diagnóstico del combo) |
+| SDE `@unit` | **191/191**: 155 anteriores + 20 de la fase del 14/10 + 16 regresiones de la auditoría de Work (R1 ortografía sin evidencia, R2 defecto conservado ante excepción) |
 | Demo (regresión) | 48 aprobadas / 4 fallidas: los mismos 4 fallos históricos de plantilla sin URL real |
 | Colsubsidio | `lifecycle-casos.unit`, `contrato-create-case`, `login-navegacion.unit` y `afi-soporte.unit`: **53/53** |
 | CONPRE | Sin cambios; `--list` 6 pruebas en 3 archivos (no se ejecuta porque hace login real) |
@@ -27,8 +27,8 @@
 
 | CP | Estado real | Última ejecución | Detalle |
 |---|---|---|---|
-| HU06-CP05 | FAIL (no atribuible al producto) | 2026-10-14 14:51 (Juan Miguel), sin caso: P3 falló porque el Ramo ahora se muestra "48 - …" (P-14). Antes: REAL_PASS_PARCIAL (caso 434) | Precreación del 14/10 tras ajustar los datos: P2–P5 y P7 PASS; P6 con presentación evaluada (sin hallazgos ortográficos) y expectativas pendientes. Máximo alcanzable: REAL_PASS_PARCIAL (P6 y P9) |
-| HU06-CP01 (oficial) | FAIL | 2026-10-13, sin caso | P2–P8 PASS; P9 FAIL (secuencia de documentos, control de cambios). Hoy: precreación P2–P9 PASS sin cargar documentos; Estructurar verificado en el caso 571 (P13–P17, P27–P29 PASS; P1 ortografía: OBS-04). **Pendientes para REAL_PASS: P4** (capitalización y orden sin fuente, D-33), **P12, P17** (Worker AI) **y P28** (UI-04). Máximo: REAL_PASS_PARCIAL |
+| HU06-CP05 | FAIL (no atribuible al producto) | 2026-10-14 14:51 (Juan Miguel), sin caso: P3 falló porque el Ramo ahora se muestra "48 - …" (P-14). Antes: REAL_PASS_PARCIAL (caso 434) | Precreación del 14/10 (no cuenta como CP): P2–P5 y P7 PASS; P6 mixto (UI PASS + ortografía sin hallazgos + expectativas pendientes); P8–P9 no ejecutados. Máximo alcanzable: REAL_PASS_PARCIAL (P6 y P9) |
+| HU06-CP01 (oficial) | FAIL | 2026-10-13, sin caso | P2–P8 PASS; P9 FAIL (secuencia de documentos, control de cambios). Precreación del 14/10 (no cuenta como CP): P2, P3 y P5–P8 PASS, P4 mixto (UI + pendientes), P9 parcial (narrativa sin documentos); Estructurar verificado en el caso 571 (P13–P17, P27–P29 PASS; P1 ortografía: OBS-04). **Pendientes para REAL_PASS: P4** (capitalización y orden sin fuente, D-33), **P12, P17** (Worker AI) **y P28** (UI-04). Máximo: REAL_PASS_PARCIAL |
 | HU06-CP01 (variante, no cuenta) | Diagnóstico | Caso 429 | Pasos observados en QA sumando todas las fuentes: P2–P11, P13–P16, P18, P22, P28 y P29 (**18 de 29**). P12 y P17 son integración no verificable (Worker AI); P19–P26 bloqueados por UI-10; P27 falla por BUG-04 |
 | HU03-CP01 a CP05 | BLOCKED (datos) | Precreación 2026-10-14, sin crear casos | P2–P5 PASS y P6 con presentación evaluada (sin hallazgos) con INT-013403; P7 necesita datos de QA; Completar información depende de SISE |
 | HU03-CP06 a CP08 | BLOCKED (datos) | Pre-creación | P2–P3; falta saber qué ramos de Cumplimiento tienen la propiedad RCE |
@@ -46,7 +46,7 @@
 - **ENV-03:** resuelto para la cuenta INT-013403 (rol CE_Intermediarios); `intermediario_alerta` sigue sin rol.
 - **Datos:** ninguna póliza, placa ni tomador real; no hay fuente autorizada en el portal.
 
-**Incidente 2026-10-13 (Claude Code):** al correr una prueba unitaria con `--grep "no se pisan"` desde Git Bash, `tools/run.mjs` partió el filtro por los espacios (se lanzaba con shell sin entrecomillar) y Playwright seleccionó pruebas reales. Se ejecutó **HU06-CP05 contra QA y se creó el caso 434** (REAL_PASS_PARCIAL, mismo resultado que 427; sin pop-ups ni acciones destructivas); HU03-CP08 quedó BLOCKED en preflight. Causa raíz corregida en `tools/run.mjs` con prueba de regresión. Pendiente de Juan Miguel: qué hacer con el caso 434 (P-07) y si las E2E reales deben exigir una activación explícita (P-06).
+**Incidente 2026-10-13 (Claude Code):** al correr una prueba unitaria con `--grep "no se pisan"` desde Git Bash, `tools/run.mjs` partió el filtro por los espacios (se lanzaba con shell sin entrecomillar) y Playwright seleccionó pruebas reales. Se ejecutó **HU06-CP05 contra QA y se creó el caso 434** (REAL_PASS_PARCIAL, mismo resultado que 427; sin pop-ups ni acciones destructivas); HU03-CP08 quedó BLOCKED en preflight. Causa raíz corregida en `tools/run.mjs` con prueba de regresión. Activación explícita de las E2E reales: P-06 **resuelta** (D-34, `SDE_E2E=1`). Pendiente de Juan Miguel: qué hacer con los casos 434 y 571 (P-07).
 
 **Confiabilidad (esta rama):** H1 veredicto E2E y JUnit con estado, causa y atribución · H4 causas estructuradas en preflight y ejecución · H6 bloqueo entre procesos para el histórico y las ejecuciones reales · H7 pendientes estructurales y «máximo alcanzable» por CP. Detalle en el checkpoint.
 

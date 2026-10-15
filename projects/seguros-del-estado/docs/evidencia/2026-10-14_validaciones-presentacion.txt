@@ -16,13 +16,17 @@ Corrección de diagnóstico: el error del combo informaba "visibles: ninguna" po
 reabre y lista las opciones reales.
 
 == 2. Formulario de inicio — precreación de solo lectura (red: CREATENEWCASE abortado; se detiene antes de Crear y de cargas)
-HU06-CP05 (analista):     P2–P7 PASS; P6 presentación: ortografía 16 textos sin hallazgos, etiquetas aprobadas OK;
-                          orden/obligatoriedad/capitalización/etiqueta de tipo de solicitud PENDIENTES (NOT_AUTOMATED).
-HU06-CP01 (analista):     P2–P9 PASS (hasta antes de adjuntar); P4 y P6 presentación: 11 textos sin hallazgos;
+HU06-CP05 (analista):     P2–P5 y P7 PASS (verificación UI). P6 MIXTO: verificaciones UI PASS + ortografía 16 textos sin
+                          hallazgos + etiquetas aprobadas OK, y orden/obligatoriedad/capitalización/etiqueta de tipo de
+                          solicitud PENDIENTES (NOT_AUTOMATED). P8–P9 no ejecutados (la precreación se detiene antes de Crear).
+HU06-CP01 (analista):     P2, P3 y P5–P8 PASS (verificación UI). P4 MIXTO (UI PASS + expectativas pendientes). P9 PARCIAL:
+                          narrativa diligenciada, documentos NO cargados (la precreación se detiene antes de adjuntar).
+                          Presentación en P4 y P6: 11 textos sin hallazgos;
                           Descripción de la Solicitud (Masiva/Múltiple) y Documentos Anexos con el texto de la matriz;
                           texto de ayuda exacto "Masivo: Solicitud asociada a más de una póliza.".
-HU03-CP01/02/03 (intermediario): P2–P6 PASS + presentación sin hallazgos · P7 BLOCKED (placa/póliza de QA ausentes).
-HU03-CP04/05 (intermediario):    P2–P6 PASS (obligatorio Tipo/Número de Documento del Tomador) · P7 BLOCKED (tomador).
+HU03-CP01/02/03 (intermediario): P2–P5 PASS · P6 MIXTO (UI PASS + ortografía sin hallazgos + expectativas pendientes y tipo de
+                                 dato sin especificar) · P7 BLOCKED (placa/póliza de QA ausentes).
+HU03-CP04/05 (intermediario):    P2–P5 PASS (obligatorio Tipo/Número de Documento del Tomador) · P6 MIXTO · P7 BLOCKED (tomador).
 HU03-CP06/07/08 (intermediario): P2–P3 PASS · P4 BLOCKED (ramo Cumplimiento con/sin RCE sin definir).
 
 Nomenclatura observada en el inicio:

@@ -91,7 +91,7 @@ test('diagnóstico BUG-01: secuencia guardar registro → tipos documentales (si
   const ui: UiEntorno = {
     browser, paginaInicial: page, paginas: new Map(), contextos: [],
     registrarCaso: (n, actor) => registrarCasoCreado({ cp: 'DIAGNOSTICO BUG-01 secuencia producto (no es resultado de CP)', numero: n, actor, unico: 'diag', cleanup: 'CLEANUP_NOT_APPLICABLE' }),
-    soloLectura: process.env.SDE_DIAG_CREAR !== '1', // solo crea si se pide explícitamente
+    soloLectura: false, // funcional controlada: escribe (filas y cargas); solo corre con SDE_DIAG_CREAR=1
   };
   const { capacidades } = crearCapacidadesUi(ui);
   const obs: Record<string, unknown>[] = [];

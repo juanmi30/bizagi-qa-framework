@@ -20,6 +20,11 @@ export interface ContextoEjecucion {
   sesiones: Set<string>;      // actores con sesión real iniciada
   /** Hay un pop-up de fila abierto (lo marcan las capabilities de tabla). Salir de él sin Guardar destruye el caso (BUG-03). */
   dialogoAbierto: boolean;
+  /**
+   * Evidencia POSITIVA de estar en el formulario de inicio sin caso (P-15/F2): la pone nuevo_caso al confirmar el diálogo y
+   * la retiran las capacidades que salen de él. La ausencia de número de caso NO es evidencia de precreación.
+   */
+  formularioInicio?: boolean;
   secretos: string[];         // valores que jamás deben aparecer en reportes
   /** Resuelve ${dato:..}/${config:..}/${unico}; lanza DatoFaltanteError si falta. */
   resolver(texto: string): string;

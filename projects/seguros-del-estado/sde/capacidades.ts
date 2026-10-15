@@ -9,7 +9,7 @@ import type { CampoSde, PasoSde, Verificacion } from './escenario';
 import { EntornoError, type Capacidad, type ContextoEjecucion, type Verificador } from './ejecutor';
 import { autorizarAperturaPopup, cargarPopups, type RegistroPopups } from './popups';
 import { cargarPresentacion } from './presentacion';
-import { exigirSoloLectura, protegerSoloLectura, type RegistroSoloLectura } from './soloLectura';
+import { exigirSoloLectura, OPERACIONES, protegerSoloLectura, registroDe, type RegistroSoloLectura } from './soloLectura';
 import { aplicarReglasOrtograficas, compararConAprobado, revisarOrden } from '../../../shared/utils/ValidacionesPresentacion';
 import {
   CalibracionError, NoConcluyenteError, adjuntar, botonesVisibles, campo, diligenciar, esObligatorio, esperarCarga, estaSoloLectura,
@@ -52,6 +52,26 @@ function paginaActual(ui: UiEntorno): Page {
   return p;
 }
 const ambitoActual = (ui: UiEntorno): Ambito => ui.dialogo ?? paginaActual(ui);
+
+/**
+ * Evidencia POSITIVA de estar en el formulario de inicio sin caso (P-15/F2). Solo se marca si el diálogo de inicio está
+ * visible y es único; la comparten el contexto de ejecución (capa de capacidades) y la guardia de red del navegador.
+ */
+export async function marcarFormularioInicio(page: Page, ctx: { formularioInicio?: boolean }): Promise<void> {
+  if ((await page.locator(SdeObjects.dialogoInicio).filter({ visible: true }).count()) !== 1) {
+    throw new Error('No hay evidencia del formulario de inicio: su diálogo no está visible (no se marca precreación).');
+  }
+  ctx.formularioInicio = true;
+  const registro = registroDe(page.context());
+  if (registro) registro.estado.formularioInicio = true;
+}
+
+/** Retira la evidencia: a partir de aquí no se está en el formulario de inicio (red y capacidades vuelven a denegar). */
+export function salirDeFormularioInicio(page: Page, ctx: { formularioInicio?: boolean }): void {
+  ctx.formularioInicio = false;
+  const registro = registroDe(page.context());
+  if (registro) registro.estado.formularioInicio = false;
+}
 
 /**
  * Pulsa el botón que crea el caso y obtiene el número desde la RESPUESTA REAL de Bizagi
@@ -290,6 +310,7 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
         (ui.registroSoloLectura ??= []).push(await protegerSoloLectura(page.context()));
       }
       rastrearAcciones(page); // habilita la espera de "forma quieta" (re-ejecución de reglas Bizagi)
+      salirDeFormularioInicio(page, ctx); // una sesión nueva no está en ningún formulario de inicio
       const usuario = ctx.env[`USUARIO_${actor}`] ?? '';
       const clave = ctx.env[`CLAVE_${actor}`] ?? '';
       try {
@@ -341,6 +362,7 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       await (await unicoVisible(item, `el proceso "${proceso}"`, 20_000)).click();
       // Formulario de inicio (hasStartForm): diálogo propio; el caso NO existe hasta "Crear".
       await unicoVisible(page.locator(SdeObjects.dialogoInicio), 'el formulario de inicio (SdeObjects.dialogoInicio)', 60_000);
+      await marcarFormularioInicio(page, ctx); // evidencia POSITIVA de precreación (P-15/F2)
       await esperarCarga(page);
       return { detalle: `Formulario de inicio de "${proceso}" abierto (ruta: ${ruta.join(' > ') || '—'})` };
     },
@@ -441,6 +463,7 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
 
     pulsar: async (p, ctx) => {
       const page = paginaActual(ui);
+      salirDeFormularioInicio(page, ctx); // un botón puede crear el caso o cambiar de pantalla
       const notas = [`Botón "${p.boton}" pulsado`];
       if (p.capturar_numero_caso) {
         const numero = await pulsarYCapturarCaso(page, () => pulsar(ambitoActual(ui), p.boton as string), async (n) => {
@@ -466,6 +489,7 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       if (!ctx.numeroCaso) throw new Error('No hay número de caso capturado: no se puede verificar la ruta.');
       const page = ui.paginas.get(p.actor as string);
       if (!page) throw new Error(`El actor "${p.actor}" no tiene sesión.`);
+      salirDeFormularioInicio(page, ctx); // el buscador recarga el portal: el formulario de inicio ya no está
       const destinos = (Array.isArray(p.llega_a) ? p.llega_a as string[] : [p.llega_a as string]).map(normaliza);
       const prohibidas = ((p.no_llega_a as string[]) ?? []).map(normaliza);
       const limite = Date.now() + ((p.maximo_minutos as number) ?? 8) * 60_000;
@@ -500,6 +524,7 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       if (!ctx.numeroCaso) throw new Error('No hay número de caso capturado.');
       const page = ui.paginas.get(p.actor as string);
       if (!page) throw new Error(`El actor "${p.actor}" no tiene sesión.`);
+      salirDeFormularioInicio(page, ctx); // se trabaja sobre un caso EXISTENTE
       const actividad = normaliza(p.actividad as string);
       const limite = Date.now() + ((p.maximo_minutos as number) ?? 8) * 60_000;
       let e: EstadoCaso;
@@ -701,7 +726,16 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
   // un spec invoque directamente). Lo no clasificado se deniega (sde/soloLectura.ts).
   if (ui.soloLectura) {
     for (const [nombre, cap] of Object.entries(capacidades)) {
-      capacidades[nombre] = async (p, ctx) => { exigirSoloLectura(nombre, ctx); return cap(p, ctx); };
+      capacidades[nombre] = async (p, ctx) => {
+        // Escribir en el formulario de inicio exige que la evidencia siga vigente: el diálogo de inicio debe estar visible.
+        // Ante la duda (se cerró, otra pantalla), se retira la evidencia y la política deniega (F2).
+        if (OPERACIONES[nombre]?.clase === 'formulario_inicio' && ctx.formularioInicio) {
+          const pagina = paginaActual(ui);
+          if ((await pagina.locator(SdeObjects.dialogoInicio).filter({ visible: true }).count()) !== 1) salirDeFormularioInicio(pagina, ctx);
+        }
+        exigirSoloLectura(nombre, ctx);
+        return cap(p, ctx);
+      };
     }
   }
   return { capacidades, verificar };

@@ -11,7 +11,9 @@ import { buscarCaso, crearCapacidadesUi, VIEWPORT_SDE, type UiEntorno } from '..
 import { DIR_SALIDA } from '../sde/registro';
 
 /**
- * RE-VERIFICACIÓN DE BLOQUEOS en QA, SOLO LECTURA. Corre únicamente con SDE_VERIFICAR_BLOQUEOS=1.
+ * RE-VERIFICACIÓN DE BLOQUEOS en QA. Corre únicamente con SDE_VERIFICAR_BLOQUEOS=1. Cada prueba DECLARA su modalidad (P-15/F3):
+ *  [solo lectura] → UiEntorno con soloLectura: true (capacidades, DOM y red protegidos; no abre actividades).
+ *  [funcional controlada] → abre actividades o agrega una fila sin pulsar "Crear"/"Guardar"; no promete solo lectura.
  *  - ENV-03: ¿qué procesos recibe el portal de cada rol al abrir "Nuevo Caso"? (no modifica permisos)
  *  - BUG-02: actividades actuales de los casos PROPIOS Individuales detenidos (buscador; no abre ni avanza)
  *  - BUG-01: lista "Tipo Documental" de "Documentos Anexos" en Masiva/Póliza Nueva. Abre el formulario de
@@ -25,7 +27,7 @@ const registro = cargarRegistro();
 const CASOS_BUG02 = (process.env.SDE_CASOS_BUG02 ?? '336,345,346,347,348,352').split(',').map((x) => x.trim()).filter(Boolean);
 const P = (matriz: number[], hacer: string, extra: Record<string, unknown> = {}): PasoSde => ({ matriz, hacer, ...extra });
 
-test.describe('Re-verificación de bloqueos SDE (solo lectura) @bloqueos', () => {
+test.describe('Re-verificación de bloqueos SDE (modalidad declarada por prueba) @bloqueos', () => {
   test.skip(process.env.SDE_VERIFICAR_BLOQUEOS !== '1', 'Desactivado: SDE_VERIFICAR_BLOQUEOS=1 para correrlo.');
   const salida: Record<string, unknown> = { fecha: new Date().toISOString() };
   test.afterAll(() => {
@@ -34,7 +36,7 @@ test.describe('Re-verificación de bloqueos SDE (solo lectura) @bloqueos', () =>
     console.log(`BLOQUEOS\n${JSON.stringify(salida, null, 2)}`);
   });
 
-  test('ENV-03: procesos habilitados por rol (respuesta que el propio portal recibe)', async ({ page, browser }) => {
+  test('ENV-03: procesos habilitados por rol (respuesta que el propio portal recibe) [solo lectura]', async ({ page, browser }) => {
     test.setTimeout(6 * 60_000);
     const proceso = process.env.SDE_PROCESO_RADICACION ?? '';
     const resultado: Record<string, unknown> = {};
@@ -42,7 +44,7 @@ test.describe('Re-verificación de bloqueos SDE (solo lectura) @bloqueos', () =>
       if (estadoActor(registro, actor, process.env).estado !== 'READY') { resultado[actor] = 'SIN_CREDENCIALES'; continue; }
       const contexto = await browser.newContext({ baseURL: process.env.BIZAGI_BASE_URL, ignoreHTTPSErrors: true, viewport: VIEWPORT_SDE });
       const p = actor === 'intermediario' ? page : await contexto.newPage();
-      const ui: UiEntorno = { browser, paginaInicial: p, paginas: new Map(), contextos: [], registrarCaso: () => undefined };
+      const ui: UiEntorno = { browser, paginaInicial: p, paginas: new Map(), contextos: [], registrarCaso: () => undefined, soloLectura: true };
       const ctx = crearContexto(registro, process.env, 'bloqueos');
       await crearCapacidadesUi(ui).capacidades.iniciar_sesion({ matriz: [2], hacer: 'iniciar_sesion', actor }, ctx);
       const vistas: { url: string; http: number; proceso_visible: boolean; categorias_vacias: boolean }[] = [];
@@ -64,7 +66,7 @@ test.describe('Re-verificación de bloqueos SDE (solo lectura) @bloqueos', () =>
     salida['ENV-03'] = resultado;
   });
 
-  test('ENV-03 detalle: rol visible, aplicaciones/categorías/procesos y opciones del portal por actor', async ({ browser }) => {
+  test('ENV-03 detalle: rol visible, aplicaciones/categorías/procesos y opciones del portal por actor [solo lectura]', async ({ browser }) => {
     test.setTimeout(8 * 60_000);
     const detalle: Record<string, unknown> = {};
     for (const actor of ['intermediario', 'analista']) {
@@ -79,7 +81,7 @@ test.describe('Re-verificación de bloqueos SDE (solo lectura) @bloqueos', () =>
         rutas.add(u.pathname.replace(/\/\d+(?=\/|$)/g, '/{n}'));
         if (/Processes\/All|Processes\/RecentProcesses|Authorization\/MenuAuthorization/.test(u.pathname) && r.status() === 200) cuerpos.push(r.text().then((t) => ({ ruta: u.pathname, t }), () => ({ ruta: u.pathname, t: '' })));
       });
-      const ui: UiEntorno = { browser, paginaInicial: p, paginas: new Map(), contextos: [], registrarCaso: () => undefined };
+      const ui: UiEntorno = { browser, paginaInicial: p, paginas: new Map(), contextos: [], registrarCaso: () => undefined, soloLectura: true };
       await crearCapacidadesUi(ui).capacidades.iniciar_sesion({ matriz: [2], hacer: 'iniciar_sesion', actor }, crearContexto(registro, process.env, 'bloqueos'));
       await esperarCarga(p);
       // Rol: textos con forma de rol Bizagi (p. ej. "CE_Analista"); el nombre de la persona NO se registra.
@@ -123,9 +125,9 @@ test.describe('Re-verificación de bloqueos SDE (solo lectura) @bloqueos', () =>
     salida['ENV-03-detalle'] = detalle;
   });
 
-  test('BUG-02: actividad actual de los casos propios Individuales', async ({ page, browser }) => {
+  test('BUG-02: actividad actual de los casos propios Individuales [solo lectura]', async ({ page, browser }) => {
     test.setTimeout(8 * 60_000);
-    const ui: UiEntorno = { browser, paginaInicial: page, paginas: new Map(), contextos: [], registrarCaso: () => undefined };
+    const ui: UiEntorno = { browser, paginaInicial: page, paginas: new Map(), contextos: [], registrarCaso: () => undefined, soloLectura: true };
     await crearCapacidadesUi(ui).capacidades.iniciar_sesion({ matriz: [2], hacer: 'iniciar_sesion', actor: 'analista' }, crearContexto(registro, process.env, 'bloqueos'));
     const casos: Record<string, unknown> = {};
     const secretos = crearContexto(registro, process.env, 'bloqueos').secretos;
@@ -137,7 +139,7 @@ test.describe('Re-verificación de bloqueos SDE (solo lectura) @bloqueos', () =>
     salida['BUG-02'] = casos;
   });
 
-  test('BUG-03: estado al reabrir casos propios en Estructurar información (sin Cancelar ni Guardar)', async ({ page, browser }) => {
+  test('BUG-03: estado al reabrir casos propios en Estructurar información (sin Cancelar ni Guardar) [funcional controlada: abre la actividad]', async ({ page, browser }) => {
     const casos = (process.env.SDE_CASOS_BUG03 ?? '').split(',').map((x) => x.trim()).filter(Boolean);
     test.skip(casos.length === 0, 'SDE_CASOS_BUG03=<n1,n2> (casos PROPIOS) para correrlo.');
     test.setTimeout(6 * 60_000);
@@ -157,7 +159,7 @@ test.describe('Re-verificación de bloqueos SDE (solo lectura) @bloqueos', () =>
     salida['BUG-03'] = res;
   });
 
-  test('TRAZA BPM: subprocesos, eventos y línea de tiempo del caso (solo nombres de actividades/procesos)', async ({ page, browser }) => {
+  test('TRAZA BPM: subprocesos, eventos y línea de tiempo del caso (solo nombres de actividades/procesos) [funcional controlada: abre el caso]', async ({ page, browser }) => {
     const casos = (process.env.SDE_CASOS_TRAZA ?? '').split(',').map((x) => x.trim()).filter(Boolean);
     test.skip(casos.length === 0, 'SDE_CASOS_TRAZA=<n1,n2> (casos PROPIOS) para correrlo.');
     test.setTimeout(8 * 60_000);
@@ -203,7 +205,7 @@ test.describe('Re-verificación de bloqueos SDE (solo lectura) @bloqueos', () =>
     salida['TRAZA'] = res;
   });
 
-  test('UI-10: definición de formularios que entrega Render al abrir Estructurar (solo metadatos; NO abre el pop-up)', async ({ page, browser }) => {
+  test('UI-10: definición de formularios que entrega Render al abrir Estructurar (solo metadatos; NO abre el pop-up) [funcional controlada: abre la actividad]', async ({ page, browser }) => {
     const caso = process.env.SDE_CASO_RENDER;
     test.skip(!caso, 'SDE_CASO_RENDER=<n> (caso PROPIO en Estructurar información) para correrlo.');
     test.setTimeout(6 * 60_000);
@@ -239,7 +241,7 @@ test.describe('Re-verificación de bloqueos SDE (solo lectura) @bloqueos', () =>
     salida['UI-10-RENDER'] = { respuestas_render: textos.length, bytes: textos.map((t) => t.length), controles_totales: controles.length, relevantes };
   });
 
-  test('BANDEJA del intermediario: conteos y actividades (solo lectura, sin abrir casos)', async ({ page, browser }) => {
+  test('BANDEJA del intermediario: conteos y actividades (sin abrir casos) [solo lectura]', async ({ page, browser }) => {
     test.skip(process.env.SDE_VER_BANDEJA !== '1', 'SDE_VER_BANDEJA=1 para correrlo.');
     test.setTimeout(5 * 60_000);
     const cuerpos: Promise<[string, string]>[] = [];
@@ -267,7 +269,7 @@ test.describe('Re-verificación de bloqueos SDE (solo lectura) @bloqueos', () =>
     salida['BANDEJA'] = resumen;
   });
 
-  test('HISTÓRICO: consultas del analista y datos de póliza en casos accesibles (solo lectura; valores solo a archivo privado)', async ({ page, browser }) => {
+  test('HISTÓRICO: consultas del analista y datos de póliza en casos accesibles (valores solo a archivo privado) [solo lectura]', async ({ page, browser }) => {
     const privado = process.env.SDE_SALIDA_PRIVADA;
     test.skip(!privado, 'SDE_SALIDA_PRIVADA=<ruta fuera del repo> para correrlo.');
     test.setTimeout(8 * 60_000);
@@ -336,7 +338,7 @@ test.describe('Re-verificación de bloqueos SDE (solo lectura) @bloqueos', () =>
     salida['HISTORICO'] = res;
   });
 
-  test('BUG-01: tipos documentales en Masiva / Póliza Nueva (sin Crear)', async ({ page, browser }) => {
+  test('BUG-01: tipos documentales en Masiva / Póliza Nueva (sin Crear) [funcional controlada: agrega una fila en el formulario de inicio]', async ({ page, browser }) => {
     test.setTimeout(10 * 60_000);
     const esc: EscenarioSde = {
       id: 'HU06-CP01', titulo: 'VERIFICACIÓN BUG-01 (no es resultado del CP; no pulsa Crear)', etiquetas: [], actores: ['analista'],
@@ -357,7 +359,8 @@ test.describe('Re-verificación de bloqueos SDE (solo lectura) @bloqueos', () =>
     };
     const ui: UiEntorno = { browser, paginaInicial: page, paginas: new Map(), contextos: [], registrarCaso: () => undefined };
     const { capacidades, verificar } = crearCapacidadesUi(ui);
-    const r = await ejecutarEscenario(esc, { capacidades, verificar, evidencia: async () => undefined, soloLectura: ui.soloLectura }, crearContexto(registro, process.env, 'bloqueos'));
+    // Funcional controlada (F3): adjuntar_en_grilla agrega una fila; nunca se presenta como solo lectura. No hay paso "Crear".
+    const r = await ejecutarEscenario(esc, { capacidades, verificar, evidencia: async () => undefined, soloLectura: false }, crearContexto(registro, process.env, 'bloqueos'));
     salida['BUG-01'] = r.pasos.map((p) => `#${p.indice} ${p.hacer} [${p.estado}] ${p.detalle}`);
   });
 });

@@ -9,6 +9,7 @@ import type { CampoSde, PasoSde, Verificacion } from './escenario';
 import { EntornoError, type Capacidad, type ContextoEjecucion, type Verificador } from './ejecutor';
 import { autorizarAperturaPopup, cargarPopups, type RegistroPopups } from './popups';
 import { cargarPresentacion } from './presentacion';
+import { exigirSoloLectura, protegerSoloLectura, type RegistroSoloLectura } from './soloLectura';
 import { aplicarReglasOrtograficas, compararConAprobado, revisarOrden } from '../../../shared/utils/ValidacionesPresentacion';
 import {
   CalibracionError, NoConcluyenteError, adjuntar, botonesVisibles, campo, diligenciar, esObligatorio, esperarCarga, estaSoloLectura,
@@ -21,20 +22,6 @@ import {
  * Un actor = un BrowserContext propio: el cambio de usuario no depende del logout del portal.
  */
 
-/**
- * MODO SOLO LECTURA (diagnósticos y calibraciones): ninguna petición que cree un caso llega a Bizagi. Se instala en el
- * CONTEXTO del navegador (todas sus páginas) y aborta cualquier POST a la ruta de acciones cuyo cuerpo contenga
- * CREATENEWCASE, sin importar qué prueba o filtro lo disparó. Devuelve el contador de intentos bloqueados.
- */
-export async function protegerContraCreacion(contexto: BrowserContext): Promise<{ bloqueados: () => number }> {
-  let n = 0;
-  await contexto.route(`**${SdeObjects.rutaAcciones}*`, async (route) => {
-    if ((route.request().postData() ?? '').includes('CREATENEWCASE')) { n++; return route.abort('blockedbyclient'); }
-    return route.fallback();
-  });
-  return { bloqueados: () => n };
-}
-
 export interface UiEntorno {
   browser: Browser;
   paginaInicial: Page;
@@ -44,8 +31,13 @@ export interface UiEntorno {
   dialogo?: Locator;                                   // pop-up abierto (edición/adición de filas)
   tabla?: { tabla: string; fila: number | null; filasAntes: number; contenidoFila?: string[] };
   registrarCaso: (numero: string, actor: string) => Promise<void> | void;
-  /** true: el escenario NO puede crear casos (pulsar "Crear" falla antes del clic y la red bloquea CREATENEWCASE). */
+  /**
+   * true: SOLO LECTURA (P-15, sde/soloLectura.ts). Las capacidades de escritura se rechazan antes de ejecutarse, la guardia DOM
+   * neutraliza clics y cargas en componentes que persisten datos y la red aborta las acciones de escritura verificadas.
+   */
   soloLectura?: boolean;
+  /** Registro por contexto protegido: acciones de red abortadas y nombres de acciones observadas (sin datos). */
+  registroSoloLectura?: RegistroSoloLectura[];
   /** Registro de formularios de pop-up (por defecto data/popups-calibrados.yaml). Solo las pruebas sintéticas lo sustituyen. */
   popupsCalibrados?: RegistroPopups;
 }
@@ -293,7 +285,10 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
         }
         ui.paginas.set(actor, page);
       }
-      if (ui.soloLectura && !protegidos.has(page.context())) { protegidos.add(page.context()); await protegerContraCreacion(page.context()); }
+      if (ui.soloLectura && !protegidos.has(page.context())) {
+        protegidos.add(page.context());
+        (ui.registroSoloLectura ??= []).push(await protegerSoloLectura(page.context()));
+      }
       rastrearAcciones(page); // habilita la espera de "forma quieta" (re-ejecución de reglas Bizagi)
       const usuario = ctx.env[`USUARIO_${actor}`] ?? '';
       const clave = ctx.env[`CLAVE_${actor}`] ?? '';
@@ -447,9 +442,6 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
     pulsar: async (p, ctx) => {
       const page = paginaActual(ui);
       const notas = [`Botón "${p.boton}" pulsado`];
-      if (ui.soloLectura && (p.capturar_numero_caso || /^crear$/i.test(String(p.boton).trim()))) {
-        throw new Error(`MODO SOLO LECTURA: se impidió pulsar "${p.boton}" (crearía un caso).`);
-      }
       if (p.capturar_numero_caso) {
         const numero = await pulsarYCapturarCaso(page, () => pulsar(ambitoActual(ui), p.boton as string), async (n) => {
           ctx.numeroCaso = n;
@@ -705,5 +697,12 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       return { detalle: notas.join('; ') };
     },
   };
+  // P-15: la política de solo lectura se aplica en UN solo lugar, antes de ejecutar cualquier capacidad (incluidas las que
+  // un spec invoque directamente). Lo no clasificado se deniega (sde/soloLectura.ts).
+  if (ui.soloLectura) {
+    for (const [nombre, cap] of Object.entries(capacidades)) {
+      capacidades[nombre] = async (p, ctx) => { exigirSoloLectura(nombre, ctx); return cap(p, ctx); };
+    }
+  }
   return { capacidades, verificar };
 }

@@ -49,7 +49,7 @@ test.describe('Pre-creación HU03 en solo lectura @precreacion', () => {
       const { capacidades, verificar } = crearCapacidadesUi(ui);
       const ctx = crearContexto(registro, process.env, `pre-${Date.now()}`);
       try {
-        const r = await ejecutarEscenario(esc, { capacidades, verificar, evidencia: async () => undefined }, ctx);
+        const r = await ejecutarEscenario(esc, { capacidades, verificar, evidencia: async () => undefined, soloLectura: true }, ctx);
         r.motivo = `PRE-CREACIÓN en solo lectura (no es ejecución del CP; se detiene antes de "Crear"): ${r.motivo}`;
         guardarReporte(r, 'PRECREACION_');
         const etiquetas = await etiquetasFormulario(ui.actual ? ui.paginas.get(ui.actual)! : page).catch(() => []);

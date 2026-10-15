@@ -113,7 +113,7 @@ test('calibración Estructurar información sobre caso propio @calibracion', asy
           campos: await inventarioCampos(pg), hallazgos_ortograficos: aplicarReglasOrtograficas(textos, cat.reglas_ortograficas, cat.conocidos), textos_revisados: textos };
       }
       return salida;
-    } }, verificar,
+    } }, verificar, soloLectura: ui.soloLectura,
     evidencia: async (n) => { const f = await page.screenshot({ fullPage: true }).catch(() => null); if (f) await testInfo.attach(n, { body: f, contentType: 'image/png' }); return n; },
   }, ctx);
   if (presentacion) {

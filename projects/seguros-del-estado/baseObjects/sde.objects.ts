@@ -107,6 +107,13 @@ export const SdeObjects = {
    * títulos y columnas de grillas y pestañas. Los botones se toman de areaBotones. Nunca valores diligenciados. [VERIFICADO: etiquetas, grupos, grillas]
    */
   textosPresentacion: ['.ui-bizagi-label label', '[class~="ui-bizagi-render"] label[for]', 'h3.ui-bizagi-container-group-header', '.bz-rn-grid-header-title', 'thead th label', '[role="tab"]'],
+  /**
+   * Componentes que PERSISTEN datos en el Work Portal (P-15, guardia DOM de solo lectura): zona de botones de la actividad o
+   * del formulario de inicio, acciones de grilla (Adicionar/Guardar/Eliminar/Editar fila), botones de diálogos (Guardar,
+   * Cancelar, Subir) y controles de carga de archivos. Clasificados por su función en Bizagi, no por el texto del botón.
+   */
+  componentesEscritura: ['.ui-bizagi-button-container button', '.ui-bizagi-button-container input', 'li[data-action]',
+    '.ui-dialog-buttonpane button', '.ui-dialog-titlebar-close', 'li.ui-bizagi-render-upload-wrapper > a', 'input[type="file"]'],
   /** Notificación de Bizagi ("Debe revisar lo siguiente:"). Se registra como hallazgo, no se oculta. */
   notificacion: '.ui-bizagi-notifications-container, #NotificationCenter',
 };

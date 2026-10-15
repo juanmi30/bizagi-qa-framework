@@ -357,7 +357,7 @@ test.describe('Re-verificación de bloqueos SDE (solo lectura) @bloqueos', () =>
     };
     const ui: UiEntorno = { browser, paginaInicial: page, paginas: new Map(), contextos: [], registrarCaso: () => undefined };
     const { capacidades, verificar } = crearCapacidadesUi(ui);
-    const r = await ejecutarEscenario(esc, { capacidades, verificar, evidencia: async () => undefined }, crearContexto(registro, process.env, 'bloqueos'));
+    const r = await ejecutarEscenario(esc, { capacidades, verificar, evidencia: async () => undefined, soloLectura: ui.soloLectura }, crearContexto(registro, process.env, 'bloqueos'));
     salida['BUG-01'] = r.pasos.map((p) => `#${p.indice} ${p.hacer} [${p.estado}] ${p.detalle}`);
   });
 });

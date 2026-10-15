@@ -110,10 +110,13 @@ test.describe('Métricas de cobertura (implementada / ejecutada / aprobada) @uni
   });
 
   test('implementación (H2): un paso UI + integración/no automatizado es MIXTO y no cuenta como completo; CP05 es PARCIAL', () => {
-    // 9 pasos menos "Objetivo" = 8. P6 (verificar + expectativas de presentación PENDIENTES) y P9 (verificar_ruta + integración) son MIXTOS.
-    expect(nivelImplementacion(m, esc)).toEqual({ nivel: 'PARCIAL', pasos: { total: 8, ui: 6, mixto: 2, integracion: 0, no_automatizado: 0, sin_cubrir: 0 } });
+    // 9 pasos menos "Objetivo" = 8. P6 (verificar + expectativas de presentación PENDIENTES), P8 (ruta pendiente de definición, P-18)
+    // y P9 (verificar_ruta con esa expectativa + integración) son MIXTOS.
+    expect(nivelImplementacion(m, esc)).toEqual({ nivel: 'PARCIAL', pasos: { total: 8, ui: 5, mixto: 3, integracion: 0, no_automatizado: 0, sin_cubrir: 0 } });
     // Control: sin lo declarativo (integración, no automatizado y pasos que citan expectativas de presentación) queda COMPLETA.
-    const soloUi = { ...esc, pasos: esc.pasos.filter((p) => !['integracion', 'no_automatizado'].includes(p.hacer) && !(p.verificar ?? []).some((v) => 'expectativa' in v)) };
+    // Los pasos «verificar» que citan expectativas se quitan; en los demás (p. ej. la ruta de P8) solo se quita la expectativa.
+    const soloUi = { ...esc, pasos: esc.pasos.filter((p) => !['integracion', 'no_automatizado'].includes(p.hacer) && !(p.hacer === 'verificar' && (p.verificar ?? []).some((v) => 'expectativa' in v)))
+      .map((p) => ({ ...p, verificar: p.verificar?.filter((v) => !('expectativa' in v)) })) };
     expect(nivelImplementacion(m, soloUi).nivel).toBe('COMPLETA');
     expect(nivelImplementacion(casoMatriz('HU06-CP02'), undefined).nivel).toBe('NO_IMPLEMENTADA');
     const sinPaso8 = { ...esc, pasos: esc.pasos.filter((p) => !p.matriz.includes(8)) };

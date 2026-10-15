@@ -93,6 +93,39 @@ export function limiteCasosPendientes(env: Record<string, string | undefined>, p
     : [];
 }
 
+export type AdmisionCreacion<T> =
+  | { admitida: true; pendientes: number; resultado: T }
+  | { admitida: false; pendientes: number | null; bloqueos: string[] };
+
+/**
+ * Cupo de creación ATÓMICO (corrección de Work, PR #4): el conteo de pendientes, el límite, la ejecución que crea el caso
+ * y su registro ocurren DENTRO del mismo bloqueo de ejecución real (H6). Mientras una corrida admitida lo tiene, su cupo
+ * está reservado: otra corrida solo cuenta después de que la primera liberó, y para entonces su caso ya está registrado
+ * (`registrarCasoCreado` se espera dentro de la ejecución). La reserva ES el bloqueo: se libera en `finally` ante rechazo,
+ * excepción o cancelación, así que no quedan reservas fantasma. Alcance: el del bloqueo (un mismo equipo y el mismo
+ * histórico local); NO protege entre computadores distintos.
+ */
+export async function conCupoDeCreacion<T>(
+  o: { env: Record<string, string | undefined>; adquirir: () => Promise<Bloqueo>; contarPendientes: () => Promise<number> },
+  ejecutar: (pendientes: number) => Promise<T>,
+): Promise<AdmisionCreacion<T>> {
+  let bloqueo: Bloqueo;
+  try {
+    bloqueo = await o.adquirir();
+  } catch (e) {
+    if (!(e instanceof BloqueoOcupadoError)) throw e;
+    return { admitida: false, pendientes: null, bloqueos: [`CONCURRENCIA: otra ejecución real de SDE está en curso — ${e.message} Ejecuta de a una (--workers=1) o define SDE_ESPERA_EJECUCION_REAL_SEGUNDOS.`] };
+  }
+  try {
+    const pendientes = await o.contarPendientes();
+    const exceso = limiteCasosPendientes(o.env, pendientes);
+    if (exceso.length) return { admitida: false, pendientes, bloqueos: exceso };
+    return { admitida: true, pendientes, resultado: await ejecutar(pendientes) };
+  } finally {
+    bloqueo.liberar();
+  }
+}
+
 export interface OpcionesVerticales { titulo: string; etiquetas: string[]; prefijoReporte: string; prefijoMotivo: string }
 
 export function registrarVerticales(rutas: string[], o: OpcionesVerticales = { titulo: '[SDE]', etiquetas: [], prefijoReporte: '', prefijoMotivo: '' }): void {
@@ -122,53 +155,56 @@ export function registrarVerticales(rutas: string[], o: OpcionesVerticales = { t
       };
       const faltantes = [...activacionE2e(process.env), ...preflight(s, registro, process.env)];
       if (faltantes.length) return bloqueados(faltantes);
-      const pendientes = (await new HistorialCasos({ proyecto: 'seguros-del-estado', directorioBase: resolve(__dirname, '..', '..', '..') }).listarPendientes()).length;
-      testInfo.annotations.push({ type: 'P-17', description: `Casos SDE propios pendientes de cierre antes de esta corrida: ${pendientes}` });
-      const excesoPendientes = limiteCasosPendientes(process.env, pendientes);
-      if (excesoPendientes.length) return bloqueados(excesoPendientes);
 
       // H6: una sola ejecución real de SDE a la vez (casos reales, histórico y reportes compartidos), aunque se pase
       // --workers>1 o se abran dos terminales. Por defecto no espera: el CP queda BLOCKED por CONCURRENCIA.
       if (testInfo.config.workers > 1) {
         testInfo.annotations.push({ type: 'ADVERTENCIA', description: `Se pidieron ${testInfo.config.workers} workers: las ejecuciones reales de SDE se serializan con un bloqueo; usa --workers=1.` });
       }
-      let bloqueo: Bloqueo;
-      try {
-        bloqueo = await adquirirBloqueo(RUTA_BLOQUEO_EJECUCION_REAL, {
-          esperaMs: Number(process.env.SDE_ESPERA_EJECUCION_REAL_SEGUNDOS ?? 0) * 1000,
-          caducidadMs: 6 * 60 * 60_000, descripcion: `${o.prefijoReporte}${s.id}`,
-        });
-      } catch (e) {
-        if (!(e instanceof BloqueoOcupadoError)) throw e;
-        return bloqueados([`CONCURRENCIA: otra ejecución real de SDE está en curso — ${e.message} Ejecuta de a una (--workers=1) o define SDE_ESPERA_EJECUCION_REAL_SEGUNDOS.`]);
-      }
-
       testInfo.setTimeout(30 * 60_000);
       const ui: UiEntorno = {
         browser, paginaInicial: page, paginas: new Map(), contextos: [],
         registrarCaso: (numero, actor) => registrarCasoCreado({ cp: `${o.prefijoReporte}${s.id}`, numero, actor, unico, cleanup: s.cleanup.politica }),
       };
-      const { capacidades, verificar } = crearCapacidadesUi(ui);
-      try {
-        const reporte = await ejecutarEscenario(s, {
-          capacidades, verificar,
-          evidencia: async (nombreEv) => {
-            const p = ui.actual ? ui.paginas.get(ui.actual) : page;
-            const foto = await p?.screenshot({ fullPage: true }).catch(() => null);
-            if (foto) await testInfo.attach(nombreEv, { body: foto, contentType: 'image/png' });
-            return foto ? nombreEv : undefined;
-          },
-        }, ctx);
-        if (o.prefijoMotivo) reporte.motivo = `${o.prefijoMotivo}${reporte.motivo}`;
-        const ruta = guardarReporte(reporte, o.prefijoReporte);
-        await testInfo.attach(`${s.id}-reporte.json`, { path: ruta, contentType: 'application/json' });
-        testInfo.annotations.push({ type: reporte.estado, description: reporte.motivo });
-        if (reporte.numero_caso) testInfo.annotations.push({ type: 'caso', description: reporte.numero_caso });
-        console.log(resumenTexto(reporte));
-        aplicarResultado(reporte, testInfo);
-      } finally {
-        for (const c of ui.contextos) await c.close().catch(() => undefined);
-        bloqueo.liberar();
+      // P-17 / D-44: conteo y límite DENTRO del bloqueo H6, que se mantiene hasta registrar el caso (cupo atómico).
+      const admision = await conCupoDeCreacion({
+        env: process.env,
+        adquirir: () => adquirirBloqueo(RUTA_BLOQUEO_EJECUCION_REAL, {
+          esperaMs: Number(process.env.SDE_ESPERA_EJECUCION_REAL_SEGUNDOS ?? 0) * 1000,
+          caducidadMs: 6 * 60 * 60_000, descripcion: `${o.prefijoReporte}${s.id}`,
+        }),
+        contarPendientes: async () => (await new HistorialCasos({ proyecto: 'seguros-del-estado', directorioBase: resolve(__dirname, '..', '..', '..') }).listarPendientes()).length,
+      }, async (pendientes) => {
+        testInfo.annotations.push({ type: 'P-17', description: `Casos SDE propios pendientes de cierre antes de esta corrida: ${pendientes}` });
+        await ejecutarVertical();
+      });
+      if (!admision.admitida) {
+        if (admision.pendientes != null) testInfo.annotations.push({ type: 'P-17', description: `Casos SDE propios pendientes de cierre: ${admision.pendientes}` });
+        return bloqueados(admision.bloqueos);
+      }
+
+      async function ejecutarVertical(): Promise<void> {
+        const { capacidades, verificar } = crearCapacidadesUi(ui);
+        try {
+          const reporte = await ejecutarEscenario(s, {
+            capacidades, verificar,
+            evidencia: async (nombreEv) => {
+              const p = ui.actual ? ui.paginas.get(ui.actual) : page;
+              const foto = await p?.screenshot({ fullPage: true }).catch(() => null);
+              if (foto) await testInfo.attach(nombreEv, { body: foto, contentType: 'image/png' });
+              return foto ? nombreEv : undefined;
+            },
+          }, ctx);
+          if (o.prefijoMotivo) reporte.motivo = `${o.prefijoMotivo}${reporte.motivo}`;
+          const ruta = guardarReporte(reporte, o.prefijoReporte);
+          await testInfo.attach(`${s.id}-reporte.json`, { path: ruta, contentType: 'application/json' });
+          testInfo.annotations.push({ type: reporte.estado, description: reporte.motivo });
+          if (reporte.numero_caso) testInfo.annotations.push({ type: 'caso', description: reporte.numero_caso });
+          console.log(resumenTexto(reporte));
+          aplicarResultado(reporte, testInfo);
+        } finally {
+          for (const c of ui.contextos) await c.close().catch(() => undefined);
+        }
       }
     });
   }

@@ -24,7 +24,11 @@ export interface ExpectativaPendiente {
 }
 export type Expectativa = ExpectativaAprobada | ExpectativaPendiente;
 
+/** Pantalla reconocible por marcadores citados en la matriz (R1: sin pantalla identificada no hay aprobación). */
+export interface PantallaPresentacion { descripcion: string; marcadores: string[]; fuente: string }
+
 export interface CatalogoPresentacion {
+  pantallas: Record<string, PantallaPresentacion>;
   reglas_ortograficas: ReglaOrtografica[];
   conocidos: Record<string, string>;
   expectativas: Record<string, Expectativa>;
@@ -38,8 +42,14 @@ const esTexto = (v: unknown): v is string => typeof v === 'string' && v.trim() !
 export function problemasCatalogo(c: Partial<CatalogoPresentacion> | undefined): string[] {
   const p: string[] = [];
   if (!c || typeof c !== 'object') return ['el catálogo debe ser un mapa con reglas_ortograficas, conocidos y expectativas'];
-  const extra = Object.keys(c).filter((k) => !['reglas_ortograficas', 'conocidos', 'expectativas'].includes(k));
+  const extra = Object.keys(c).filter((k) => !['pantallas', 'reglas_ortograficas', 'conocidos', 'expectativas'].includes(k));
   if (extra.length) p.push(`claves desconocidas en la raíz: ${extra.join(', ')}`);
+  for (const [id, pa] of Object.entries(c.pantallas ?? {})) {
+    if (!esTexto(pa?.descripcion) || !esTexto(pa?.fuente) || !Array.isArray(pa?.marcadores) || pa.marcadores.length === 0 || !pa.marcadores.every(esTexto))
+      p.push(`pantalla ${id}: requiere descripcion, fuente y una lista no vacía de marcadores`);
+    const sobran = Object.keys(pa ?? {}).filter((k) => !['descripcion', 'marcadores', 'fuente'].includes(k));
+    if (sobran.length) p.push(`pantalla ${id}: claves desconocidas ${sobran.join(', ')}`);
+  }
   const ids = new Set<string>();
   for (const [i, r] of (c.reglas_ortograficas ?? []).entries()) {
     const donde = `regla #${i + 1}`;
@@ -79,7 +89,7 @@ export function cargarPresentacion(ruta = RUTA_PRESENTACION): CatalogoPresentaci
   const crudo = existsSync(ruta) ? yaml.load(readFileSync(ruta, 'utf8')) as Partial<CatalogoPresentacion> : {};
   const problemas = problemasCatalogo(crudo);
   if (problemas.length) throw new Error(`Catálogo de presentación inválido (${ruta.split(/[\\/]/).pop()}):\n  • ${problemas.join('\n  • ')}`);
-  const catalogo = { reglas_ortograficas: crudo.reglas_ortograficas ?? [], conocidos: crudo.conocidos ?? {}, expectativas: crudo.expectativas ?? {} };
+  const catalogo = { pantallas: crudo.pantallas ?? {}, reglas_ortograficas: crudo.reglas_ortograficas ?? [], conocidos: crudo.conocidos ?? {}, expectativas: crudo.expectativas ?? {} };
   cache = { ruta, catalogo };
   return catalogo;
 }

@@ -12,6 +12,18 @@ import { SdeObjects } from '../baseObjects/sde.objects';
 
 export type Ambito = Page | Locator;
 
+/**
+ * Una verificación no pudo concluir: la pantalla no es la esperada, está vacía o no aporta los elementos que la
+ * verificación necesita. NUNCA es una aprobación (R1, auditoría de Work del PR #2): ausencia de evidencia no es ausencia
+ * de defectos. Se clasifica como AUTOMATIZACION (no se atribuye al producto).
+ */
+export class NoConcluyenteError extends Error {
+  constructor(detalle: string) {
+    super(`NO CONCLUYENTE: ${detalle}`);
+    this.name = 'NoConcluyenteError';
+  }
+}
+
 export class CalibracionError extends Error {
   constructor(clave: string, detalle: string) {
     super(`[calibrar SdeObjects.${clave}] ${detalle}`);
@@ -312,12 +324,17 @@ export async function inventarioCampos(ambito: Ambito): Promise<CampoInventario[
   return out;
 }
 
-/** Textos de presentación visibles del ámbito (SdeObjects.textosPresentacion + botones), sin repetir. Nunca valores. */
+/**
+ * Textos de presentación visibles del ámbito (SdeObjects.textosPresentacion + botones), sin repetir. Nunca valores.
+ * Única ausencia tolerada: que la pantalla no tenga zona de botones (consulta completada sin error). Cualquier error al
+ * consultar se PROPAGA para clasificarse; nunca se convierte en "sin textos".
+ */
 export async function textosVisibles(ambito: Ambito): Promise<string[]> {
   await esperarCarga(paginaDe(ambito));
   const textos: string[] = [];
   for (const sel of SdeObjects.textosPresentacion) textos.push(...await ambito.locator(sel).filter({ visible: true }).allInnerTexts());
-  textos.push(...await botonesVisibles(ambito).catch(() => [])); // sin zona de botones visible no hay botones que revisar
+  const hayBotones = (await ambito.locator(SdeObjects.areaBotones).filter({ visible: true }).count()) > 0;
+  if (hayBotones) textos.push(...await botonesVisibles(ambito));
   return [...new Set(textos.map(normaliza).filter(Boolean))];
 }
 

@@ -45,7 +45,8 @@ test.describe('Presentación — funciones puras (shared/utils/ValidacionesPrese
     expect(por('Detalle Polizas Asociadas')).toEqual(['ORT-TERMINO-POLIZA@OBS-04']);
     expect(por('Digito de Verificacion del Tomador').sort()).toEqual(['ORT-AGUDA-CION@OBS-10', 'ORT-TERMINO-DIGITO@OBS-10']);
     expect(por('Ramo :')).toEqual(['ORT-ESPACIO-ANTES-DE-SIGNO@OBS-03']);
-    expect(por('Si')).toEqual(['ORT-SI-AFIRMATIVO']); // sin ID: sería un hallazgo NUEVO
+    // "Si" ya no se marca automáticamente (observación de Work, PR #2): depende del contexto afirmativo (INI-SI-AFIRMATIVO, pendiente).
+    expect(por('Si')).toEqual([]);
   });
 
   test('control negativo: los textos correctos observados en QA no producen hallazgos', () => {
@@ -75,7 +76,7 @@ test.describe('Presentación — catálogo y validador estricto @unit', () => {
       reglas_ortograficas: [{ id: 'R', patron: '(', descripcion: 'd', fuente: 'f' }],
       conocidos: {},
       expectativas: {
-        A: { descripcion: 'x', estado: 'aprobada', verificar: [{ ortografia: 'visible' }] } as never,
+        A: { descripcion: 'x', estado: 'aprobada', verificar: [{ ortografia: 'inicio-radicacion' }] } as never,
         B: { descripcion: 'x', estado: 'pendiente_definicion', pendiente: 'p' } as never,
         C: { descripcion: 'x', estado: 'pendiente_definicion', pendiente: 'p', responsable: 'r', verificar: [] } as never,
       },
@@ -97,7 +98,7 @@ pasos:
     no_bloqueante: true
     verificar:
       - expectativa: NO-EXISTE
-      - ortografia: todo
+      - ortografia: visible
       - orden: [Línea]
       - opcional: [Ramo]
       - expectativa: INI-ORDEN-CAMPOS
@@ -105,7 +106,7 @@ pasos:
     const error = (() => { try { cargarEscenario(ruta, reg); return ''; } catch (e) { return (e as Error).message; } })();
     expect(error).toContain('claves no soportadas no_bloqueante');
     expect(error).toContain('"NO-EXISTE" no existe en data/expectativas-presentacion.yaml');
-    expect(error).toContain('el único ámbito soportado es "visible"');
+    expect(error).toContain('"visible" no es una pantalla de data/expectativas-presentacion.yaml');
     expect(error).toContain('"orden": requiere al menos 2 campos');
     expect(error).not.toMatch(/opcional|INI-ORDEN-CAMPOS/);
   });
@@ -125,7 +126,7 @@ function escenario(pasos: PasoSde[]): EscenarioSde {
 }
 
 const CATALOGO_PRUEBA: CatalogoPresentacion = {
-  reglas_ortograficas: [], conocidos: {},
+  pantallas: {}, reglas_ortograficas: [], conocidos: {},
   expectativas: {
     APROBADA: { descripcion: 'd', estado: 'aprobada', fuente: 'Matriz HU06-CP05 P6', verificar: [{ etiquetas: ['Observaciones'] }] },
     PENDIENTE: { descripcion: 'd', estado: 'pendiente_definicion', pendiente: 'falta el FRM', responsable: 'Daniel' },
@@ -157,7 +158,7 @@ test.describe('Presentación — ejecutor: expectativas y pasos no bloqueantes @
 
   test('no_bloqueante: la diferencia de presentación queda FAIL pero el recorrido sigue; sin la clave se detiene', async () => {
     const pasos = (nb: boolean) => [P([2], 'iniciar_sesion', { actor: 'analista' }),
-      P([6], 'verificar', { verificar: [{ ortografia: 'visible' }], ...(nb ? { no_bloqueante: true } : {}) }), P([7], 'pulsar', { boton: 'Crear' })];
+      P([6], 'verificar', { verificar: [{ ortografia: 'inicio-radicacion' }], ...(nb ? { no_bloqueante: true } : {}) }), P([7], 'pulsar', { boton: 'Crear' })];
     const sigue = await correr(pasos(true), (v) => !('ortografia' in v));
     expect(sigue.pasos.map((p) => p.estado)).toEqual(['PASS', 'FAIL', 'PASS']);
     expect(sigue.pasos[1].detalle).toContain('No bloqueante: el recorrido continúa');
@@ -168,7 +169,7 @@ test.describe('Presentación — ejecutor: expectativas y pasos no bloqueantes @
 
   test('no_bloqueante NO aplica a excepciones (automatización): el estado de la UI ya no es confiable', async () => {
     const r = await ejecutarEscenario(escenario([P([2], 'iniciar_sesion', { actor: 'analista' }),
-      P([6], 'verificar', { verificar: [{ ortografia: 'visible' }], no_bloqueante: true }), P([7], 'pulsar', { boton: 'Crear' })]), {
+      P([6], 'verificar', { verificar: [{ ortografia: 'inicio-radicacion' }], no_bloqueante: true }), P([7], 'pulsar', { boton: 'Crear' })]), {
       capacidades: { iniciar_sesion: async (_p, c) => { c.sesiones.add('analista'); }, verificar: async () => ({}), pulsar: async () => undefined },
       verificar: async () => { throw new Error('locator.click: Timeout 15000ms exceeded.'); }, evidencia: async () => undefined, presentacion: CATALOGO_PRUEBA,
     }, crearContexto(reg, ENV, 'u'));
@@ -192,6 +193,8 @@ const FORM = `
     ${CAMPO('Observaciónes', '<textarea></textarea>')}
     ${CAMPO('¿Su solicitud requiere cambio de intermediario?', '<input type="radio" id="s" name="r"><label for="s">Si</label><input type="radio" id="n" name="r"><label for="n">No</label>')}
     ${CAMPO('Número de Caso', '<span>1</span>', 'ui-bizagi-render-readonly')}
+    ${CAMPO('Tipo de Radicación', '<input type="radio" id="i" name="t"><label for="i">Individual</label>')}
+    ${CAMPO('Codigo de Agencia', '<input>')}
   </div>
   <div class="ui-bizagi-button-container"><button>Crear</button></div>`;
 
@@ -205,7 +208,7 @@ test.describe('Presentación — verificaciones sobre DOM sintético @unit', () 
 
   test('inventario en orden de lectura, con grupo, obligatoriedad y solo lectura', async ({ page }) => {
     const inv = await inventarioCampos(page);
-    expect(inv.map((x) => x.etiqueta)).toEqual(['Línea', 'Ramo :', 'Sucursal', 'Observaciónes', '¿Su solicitud requiere cambio de intermediario?', 'Número de Caso']);
+    expect(inv.map((x) => x.etiqueta)).toEqual(['Línea', 'Ramo :', 'Sucursal', 'Observaciónes', '¿Su solicitud requiere cambio de intermediario?', 'Número de Caso', 'Tipo de Radicación', 'Codigo de Agencia']);
     expect(inv[0]).toMatchObject({ grupo: 'Informacion a Consultar', obligatorio: true, soloLectura: false });
     expect(inv[5]).toMatchObject({ grupo: 'Tipo de Consulta', soloLectura: true });
   });
@@ -224,14 +227,16 @@ test.describe('Presentación — verificaciones sobre DOM sintético @unit', () 
   });
 
   test('ortografía sobre los textos visibles: separa hallazgos ya registrados de los nuevos', async ({ page }) => {
-    const r = await verificarSintetico(page, { ortografia: 'visible' });
+    const r = await verificarSintetico(page, { ortografia: 'inicio-radicacion' });
     expect(r.ok).toBe(false);
     expect(r.detalle).toContain('"Observaciónes" → ORT-PLURAL-ONES ("Observaciónes") [ya registrado: BUG-04]');
     expect(r.detalle).toContain('"Informacion a Consultar" → ORT-AGUDA-CION ("Informacion") [ya registrado: OBS-01]');
     expect(r.detalle).toContain('"Ramo :" → ORT-ESPACIO-ANTES-DE-SIGNO');
-    expect(r.detalle).toContain('"Si" → ORT-SI-AFIRMATIVO ("Si"; correcto: Sí) [NUEVO]');
-    await page.setContent(CAMPO('Observaciones', '<textarea></textarea>') + CAMPO('Línea', '<input>'));
-    expect(await verificarSintetico(page, { ortografia: 'visible' })).toMatchObject({ ok: true });
+    expect(r.detalle).toContain('"Codigo de Agencia" → ORT-TERMINO-CODIGO ("Codigo"; correcto: Código) [NUEVO]');
+    expect(r.detalle).not.toContain('"Si" →');
+    expect(r.detalle).toContain('en "inicio-radicacion" (identificada por Línea, Tipo de Radicación)');
+    await page.setContent(CAMPO('Observaciones', '<textarea></textarea>') + CAMPO('Línea', '<input>') + CAMPO('Tipo de Radicación', '<input>'));
+    expect(await verificarSintetico(page, { ortografia: 'inicio-radicacion' })).toMatchObject({ ok: true });
   });
 
   test('etiquetas: "Observaciones" aprobada frente a "Observaciónes" se informa como diferencia de ortografía', async ({ page }) => {

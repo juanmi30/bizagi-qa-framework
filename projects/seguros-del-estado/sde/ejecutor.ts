@@ -49,6 +49,8 @@ export function causaDeExcepcion(e: unknown): CausaPaso {
   if (nombre === 'CalibracionError' || nombre === 'BarreraPopupError' || /^\[calibrar /.test(m)) return 'AUTOMATIZACION';
   if (/No se encontró visible|Se esperaba exactamente 1|Ambigüedad|locator\.|Timeout \d+ms exceeded|intercepts pointer|no está dentro de/.test(m)) return 'AUTOMATIZACION';
   if (/MODO SOLO LECTURA|^NO VERIFICABLE:/.test(m)) return 'AUTOMATIZACION';
+  // Verificación sin evidencia suficiente (pantalla no identificada o vacía): nunca aprobada ni atribuida al producto (R1).
+  if (nombre === 'NoConcluyenteError' || /^NO CONCLUYENTE:/.test(m)) return 'AUTOMATIZACION';
   if (/Bizagi rechazó|no ofrece ninguna opción|ruta NO esperada|no quedó marcada|el formulario muestra .* tras diligenciar|se confirmó sin los campos obligatorios|no muestra "/.test(m)) return 'PRODUCTO_POR_CONFIRMAR';
   return 'NO_CLASIFICADO';
 }
@@ -149,7 +151,8 @@ function agregarMatriz(cp: string, pasos: ResultadoPaso[], estadoGlobal?: Estado
 
 /** Causas distintas de los pasos ejecutados que no quedaron verdes (en orden de aparición). */
 function causasDe(pasos: ResultadoPaso[], filtro: (p: ResultadoPaso) => boolean = () => true): CausaPaso[] {
-  return [...new Set(pasos.filter((p) => p.causa && filtro(p)).map((p) => p.causa!))];
+  // Incluye la causa de un incidente técnico posterior a un defecto observado (R2): queda trazado sin sustituir al defecto.
+  return [...new Set(pasos.filter(filtro).flatMap((p) => [p.causa, p.incidente?.causa]).filter((c): c is CausaPaso => !!c))];
 }
 
 function clasificar(matriz: ResultadoPasoMatriz[], ctx: ContextoEjecucion, pasos: ResultadoPaso[] = []): { estado: EstadoCp; motivo: string; atribucion: ReporteCp['atribucion'] } {
@@ -158,10 +161,12 @@ function clasificar(matriz: ResultadoPasoMatriz[], ctx: ContextoEjecucion, pasos
     const causas = [...new Set(pasos.filter((p) => p.estado === 'FAIL').map((p) => p.causa ?? 'NO_CLASIFICADO'))];
     // Solo una verificación observada distinta de lo esperado (o una respuesta explícita de Bizagi) apunta al producto.
     const producto = causas.includes('PRODUCTO_POR_CONFIRMAR');
+    const incidentes = [...new Set(pasos.filter((p) => p.incidente).map((p) => p.incidente!.causa))];
     return {
       estado: 'FAIL',
       atribucion: producto ? 'PRODUCTO_POR_CONFIRMAR' : 'NO_ATRIBUIBLE_AL_PRODUCTO',
-      motivo: `Al menos un paso de la matriz falló (causa: ${causas.join(', ')})` + (producto
+      motivo: `Al menos un paso de la matriz falló (causa: ${causas.join(', ')})` +
+        (incidentes.length ? ` [incidente técnico posterior al defecto observado: ${incidentes.join(', ')}; ver el paso]` : '') + (producto
         ? ' — comportamiento observado distinto al esperado: posible defecto, POR CONFIRMAR funcionalmente.'
         : causas.every((c) => c === 'AUTOMATIZACION')
           ? ' — falla de AUTOMATIZACIÓN/calibración, NO atribuible al producto.'
@@ -242,13 +247,19 @@ export async function ejecutarEscenario(esc: EscenarioSde, deps: Dependencias, c
       continue;
     }
     const t0 = Date.now();
+    // Observaciones del paso FUERA del try (R2, auditoría de Work del PR #2): una excepción posterior no debe borrar lo ya
+    // observado. "fallas" cuenta las verificaciones que SÍ se ejecutaron y no se cumplieron (defecto funcional observado).
+    const notas: string[] = [];
+    let ok = true;
+    let fallas = 0;
+    let verificadas = 0;
+    const pendientes: string[] = [];
+    let incidente = false;
     try {
       const cap = deps.capacidades[paso.hacer] ?? CAPACIDADES_DECLARATIVAS[paso.hacer];
       if (!cap) throw new Error(`capability "${paso.hacer}" no implementada en este ejecutor`);
       const salida = (await cap(paso, ctx)) ?? {};
-      const notas: string[] = salida.detalle ? [salida.detalle] : [];
-      let ok = true;
-      const pendientes: string[] = [];
+      if (salida.detalle) notas.push(salida.detalle);
       for (const v of paso.verificar ?? []) {
         // Expectativa del catálogo de presentación: aprobada → se verifican sus verificaciones (citando la fuente);
         // pendiente de definición → no se verifica y el paso no puede quedar verde.
@@ -259,30 +270,49 @@ export async function ejecutarEscenario(esc: EscenarioSde, deps: Dependencias, c
           if (e.estado !== 'aprobada') { pendientes.push(id); notas.push(`… ${id} PENDIENTE DE DEFINICIÓN (${e.responsable}): ${e.pendiente}`); continue; }
           for (const sub of e.verificar as Verificacion[]) {
             const res = await deps.verificar(sub, ctx);
+            verificadas++;
             notas.push(`${res.ok ? '✔' : '✘'} [${id} · fuente: ${e.fuente}] ${res.detalle}`);
-            if (!res.ok) ok = false;
+            if (!res.ok) { ok = false; fallas++; }
           }
           continue;
         }
         const res = await deps.verificar(v, ctx);
+        verificadas++;
         notas.push(`${res.ok ? '✔' : '✘'} ${res.detalle}`);
-        if (!res.ok) ok = false;
+        if (!res.ok) { ok = false; fallas++; }
       }
       r.estado = !ok ? 'FAIL' : pendientes.length ? 'NOT_AUTOMATED' : (salida.estado ?? 'PASS');
       // Verificación no cumplida = comportamiento observado distinto al esperado (por confirmar, nunca "defecto" directo).
       r.causa = !ok ? 'PRODUCTO_POR_CONFIRMAR' : pendientes.length ? 'NO_AUTOMATIZADO' : (salida.causa ?? CAUSA_DE_ESTADO[r.estado]);
       r.detalle = notas.join(' | ');
     } catch (e) {
-      r.causa = causaDeExcepcion(e);
-      r.estado = r.causa === 'DATO' || r.causa === 'AMBIENTE' || (e as Error)?.name === 'BarreraPopupError' ? 'BLOCKED' : 'FAIL';
-      r.detalle = (e as Error).message.split('\n').slice(0, 3).join(' ');
+      const causa = causaDeExcepcion(e);
+      const mensaje = (e as Error).message.split('\n').slice(0, 3).join(' ');
+      const previas = notas.length ? `${notas.join(' | ')} | ` : '';
+      if (fallas > 0) {
+        // Ya había un defecto funcional OBSERVADO en este paso: se conserva como FAIL atribuido al producto (por
+        // confirmar) y la excepción se registra APARTE como incidente técnico. No pasa a BLOCKED ni desaparece.
+        const total = (paso.verificar ?? []).length;
+        r.estado = 'FAIL';
+        r.causa = 'PRODUCTO_POR_CONFIRMAR';
+        r.incidente = { causa, detalle: sanitizar(mensaje, ctx.secretos) };
+        incidente = true;
+        r.detalle = `${previas}⚠ INCIDENTE posterior (${causa}; no sustituye lo observado): ${mensaje}` +
+          ` | Verificaciones ejecutadas: ${verificadas} de ${total} (las demás no se ejecutaron).`;
+      } else {
+        // Sin defecto previo: comportamiento anterior (BLOCKED o FAIL técnico según la causa), conservando lo observado.
+        r.causa = causa;
+        r.estado = causa === 'DATO' || causa === 'AMBIENTE' || (e as Error)?.name === 'BarreraPopupError' ? 'BLOCKED' : 'FAIL';
+        r.detalle = `${previas}${mensaje}`;
+      }
     }
     r.ms = Date.now() - t0;
     r.detalle = sanitizar(r.detalle, ctx.secretos);
     r.evidencia = await deps.evidencia(`${esc.id}_p${String(i + 1).padStart(2, '0')}_${paso.hacer}`).catch(() => undefined);
     // Paso de verificación NO BLOQUEANTE con una diferencia observada: solo miró la pantalla (no la cambió), así que el
     // estado de la UI sigue siendo confiable. Queda FAIL (y el CP también) y el recorrido continúa.
-    const sigue = paso.hacer === 'verificar' && paso.no_bloqueante === true && r.estado === 'FAIL' && r.causa === 'PRODUCTO_POR_CONFIRMAR';
+    // Un incidente técnico (R2) siempre detiene: el estado de la UI ya no es confiable aunque el paso sea no bloqueante.
+    const sigue = !incidente && paso.hacer === 'verificar' && paso.no_bloqueante === true && r.estado === 'FAIL' && r.causa === 'PRODUCTO_POR_CONFIRMAR';
     if (sigue) r.detalle += ' | No bloqueante: el recorrido continúa (el CP queda FAIL).';
     // Un FAIL (o un dato o ambiente que faltaba a mitad de un paso) detiene: el estado de la UI ya no es confiable.
     if (!sigue && (r.estado === 'FAIL' || r.estado === 'BLOCKED')) {

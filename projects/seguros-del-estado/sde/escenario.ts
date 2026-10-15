@@ -36,7 +36,7 @@ export type Verificacion =
   // reglas ortográficas del proyecto sobre los textos visibles, y expectativas del catálogo data/expectativas-presentacion.yaml.
   | { orden: string[] }
   | { opcional: string[] }
-  | { ortografia: 'visible' }
+  | { ortografia: string } // id de una pantalla de data/expectativas-presentacion.yaml
   | { expectativa: string };
 
 export const VERIFICACIONES = ['visible', 'no_visible', 'campo_visible', 'campo_no_visible', 'texto_exacto', 'etiquetas', 'solo_lectura', 'editable', 'obligatorio', 'botones_exactos', 'valor', 'actividad', 'orden', 'opcional', 'ortografia', 'expectativa'] as const;
@@ -125,7 +125,8 @@ function validarVerificaciones(v: unknown, donde: string, problemas: string[], p
     if (['visible', 'no_visible', 'campo_visible', 'campo_no_visible', 'texto_exacto', 'actividad'].includes(claves[0]) && !esTexto(val))
       problemas.push(`${donde}, verificación "${claves[0]}": debe ser un texto`);
     if (claves[0] === 'orden' && Array.isArray(val) && val.length < 2) problemas.push(`${donde}, verificación "orden": requiere al menos 2 campos`);
-    if (claves[0] === 'ortografia' && val !== 'visible') problemas.push(`${donde}, verificación "ortografia": el único ámbito soportado es "visible"`);
+    if (claves[0] === 'ortografia' && !(esTexto(val) && cargarPresentacion().pantallas[val]))
+      problemas.push(`${donde}, verificación "ortografia": "${val}" no es una pantalla de data/expectativas-presentacion.yaml (${Object.keys(cargarPresentacion().pantallas).join(', ')})`);
     if (claves[0] === 'expectativa') {
       const cat = cargarPresentacion().expectativas;
       if (!permitirExpectativa) problemas.push(`${donde}: una expectativa no puede contener otra expectativa`);

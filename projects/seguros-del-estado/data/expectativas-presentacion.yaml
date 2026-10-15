@@ -9,9 +9,27 @@
 # Las listas de etiquetas usan el texto que la FUENTE escribe. Si el portal muestra el mismo texto con otra ortografía o
 # capitalización, la verificación lo informa como diferencia de ortografía (no como "ausente").
 
+# Pantallas que una verificación de ortografía debe IDENTIFICAR antes de revisar (R1, auditoría de Work del PR #2):
+# { ortografia: <pantalla> } exige que todos sus marcadores estén visibles y recogidos; si no, el resultado es NO
+# CONCLUYENTE (nunca aprobado). Los marcadores son etiquetas citadas literalmente en la matriz (fuente), no textos copiados
+# del portal; solo sirven para reconocer la pantalla, no son expectativas de presentación.
+pantallas:
+  inicio-radicacion:
+    descripcion: Formulario de inicio de "Gestión Solicitudes Centro Expedición" (Individual y Masiva).
+    marcadores: [Línea, Tipo de Radicación]
+    fuente: Matriz HU06-CP01 P4 ("Línea") y P6 ("Tipo de Radicación")
+  estructurar-informacion:
+    descripcion: Actividad "Estructurar información" (analista, HU06).
+    marcadores: [Número de Caso, Creador del Caso]
+    fuente: Matriz HU06-CP01 P14 ("Número de Caso, Creador del Caso")
+  completar-informacion:
+    descripcion: Actividad "Completar información de solicitud" (intermediario, HU03). Nunca observada (UI-09).
+    marcadores: [¿Requiere actualizar el correo electrónico?]
+    fuente: Matriz HU03-CP01 P17 ("regla ¿Requiere actualizar el correo electrónico?")
+
 # Reglas de la norma ortográfica (RAE-ASALE, "Ortografía de la lengua española", 2010; Diccionario de la lengua española).
 # Se aplican a los textos visibles de la pantalla (etiquetas de campo, títulos de grupo, opciones, botones y grillas) con
-# la verificación { ortografia: visible }. Solo reglas sin excepciones en etiquetas de formulario (alta precisión).
+# la verificación { ortografia: <pantalla> }. Solo reglas sin excepciones en etiquetas de formulario (alta precisión).
 reglas_ortograficas:
   - id: ORT-AGUDA-CION
     patron: '(?<!\p{L})\p{L}+[csx]ion(?!\p{L})'
@@ -40,7 +58,7 @@ reglas_ortograficas:
     correcto: Dígito
   - id: ORT-TERMINO-LINEA
     patron: '(?<!\p{L})[Ll]ineas?(?!\p{L})'
-    descripcion: '"Línea" lleva tilde (hiato).'
+    descripcion: '"Línea" es esdrújula (lí-ne-a) y lleva tilde.'
     fuente: Diccionario de la lengua española (DLE), "línea"
     correcto: Línea
   - id: ORT-TERMINO-ELECTRONICO
@@ -58,11 +76,6 @@ reglas_ortograficas:
     descripcion: '"Teléfono" es esdrújula y lleva tilde.'
     fuente: Diccionario de la lengua española (DLE), "teléfono"
     correcto: Teléfono
-  - id: ORT-SI-AFIRMATIVO
-    patron: '^Si$'
-    descripcion: 'Como opción de respuesta afirmativa (Sí/No), "sí" es adverbio de afirmación y lleva tilde diacrítica. Puede ser texto por defecto de la plataforma: confirmar.'
-    fuente: RAE-ASALE, Ortografía 2010, tilde diacrítica (sí / si)
-    correcto: Sí
   - id: ORT-PALABRA-REPETIDA
     patron: '(?<!\p{L})(\p{L}+)\s+\1(?!\p{L})'
     banderas: i
@@ -89,7 +102,7 @@ expectativas:
     estado: aprobada
     fuente: Matriz HU06-CP05 P6 / HU03 P6 ("correcta ortografía y capitalización") + reglas_ortograficas (RAE-ASALE, DLE)
     verificar:
-      - ortografia: visible
+      - ortografia: inicio-radicacion
 
   INI-ETIQUETAS-INFORMACION-INICIAL:
     descripcion: Etiquetas Línea, Ramo y Sucursal con la ortografía y capitalización de la matriz.
@@ -123,6 +136,14 @@ expectativas:
       consulta. El inventario observado (marca de obligatorio con el campo vacío) se entrega como propuesta.
     responsable: Daniel / Karen (fuente FRM del requerimiento)
 
+  INI-SI-AFIRMATIVO:
+    descripcion: Opción afirmativa de las preguntas Sí/No ("Sí" con tilde diacrítica frente a "Si").
+    estado: pendiente_definicion
+    pendiente: >-
+      La forma "Si" solo es errata si la opción es la respuesta afirmativa; puede ser texto por defecto de la plataforma
+      Bizagi. Requiere confirmar el contexto y la fuente funcional antes de tratarla como defecto (observación de Work, PR #2).
+    responsable: Karen / Daniel
+
   INI-CAPITALIZACION:
     descripcion: Capitalización de etiquetas, grupos y opciones (p. ej. "Nuevo correo Electrónico de Facturación").
     estado: pendiente_definicion
@@ -144,7 +165,7 @@ expectativas:
     estado: aprobada
     fuente: Matriz HU06-CP01 P1 (presentación de Estructurar información) + reglas_ortograficas (RAE-ASALE, DLE)
     verificar:
-      - ortografia: visible
+      - ortografia: estructurar-informacion
 
   EST-ETIQUETA-OBSERVACIONES:
     descripcion: Campo "Observaciones" con ese texto.
@@ -167,7 +188,7 @@ expectativas:
     estado: aprobada
     fuente: Matriz HU03-CP01 P19 / HU03-CP02 P18 ("nomenclatura definida") + reglas_ortograficas (RAE-ASALE, DLE)
     verificar:
-      - ortografia: visible
+      - ortografia: completar-informacion
 
   COM-NOMENCLATURA:
     descripcion: Nombres exactos de grupos, campos, mensajes y botones de Completar información de solicitud.

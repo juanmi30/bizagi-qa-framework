@@ -11,7 +11,7 @@ import { autorizarAperturaPopup, cargarPopups, type RegistroPopups } from './pop
 import { cargarPresentacion } from './presentacion';
 import { aplicarReglasOrtograficas, compararConAprobado, revisarOrden } from '../../../shared/utils/ValidacionesPresentacion';
 import {
-  CalibracionError, adjuntar, botonesVisibles, campo, diligenciar, esObligatorio, esperarCarga, estaSoloLectura,
+  CalibracionError, NoConcluyenteError, adjuntar, botonesVisibles, campo, diligenciar, esObligatorio, esperarCarga, estaSoloLectura,
   etiqueta, hayLineaExacta, hayTextoVisible, infoCampo, inventarioCampos, normaliza, textosVisibles, pulsar, paginaDe, rastrearAcciones, regexEtiqueta, regexExacto, teclear, textoInterno, unicoVisible, valorMostrado, type Ambito,
 } from './ui';
 
@@ -222,11 +222,20 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
         return { ok: r.ok, detalle: `orden de campos [${(val as string[]).join(' → ')}]: ${r.ok ? 'se cumple' : `NO se cumple (${problema}); orden observado [${r.observado.join(' → ')}]`}` };
       }
       case 'ortografia': {
+        // R1 (Work, PR #2): solo se concluye sobre la pantalla esperada y con evidencia positiva de haberla observado.
         const cat = cargarPresentacion();
+        const id = val as string;
+        const pantalla = cat.pantallas[id];
+        if (!pantalla) throw new NoConcluyenteError(`la pantalla "${id}" no está declarada en el catálogo de presentación.`);
+        const ausentes: string[] = [];
+        for (const m of pantalla.marcadores) if ((await hayTextoVisible(amb, m)) === 0) ausentes.push(m);
+        if (ausentes.length) throw new NoConcluyenteError(`no se identificó la pantalla "${id}": marcadores no visibles ${ausentes.join(', ')} (fuente: ${pantalla.fuente}).`);
         const textos = await textosVisibles(amb);
+        const sinRecoger = pantalla.marcadores.filter((m) => compararConAprobado(m, textos).estado !== 'exacto');
+        if (sinRecoger.length) throw new NoConcluyenteError(`la pantalla "${id}" está visible pero la recolección de textos no observó ${sinRecoger.join(', ')}: la revisión no sería completa.`);
         const hallazgos = aplicarReglasOrtograficas(textos, cat.reglas_ortograficas, cat.conocidos);
         const describirH = hallazgos.map((h) => `"${h.texto}" → ${h.regla} ("${h.fragmento}"${h.correcto ? `; correcto: ${h.correcto}` : ''})${h.conocido ? ` [ya registrado: ${h.conocido}]` : ' [NUEVO]'}`);
-        return { ok: hallazgos.length === 0, detalle: `ortografía (norma RAE/DLE) sobre ${textos.length} textos visibles: ${hallazgos.length ? `${hallazgos.length} hallazgo(s): ${describirH.join('; ')}` : 'sin hallazgos'}` };
+        return { ok: hallazgos.length === 0, detalle: `ortografía (norma RAE/DLE) en "${id}" (identificada por ${pantalla.marcadores.join(', ')}) sobre ${textos.length} textos visibles: ${hallazgos.length ? `${hallazgos.length} hallazgo(s): ${describirH.join('; ')}` : 'sin hallazgos'}` };
       }
       case 'solo_lectura':
       case 'editable':

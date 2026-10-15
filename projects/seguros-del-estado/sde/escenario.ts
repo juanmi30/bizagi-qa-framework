@@ -4,6 +4,7 @@ import * as yaml from 'js-yaml';
 import { casoMatriz } from './matriz';
 import { referencias, type Registro } from './datos';
 import { cargarPopups } from './popups';
+import { cargarPresentacion } from './presentacion';
 
 /**
  * Escenario declarativo SDE (escenarios/*.yaml). Un escenario ejecuta UN CP de la matriz con
@@ -30,9 +31,15 @@ export type Verificacion =
   | { obligatorio: string[] }
   | { botones_exactos: string[] }
   | { valor: { campo: string; igual: string } }
-  | { actividad: string };
+  | { actividad: string }
+  // Presentación (reunión QA 2026-10-14): orden relativo de campos, campos opcionales (verificar con el campo VACÍO),
+  // reglas ortográficas del proyecto sobre los textos visibles, y expectativas del catálogo data/expectativas-presentacion.yaml.
+  | { orden: string[] }
+  | { opcional: string[] }
+  | { ortografia: string } // id de una pantalla de data/expectativas-presentacion.yaml
+  | { expectativa: string };
 
-export const VERIFICACIONES = ['visible', 'no_visible', 'campo_visible', 'campo_no_visible', 'texto_exacto', 'etiquetas', 'solo_lectura', 'editable', 'obligatorio', 'botones_exactos', 'valor', 'actividad'] as const;
+export const VERIFICACIONES = ['visible', 'no_visible', 'campo_visible', 'campo_no_visible', 'texto_exacto', 'etiquetas', 'solo_lectura', 'editable', 'obligatorio', 'botones_exactos', 'valor', 'actividad', 'orden', 'opcional', 'ortografia', 'expectativa'] as const;
 
 export interface PasoSde {
   matriz: number[];
@@ -40,6 +47,11 @@ export interface PasoSde {
   verificar?: Verificacion[];
   /** Datasets que SOLO este paso necesita: si faltan, el paso queda BLOCKED y el escenario continúa. */
   requiere?: string[];
+  /**
+   * Solo en pasos "verificar" (no cambian la pantalla): si una verificación no se cumple, el paso queda FAIL y el CP también,
+   * pero el recorrido CONTINÚA (un defecto de presentación no impide observar el resto del flujo de negocio).
+   */
+  no_bloqueante?: boolean;
   [k: string]: unknown;
 }
 
@@ -97,7 +109,7 @@ export class EscenarioError extends Error {
 
 const esTexto = (v: unknown): v is string => typeof v === 'string' && v.trim() !== '';
 
-function validarVerificaciones(v: unknown, donde: string, problemas: string[]): void {
+function validarVerificaciones(v: unknown, donde: string, problemas: string[], permitirExpectativa = true): void {
   if (v == null) return;
   if (!Array.isArray(v)) { problemas.push(`${donde}: "verificar" debe ser una lista`); return; }
   v.forEach((item, i) => {
@@ -107,11 +119,23 @@ function validarVerificaciones(v: unknown, donde: string, problemas: string[]): 
       return;
     }
     const val = (item as Record<string, unknown>)[claves[0]];
-    const listas = ['etiquetas', 'solo_lectura', 'editable', 'obligatorio', 'botones_exactos'];
+    const listas = ['etiquetas', 'solo_lectura', 'editable', 'obligatorio', 'botones_exactos', 'orden', 'opcional'];
     if (listas.includes(claves[0]) && !(Array.isArray(val) && val.length > 0 && val.every(esTexto)))
       problemas.push(`${donde}, verificación "${claves[0]}": debe ser una lista no vacía de textos`);
     if (['visible', 'no_visible', 'campo_visible', 'campo_no_visible', 'texto_exacto', 'actividad'].includes(claves[0]) && !esTexto(val))
       problemas.push(`${donde}, verificación "${claves[0]}": debe ser un texto`);
+    if (claves[0] === 'orden' && Array.isArray(val) && val.length < 2) problemas.push(`${donde}, verificación "orden": requiere al menos 2 campos`);
+    if (claves[0] === 'ortografia' && !(esTexto(val) && cargarPresentacion().pantallas[val]))
+      problemas.push(`${donde}, verificación "ortografia": "${val}" no es una pantalla de data/expectativas-presentacion.yaml (${Object.keys(cargarPresentacion().pantallas).join(', ')})`);
+    if (claves[0] === 'expectativa') {
+      const cat = cargarPresentacion().expectativas;
+      if (!permitirExpectativa) problemas.push(`${donde}: una expectativa no puede contener otra expectativa`);
+      else if (!esTexto(val) || !cat[val]) problemas.push(`${donde}, verificación "expectativa": "${val}" no existe en data/expectativas-presentacion.yaml`);
+      else {
+        const e = cat[val];
+        if (e.estado === 'aprobada') validarVerificaciones(e.verificar, `${donde} (expectativa ${val})`, problemas, false);
+      }
+    }
     if (claves[0] === 'valor') {
       const o = val as Record<string, unknown>;
       if (!o || !esTexto(o.campo) || !esTexto(o.igual)) problemas.push(`${donde}, verificación "valor": requiere { campo, igual }`);
@@ -225,7 +249,8 @@ export function cargarEscenario(ruta: string, registro: Registro): EscenarioSde 
       problemas.push(`${donde}: "matriz" debe listar los números de paso del Excel que cubre`);
     else for (const n of m) if (pasosMatriz.size && !pasosMatriz.has(n)) problemas.push(`${donde}: el paso ${n} no existe en la matriz de ${d.id}`);
     for (const r of cap.req) if (p[r] == null) problemas.push(`${donde} (${p.hacer}): falta "${r}"`);
-    const permitidas = ['matriz', 'hacer', 'verificar', 'requiere', ...cap.req, ...cap.opt];
+    const permitidas = ['matriz', 'hacer', 'verificar', 'requiere', ...(p.hacer === 'verificar' ? ['no_bloqueante'] : []), ...cap.req, ...cap.opt];
+    if (p.no_bloqueante != null && typeof p.no_bloqueante !== 'boolean') problemas.push(`${donde}: "no_bloqueante" debe ser true o false`);
     if (p.requiere != null) {
       if (!Array.isArray(p.requiere) || !(p.requiere as unknown[]).every(esTexto)) problemas.push(`${donde}: "requiere" debe ser una lista de datasets`);
       else for (const ds of p.requiere as string[]) if (!registro.datasets[ds]) problemas.push(`${donde}: dataset requerido "${ds}" no existe en data/datasets.yaml`);

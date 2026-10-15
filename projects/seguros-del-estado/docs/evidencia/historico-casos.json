@@ -110,5 +110,19 @@
     "escenario": "DIAGNOSTICO BUG-01 secuencia producto (no es resultado de CP) [analista] diag CLEANUP_NOT_APPLICABLE — prueba de eliminación del tipo 3 (Crear ACEPTÓ un documento de tipo Sarlaft, BUG-06)",
     "modoCreacion": "portal",
     "estadoDepuracion": "Pendiente de depurar"
+  },
+  {
+    "numeroCaso": "434",
+    "fechaHora": "2026-10-14T04:12:48.913Z",
+    "escenario": "HU06-CP05 [analista] 20261013-231227 CLEANUP_NOT_APPLICABLE — creado por una ejecución NO intencional de HU06-CP05 (incidente del 2026-10-13, P-07); REAL_PASS_PARCIAL, sin pop-ups",
+    "modoCreacion": "portal",
+    "estadoDepuracion": "Pendiente de depurar"
+  },
+  {
+    "numeroCaso": "571",
+    "fechaHora": "2026-10-14T23:13:13.102Z",
+    "escenario": "CALIBRACION Estructurar (Masiva Generales/Modificación) [analista] 20261014-181230 CLEANUP_NOT_APPLICABLE — único caso autorizado por Juan Miguel en la fase de validaciones (2026-10-14): Masiva Generales/Modificación, texto sintético sin pólizas reales; Estructurar información verificada en solo lectura, sin abrir pop-ups",
+    "modoCreacion": "portal",
+    "estadoDepuracion": "Pendiente de depurar"
   }
 ]

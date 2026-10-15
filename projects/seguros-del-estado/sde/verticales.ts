@@ -66,6 +66,16 @@ export function exclusividadEjecucionReal(descripcion: string): void {
   test.afterEach(() => { bloqueo?.liberar(); bloqueo = undefined; });
 }
 
+/**
+ * P-06 (aprobada por Juan Miguel el 2026-10-14): una vertical REAL (crea casos en QA) solo se ejecuta con SDE_E2E=1.
+ * Sin la activación, el CP queda BLOCKED por CONFIGURACION antes de tocar QA: un filtro mal escrito ya no basta para
+ * radicar un caso (incidente del caso 434). Devuelve el bloqueo (prefijo ENVIRONMENT) o nada si está activada.
+ */
+export function activacionE2e(env: Record<string, string | undefined>): string[] {
+  return env.SDE_E2E?.trim() === '1' ? []
+    : ['ENVIRONMENT: SDE_E2E=1 no definida — las verticales reales crean casos en QA y exigen activación explícita (P-06).'];
+}
+
 export interface OpcionesVerticales { titulo: string; etiquetas: string[]; prefijoReporte: string; prefijoMotivo: string }
 
 export function registrarVerticales(rutas: string[], o: OpcionesVerticales = { titulo: '[SDE]', etiquetas: [], prefijoReporte: '', prefijoMotivo: '' }): void {
@@ -93,7 +103,7 @@ export function registrarVerticales(rutas: string[], o: OpcionesVerticales = { t
         await testInfo.attach(`${s.id}-reporte.json`, { path: guardarReporte(reporte, o.prefijoReporte), contentType: 'application/json' });
         aplicarResultado(reporte, testInfo);
       };
-      const faltantes = preflight(s, registro, process.env);
+      const faltantes = [...activacionE2e(process.env), ...preflight(s, registro, process.env)];
       if (faltantes.length) return bloqueados(faltantes);
 
       // H6: una sola ejecución real de SDE a la vez (casos reales, histórico y reportes compartidos), aunque se pase

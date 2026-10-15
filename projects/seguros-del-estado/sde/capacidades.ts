@@ -8,9 +8,11 @@ import { describir } from './datos';
 import type { CampoSde, PasoSde, Verificacion } from './escenario';
 import { EntornoError, type Capacidad, type ContextoEjecucion, type Verificador } from './ejecutor';
 import { autorizarAperturaPopup, cargarPopups, type RegistroPopups } from './popups';
+import { cargarPresentacion } from './presentacion';
+import { aplicarReglasOrtograficas, compararConAprobado, revisarOrden } from '../../../shared/utils/ValidacionesPresentacion';
 import {
-  CalibracionError, adjuntar, botonesVisibles, campo, diligenciar, esObligatorio, esperarCarga, estaSoloLectura,
-  etiqueta, hayLineaExacta, hayTextoVisible, infoCampo, normaliza, pulsar, paginaDe, rastrearAcciones, regexEtiqueta, regexExacto, teclear, textoInterno, unicoVisible, valorMostrado, type Ambito,
+  CalibracionError, NoConcluyenteError, adjuntar, botonesVisibles, campo, diligenciar, esObligatorio, esperarCarga, estaSoloLectura,
+  etiqueta, hayLineaExacta, hayTextoVisible, infoCampo, inventarioCampos, normaliza, textosVisibles, pulsar, paginaDe, rastrearAcciones, regexEtiqueta, regexExacto, teclear, textoInterno, unicoVisible, valorMostrado, type Ambito,
 } from './ui';
 
 /**
@@ -203,18 +205,52 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       case 'etiquetas': {
         const faltan: string[] = [];
         for (const e of val as string[]) if ((await hayTextoVisible(amb, e)) === 0) faltan.push(e);
-        return { ok: faltan.length === 0, detalle: faltan.length ? `etiquetas exactas ausentes: ${faltan.join(', ')}` : `etiquetas exactas presentes (${(val as string[]).length})` };
+        if (!faltan.length) return { ok: true, detalle: `etiquetas exactas presentes (${(val as string[]).length})` };
+        // Distingue "no está" de "está con otra ortografía o capitalización" (lo que QA prioriza detectar).
+        const vistos = await textosVisibles(amb);
+        const diag = faltan.map((e) => {
+          const c = compararConAprobado(e, vistos);
+          return c.estado === 'difiere_ortografia' ? `"${e}" difiere en ortografía/capitalización: la pantalla muestra "${c.observado}"` : `"${e}" ausente`;
+        });
+        return { ok: false, detalle: `etiquetas exactas no encontradas: ${diag.join('; ')}` };
+      }
+      case 'orden': {
+        const inventario = (await inventarioCampos(amb)).map((x) => x.etiqueta);
+        const r = revisarOrden(val as string[], inventario);
+        const problema = r.faltan.length ? `no visibles: ${r.faltan.join(', ')}` : r.repetidos.length ? `repetidos (orden ambiguo): ${r.repetidos.join(', ')}`
+          : r.inversion ? `"${r.inversion[1]}" aparece antes que "${r.inversion[0]}"` : '';
+        return { ok: r.ok, detalle: `orden de campos [${(val as string[]).join(' → ')}]: ${r.ok ? 'se cumple' : `NO se cumple (${problema}); orden observado [${r.observado.join(' → ')}]`}` };
+      }
+      case 'ortografia': {
+        // R1 (Work, PR #2): solo se concluye sobre la pantalla esperada y con evidencia positiva de haberla observado.
+        const cat = cargarPresentacion();
+        const id = val as string;
+        const pantalla = cat.pantallas[id];
+        if (!pantalla) throw new NoConcluyenteError(`la pantalla "${id}" no está declarada en el catálogo de presentación.`);
+        const ausentes: string[] = [];
+        for (const m of pantalla.marcadores) if ((await hayTextoVisible(amb, m)) === 0) ausentes.push(m);
+        if (ausentes.length) throw new NoConcluyenteError(`no se identificó la pantalla "${id}": marcadores no visibles ${ausentes.join(', ')} (fuente: ${pantalla.fuente}).`);
+        const textos = await textosVisibles(amb);
+        const sinRecoger = pantalla.marcadores.filter((m) => compararConAprobado(m, textos).estado !== 'exacto');
+        if (sinRecoger.length) throw new NoConcluyenteError(`la pantalla "${id}" está visible pero la recolección de textos no observó ${sinRecoger.join(', ')}: la revisión no sería completa.`);
+        const hallazgos = aplicarReglasOrtograficas(textos, cat.reglas_ortograficas, cat.conocidos);
+        const describirH = hallazgos.map((h) => `"${h.texto}" → ${h.regla} ("${h.fragmento}"${h.correcto ? `; correcto: ${h.correcto}` : ''})${h.conocido ? ` [ya registrado: ${h.conocido}]` : ' [NUEVO]'}`);
+        return { ok: hallazgos.length === 0, detalle: `ortografía (norma RAE/DLE) en "${id}" (identificada por ${pantalla.marcadores.join(', ')}) sobre ${textos.length} textos visibles: ${hallazgos.length ? `${hallazgos.length} hallazgo(s): ${describirH.join('; ')}` : 'sin hallazgos'}` };
       }
       case 'solo_lectura':
       case 'editable':
-      case 'obligatorio': {
+      case 'obligatorio':
+      case 'opcional': {
         const malos: string[] = [];
         for (const e of val as string[]) {
           const lbl = await etiqueta(amb, e);
           const info = await infoCampo(await campo(amb, e), e);
+          // Bizagi solo marca un obligatorio mientras está VACÍO: con un valor, "opcional" no es verificable (error del escenario).
+          if (tipo === 'opcional' && valorMostrado(info) !== '') throw new Error(`NO VERIFICABLE: "${e}" ya tiene valor; "opcional" se verifica con el campo vacío.`);
           const cumple = tipo === 'solo_lectura' ? estaSoloLectura(info)
             : tipo === 'editable' ? !estaSoloLectura(info)
-              : esObligatorio(info, await lbl.innerText());
+              : tipo === 'opcional' ? !esObligatorio(info, await lbl.innerText())
+                : esObligatorio(info, await lbl.innerText());
           if (!cumple) malos.push(e);
         }
         return { ok: malos.length === 0, detalle: malos.length ? `no cumplen "${tipo}": ${malos.join(', ')}` : `${tipo}: ${(val as string[]).join(', ')}` };

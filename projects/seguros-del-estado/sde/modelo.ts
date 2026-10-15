@@ -54,6 +54,11 @@ export interface ResultadoPaso {
   causa?: CausaPaso;       // solo para estados no verdes ejecutados (no para NOT_RUN)
   detalle: string;         // SIEMPRE sanitizado (sin valores sensibles)
   evidencia?: string;      // nombre del adjunto en el reporte
+  /**
+   * Excepción técnica ocurrida DESPUÉS de observar un defecto funcional en el mismo paso (R2). El paso conserva el FAIL
+   * funcional (causa PRODUCTO_POR_CONFIRMAR) y el incidente se registra aparte, con su propia causa.
+   */
+  incidente?: { causa: CausaPaso; detalle: string };
   ms?: number;
 }
 

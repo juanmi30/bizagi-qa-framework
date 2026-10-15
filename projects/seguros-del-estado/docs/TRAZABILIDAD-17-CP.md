@@ -6,7 +6,7 @@
 > (sesión real) de `test-results/seguros-del-estado/sde/`; un intento BLOCKED en preflight se muestra aparte y no tapa
 > la evidencia. Sin reporte ejecutado: estado del manifest. Ningún estado verde sin reporte.
 
-> **Fuentes de ejecución:** historial local `test-results/`: 54 reporte(s) · evidencia versionada `docs/evidencia/`: 7 reporte(s). Si un reporte está en ambas, prevalece la copia local.
+> **Fuentes de ejecución:** historial local `test-results/`: 55 reporte(s) · evidencia versionada `docs/evidencia/`: 8 reporte(s). Si un reporte está en ambas, prevalece la copia local.
 
 ## Cobertura (tres indicadores independientes)
 
@@ -14,7 +14,7 @@
 |---|---|---|
 | Implementada | 13/17 (completa: 0) | Escenario declarativo válido. Completa = TODOS los pasos verificados solo por UI (ninguno mixto, con integración pendiente o no automatizado) |
 | Ejecutada | 2/17 | Reporte con sesión real contra QA (no cuenta un BLOCKED de preflight) |
-| Aprobada | 0/17 | Último reporte ejecutado = REAL_PASS. No cuenta REAL_PASS_PARCIAL (1), FAIL (1) ni BLOCKED (11) |
+| Aprobada | 0/17 | Último reporte ejecutado = REAL_PASS. No cuenta REAL_PASS_PARCIAL (0), FAIL (2) ni BLOCKED (11) |
 
 Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuestra la integración con SISE.
 
@@ -22,19 +22,19 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 
 | CP | Familia | Fase | Escenario | Actores (credenciales) | Datos | Implementación (pasos solo UI / mixtos UI+pendiente / integración / no autom. / sin cubrir) | Ejecución (evidencia) | Estado funcional | Aprobado |
 |---|---|---|---|---|---|---|---|---|---|
-| HU06-CP01 | F-MASIVO-ESTRUCTURAR | 1 | 3-hu06-cp01.yaml | analista: READY | CFG-PROCESO: READY<br>INI-GENERALES-MASIVO: READY<br>DOC-SOPORTE: READY<br>DOCS-OBLIGATORIOS: READY | PARCIAL (25/3/0/0/0 de 28) | HU06-CP01_20261013-120048.json | **FAIL** | no |
+| HU06-CP01 | F-MASIVO-ESTRUCTURAR | 1 | 3-hu06-cp01.yaml | analista: READY | CFG-PROCESO: READY<br>INI-GENERALES-MASIVO: READY<br>DOC-SOPORTE: READY<br>DOCS-OBLIGATORIOS: READY | PARCIAL (24/4/0/0/0 de 28) | HU06-CP01_20261013-120048.json | **FAIL** | no |
 | HU06-CP02 | F-MASIVO-ESTRUCTURAR | 2 | 4-hu06-cp02.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-AUTOS-MASIVO: MISSING | PARCIAL (19/2/0/0/0 de 21) | NO EJECUTADO<br>último intento: BLOCKED (HU06-CP02_20261013-095835.json) | **BLOCKED** | no |
 | HU06-CP03 | F-MASIVO-ESTRUCTURAR | 2 | 5-hu06-cp03.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-CUMPL-MASIVO-SIN-RCE: MISSING | PARCIAL (23/1/0/0/0 de 24) | NO EJECUTADO<br>último intento: BLOCKED (HU06-CP03_20261013-095835.json) | **BLOCKED** | no |
 | HU06-CP04 | F-MASIVO-ESTRUCTURAR | 2 | 6-hu06-cp04.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-CUMPL-MASIVO-CON-RCE: MISSING | PARCIAL (20/1/0/1/0 de 22) | NO EJECUTADO<br>último intento: BLOCKED (HU06-CP04_20261013-095835.json) | **BLOCKED** | no |
-| HU06-CP05 | F-INDIVIDUAL-RUTA | 1 | 1-hu06-cp05.yaml | analista: READY | CFG-PROCESO: READY<br>INI-INDIVIDUAL-RUTA: READY | PARCIAL (6/2/0/0/0 de 8) | HU06-CP05_20261013-231227.json (caso 434) | **REAL_PASS_PARCIAL** | no |
-| HU03-CP01 | F-INDIVIDUAL-CONSULTA | 2 | 7-hu03-cp01.yaml | intermediario: READY | CFG-PROCESO: READY<br>PLACA-MULTIPOLIZA: MISSING | PARCIAL (13/4/3/1/0 de 21) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP01_20261013-095835.json) | **BLOCKED** | no |
-| HU03-CP02 | F-INDIVIDUAL-CONSULTA | 1 | 2-hu03-cp02.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-AUTOS-VIGENTE: MISSING | PARCIAL (13/4/2/1/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP02_20261013-155239.json) | **BLOCKED** | no |
-| HU03-CP03 | F-INDIVIDUAL-CONSULTA | 2 | 8-hu03-cp03.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-GENERALES-VIGENTE: MISSING | PARCIAL (12/4/3/1/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP03_20261013-095835.json) | **BLOCKED** | no |
-| HU03-CP04 | F-INDIVIDUAL-CONSULTA | 2 | 9-hu03-cp04.yaml | intermediario: READY | CFG-PROCESO: READY<br>TOMADOR-EXISTENTE: MISSING | PARCIAL (10/4/3/2/0 de 19) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP04_20261013-095836.json) | **BLOCKED** | no |
-| HU03-CP05 | F-INDIVIDUAL-CONSULTA | 2 | 10-hu03-cp05.yaml | intermediario: READY | CFG-PROCESO: READY<br>TOMADOR-INEXISTENTE: MISSING | PARCIAL (10/5/3/2/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP05_20261013-095836.json) | **BLOCKED** | no |
-| HU03-CP06 | F-INDIVIDUAL-CONSULTA | 2 | 11-hu03-cp06.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-CUMPL-RCE: MISSING | PARCIAL (12/4/3/1/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP06_20261013-095836.json) | **BLOCKED** | no |
-| HU03-CP07 | F-INDIVIDUAL-CONSULTA | 2 | 12-hu03-cp07.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-CUMPL-RCE: MISSING | PARCIAL (12/4/3/1/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP07_20261013-095836.json) | **BLOCKED** | no |
-| HU03-CP08 | F-INDIVIDUAL-CONSULTA | 2 | 13-hu03-cp08.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-CUMPL-RCE: MISSING | PARCIAL (12/4/3/1/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP08_20261013-231254.json) | **BLOCKED** | no |
+| HU06-CP05 | F-INDIVIDUAL-RUTA | 1 | 1-hu06-cp05.yaml | analista: READY | CFG-PROCESO: READY<br>INI-INDIVIDUAL-RUTA: READY | PARCIAL (6/2/0/0/0 de 8) | HU06-CP05_20261014-145128.json | **FAIL** | no |
+| HU03-CP01 | F-INDIVIDUAL-CONSULTA | 2 | 7-hu03-cp01.yaml | intermediario: READY | CFG-PROCESO: READY<br>PLACA-MULTIPOLIZA: MISSING | PARCIAL (13/5/3/0/0 de 21) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP01_20261013-095835.json) | **BLOCKED** | no |
+| HU03-CP02 | F-INDIVIDUAL-CONSULTA | 1 | 2-hu03-cp02.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-AUTOS-VIGENTE: MISSING | PARCIAL (13/5/2/0/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP02_20261013-155239.json) | **BLOCKED** | no |
+| HU03-CP03 | F-INDIVIDUAL-CONSULTA | 2 | 8-hu03-cp03.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-GENERALES-VIGENTE: MISSING | PARCIAL (12/5/3/0/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP03_20261013-095835.json) | **BLOCKED** | no |
+| HU03-CP04 | F-INDIVIDUAL-CONSULTA | 2 | 9-hu03-cp04.yaml | intermediario: READY | CFG-PROCESO: READY<br>TOMADOR-EXISTENTE: MISSING | PARCIAL (10/5/3/1/0 de 19) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP04_20261013-095836.json) | **BLOCKED** | no |
+| HU03-CP05 | F-INDIVIDUAL-CONSULTA | 2 | 10-hu03-cp05.yaml | intermediario: READY | CFG-PROCESO: READY<br>TOMADOR-INEXISTENTE: MISSING | PARCIAL (10/6/3/1/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP05_20261013-095836.json) | **BLOCKED** | no |
+| HU03-CP06 | F-INDIVIDUAL-CONSULTA | 2 | 11-hu03-cp06.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-CUMPL-RCE: MISSING | PARCIAL (12/5/3/0/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP06_20261013-095836.json) | **BLOCKED** | no |
+| HU03-CP07 | F-INDIVIDUAL-CONSULTA | 2 | 12-hu03-cp07.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-CUMPL-RCE: MISSING | PARCIAL (12/5/3/0/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP07_20261013-095836.json) | **BLOCKED** | no |
+| HU03-CP08 | F-INDIVIDUAL-CONSULTA | 2 | 13-hu03-cp08.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-CUMPL-RCE: MISSING | PARCIAL (12/5/3/0/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP08_20261013-231254.json) | **BLOCKED** | no |
 | HU03-CP09 | F-EXCEPCIONES | 3 | — | intermediario_alerta: READY | CFG-PROCESO: READY<br>POL-AUTOS-VIGENTE: MISSING | NO_IMPLEMENTADA (0/0/0/0/13 de 13) | NO EJECUTADO | **PREPARADO** | no |
 | HU03-CP10 | F-EXCEPCIONES | 3 | — | intermediario: READY | CFG-PROCESO: READY<br>POL-OTRO-INTERMEDIARIO: MISSING<br>DOC-SOPORTE: READY | NO_IMPLEMENTADA (0/0/0/0/16 de 16) | NO EJECUTADO | **PREPARADO** | no |
 | HU03-CP11 | F-EXCEPCIONES | 3 | — | intermediario: READY | CFG-PROCESO: READY<br>POL-INEXISTENTE-RECONSULTA: MISSING | NO_IMPLEMENTADA (0/0/0/0/20 de 20) | NO EJECUTADO | **PREPARADO** | no |
@@ -46,40 +46,40 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-MASIVO-ESTRUCTURAR · **Fase:** 1 · **Prioridad:** P1
 - **Escenario:** `escenarios/3-hu06-cp01.yaml`
 - **Brechas:** BUG-01 (FUNCTIONAL_AMBIGUITY), BUG-05 (FUNCTIONAL_DEFECT), BUG-06 (FUNCTIONAL_DEFECT), BUG-03 (FUNCTIONAL_DEFECT), BUG-04 (FUNCTIONAL_DEFECT), UI-10 (UI_CAPABILITY_GAP), DATA-03 (TEST_DATA_GAP), UI-03 (UI_CAPABILITY_GAP), UI-04 (UI_CAPABILITY_GAP), INT-02 (INTEGRATION_VISIBILITY_GAP), FUNC-04 (FUNCTIONAL_AMBIGUITY), FUNC-06 (FUNCTIONAL_AMBIGUITY), FUNC-10 (FUNCTIONAL_AMBIGUITY)
-- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P12 (mixto), P17 (mixto), P28 (mixto)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P4 (mixto), P12 (mixto), P17 (mixto), P28 (mixto)
 - **Estado:** FAIL — Al menos un paso de la matriz falló.
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
 |---|---|---|---|---|
-| 1 | Objetivo: | Validar la radicación Masiva para la línea Generales, verificando las reglas del formulario inicial, la ruta de la compuerta ¿Masivo? y el comportamiento de la actividad Estructurar Información, incluyendo la visualización, edición y obligatoriedad de los campos de la tabla de pólizas asociadas. | Agregado del CP | FAIL |
+| 1 | Objetivo: | Validar la radicación Masiva para la línea Generales, verificando las reglas del formulario inicial, la ruta de la compuerta ¿Masivo? y el comportamiento de la actividad Estructurar Información, incluyendo la visualización, edición y obligatoriedad de los campos de la tabla de pólizas asociadas. | #17 verificar (UI: aserciones) | FAIL |
 | 2 | Ingresar al ambiente Bizagi mediante la URL: https://test-aiprocesos-sde.bizagi.com/ | El ambiente de pruebas de Bizagi se encuentra disponible y permite iniciar la gestión de una nueva Radicación. | #1 iniciar_sesion (UI: login real)<br>#2 nuevo_caso (UI: abrir formulario) | PASS |
 | 3 | Crear un nuevo caso de Radicación y seleccionar Línea = Generales, junto con un Ramo y Tipo de Solicitud válidos para la prueba. | El formulario presenta la información correspondiente a la Línea, Ramo y Tipo de Solicitud seleccionados. | #2 nuevo_caso (UI: abrir formulario)<br>#3 diligenciar (UI: diligenciar + post-condición) | PASS |
-| 4 | Validar la sección de información inicial antes de seleccionar el tipo de radicación. | Los campos Línea, Ramo, Tipo de Solicitud/Movimiento y Sucursal se presentan con las etiquetas, ortografía y capitalización definidas. | #4 verificar (UI: aserciones) | PASS |
-| 5 | Seleccionar una Sucursal válida. | La Sucursal queda registrada y se mantiene disponible como dato requerido para continuar con la radicación. | #4 verificar (UI: aserciones)<br>#5 diligenciar (UI: diligenciar + post-condición) | PASS |
-| 6 | Seleccionar Tipo de Radicación = Masivo. | Se habilitan los elementos correspondientes a la modalidad Masivo, incluyendo Descripción de la Solicitud (Masiva/Múltiple) y Documentos Anexos. | #6 diligenciar (UI: diligenciar + post-condición) | PASS |
-| 7 | Validar el texto de ayuda presentado para Masivo. | Para Generales se muestra: “Masivo: Solicitud asociada a más de una póliza.”, conservando ortografía, tildes y capitalización. | #7 verificar (UI: aserciones) | PASS |
-| 8 | Validar la descripción de la solicitud. | El campo Descripción de la Solicitud (Masiva/Múltiple) se encuentra disponible para ingresar la narrativa de la solicitud y permite registrar la información requerida. | #8 verificar (UI: aserciones) | PASS |
-| 9 | Ingresar una narrativa que permita identificar más de una póliza y adjuntar los documentos obligatorios parametrizados. | La narrativa y los documentos quedan registrados en el formulario sin errores de presentación, ortografía o capitalización. | #9 diligenciar (UI: diligenciar + post-condición)<br>#10 adjuntar_en_grilla (UI: documento en grilla) | FAIL |
-| 10 | Crear la solicitud. | Se crea una única solicitud de radicación masiva y la información registrada queda asociada al caso. | #11 pulsar (UI: botón) | NOT_RUN |
-| 11 | Validar la compuerta ¿Masivo?. | La compuerta evalúa el Tipo de Radicación Masivo y dirige el caso por la ruta correspondiente a la modalidad masiva. | #12 verificar_ruta (Actividad actual según Bizagi (buscador)) | NOT_RUN |
-| 12 | Validar el procesamiento posterior a la compuerta. | El caso continúa hacia el procesamiento automático del Worker AI y posteriormente hacia la actividad Estructurar Información. | #12 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#13 integracion (INTEGRATION_NOT_VERIFIED) | NOT_RUN |
-| 13 | Ingresar a la actividad Estructurar Información. | La actividad se encuentra asignada al Analista Centro de Expedición y presenta la información del caso masivo. | #14 abrir_caso (UI: abrir caso por número) | NOT_RUN |
-| 14 | Validar la sección Encabezado. | Se muestran en solo lectura Número de Caso, Creador del Caso, Fecha de Creación, Línea, Ramo y Tipo de Movimiento. | #15 verificar (UI: aserciones) | NOT_RUN |
-| 15 | Validar la sección Tipo de Consulta. | Se muestran en solo lectura el Tipo de Radicación = Masivo y la Sucursal asociada al caso. | #16 verificar (UI: aserciones) | NOT_RUN |
-| 16 | Validar la sección Información a Consultar. | Se muestra la narrativa original registrada por el intermediario y el campo permanece no editable. | #17 verificar (UI: aserciones) | NOT_RUN |
-| 17 | Validar la tabla Pólizas asociadas a la solicitud. | La tabla se encuentra disponible y contiene la información estructurada por el Worker AI, incluyendo las columnas definidas para la actividad. | #13 integracion (INTEGRATION_NOT_VERIFIED)<br>#18 tabla_verificar (UI: tabla) | NOT_RUN |
-| 18 | Validar la posibilidad de seleccionar un registro de la tabla para editarlo. | Se habilita el formulario de edición correspondiente al registro seleccionado. | #19 tabla_abrir_fila (UI: editar fila) | NOT_RUN |
-| 19 | Validar el formulario de edición para Línea Generales – Movimiento Póliza Nueva. | La Forma de Consulta se encuentra asignada automáticamente como Identificación de Tomador y no permite modificación. | #20 verificar (UI: aserciones) | NOT_RUN |
-| 20 | Validar los campos disponibles en el formulario de edición. | Se presentan como obligatorios Tipo de Documento Tomador y Número de Documento Tomador. | #21 verificar (UI: aserciones) | NOT_RUN |
-| 21 | Seleccionar Tipo de Documento Tomador = NIT. | Se muestra el campo Dígito de Verificación como campo no editable y asociado al tipo de identificación seleccionado. | #22 diligenciar (UI: diligenciar + post-condición) | NOT_RUN |
-| 22 | Intentar cerrar/confirmar el formulario sin diligenciar los campos obligatorios. | El sistema mantiene abierto el formulario y evita confirmar el registro mientras los campos obligatorios no se encuentren diligenciados. | #23 dialogo_confirmar (UI: confirmar pop-up) | NOT_RUN |
-| 23 | Diligenciar los campos obligatorios y confirmar la edición. | El registro queda actualizado en la tabla Pólizas asociadas a la solicitud con la información diligenciada. | #24 diligenciar (UI: diligenciar + post-condición)<br>#25 dialogo_confirmar (UI: confirmar pop-up) | NOT_RUN |
-| 24 | Validar la opción para agregar un nuevo registro. | Se presenta el formulario de adición con las reglas correspondientes a Línea Generales y al Tipo de Movimiento seleccionado. | #26 tabla_agregar (UI: agregar fila) | NOT_RUN |
-| 25 | Agregar un registro válido y confirmar. | El nuevo registro queda incorporado en la colección Pólizas asociadas a la solicitud. | #27 diligenciar (UI: diligenciar + post-condición)<br>#28 dialogo_confirmar (UI: confirmar pop-up) | NOT_RUN |
-| 26 | Seleccionar un registro y ejecutar la opción de eliminación. | El registro seleccionado es eliminado de la colección de pólizas asociadas. | #29 tabla_eliminar_fila (UI: eliminar fila) | NOT_RUN |
-| 27 | Validar el campo Observaciones. | El analista dispone de un campo editable para registrar observaciones relacionadas con la estructuración del caso. | #30 verificar (UI: aserciones) | NOT_RUN |
-| 28 | Validar las pestañas Documentos de la solicitud y Seguimiento. | La pestaña de documentos permite consultar los soportes asociados y la pestaña Seguimiento presenta la trazabilidad del caso. | #31 verificar (UI: aserciones)<br>#32 no_automatizado (NOT_AUTOMATED) | NOT_RUN |
-| 29 | Intentar modificar Línea, Ramo, Tipo de Solicitud, Sucursal o Tipo de Radicación desde Estructurar Información. | Los datos maestros permanecen en solo lectura y no pueden ser modificados por el analista. | #33 verificar (UI: aserciones) | NOT_RUN |
+| 4 | Validar la sección de información inicial antes de seleccionar el tipo de radicación. | Los campos Línea, Ramo, Tipo de Solicitud/Movimiento y Sucursal se presentan con las etiquetas, ortografía y capitalización definidas. | #4 verificar (UI: aserciones)<br>#5 verificar (UI: aserciones) | PASS |
+| 5 | Seleccionar una Sucursal válida. | La Sucursal queda registrada y se mantiene disponible como dato requerido para continuar con la radicación. | #4 verificar (UI: aserciones)<br>#6 diligenciar (UI: diligenciar + post-condición) | PASS |
+| 6 | Seleccionar Tipo de Radicación = Masivo. | Se habilitan los elementos correspondientes a la modalidad Masivo, incluyendo Descripción de la Solicitud (Masiva/Múltiple) y Documentos Anexos. | #7 diligenciar (UI: diligenciar + post-condición)<br>#8 verificar (UI: aserciones) | PASS |
+| 7 | Validar el texto de ayuda presentado para Masivo. | Para Generales se muestra: “Masivo: Solicitud asociada a más de una póliza.”, conservando ortografía, tildes y capitalización. | #9 verificar (UI: aserciones) | PASS |
+| 8 | Validar la descripción de la solicitud. | El campo Descripción de la Solicitud (Masiva/Múltiple) se encuentra disponible para ingresar la narrativa de la solicitud y permite registrar la información requerida. | #10 verificar (UI: aserciones) | PASS |
+| 9 | Ingresar una narrativa que permita identificar más de una póliza y adjuntar los documentos obligatorios parametrizados. | La narrativa y los documentos quedan registrados en el formulario sin errores de presentación, ortografía o capitalización. | #11 diligenciar (UI: diligenciar + post-condición)<br>#12 adjuntar_en_grilla (UI: documento en grilla) | FAIL |
+| 10 | Crear la solicitud. | Se crea una única solicitud de radicación masiva y la información registrada queda asociada al caso. | #13 pulsar (UI: botón) | NOT_RUN |
+| 11 | Validar la compuerta ¿Masivo?. | La compuerta evalúa el Tipo de Radicación Masivo y dirige el caso por la ruta correspondiente a la modalidad masiva. | #14 verificar_ruta (Actividad actual según Bizagi (buscador)) | NOT_RUN |
+| 12 | Validar el procesamiento posterior a la compuerta. | El caso continúa hacia el procesamiento automático del Worker AI y posteriormente hacia la actividad Estructurar Información. | #14 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#15 integracion (INTEGRATION_NOT_VERIFIED) | NOT_RUN |
+| 13 | Ingresar a la actividad Estructurar Información. | La actividad se encuentra asignada al Analista Centro de Expedición y presenta la información del caso masivo. | #16 abrir_caso (UI: abrir caso por número) | NOT_RUN |
+| 14 | Validar la sección Encabezado. | Se muestran en solo lectura Número de Caso, Creador del Caso, Fecha de Creación, Línea, Ramo y Tipo de Movimiento. | #18 verificar (UI: aserciones) | NOT_RUN |
+| 15 | Validar la sección Tipo de Consulta. | Se muestran en solo lectura el Tipo de Radicación = Masivo y la Sucursal asociada al caso. | #19 verificar (UI: aserciones) | NOT_RUN |
+| 16 | Validar la sección Información a Consultar. | Se muestra la narrativa original registrada por el intermediario y el campo permanece no editable. | #20 verificar (UI: aserciones) | NOT_RUN |
+| 17 | Validar la tabla Pólizas asociadas a la solicitud. | La tabla se encuentra disponible y contiene la información estructurada por el Worker AI, incluyendo las columnas definidas para la actividad. | #15 integracion (INTEGRATION_NOT_VERIFIED)<br>#21 tabla_verificar (UI: tabla) | NOT_RUN |
+| 18 | Validar la posibilidad de seleccionar un registro de la tabla para editarlo. | Se habilita el formulario de edición correspondiente al registro seleccionado. | #22 tabla_abrir_fila (UI: editar fila) | NOT_RUN |
+| 19 | Validar el formulario de edición para Línea Generales – Movimiento Póliza Nueva. | La Forma de Consulta se encuentra asignada automáticamente como Identificación de Tomador y no permite modificación. | #23 verificar (UI: aserciones) | NOT_RUN |
+| 20 | Validar los campos disponibles en el formulario de edición. | Se presentan como obligatorios Tipo de Documento Tomador y Número de Documento Tomador. | #24 verificar (UI: aserciones) | NOT_RUN |
+| 21 | Seleccionar Tipo de Documento Tomador = NIT. | Se muestra el campo Dígito de Verificación como campo no editable y asociado al tipo de identificación seleccionado. | #25 diligenciar (UI: diligenciar + post-condición) | NOT_RUN |
+| 22 | Intentar cerrar/confirmar el formulario sin diligenciar los campos obligatorios. | El sistema mantiene abierto el formulario y evita confirmar el registro mientras los campos obligatorios no se encuentren diligenciados. | #26 dialogo_confirmar (UI: confirmar pop-up) | NOT_RUN |
+| 23 | Diligenciar los campos obligatorios y confirmar la edición. | El registro queda actualizado en la tabla Pólizas asociadas a la solicitud con la información diligenciada. | #27 diligenciar (UI: diligenciar + post-condición)<br>#28 dialogo_confirmar (UI: confirmar pop-up) | NOT_RUN |
+| 24 | Validar la opción para agregar un nuevo registro. | Se presenta el formulario de adición con las reglas correspondientes a Línea Generales y al Tipo de Movimiento seleccionado. | #29 tabla_agregar (UI: agregar fila) | NOT_RUN |
+| 25 | Agregar un registro válido y confirmar. | El nuevo registro queda incorporado en la colección Pólizas asociadas a la solicitud. | #30 diligenciar (UI: diligenciar + post-condición)<br>#31 dialogo_confirmar (UI: confirmar pop-up) | NOT_RUN |
+| 26 | Seleccionar un registro y ejecutar la opción de eliminación. | El registro seleccionado es eliminado de la colección de pólizas asociadas. | #32 tabla_eliminar_fila (UI: eliminar fila) | NOT_RUN |
+| 27 | Validar el campo Observaciones. | El analista dispone de un campo editable para registrar observaciones relacionadas con la estructuración del caso. | #33 verificar (UI: aserciones) | NOT_RUN |
+| 28 | Validar las pestañas Documentos de la solicitud y Seguimiento. | La pestaña de documentos permite consultar los soportes asociados y la pestaña Seguimiento presenta la trazabilidad del caso. | #34 verificar (UI: aserciones)<br>#35 no_automatizado (NOT_AUTOMATED) | NOT_RUN |
+| 29 | Intentar modificar Línea, Ramo, Tipo de Solicitud, Sucursal o Tipo de Radicación desde Estructurar Información. | Los datos maestros permanecen en solo lectura y no pueden ser modificados por el analista. | #36 verificar (UI: aserciones) | NOT_RUN |
 
 ## HU06-CP02 — SDE - CEL - HU06 - Validar radicación Masiva para línea Autos y estructuración por Placa
 
@@ -113,7 +113,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | 19 | Confirmar la edición. | La información de consulta queda actualizada en la tabla Pólizas asociadas a la solicitud. | #21 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
 | 20 | Agregar un nuevo registro mediante el formulario de adición. | El formulario presenta las mismas reglas de visibilidad y obligatoriedad correspondientes al caso. | #22 tabla_agregar (UI: agregar fila) | BLOCKED |
 | 21 | Diligenciar y confirmar un registro válido. | El nuevo registro queda almacenado en la tabla de pólizas asociadas. | #23 diligenciar (UI: diligenciar + post-condición)<br>#24 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
-| 22 | Validar Observaciones, Documentos y Seguimiento. | Las tres secciones presentan la información correspondiente al caso y la trazabilidad registrada. | #25 abrir_pestana (UI: pestaña + contenido)<br>#26 abrir_pestana (UI: pestaña + contenido)<br>#27 verificar (UI: aserciones) | BLOCKED |
+| 22 | Validar Observaciones, Documentos y Seguimiento. | Las tres secciones presentan la información correspondiente al caso y la trazabilidad registrada. | #25 verificar (UI: aserciones)<br>#26 verificar (UI: aserciones)<br>#27 abrir_pestana (UI: pestaña + contenido)<br>#28 abrir_pestana (UI: pestaña + contenido) | BLOCKED |
 
 ## HU06-CP03 — SDE - CEL - HU06 - Validar radicación Masiva de Cumplimiento sin propiedad Póliza RCE
 
@@ -149,8 +149,8 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | 21 | Diligenciar Ramo RCE y un Número de Póliza RCE válido. | Los campos quedan diligenciados y el registro puede ser confirmado. | #25 diligenciar (UI: diligenciar + post-condición)<br>#27 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
 | 22 | Validar Número de Póliza RCE. | El campo acepta únicamente valores numéricos con longitud entre 9 y 12 caracteres. | #26 intentar_diligenciar (UI: prueba negativa de campo) | BLOCKED |
 | 23 | Confirmar el registro. | El registro actualizado queda almacenado en la tabla Pólizas asociadas a la solicitud con la información de RCE. | #28 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
-| 24 | Validar Observaciones. | El analista puede ingresar texto libre en el campo Observaciones. | #31 verificar (UI: aserciones) | BLOCKED |
-| 25 | Validar Documentos de la solicitud y Seguimiento. | Los documentos asociados y la trazabilidad del caso se encuentran disponibles para consulta. | #29 abrir_pestana (UI: pestaña + contenido)<br>#30 abrir_pestana (UI: pestaña + contenido) | BLOCKED |
+| 24 | Validar Observaciones. | El analista puede ingresar texto libre en el campo Observaciones. | #29 verificar (UI: aserciones)<br>#30 verificar (UI: aserciones) | BLOCKED |
+| 25 | Validar Documentos de la solicitud y Seguimiento. | Los documentos asociados y la trazabilidad del caso se encuentran disponibles para consulta. | #31 abrir_pestana (UI: pestaña + contenido)<br>#32 abrir_pestana (UI: pestaña + contenido) | BLOCKED |
 
 ## HU06-CP04 — SDE - CEL - HU06 - Validar radicación Masiva de Cumplimiento con propiedad Póliza RCE
 
@@ -185,7 +185,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | 20 | Agregar un nuevo registro. | El formulario de adición presenta las mismas reglas de visibilidad, obligatoriedad y validación correspondientes al caso. | #23 tabla_agregar (UI: agregar fila) | BLOCKED |
 | 21 | Diligenciar un registro válido y confirmarlo. | El nuevo registro queda incorporado a la colección de pólizas asociadas. | #24 diligenciar (UI: diligenciar + post-condición)<br>#25 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
 | 22 | Validar la opción de eliminar un registro. | El registro seleccionado puede ser eliminado de la tabla. | #26 tabla_eliminar_fila (UI: eliminar fila) | BLOCKED |
-| 23 | Validar Observaciones, Documentos y Seguimiento. | Las secciones se encuentran disponibles y presentan la información correspondiente al caso. | #27 abrir_pestana (UI: pestaña + contenido)<br>#28 abrir_pestana (UI: pestaña + contenido)<br>#29 verificar (UI: aserciones) | BLOCKED |
+| 23 | Validar Observaciones, Documentos y Seguimiento. | Las secciones se encuentran disponibles y presentan la información correspondiente al caso. | #27 verificar (UI: aserciones)<br>#28 verificar (UI: aserciones)<br>#29 abrir_pestana (UI: pestaña + contenido)<br>#30 abrir_pestana (UI: pestaña + contenido) | BLOCKED |
 
 ## HU06-CP05 — SDE - CEL - HU06 - Validar radicación Individual y ruta de la compuerta ¿Masivo?
 
@@ -194,19 +194,19 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Escenario:** `escenarios/1-hu06-cp05.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-10 (FUNCTIONAL_AMBIGUITY)
 - **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P9 (mixto)
-- **Estado:** REAL_PASS_PARCIAL — Sesión y caso reales, sin fallos; 3 paso(s) de la matriz no verificados directamente: P1=NOT_AUTOMATED, P6=NOT_AUTOMATED, P9=INTEGRATION_NOT_VERIFIED
+- **Estado:** FAIL — Al menos un paso de la matriz falló (causa: NO_CLASIFICADO) — NO atribuible al producto (automatización, ambiente o excepción sin clasificar): revisar antes de reportar.
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
 |---|---|---|---|---|
-| 1 | Objetivo: | Validar que una solicitud con Tipo de Radicación Individual tome la transición correspondiente en la compuerta ¿Masivo? y continúe por el flujo regular, sin ingresar a Estructurar Información. | Agregado del CP | NOT_AUTOMATED |
+| 1 | Objetivo: | Validar que una solicitud con Tipo de Radicación Individual tome la transición correspondiente en la compuerta ¿Masivo? y continúe por el flujo regular, sin ingresar a Estructurar Información. | Agregado del CP | FAIL |
 | 2 | Ingresar al ambiente Bizagi mediante la URL: https://test-aiprocesos-sde.bizagi.com/ | El ambiente de pruebas se encuentra disponible y permite iniciar una nueva Radicación. | #1 iniciar_sesion (UI: login real)<br>#2 nuevo_caso (UI: abrir formulario) | PASS |
-| 3 | Crear un nuevo caso y seleccionar una combinación válida de Línea, Ramo y Tipo de Solicitud. | El formulario presenta la configuración correspondiente a los valores seleccionados. | #2 nuevo_caso (UI: abrir formulario)<br>#3 diligenciar (UI: diligenciar + post-condición) | PASS |
-| 4 | Seleccionar una Sucursal válida. | La Sucursal queda registrada correctamente. | #4 diligenciar (UI: diligenciar + post-condición) | PASS |
-| 5 | Seleccionar Tipo de Radicación = Individual. | El formulario cambia a la modalidad Individual y no presenta los elementos exclusivos de la modalidad Masivo que no correspondan a esta ruta. | #5 diligenciar (UI: diligenciar + post-condición) | PASS |
-| 6 | Validar el formulario de inicio. | Los campos, etiquetas, opciones y textos visibles presentan correcta ortografía y capitalización. | #6 verificar (UI: aserciones)<br>#7 no_automatizado (NOT_AUTOMATED) | NOT_AUTOMATED |
-| 7 | Diligenciar la información requerida para la radicación Individual y crear el caso. | El caso es creado con Tipo de Radicación = Individual. | #8 diligenciar (UI: diligenciar + post-condición)<br>#9 pulsar (UI: botón) | PASS |
-| 8 | Validar la compuerta ¿Masivo?. | La compuerta identifica el valor Individual y selecciona la transición correspondiente al flujo regular. | #10 verificar_ruta (Actividad actual según Bizagi (buscador)) | PASS |
-| 9 | Validar la actividad posterior a la compuerta. | El caso continúa por el camino regular hacia el flujo de consulta unitaria y no es enviado al Worker AI ni a Estructurar Información. | #10 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#11 integracion (INTEGRATION_NOT_VERIFIED) | INTEGRATION_NOT_VERIFIED |
+| 3 | Crear un nuevo caso y seleccionar una combinación válida de Línea, Ramo y Tipo de Solicitud. | El formulario presenta la configuración correspondiente a los valores seleccionados. | #2 nuevo_caso (UI: abrir formulario)<br>#3 diligenciar (UI: diligenciar + post-condición) | FAIL |
+| 4 | Seleccionar una Sucursal válida. | La Sucursal queda registrada correctamente. | #4 diligenciar (UI: diligenciar + post-condición) | NOT_RUN |
+| 5 | Seleccionar Tipo de Radicación = Individual. | El formulario cambia a la modalidad Individual y no presenta los elementos exclusivos de la modalidad Masivo que no correspondan a esta ruta. | #5 diligenciar (UI: diligenciar + post-condición) | NOT_RUN |
+| 6 | Validar el formulario de inicio. | Los campos, etiquetas, opciones y textos visibles presentan correcta ortografía y capitalización. | #6 verificar (UI: aserciones)<br>#7 verificar (UI: aserciones) | NOT_RUN |
+| 7 | Diligenciar la información requerida para la radicación Individual y crear el caso. | El caso es creado con Tipo de Radicación = Individual. | #8 diligenciar (UI: diligenciar + post-condición)<br>#9 pulsar (UI: botón) | NOT_RUN |
+| 8 | Validar la compuerta ¿Masivo?. | La compuerta identifica el valor Individual y selecciona la transición correspondiente al flujo regular. | #10 verificar_ruta (Actividad actual según Bizagi (buscador)) | NOT_RUN |
+| 9 | Validar la actividad posterior a la compuerta. | El caso continúa por el camino regular hacia el flujo de consulta unitaria y no es enviado al Worker AI ni a Estructurar Información. | #10 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#11 integracion (INTEGRATION_NOT_VERIFIED) | NOT_RUN |
 
 ## HU03-CP01 — SDE - CEL - HU03 - Validar radicación Individual de Autos mediante consulta por Placa
 
@@ -214,7 +214,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-INDIVIDUAL-CONSULTA · **Fase:** 2 · **Prioridad:** P2
 - **Escenario:** `escenarios/7-hu03-cp01.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), DATA-08 (TEST_DATA_GAP), UI-06 (UI_CAPABILITY_GAP), UI-09 (UI_CAPABILITY_GAP), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-03 (FUNCTIONAL_AMBIGUITY)
-- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P18 (mixto), P19 (no automatizado), P21 (mixto), P22 (mixto)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P18 (mixto), P19 (mixto), P21 (mixto), P22 (mixto)
 - **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA PLACA-MULTIPOLIZA: faltan SDE_PLACA_MULTIPOLIZA, SDE_PLACA_MULTIPOLIZA_N
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -224,7 +224,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | 3 | Crear un nuevo caso de Radicación. | El formulario de inicio se presenta correctamente y permite diligenciar una nueva solicitud. | #2 nuevo_caso (UI: abrir formulario) | BLOCKED |
 | 4 | Seleccionar Línea = Autos, Ramo, Tipo de Solicitud/Movimiento y Sucursal correspondientes a la data preparada para el caso. | El formulario presenta las opciones parametrizadas correspondientes a Autos. | #3 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
 | 5 | Seleccionar Tipo de Radicación = Individual y Forma de Consulta = Placa. | El formulario habilita únicamente los campos correspondientes a la consulta individual por Placa. | #4 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 6 | Validar caracterización, ortografía y capitalización del formulario de inicio. | Las etiquetas, mensajes, campos, obligatoriedades, tipos de control y textos se presentan conforme al requerimiento, sin errores ortográficos ni inconsistencias de mayúsculas/minúsculas. | #5 verificar (UI: aserciones)<br>#6 no_automatizado (NOT_AUTOMATED) | BLOCKED |
+| 6 | Validar caracterización, ortografía y capitalización del formulario de inicio. | Las etiquetas, mensajes, campos, obligatoriedades, tipos de control y textos se presentan conforme al requerimiento, sin errores ortográficos ni inconsistencias de mayúsculas/minúsculas. | #5 verificar (UI: aserciones)<br>#6 verificar (UI: aserciones) | BLOCKED |
 | 7 | Ingresar una Placa válida asociada a más de una póliza disponible en SISE y completar los campos/documentos obligatorios parametrizados. | El formulario queda diligenciado con información válida y permite crear la solicitud. | #7 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
 | 8 | Seleccionar Crear e identificar el número único del caso. | Se genera correctamente un número de caso y la información registrada queda asociada a la radicación. | #8 pulsar (UI: botón) | BLOCKED |
 | 9 | Validar el paso por la compuerta ¿Masivo?. | Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información. | #9 verificar_ruta (Actividad actual según Bizagi (buscador)) | BLOCKED |
@@ -237,7 +237,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | 16 | Validar editabilidad de la información precargada. | Los datos retornados por SISE permanecen en solo lectura, excepto aquellos definidos expresamente como editables. | #16 verificar (UI: aserciones) | BLOCKED |
 | 17 | Validar la regla ¿Requiere actualizar el correo electrónico?. | Al seleccionar Sí, se habilita Nuevo correo Electrónico de Facturación como obligatorio; al seleccionar No, no se exige un nuevo correo. | #17 diligenciar (UI: diligenciar + post-condición)<br>#18 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
 | 18 | Validar Comentarios y tabla de documentos. | El campo de comentarios se encuentra disponible y la tabla permite adicionar documentos según la parametrización correspondiente. | #19 verificar (UI: aserciones)<br>#20 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 19 | Validar ortografía, capitalización, etiquetas y estructura completa de Completar Información. | Todos los grupos, campos, mensajes, botones y nombres visibles mantienen la nomenclatura funcional definida. | #21 no_automatizado (NOT_AUTOMATED) | BLOCKED |
+| 19 | Validar ortografía, capitalización, etiquetas y estructura completa de Completar Información. | Todos los grupos, campos, mensajes, botones y nombres visibles mantienen la nomenclatura funcional definida. | #21 verificar (UI: aserciones) | BLOCKED |
 | 20 | Validar los botones disponibles para el escenario exitoso. | Se presentan únicamente Desistir Solicitud y Confirmar Radicación. | #22 verificar (UI: aserciones) | BLOCKED |
 | 21 | Seleccionar Confirmar Radicación. | La información requerida queda almacenada y la decisión de continuar queda registrada. | #23 pulsar (UI: botón)<br>#24 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#25 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
 | 22 | Validar la compuerta Acción a tomar. | La compuerta evalúa Continuar solicitud y direcciona el caso hacia la etapa de análisis. | #24 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#25 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
@@ -248,7 +248,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-INDIVIDUAL-CONSULTA · **Fase:** 1 · **Prioridad:** P1
 - **Escenario:** `escenarios/2-hu03-cp02.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), DATA-09 (TEST_DATA_GAP), DATA-05 (TEST_DATA_GAP), UI-01 (UI_CAPABILITY_GAP), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-03 (FUNCTIONAL_AMBIGUITY)
-- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (mixto), P12 (integracion), P17 (mixto), P18 (no automatizado), P20 (mixto)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (mixto), P12 (integracion), P17 (mixto), P18 (mixto), P20 (mixto)
 - **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA POL-AUTOS-VIGENTE: faltan SDE_AUTOS_POLIZA
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -258,22 +258,22 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | 3 | Crear un nuevo caso de Radicación. | El formulario de inicio se presenta correctamente y permite diligenciar una nueva solicitud. | #2 nuevo_caso (UI: abrir formulario) | BLOCKED |
 | 4 | Seleccionar Línea = Autos, Ramo, Tipo de Solicitud/Movimiento y Sucursal correspondientes a la data preparada para el caso. | El formulario presenta las opciones parametrizadas correspondientes a Autos. | #3 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
 | 5 | Seleccionar Tipo de Radicación = Individual y Forma de Consulta = Numero de Poliza. | Se habilita el campo Número de póliza y se presentan únicamente los campos aplicables al escenario. | #4 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 6 | Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización. | El formulario presenta correctamente la caracterización funcional de cada campo. | #5 verificar (UI: aserciones)<br>#6 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 7 | Ingresar una póliza válida de Autos asociada al intermediario y completar los campos/documentos obligatorios parametrizados. | El formulario queda diligenciado con información válida y permite crear la solicitud. | #7 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 8 | Seleccionar Crear e identificar el número único del caso. | Se genera correctamente un número de caso y la información registrada queda asociada a la radicación. | #8 pulsar (UI: botón) | BLOCKED |
-| 9 | Validar el paso por la compuerta ¿Masivo?. | Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información. | #9 verificar_ruta (Actividad actual según Bizagi (buscador)) | BLOCKED |
-| 10 | Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud. | Se ejecuta la consulta correspondiente y se envía al servicio SISE la poliza registrada como criterio de búsqueda. | #10 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 11 | Validar la respuesta de la integración. | SISE retorna la póliza vigente y la información correspondiente queda almacenada para continuar el flujo. | #10 integracion (INTEGRATION_NOT_VERIFIED)<br>#13 verificar (UI: aserciones) | BLOCKED |
-| 12 | Validar la ejecución de Consultar alertas Intermediarios. | Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información. | #11 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 13 | Validar la asignación de Completar Información. | La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud. | #12 abrir_caso (UI: abrir caso por número) | BLOCKED |
-| 14 | Validar Información de Póliza, Tomador y Asegurado. | La información recuperada desde SISE es visible y permanece en solo lectura. | #13 verificar (UI: aserciones) | BLOCKED |
-| 15 | Validar Información del Vehículo. | Se presentan Placa y demás datos del vehículo relacionados con la póliza consultada, de acuerdo con la respuesta de SISE. | #14 verificar (UI: aserciones) | BLOCKED |
-| 16 | Validar la actualización de correo electrónico. | Si se selecciona actualizar correo, el nuevo correo se habilita y se vuelve obligatorio. | #15 diligenciar (UI: diligenciar + post-condición)<br>#16 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 17 | Validar Comentarios y documentos. | Ambas secciones se encuentran disponibles y permiten registrar información según las reglas configuradas. | #17 verificar (UI: aserciones)<br>#18 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 18 | Validar ortografía, capitalización y presentación del formulario. | Los nombres de campos, grupos, mensajes y botones presentan la nomenclatura definida. | #19 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 19 | Validar los botones disponibles para el escenario exitoso. | Se presentan únicamente Desistir Solicitud y Confirmar Radicación. | #20 verificar (UI: aserciones) | BLOCKED |
-| 20 | Confirmar la radicación. | La información queda almacenada y el caso toma la decisión Continuar solicitud. | #21 pulsar (UI: botón)<br>#22 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#23 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 21 | Validar el avance del flujo. | El caso continúa hacia Análisis. | #22 verificar_ruta (Actividad actual según Bizagi (buscador)) | BLOCKED |
+| 6 | Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización. | El formulario presenta correctamente la caracterización funcional de cada campo. | #5 verificar (UI: aserciones)<br>#6 verificar (UI: aserciones)<br>#7 no_automatizado (NOT_AUTOMATED) | BLOCKED |
+| 7 | Ingresar una póliza válida de Autos asociada al intermediario y completar los campos/documentos obligatorios parametrizados. | El formulario queda diligenciado con información válida y permite crear la solicitud. | #8 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
+| 8 | Seleccionar Crear e identificar el número único del caso. | Se genera correctamente un número de caso y la información registrada queda asociada a la radicación. | #9 pulsar (UI: botón) | BLOCKED |
+| 9 | Validar el paso por la compuerta ¿Masivo?. | Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información. | #10 verificar_ruta (Actividad actual según Bizagi (buscador)) | BLOCKED |
+| 10 | Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud. | Se ejecuta la consulta correspondiente y se envía al servicio SISE la poliza registrada como criterio de búsqueda. | #11 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 11 | Validar la respuesta de la integración. | SISE retorna la póliza vigente y la información correspondiente queda almacenada para continuar el flujo. | #11 integracion (INTEGRATION_NOT_VERIFIED)<br>#14 verificar (UI: aserciones) | BLOCKED |
+| 12 | Validar la ejecución de Consultar alertas Intermediarios. | Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información. | #12 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 13 | Validar la asignación de Completar Información. | La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud. | #13 abrir_caso (UI: abrir caso por número) | BLOCKED |
+| 14 | Validar Información de Póliza, Tomador y Asegurado. | La información recuperada desde SISE es visible y permanece en solo lectura. | #14 verificar (UI: aserciones) | BLOCKED |
+| 15 | Validar Información del Vehículo. | Se presentan Placa y demás datos del vehículo relacionados con la póliza consultada, de acuerdo con la respuesta de SISE. | #15 verificar (UI: aserciones) | BLOCKED |
+| 16 | Validar la actualización de correo electrónico. | Si se selecciona actualizar correo, el nuevo correo se habilita y se vuelve obligatorio. | #16 diligenciar (UI: diligenciar + post-condición)<br>#17 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
+| 17 | Validar Comentarios y documentos. | Ambas secciones se encuentran disponibles y permiten registrar información según las reglas configuradas. | #18 verificar (UI: aserciones)<br>#19 no_automatizado (NOT_AUTOMATED) | BLOCKED |
+| 18 | Validar ortografía, capitalización y presentación del formulario. | Los nombres de campos, grupos, mensajes y botones presentan la nomenclatura definida. | #20 verificar (UI: aserciones) | BLOCKED |
+| 19 | Validar los botones disponibles para el escenario exitoso. | Se presentan únicamente Desistir Solicitud y Confirmar Radicación. | #21 verificar (UI: aserciones) | BLOCKED |
+| 20 | Confirmar la radicación. | La información queda almacenada y el caso toma la decisión Continuar solicitud. | #22 pulsar (UI: botón)<br>#23 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#24 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 21 | Validar el avance del flujo. | El caso continúa hacia Análisis. | #23 verificar_ruta (Actividad actual según Bizagi (buscador)) | BLOCKED |
 
 ## HU03-CP03 — SDE - CEL - HU03 - Validar radicación Individual de Generales mediante consulta por Póliza
 
@@ -281,7 +281,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-INDIVIDUAL-CONSULTA · **Fase:** 2 · **Prioridad:** P2
 - **Escenario:** `escenarios/8-hu03-cp03.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), DATA-10 (TEST_DATA_GAP), UI-09 (UI_CAPABILITY_GAP), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-03 (FUNCTIONAL_AMBIGUITY), FUNC-08 (FUNCTIONAL_AMBIGUITY)
-- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P17 (mixto), P18 (no automatizado), P20 (mixto), P21 (mixto)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P17 (mixto), P18 (mixto), P20 (mixto), P21 (mixto)
 - **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA POL-GENERALES-VIGENTE: faltan SDE_GEN_POLIZA
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -291,22 +291,22 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | 3 | Crear un nuevo caso de Radicación. | El formulario de inicio se presenta correctamente y permite diligenciar una nueva solicitud. | #2 nuevo_caso (UI: abrir formulario) | BLOCKED |
 | 4 | Seleccionar Línea = General, Ramo, Tipo de Solicitud/Movimiento = Modificacion. y Sucursal correspondientes a la data preparada para el caso. | El formulario presenta las opciones parametrizadas correspondientes a Autos. | #3 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
 | 5 | Seleccionar Tipo de Radicación = Individual. | Se habilita el campo Número de póliza y se presentan únicamente los campos aplicables al escenario. | #4 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 6 | Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización. | El formulario presenta correctamente la caracterización funcional de cada campo. | #5 verificar (UI: aserciones)<br>#6 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 7 | Ingresar una póliza existente asociada al intermediario y completar los campos/documentos obligatorios parametrizados. | El formulario queda diligenciado con información válida y permite crear la solicitud. | #7 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 8 | Seleccionar Crear e identificar el número único del caso. | Se genera correctamente un número de caso y la información registrada queda asociada a la radicación. | #8 pulsar (UI: botón) | BLOCKED |
-| 9 | Validar el paso por la compuerta ¿Masivo?. | Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información. | #9 verificar_ruta (Actividad actual según Bizagi (buscador)) | BLOCKED |
-| 10 | Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud. | Se ejecuta la consulta correspondiente y se envía al servicio SISE la poliza registrada como criterio de búsqueda. | #10 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 11 | Validar la respuesta de la integración. | SISE retorna las póliza vigente y la información correspondiente queda almacenada para continuar el flujo. | #10 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 12 | Validar la ejecución de Consultar alertas Intermediarios. | Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información. | #11 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 13 | Validar la asignación de Completar Información. | La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud. | #12 abrir_caso (UI: abrir caso por número) | BLOCKED |
-| 14 | Validar Información de Póliza, Tomador y Asegurado. | Los datos se muestran correctamente y permanecen no editables. | #13 verificar (UI: aserciones) | BLOCKED |
-| 15 | Validar que no se presente información exclusiva de Autos. | No se muestra el bloque de Información del Vehículo para la línea Generales. | #14 verificar (UI: aserciones) | BLOCKED |
-| 16 | Validar actualización del correo electrónico. | Si se solicita actualización, el campo Nuevo correo Electrónico de Facturación queda visible y obligatorio. | #15 diligenciar (UI: diligenciar + post-condición)<br>#16 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 17 | Validar Comentarios y documentos. | Las secciones permiten registrar la información correspondiente. | #17 verificar (UI: aserciones)<br>#18 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 18 | Validar etiquetas, textos, tildes y capitalización. | El formulario no presenta inconsistencias de nomenclatura ni ortografía. | #18 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 19 | Validar los botones disponibles para el escenario exitoso. | Se presentan únicamente Desistir Solicitud y Confirmar Radicación. | #19 verificar (UI: aserciones) | BLOCKED |
-| 20 | Confirmar la radicación. | Se almacena la información y la decisión de continuar. | #20 pulsar (UI: botón)<br>#21 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#22 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 21 | Validar Acción a tomar. | El caso continúa hacia Análisis. | #21 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#22 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 6 | Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización. | El formulario presenta correctamente la caracterización funcional de cada campo. | #5 verificar (UI: aserciones)<br>#6 verificar (UI: aserciones)<br>#7 no_automatizado (NOT_AUTOMATED) | BLOCKED |
+| 7 | Ingresar una póliza existente asociada al intermediario y completar los campos/documentos obligatorios parametrizados. | El formulario queda diligenciado con información válida y permite crear la solicitud. | #8 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
+| 8 | Seleccionar Crear e identificar el número único del caso. | Se genera correctamente un número de caso y la información registrada queda asociada a la radicación. | #9 pulsar (UI: botón) | BLOCKED |
+| 9 | Validar el paso por la compuerta ¿Masivo?. | Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información. | #10 verificar_ruta (Actividad actual según Bizagi (buscador)) | BLOCKED |
+| 10 | Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud. | Se ejecuta la consulta correspondiente y se envía al servicio SISE la poliza registrada como criterio de búsqueda. | #11 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 11 | Validar la respuesta de la integración. | SISE retorna las póliza vigente y la información correspondiente queda almacenada para continuar el flujo. | #11 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 12 | Validar la ejecución de Consultar alertas Intermediarios. | Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información. | #12 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 13 | Validar la asignación de Completar Información. | La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud. | #13 abrir_caso (UI: abrir caso por número) | BLOCKED |
+| 14 | Validar Información de Póliza, Tomador y Asegurado. | Los datos se muestran correctamente y permanecen no editables. | #14 verificar (UI: aserciones) | BLOCKED |
+| 15 | Validar que no se presente información exclusiva de Autos. | No se muestra el bloque de Información del Vehículo para la línea Generales. | #15 verificar (UI: aserciones) | BLOCKED |
+| 16 | Validar actualización del correo electrónico. | Si se solicita actualización, el campo Nuevo correo Electrónico de Facturación queda visible y obligatorio. | #16 diligenciar (UI: diligenciar + post-condición)<br>#17 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
+| 17 | Validar Comentarios y documentos. | Las secciones permiten registrar la información correspondiente. | #18 verificar (UI: aserciones)<br>#19 no_automatizado (NOT_AUTOMATED) | BLOCKED |
+| 18 | Validar etiquetas, textos, tildes y capitalización. | El formulario no presenta inconsistencias de nomenclatura ni ortografía. | #20 verificar (UI: aserciones) | BLOCKED |
+| 19 | Validar los botones disponibles para el escenario exitoso. | Se presentan únicamente Desistir Solicitud y Confirmar Radicación. | #21 verificar (UI: aserciones) | BLOCKED |
+| 20 | Confirmar la radicación. | Se almacena la información y la decisión de continuar. | #22 pulsar (UI: botón)<br>#23 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#24 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 21 | Validar Acción a tomar. | El caso continúa hacia Análisis. | #23 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#24 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
 
 ## HU03-CP04 — SDE - CEL - HU03 - Validar Póliza Nueva de Generales con Tomador existente
 
@@ -314,7 +314,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-INDIVIDUAL-CONSULTA · **Fase:** 2 · **Prioridad:** P2
 - **Escenario:** `escenarios/9-hu03-cp04.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), DATA-11 (TEST_DATA_GAP), DATA-05 (TEST_DATA_GAP), UI-09 (UI_CAPABILITY_GAP), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-03 (FUNCTIONAL_AMBIGUITY), FUNC-08 (FUNCTIONAL_AMBIGUITY), FUNC-09 (FUNCTIONAL_AMBIGUITY)
-- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P14 (mixto), P15 (no automatizado), P17 (no automatizado), P19 (mixto), P20 (mixto)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P14 (mixto), P15 (no automatizado), P17 (mixto), P19 (mixto), P20 (mixto)
 - **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA TOMADOR-EXISTENTE: faltan SDE_TOMADOR_EXISTENTE_TIPO, SDE_TOMADOR_EXISTENTE_NUM
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -324,21 +324,21 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | 3 | Crear un nuevo caso de Radicación. | El formulario de inicio se presenta correctamente y permite diligenciar una nueva solicitud. | #2 nuevo_caso (UI: abrir formulario) | BLOCKED |
 | 4 | Seleccionar Línea = General, Ramo, Tipo de Solicitud/Movimiento = Nueva Poliza. y Sucursal correspondientes a la data preparada para el caso. | El formulario presenta las opciones parametrizadas correspondientes a Autos. | #3 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
 | 5 | Seleccionar Tipo de Radicación = Individual. | Se habilita el campo Número de póliza y se presentan únicamente los campos aplicables al escenario. | #4 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 6 | Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización. | El formulario presenta correctamente la caracterización funcional de cada campo. | #4 diligenciar (UI: diligenciar + post-condición)<br>#5 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 7 | Ingresar Tipo y Número de Documento pertenecientes a un Tomador existente y completar los campos/documentos obligatorios parametrizados. | El formulario queda diligenciado con información válida y permite crear la solicitud. | #6 diligenciar (UI: diligenciar + post-condición)<br>#7 verificar (UI: aserciones) | BLOCKED |
-| 8 | Seleccionar Crear e identificar el número único del caso. | Se genera correctamente un número de caso y la información registrada queda asociada a la radicación. | #8 pulsar (UI: botón) | BLOCKED |
-| 9 | Validar el paso por la compuerta ¿Masivo?. | Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información. | #9 verificar_ruta (Actividad actual según Bizagi (buscador)) | BLOCKED |
-| 10 | Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud. | Se ejecuta la consulta correspondiente y se envía al servicio SISE El numero de identificacion del tomador registrado como criterio de búsqueda. | #10 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 11 | Validar la respuesta de la integración. | SISE retorna los datos del tomador y la información correspondiente queda almacenada para continuar el flujo. | #10 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 12 | Validar la ejecución de Consultar alertas Intermediarios. | Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información. | #11 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 13 | Validar la asignación de Completar Información. | La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud. | #12 abrir_caso (UI: abrir caso por número) | BLOCKED |
-| 14 | Validar el comportamiento de ¿Requiere editar datos del tomador? conforme a la configuración de Póliza Nueva. | Al habilitar la edición se muestran como editables únicamente los datos autorizados para el escenario; al no habilitarla, la información permanece precargada. | #13 verificar (UI: aserciones)<br>#14 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 15 | Validar documentos requeridos para Póliza Nueva. | La tabla presenta los tipos documentales parametrizados y exige aquellos configurados como obligatorios. | #15 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 16 | Validar Comentarios. | El campo se encuentra disponible para diligenciamiento. | #16 verificar (UI: aserciones) | BLOCKED |
-| 17 | Validar etiquetas, textos, tildes y capitalización. | El formulario no presenta inconsistencias de nomenclatura ni ortografía. | #15 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 18 | Validar los botones disponibles para el escenario exitoso. | Se presentan únicamente Desistir Solicitud y Confirmar Radicación. | #17 verificar (UI: aserciones) | BLOCKED |
-| 19 | Confirmar la radicación. | Se almacena la información y la decisión de continuar. | #18 pulsar (UI: botón)<br>#19 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#20 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 20 | Validar Acción a tomar. | El caso continúa hacia Análisis. | #19 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#20 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 6 | Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización. | El formulario presenta correctamente la caracterización funcional de cada campo. | #4 diligenciar (UI: diligenciar + post-condición)<br>#5 verificar (UI: aserciones)<br>#6 no_automatizado (NOT_AUTOMATED) | BLOCKED |
+| 7 | Ingresar Tipo y Número de Documento pertenecientes a un Tomador existente y completar los campos/documentos obligatorios parametrizados. | El formulario queda diligenciado con información válida y permite crear la solicitud. | #7 diligenciar (UI: diligenciar + post-condición)<br>#8 verificar (UI: aserciones) | BLOCKED |
+| 8 | Seleccionar Crear e identificar el número único del caso. | Se genera correctamente un número de caso y la información registrada queda asociada a la radicación. | #9 pulsar (UI: botón) | BLOCKED |
+| 9 | Validar el paso por la compuerta ¿Masivo?. | Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información. | #10 verificar_ruta (Actividad actual según Bizagi (buscador)) | BLOCKED |
+| 10 | Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud. | Se ejecuta la consulta correspondiente y se envía al servicio SISE El numero de identificacion del tomador registrado como criterio de búsqueda. | #11 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 11 | Validar la respuesta de la integración. | SISE retorna los datos del tomador y la información correspondiente queda almacenada para continuar el flujo. | #11 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 12 | Validar la ejecución de Consultar alertas Intermediarios. | Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información. | #12 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 13 | Validar la asignación de Completar Información. | La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud. | #13 abrir_caso (UI: abrir caso por número) | BLOCKED |
+| 14 | Validar el comportamiento de ¿Requiere editar datos del tomador? conforme a la configuración de Póliza Nueva. | Al habilitar la edición se muestran como editables únicamente los datos autorizados para el escenario; al no habilitarla, la información permanece precargada. | #14 verificar (UI: aserciones)<br>#15 no_automatizado (NOT_AUTOMATED) | BLOCKED |
+| 15 | Validar documentos requeridos para Póliza Nueva. | La tabla presenta los tipos documentales parametrizados y exige aquellos configurados como obligatorios. | #16 no_automatizado (NOT_AUTOMATED) | BLOCKED |
+| 16 | Validar Comentarios. | El campo se encuentra disponible para diligenciamiento. | #18 verificar (UI: aserciones) | BLOCKED |
+| 17 | Validar etiquetas, textos, tildes y capitalización. | El formulario no presenta inconsistencias de nomenclatura ni ortografía. | #17 verificar (UI: aserciones) | BLOCKED |
+| 18 | Validar los botones disponibles para el escenario exitoso. | Se presentan únicamente Desistir Solicitud y Confirmar Radicación. | #19 verificar (UI: aserciones) | BLOCKED |
+| 19 | Confirmar la radicación. | Se almacena la información y la decisión de continuar. | #20 pulsar (UI: botón)<br>#21 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#22 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 20 | Validar Acción a tomar. | El caso continúa hacia Análisis. | #21 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#22 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
 
 ## HU03-CP05 — SDE - CEL - HU03 - Validar Póliza Nueva de Generales con Tomador no existente
 
@@ -346,7 +346,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-INDIVIDUAL-CONSULTA · **Fase:** 2 · **Prioridad:** P2
 - **Escenario:** `escenarios/10-hu03-cp05.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), DATA-12 (TEST_DATA_GAP), DATA-05 (TEST_DATA_GAP), UI-09 (UI_CAPABILITY_GAP), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-03 (FUNCTIONAL_AMBIGUITY), FUNC-08 (FUNCTIONAL_AMBIGUITY), FUNC-09 (FUNCTIONAL_AMBIGUITY)
-- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P14 (mixto), P15 (mixto), P16 (no automatizado), P18 (no automatizado), P20 (mixto), P21 (mixto)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P14 (mixto), P15 (mixto), P16 (no automatizado), P18 (mixto), P20 (mixto), P21 (mixto)
 - **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA TOMADOR-INEXISTENTE: faltan SDE_TOMADOR_INEXISTENTE_TIPO, SDE_TOMADOR_INEXISTENTE_NUM
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -356,22 +356,22 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | 3 | Crear un nuevo caso de Radicación. | El formulario de inicio se presenta correctamente y permite diligenciar una nueva solicitud. | #2 nuevo_caso (UI: abrir formulario) | BLOCKED |
 | 4 | Seleccionar Línea = General, Ramo, Tipo de Solicitud/Movimiento = Nueva Poliza. y Sucursal correspondientes a la data preparada para el caso. | El formulario presenta las opciones parametrizadas correspondientes a Autos. | #3 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
 | 5 | Seleccionar Tipo de Radicación = Individual. | Se habilita el campo Número de póliza y se presentan únicamente los campos aplicables al escenario. | #4 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 6 | Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización. | El formulario presenta correctamente la caracterización funcional de cada campo. | #4 diligenciar (UI: diligenciar + post-condición)<br>#5 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 7 | Ingresar Tipo y Número de Documento correspondiente a una persona no existente en SISE. y completar los campos/documentos obligatorios parametrizados. | El formulario queda diligenciado con información válida y permite crear la solicitud. | #6 diligenciar (UI: diligenciar + post-condición)<br>#7 verificar (UI: aserciones) | BLOCKED |
-| 8 | Seleccionar Crear e identificar el número único del caso. | Se genera correctamente un número de caso y la información registrada queda asociada a la radicación. | #8 pulsar (UI: botón) | BLOCKED |
-| 9 | Validar el paso por la compuerta ¿Masivo?. | Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información. | #9 verificar_ruta (Actividad actual según Bizagi (buscador)) | BLOCKED |
-| 10 | Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud. | Se ejecuta la consulta correspondiente y se envía al servicio SISE El numero de identificacion del tomador registrado como criterio de búsqueda. | #10 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 11 | Validar la respuesta de la integración. | SISE no retorna informacion de la Persona. | #10 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 12 | Validar la ejecución de Consultar alertas Intermediarios. | Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información. | #11 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 13 | Validar la asignación de Completar Información. | La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud. | #12 abrir_caso (UI: abrir caso por número) | BLOCKED |
-| 14 | Validar la activiad Completar Información para Póliza Nueva sin Tomador existente. | Se presenta la información disponible del formulario inicial y los campos permitidos para completar/ajustar los datos del Tomador. | #13 verificar (UI: aserciones)<br>#14 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 15 | Validar el comportamiento de ¿Requiere editar datos del tomador? conforme a la configuración de Póliza Nueva. | Al habilitar la edición se muestran como editables únicamente los datos autorizados para el escenario; al no habilitarla, la información permanece precargada. | #13 verificar (UI: aserciones)<br>#14 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 16 | Validar documentos requeridos para Póliza Nueva. | La tabla presenta los tipos documentales parametrizados y exige aquellos configurados como obligatorios. | #15 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 17 | Validar Comentarios. | El campo se encuentra disponible para diligenciamiento. | #16 verificar (UI: aserciones) | BLOCKED |
-| 18 | Validar etiquetas, textos, tildes y capitalización. | El formulario no presenta inconsistencias de nomenclatura ni ortografía. | #15 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 19 | Validar los botones disponibles para el escenario exitoso. | Se presentan únicamente Desistir Solicitud y Confirmar Radicación. | #17 verificar (UI: aserciones) | BLOCKED |
-| 20 | Confirmar la radicación. | Se almacena la información y la decisión de continuar. | #18 pulsar (UI: botón)<br>#19 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#20 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 21 | Validar Acción a tomar. | El caso continúa hacia Análisis. | #19 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#20 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 6 | Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización. | El formulario presenta correctamente la caracterización funcional de cada campo. | #4 diligenciar (UI: diligenciar + post-condición)<br>#5 verificar (UI: aserciones)<br>#6 no_automatizado (NOT_AUTOMATED) | BLOCKED |
+| 7 | Ingresar Tipo y Número de Documento correspondiente a una persona no existente en SISE. y completar los campos/documentos obligatorios parametrizados. | El formulario queda diligenciado con información válida y permite crear la solicitud. | #7 diligenciar (UI: diligenciar + post-condición)<br>#8 verificar (UI: aserciones) | BLOCKED |
+| 8 | Seleccionar Crear e identificar el número único del caso. | Se genera correctamente un número de caso y la información registrada queda asociada a la radicación. | #9 pulsar (UI: botón) | BLOCKED |
+| 9 | Validar el paso por la compuerta ¿Masivo?. | Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información. | #10 verificar_ruta (Actividad actual según Bizagi (buscador)) | BLOCKED |
+| 10 | Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud. | Se ejecuta la consulta correspondiente y se envía al servicio SISE El numero de identificacion del tomador registrado como criterio de búsqueda. | #11 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 11 | Validar la respuesta de la integración. | SISE no retorna informacion de la Persona. | #11 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 12 | Validar la ejecución de Consultar alertas Intermediarios. | Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información. | #12 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 13 | Validar la asignación de Completar Información. | La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud. | #13 abrir_caso (UI: abrir caso por número) | BLOCKED |
+| 14 | Validar la activiad Completar Información para Póliza Nueva sin Tomador existente. | Se presenta la información disponible del formulario inicial y los campos permitidos para completar/ajustar los datos del Tomador. | #14 verificar (UI: aserciones)<br>#15 no_automatizado (NOT_AUTOMATED) | BLOCKED |
+| 15 | Validar el comportamiento de ¿Requiere editar datos del tomador? conforme a la configuración de Póliza Nueva. | Al habilitar la edición se muestran como editables únicamente los datos autorizados para el escenario; al no habilitarla, la información permanece precargada. | #14 verificar (UI: aserciones)<br>#15 no_automatizado (NOT_AUTOMATED) | BLOCKED |
+| 16 | Validar documentos requeridos para Póliza Nueva. | La tabla presenta los tipos documentales parametrizados y exige aquellos configurados como obligatorios. | #16 no_automatizado (NOT_AUTOMATED) | BLOCKED |
+| 17 | Validar Comentarios. | El campo se encuentra disponible para diligenciamiento. | #18 verificar (UI: aserciones) | BLOCKED |
+| 18 | Validar etiquetas, textos, tildes y capitalización. | El formulario no presenta inconsistencias de nomenclatura ni ortografía. | #17 verificar (UI: aserciones) | BLOCKED |
+| 19 | Validar los botones disponibles para el escenario exitoso. | Se presentan únicamente Desistir Solicitud y Confirmar Radicación. | #19 verificar (UI: aserciones) | BLOCKED |
+| 20 | Confirmar la radicación. | Se almacena la información y la decisión de continuar. | #20 pulsar (UI: botón)<br>#21 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#22 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 21 | Validar Acción a tomar. | El caso continúa hacia Análisis. | #21 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#22 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
 
 ## HU03-CP06 — SDE - CEL - HU03 - Validar Cumplimiento con Ramo asociado a Póliza RCE
 
@@ -379,7 +379,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-INDIVIDUAL-CONSULTA · **Fase:** 2 · **Prioridad:** P2
 - **Escenario:** `escenarios/11-hu03-cp06.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), DATA-13 (TEST_DATA_GAP), UI-09 (UI_CAPABILITY_GAP), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-02 (FUNCTIONAL_AMBIGUITY), FUNC-03 (FUNCTIONAL_AMBIGUITY), FUNC-08 (FUNCTIONAL_AMBIGUITY)
-- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P17 (mixto), P18 (no automatizado), P20 (mixto), P21 (mixto)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P17 (mixto), P18 (mixto), P20 (mixto), P21 (mixto)
 - **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA POL-CUMPL-RCE: faltan SDE_CUMPL_MOVIMIENTO, SDE_CUMPL_RAMO_RCE, SDE_CUMPL_RAMO_CON_RCE, SDE_CUMPL_POLIZA_CON_RCE, SDE_CUMPL_RAMO_SIN_RCE, SDE_CUMPL_POLIZA_SIN_RCE, SDE_CUMPL_POLIZA_RCE
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -389,22 +389,22 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | 3 | Crear un nuevo caso de Radicación. | El formulario de inicio se presenta correctamente y permite diligenciar una nueva solicitud. | #2 nuevo_caso (UI: abrir formulario) | BLOCKED |
 | 4 | Seleccionar Línea = Cumpimiento, Ramo = Poliza RCE, Tipo de Solicitud/Movimiento y Sucursal correspondientes a la data preparada para el caso. | El formulario presenta las opciones parametrizadas correspondientes a Autos. | #3 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
 | 5 | Seleccionar Tipo de Radicación = Individual. | Se habilita el campo Número de póliza y se presentan únicamente los campos aplicables al escenario. | #4 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 6 | Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización. | El formulario presenta correctamente la caracterización funcional de cada campo. | #4 diligenciar (UI: diligenciar + post-condición)<br>#5 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 7 | Ingresar Número de Póliza principal y completar los campos/documentos obligatorios parametrizados. | El formulario queda diligenciado con información válida y permite crear la solicitud. | #6 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 8 | Seleccionar Crear e identificar el número único del caso. | Se genera correctamente un número de caso y la información registrada queda asociada a la radicación. | #7 pulsar (UI: botón) | BLOCKED |
-| 9 | Validar el paso por la compuerta ¿Masivo?. | Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información. | #8 verificar_ruta (Actividad actual según Bizagi (buscador)) | BLOCKED |
-| 10 | Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud. | Se ejecuta la consulta correspondiente y se envía al servicio SISE la poliza registrada como criterio de búsqueda. | #9 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 11 | Validar la respuesta de la integración. | SISE retorna la póliza vigente y la información correspondiente queda almacenada para continuar el flujo. | #9 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 12 | Validar la ejecución de Consultar alertas Intermediarios. | Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información. | #10 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 13 | Validar la asignación de Completar Información. | La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud. | #11 abrir_caso (UI: abrir caso por número) | BLOCKED |
-| 14 | Validar información de la Póliza principal. | Tomador, Asegurado y datos de póliza se encuentran precargados y en solo lectura. | #12 verificar (UI: aserciones) | BLOCKED |
-| 15 | Validar el bloque Póliza RCE. | Se presenta la información retornada para la Póliza RCE y permanece en solo lectura. | #13 verificar (UI: aserciones) | BLOCKED |
-| 16 | Validar actualización del correo electrónico. | Si se solicita actualización, el campo Nuevo correo Electrónico de Facturación queda visible y obligatorio. | #14 diligenciar (UI: diligenciar + post-condición)<br>#15 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 17 | Validar Comentarios y documentos. | Las secciones permiten registrar la información correspondiente. | #16 verificar (UI: aserciones)<br>#17 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 18 | Validar etiquetas, textos, tildes y capitalización. | El formulario no presenta inconsistencias de nomenclatura ni ortografía. | #17 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 19 | Validar los botones disponibles para el escenario exitoso. | Se presentan únicamente Desistir Solicitud y Confirmar Radicación. | #18 verificar (UI: aserciones) | BLOCKED |
-| 20 | Confirmar la radicación. | Se almacena la información y la decisión de continuar. | #19 pulsar (UI: botón)<br>#20 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#21 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 21 | Validar Acción a tomar. | El caso continúa hacia Análisis. | #20 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#21 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 6 | Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización. | El formulario presenta correctamente la caracterización funcional de cada campo. | #4 diligenciar (UI: diligenciar + post-condición)<br>#5 verificar (UI: aserciones)<br>#6 no_automatizado (NOT_AUTOMATED) | BLOCKED |
+| 7 | Ingresar Número de Póliza principal y completar los campos/documentos obligatorios parametrizados. | El formulario queda diligenciado con información válida y permite crear la solicitud. | #7 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
+| 8 | Seleccionar Crear e identificar el número único del caso. | Se genera correctamente un número de caso y la información registrada queda asociada a la radicación. | #8 pulsar (UI: botón) | BLOCKED |
+| 9 | Validar el paso por la compuerta ¿Masivo?. | Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información. | #9 verificar_ruta (Actividad actual según Bizagi (buscador)) | BLOCKED |
+| 10 | Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud. | Se ejecuta la consulta correspondiente y se envía al servicio SISE la poliza registrada como criterio de búsqueda. | #10 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 11 | Validar la respuesta de la integración. | SISE retorna la póliza vigente y la información correspondiente queda almacenada para continuar el flujo. | #10 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 12 | Validar la ejecución de Consultar alertas Intermediarios. | Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información. | #11 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 13 | Validar la asignación de Completar Información. | La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud. | #12 abrir_caso (UI: abrir caso por número) | BLOCKED |
+| 14 | Validar información de la Póliza principal. | Tomador, Asegurado y datos de póliza se encuentran precargados y en solo lectura. | #13 verificar (UI: aserciones) | BLOCKED |
+| 15 | Validar el bloque Póliza RCE. | Se presenta la información retornada para la Póliza RCE y permanece en solo lectura. | #14 verificar (UI: aserciones) | BLOCKED |
+| 16 | Validar actualización del correo electrónico. | Si se solicita actualización, el campo Nuevo correo Electrónico de Facturación queda visible y obligatorio. | #15 diligenciar (UI: diligenciar + post-condición)<br>#16 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
+| 17 | Validar Comentarios y documentos. | Las secciones permiten registrar la información correspondiente. | #17 verificar (UI: aserciones)<br>#18 no_automatizado (NOT_AUTOMATED) | BLOCKED |
+| 18 | Validar etiquetas, textos, tildes y capitalización. | El formulario no presenta inconsistencias de nomenclatura ni ortografía. | #19 verificar (UI: aserciones) | BLOCKED |
+| 19 | Validar los botones disponibles para el escenario exitoso. | Se presentan únicamente Desistir Solicitud y Confirmar Radicación. | #20 verificar (UI: aserciones) | BLOCKED |
+| 20 | Confirmar la radicación. | Se almacena la información y la decisión de continuar. | #21 pulsar (UI: botón)<br>#22 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#23 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 21 | Validar Acción a tomar. | El caso continúa hacia Análisis. | #22 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#23 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
 
 ## HU03-CP07 — SDE - CEL - HU03 - Validar Cumplimiento sin Ramo RCE que requiere RCE
 
@@ -412,7 +412,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-INDIVIDUAL-CONSULTA · **Fase:** 2 · **Prioridad:** P2
 - **Escenario:** `escenarios/12-hu03-cp07.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), DATA-13 (TEST_DATA_GAP), UI-09 (UI_CAPABILITY_GAP), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-02 (FUNCTIONAL_AMBIGUITY), FUNC-03 (FUNCTIONAL_AMBIGUITY), FUNC-08 (FUNCTIONAL_AMBIGUITY)
-- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P17 (mixto), P18 (no automatizado), P20 (mixto), P21 (mixto)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P17 (mixto), P18 (mixto), P20 (mixto), P21 (mixto)
 - **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA POL-CUMPL-RCE: faltan SDE_CUMPL_MOVIMIENTO, SDE_CUMPL_RAMO_RCE, SDE_CUMPL_RAMO_CON_RCE, SDE_CUMPL_POLIZA_CON_RCE, SDE_CUMPL_RAMO_SIN_RCE, SDE_CUMPL_POLIZA_SIN_RCE, SDE_CUMPL_POLIZA_RCE
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -422,22 +422,22 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | 3 | Crear un nuevo caso de Radicación. | El formulario de inicio se presenta correctamente y permite diligenciar una nueva solicitud. | #2 nuevo_caso (UI: abrir formulario) | BLOCKED |
 | 4 | Seleccionar Línea = Cumpimiento, Ramo = Poliza sin RCE, Tipo de Solicitud/Movimiento y Sucursal correspondientes a la data preparada para el caso. | El formulario presenta las opciones parametrizadas correspondientes a Autos. | #3 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
 | 5 | Seleccionar Tipo de Radicación = Individual. | Se habilita el campo Número de póliza y se presentan únicamente los campos aplicables al escenario. | #4 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 6 | Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización. | El formulario presenta correctamente la caracterización funcional de cada campo. | #4 diligenciar (UI: diligenciar + post-condición)<br>#5 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 7 | Seleccionar que la solicitud requiere RCE y diligenciar la Póliza principal y Póliza RCE, adicioal completar los campos/documentos obligatorios parametrizados. | El formulario queda diligenciado con información válida y permite crear la solicitud. | #6 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 8 | Seleccionar Crear e identificar el número único del caso. | Se genera correctamente un número de caso y la información registrada queda asociada a la radicación. | #7 pulsar (UI: botón) | BLOCKED |
-| 9 | Validar el paso por la compuerta ¿Masivo?. | Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información. | #8 verificar_ruta (Actividad actual según Bizagi (buscador)) | BLOCKED |
-| 10 | Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud. | Se ejecuta la consulta correspondiente y se envía al servicio SISE la poliza registrada como criterio de búsqueda. | #9 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 11 | Validar la respuesta de la integración. | SISE retorna la póliza vigente y la información correspondiente queda almacenada para continuar el flujo. | #9 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 12 | Validar la ejecución de Consultar alertas Intermediarios. | Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información. | #10 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 13 | Validar la asignación de Completar Información. | La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud. | #11 abrir_caso (UI: abrir caso por número) | BLOCKED |
-| 14 | Validar información de la Póliza principal. | Tomador, Asegurado y datos de póliza se encuentran precargados y en solo lectura. | #12 verificar (UI: aserciones) | BLOCKED |
-| 15 | Validar el bloque Póliza RCE. | Se presenta la información retornada para la Póliza RCE y permanece en solo lectura. | #13 verificar (UI: aserciones) | BLOCKED |
-| 16 | Validar actualización del correo electrónico. | Si se solicita actualización, el campo Nuevo correo Electrónico de Facturación queda visible y obligatorio. | #14 diligenciar (UI: diligenciar + post-condición)<br>#15 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 17 | Validar Comentarios y documentos. | Las secciones permiten registrar la información correspondiente. | #16 verificar (UI: aserciones)<br>#17 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 18 | Validar etiquetas, textos, tildes y capitalización. | El formulario no presenta inconsistencias de nomenclatura ni ortografía. | #17 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 19 | Validar los botones disponibles para el escenario exitoso. | Se presentan únicamente Desistir Solicitud y Confirmar Radicación. | #18 verificar (UI: aserciones) | BLOCKED |
-| 20 | Confirmar la radicación. | Se almacena la información y la decisión de continuar. | #19 pulsar (UI: botón)<br>#20 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#21 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 21 | Validar Acción a tomar. | El caso continúa hacia Análisis. | #20 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#21 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 6 | Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización. | El formulario presenta correctamente la caracterización funcional de cada campo. | #4 diligenciar (UI: diligenciar + post-condición)<br>#5 verificar (UI: aserciones)<br>#6 no_automatizado (NOT_AUTOMATED) | BLOCKED |
+| 7 | Seleccionar que la solicitud requiere RCE y diligenciar la Póliza principal y Póliza RCE, adicioal completar los campos/documentos obligatorios parametrizados. | El formulario queda diligenciado con información válida y permite crear la solicitud. | #7 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
+| 8 | Seleccionar Crear e identificar el número único del caso. | Se genera correctamente un número de caso y la información registrada queda asociada a la radicación. | #8 pulsar (UI: botón) | BLOCKED |
+| 9 | Validar el paso por la compuerta ¿Masivo?. | Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información. | #9 verificar_ruta (Actividad actual según Bizagi (buscador)) | BLOCKED |
+| 10 | Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud. | Se ejecuta la consulta correspondiente y se envía al servicio SISE la poliza registrada como criterio de búsqueda. | #10 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 11 | Validar la respuesta de la integración. | SISE retorna la póliza vigente y la información correspondiente queda almacenada para continuar el flujo. | #10 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 12 | Validar la ejecución de Consultar alertas Intermediarios. | Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información. | #11 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 13 | Validar la asignación de Completar Información. | La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud. | #12 abrir_caso (UI: abrir caso por número) | BLOCKED |
+| 14 | Validar información de la Póliza principal. | Tomador, Asegurado y datos de póliza se encuentran precargados y en solo lectura. | #13 verificar (UI: aserciones) | BLOCKED |
+| 15 | Validar el bloque Póliza RCE. | Se presenta la información retornada para la Póliza RCE y permanece en solo lectura. | #14 verificar (UI: aserciones) | BLOCKED |
+| 16 | Validar actualización del correo electrónico. | Si se solicita actualización, el campo Nuevo correo Electrónico de Facturación queda visible y obligatorio. | #15 diligenciar (UI: diligenciar + post-condición)<br>#16 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
+| 17 | Validar Comentarios y documentos. | Las secciones permiten registrar la información correspondiente. | #17 verificar (UI: aserciones)<br>#18 no_automatizado (NOT_AUTOMATED) | BLOCKED |
+| 18 | Validar etiquetas, textos, tildes y capitalización. | El formulario no presenta inconsistencias de nomenclatura ni ortografía. | #19 verificar (UI: aserciones) | BLOCKED |
+| 19 | Validar los botones disponibles para el escenario exitoso. | Se presentan únicamente Desistir Solicitud y Confirmar Radicación. | #20 verificar (UI: aserciones) | BLOCKED |
+| 20 | Confirmar la radicación. | Se almacena la información y la decisión de continuar. | #21 pulsar (UI: botón)<br>#22 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#23 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 21 | Validar Acción a tomar. | El caso continúa hacia Análisis. | #22 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#23 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
 
 ## HU03-CP08 — SDE - CEL - HU03 - Validar Cumplimiento sin Ramo RCE que no requiere RCE
 
@@ -445,7 +445,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-INDIVIDUAL-CONSULTA · **Fase:** 2 · **Prioridad:** P2
 - **Escenario:** `escenarios/13-hu03-cp08.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), DATA-13 (TEST_DATA_GAP), UI-09 (UI_CAPABILITY_GAP), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-02 (FUNCTIONAL_AMBIGUITY), FUNC-03 (FUNCTIONAL_AMBIGUITY), FUNC-08 (FUNCTIONAL_AMBIGUITY)
-- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P17 (mixto), P18 (no automatizado), P20 (mixto), P21 (mixto)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P10 (integracion), P11 (integracion), P12 (integracion), P17 (mixto), P18 (mixto), P20 (mixto), P21 (mixto)
 - **Estado:** BLOCKED (no ejecutado) — No ejecutado (causa: DATO; no es un resultado del producto). Ver bloqueos. TEST_DATA POL-CUMPL-RCE: faltan SDE_CUMPL_MOVIMIENTO, SDE_CUMPL_RAMO_RCE, SDE_CUMPL_RAMO_CON_RCE, SDE_CUMPL_POLIZA_CON_RCE, SDE_CUMPL_RAMO_SIN_RCE, SDE_CUMPL_POLIZA_SIN_RCE, SDE_CUMPL_POLIZA_RCE
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -455,22 +455,22 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | 3 | Crear un nuevo caso de Radicación. | El formulario de inicio se presenta correctamente y permite diligenciar una nueva solicitud. | #2 nuevo_caso (UI: abrir formulario) | BLOCKED |
 | 4 | Seleccionar Línea = Cumpimiento, Ramo = Poliza sin RCE, Tipo de Solicitud/Movimiento y Sucursal correspondientes a la data preparada para el caso. | El formulario presenta las opciones parametrizadas correspondientes a Autos. | #3 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
 | 5 | Seleccionar Tipo de Radicación = Individual. | Se habilita el campo Número de póliza y se presentan únicamente los campos aplicables al escenario. | #4 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 6 | Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización. | El formulario presenta correctamente la caracterización funcional de cada campo. | #4 diligenciar (UI: diligenciar + post-condición)<br>#5 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 7 | Seleccionar que no requiere RCE y diligenciar únicamente la Póliza principal y completar los campos/documentos obligatorios parametrizados. | El formulario queda diligenciado con información válida y permite crear la solicitud. | #6 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 8 | Seleccionar Crear e identificar el número único del caso. | Se genera correctamente un número de caso y la información registrada queda asociada a la radicación. | #7 pulsar (UI: botón) | BLOCKED |
-| 9 | Validar el paso por la compuerta ¿Masivo?. | Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información. | #8 verificar_ruta (Actividad actual según Bizagi (buscador)) | BLOCKED |
-| 10 | Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud. | Se ejecuta la consulta correspondiente y se envía al servicio SISE la poliza registrada como criterio de búsqueda. | #9 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 11 | Validar la respuesta de la integración. | SISE retorna la póliza vigente y la información correspondiente queda almacenada para continuar el flujo. | #9 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 12 | Validar la ejecución de Consultar alertas Intermediarios. | Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información. | #10 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 13 | Validar la asignación de Completar Información. | La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud. | #11 abrir_caso (UI: abrir caso por número) | BLOCKED |
-| 14 | Validar información de la Póliza principal. | Tomador, Asegurado y datos de póliza se encuentran precargados y en solo lectura. | #12 verificar (UI: aserciones) | BLOCKED |
-| 15 | Validar que no se muestre información RCE. | No se presenta un bloque de Póliza RCE al no haber sido requerida. | #13 verificar (UI: aserciones) | BLOCKED |
-| 16 | Validar actualización del correo electrónico. | Si se solicita actualización, el campo Nuevo correo Electrónico de Facturación queda visible y obligatorio. | #14 diligenciar (UI: diligenciar + post-condición)<br>#15 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 17 | Validar Comentarios y documentos. | Las secciones permiten registrar la información correspondiente. | #16 verificar (UI: aserciones)<br>#17 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 18 | Validar etiquetas, textos, tildes y capitalización. | El formulario no presenta inconsistencias de nomenclatura ni ortografía. | #17 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 19 | Validar los botones disponibles para el escenario exitoso. | Se presentan únicamente Desistir Solicitud y Confirmar Radicación. | #18 verificar (UI: aserciones) | BLOCKED |
-| 20 | Confirmar la radicación. | Se almacena la información y la decisión de continuar. | #19 pulsar (UI: botón)<br>#20 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#21 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 21 | Validar Acción a tomar. | El caso continúa hacia Análisis. | #20 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#21 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 6 | Validar reglas, obligatoriedad, tipo de dato, ortografía y capitalización. | El formulario presenta correctamente la caracterización funcional de cada campo. | #4 diligenciar (UI: diligenciar + post-condición)<br>#5 verificar (UI: aserciones)<br>#6 no_automatizado (NOT_AUTOMATED) | BLOCKED |
+| 7 | Seleccionar que no requiere RCE y diligenciar únicamente la Póliza principal y completar los campos/documentos obligatorios parametrizados. | El formulario queda diligenciado con información válida y permite crear la solicitud. | #7 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
+| 8 | Seleccionar Crear e identificar el número único del caso. | Se genera correctamente un número de caso y la información registrada queda asociada a la radicación. | #8 pulsar (UI: botón) | BLOCKED |
+| 9 | Validar el paso por la compuerta ¿Masivo?. | Al corresponder a una radicación Individual, el caso continúa por el camino No/Individual y no se dirige a Estructurar Información. | #9 verificar_ruta (Actividad actual según Bizagi (buscador)) | BLOCKED |
+| 10 | Validar la ejecución del subproceso Realizar consultas / Consultar información de la solicitud. | Se ejecuta la consulta correspondiente y se envía al servicio SISE la poliza registrada como criterio de búsqueda. | #10 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 11 | Validar la respuesta de la integración. | SISE retorna la póliza vigente y la información correspondiente queda almacenada para continuar el flujo. | #10 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 12 | Validar la ejecución de Consultar alertas Intermediarios. | Se consulta la clave del intermediario y se obtiene su información de alertas antes de asignar Completar Información. | #11 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 13 | Validar la asignación de Completar Información. | La actividad queda asignada al intermediario correspondiente y presenta el encabezado precargado con los datos de la solicitud. | #12 abrir_caso (UI: abrir caso por número) | BLOCKED |
+| 14 | Validar información de la Póliza principal. | Tomador, Asegurado y datos de póliza se encuentran precargados y en solo lectura. | #13 verificar (UI: aserciones) | BLOCKED |
+| 15 | Validar que no se muestre información RCE. | No se presenta un bloque de Póliza RCE al no haber sido requerida. | #14 verificar (UI: aserciones) | BLOCKED |
+| 16 | Validar actualización del correo electrónico. | Si se solicita actualización, el campo Nuevo correo Electrónico de Facturación queda visible y obligatorio. | #15 diligenciar (UI: diligenciar + post-condición)<br>#16 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
+| 17 | Validar Comentarios y documentos. | Las secciones permiten registrar la información correspondiente. | #17 verificar (UI: aserciones)<br>#18 no_automatizado (NOT_AUTOMATED) | BLOCKED |
+| 18 | Validar etiquetas, textos, tildes y capitalización. | El formulario no presenta inconsistencias de nomenclatura ni ortografía. | #19 verificar (UI: aserciones) | BLOCKED |
+| 19 | Validar los botones disponibles para el escenario exitoso. | Se presentan únicamente Desistir Solicitud y Confirmar Radicación. | #20 verificar (UI: aserciones) | BLOCKED |
+| 20 | Confirmar la radicación. | Se almacena la información y la decisión de continuar. | #21 pulsar (UI: botón)<br>#22 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#23 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
+| 21 | Validar Acción a tomar. | El caso continúa hacia Análisis. | #22 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#23 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
 
 ## HU03-CP09 — SDE - CEL - HU03 - Validar intermediario con alerta bloqueante
 

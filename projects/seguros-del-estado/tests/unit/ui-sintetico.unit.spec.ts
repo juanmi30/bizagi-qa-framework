@@ -78,6 +78,16 @@ test.describe('Primitivas UI SDE sobre DOM sintético @unit', () => {
     await expect(diligenciar(page, 'Sucursal', 'BOGOTA', 'lista')).rejects.toThrow(/la opción "BOGOTA" no está en la lista \(visibles: -------------\)/);
   });
 
+  test('combo que se abre y cierra con cada clic: el error lista las opciones reales, no "ninguna" (2026-10-14)', async ({ page }) => {
+    test.setTimeout(120_000);
+    // Como el combo real de Ramo: cada clic alterna la lista; QA cambió el texto a "<código> - <nombre>".
+    await page.setContent(`${CAMPO('Ramo', '<input id="ramo" role="combobox" aria-controls="lb-ramo" value="">')}
+      <ul role="listbox" id="lb-ramo" hidden><li role="option">48 - AUTOMÓVILES LIVIANOS INDIVIDUAL</li><li role="option">50 - AUTOMÓVILES PESADOS INDIVIDUAL</li></ul>
+      <script>document.getElementById('ramo').addEventListener('click', () => { const l = document.getElementById('lb-ramo'); l.hidden = !l.hidden; });</script>`);
+    await expect(diligenciar(page, 'Ramo', 'AUTOMÓVILES LIVIANOS INDIVIDUAL', 'lista'))
+      .rejects.toThrow('la opción "AUTOMÓVILES LIVIANOS INDIVIDUAL" no está en la lista (visibles: 48 - AUTOMÓVILES LIVIANOS INDIVIDUAL | 50 - AUTOMÓVILES PESADOS INDIVIDUAL)');
+  });
+
   test('obligatoriedad Bizagi (.control-required) solo mientras el campo está vacío; valor de un campo de solo lectura', async ({ page }) => {
     const info = async (t: string) => infoCampo(await campo(page, t), t);
     expect(esObligatorio(await info('Sucursal'), 'Sucursal')).toBe(true);

@@ -66,7 +66,7 @@ brechas:
   BUG-01:  { tipo: FUNCTIONAL_AMBIGUITY, titulo: 'RECLASIFICADO 2026-10-13: no es lista vacía sino secuencia. Los tipos documentales aparecen tras guardar la fila Y re-pintar el formulario; la matriz (P9) no lo describe. Control de cambios en docs/CONTROL-CAMBIOS-DOCUMENTOS-HU06.md (casos 428/429)' }
   BUG-02:  { tipo: FUNCTIONAL_AMBIGUITY, titulo: 'RECLASIFICADO 2026-10-13: observación de una ejecución con actor NO conforme (Individual radicado por CE_Analista queda en Consultar Alertas Intermediario). QA confirmó que HU03 radica el Intermediario; no es defecto confirmado' }
   BUG-03:  { tipo: FUNCTIONAL_DEFECT, titulo: 'YA REPORTADO POR QA (ticket pendiente de registrar): salir del pop-up de Detalle Polizas Asociadas sin Guardar deja el caso inutilizable (342, 350, 426). No se reproduce más' }
-  BUG-04:  { tipo: FUNCTIONAL_DEFECT, titulo: 'Ortografía: etiqueta "Observaciónes" en Estructurar información (matriz: "Observaciones")' }
+  BUG-04:  { tipo: FUNCTIONAL_DEFECT, titulo: 'Ortografía: etiqueta "Observaciónes" en Estructurar información (matriz: "Observaciones"). NO REPRODUCIDO el 2026-10-14 (caso 571 muestra "Observaciones"): confirmar con QA si se corrigió' }
   ENV-02:  { tipo: ENVIRONMENT_GAP, titulo: 'Sin acceso a la API OData de Bizagi SDE (permitiría verificar actividades del caso directamente)' }
   DATA-01: { tipo: TEST_DATA_GAP, titulo: 'RESUELTO 2026-10-08: proceso "Gestión Solicitudes Centro Expedición" (App > Processes > Centro de Expedición)' }
   DATA-02: { tipo: TEST_DATA_GAP, titulo: 'Ramo/Sucursal válidos para Masivo por Línea' }
@@ -95,6 +95,8 @@ brechas:
   BUG-06:  { tipo: FUNCTIONAL_DEFECT, titulo: 'POR CONFIRMAR: Crear exige "tipo documental obligatorio ID 3" (Solicitud de seguro, data-value 3) pero acepta un documento de tipo 2 (Sarlaft) o 4 (Otros): casos 430 y 431' }
   BUG-05:  { tipo: FUNCTIONAL_DEFECT, titulo: 'POR CONFIRMAR: tras guardar la fila de Documentos Anexos la grilla no se refresca (sigue "Por favor guarde el registro…" y sin tipos) hasta que algo re-pinta el formulario' }
   UI-09:   { tipo: UI_CAPABILITY_GAP, titulo: 'Completar información de solicitud nunca observada (ENV-03/BUG-02): etiquetas, grupos y botones tomados de la matriz, sin calibrar' }
+  OBS-12:  { tipo: FUNCTIONAL_AMBIGUITY, titulo: 'POR CONFIRMAR (2026-10-14): con Tipo de Radicación Individual, "Ramo" y "Sucursal" aparecen visibles y editables dos veces (grupos "Información de la Solicitud" e "Información a Consultar")' }
+  ENV-04:  { tipo: ENVIRONMENT_GAP, titulo: 'Cambio de parametrización entre el 13/10 y el 14/10: Ramo y Sucursal se muestran como "<código> - <nombre>". Datos locales ajustados; confirmar si es definitivo (P-14)' }
   OBS-11:  { tipo: FUNCTIONAL_AMBIGUITY, titulo: 'Número Póliza del pop-up con maxlength 20 (observado 2026-10-13); la matriz exige 9–12 numéricos: confirmar si se valida al Guardar' }
   UI-08:   { tipo: UI_CAPABILITY_GAP, titulo: 'Tabla de documentos con registro obligatorio "Carta de nombramiento"' }
   INT-01:  { tipo: INTEGRATION_VISIBILITY_GAP, titulo: 'Sin acceso a traza/log de SISE ni de Consultar alertas (solo evidencia indirecta por UI)' }

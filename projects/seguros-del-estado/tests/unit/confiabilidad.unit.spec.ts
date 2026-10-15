@@ -13,6 +13,7 @@ import { cargarManifest } from '../../sde/manifest';
 import { maximoAlcanzable, pendientesParaRealPass } from '../../sde/metricas';
 import { RUTA_BLOQUEO_EJECUCION_REAL } from '../../sde/registro';
 import { generarTrazabilidad } from '../../sde/trazabilidad';
+import { activacionE2e } from '../../sde/verticales';
 
 /** Fase "confiabilidad SDE-CEL": H4 (causas), H6 (concurrencia) y H7 (pendientes de REAL_PASS). Sin QA ni navegador. */
 
@@ -159,13 +160,39 @@ test.describe('Runner — un filtro con espacios no selecciona pruebas reales (i
   });
 });
 
+test.describe('P-06 — activación explícita de las verticales reales (aprobada 2026-10-14) @unit', () => {
+  test('sin SDE_E2E=1 la vertical queda BLOCKED por CONFIGURACION antes de tocar QA; con SDE_E2E=1 no hay bloqueo', () => {
+    for (const env of [{}, { SDE_E2E: '' }, { SDE_E2E: '0' }, { SDE_E2E: 'true' }]) {
+      const b = activacionE2e(env);
+      expect(b, JSON.stringify(env)).toHaveLength(1);
+      expect(causaDeBloqueo(b[0])).toBe('CONFIGURACION');
+    }
+    expect(activacionE2e({ SDE_E2E: '1' })).toEqual([]);
+    expect(activacionE2e({ SDE_E2E: ' 1 ' })).toEqual([]);
+    // El reporte bloqueado no atribuye nada al producto ni crea casos: es el mismo camino de preflight.
+    const r = reporteBloqueado(cp05, crearContexto(reg, ENV, 'u'), activacionE2e({}));
+    expect(r).toMatchObject({ estado: 'BLOCKED', causas: ['CONFIGURACION'], numero_caso: null });
+  });
+
+  test('el runner de verticales aplica la activación ANTES del preflight y del bloqueo de ejecución real', () => {
+    const fuente = readFileSync(resolve(__dirname, '..', '..', 'sde', 'verticales.ts'), 'utf8');
+    const iActivacion = fuente.indexOf('...activacionE2e(process.env)');
+    expect(iActivacion).toBeGreaterThan(0);
+    // registrarVerticales es la última función del archivo: su adquisición del bloqueo es la última aparición.
+    expect(iActivacion).toBeLessThan(fuente.lastIndexOf('adquirirBloqueo(RUTA_BLOQUEO_EJECUCION_REAL'));
+    expect(fuente).toContain('const faltantes = [...activacionE2e(process.env), ...preflight(s, registro, process.env)];');
+  });
+});
+
 test.describe('H7 — pendientes reales para REAL_PASS @unit', () => {
   const man = cargarManifest();
   const esc = (id: string) => { const c = man.casos.find((x) => x.id === id)!; return c.escenario ? cargarEscenario(resolve(DIR_ESCENARIOS, c.escenario), reg) : undefined; };
 
-  test('HU06-CP01: P12, P17 y P28 siguen pendientes; el máximo alcanzable es REAL_PASS_PARCIAL', () => {
+  test('HU06-CP01: P4, P12, P17 y P28 siguen pendientes; el máximo alcanzable es REAL_PASS_PARCIAL', () => {
     const pend = pendientesParaRealPass(casoMatriz('HU06-CP01'), esc('HU06-CP01'));
-    expect(pend.map((p) => p.n)).toEqual([12, 17, 28]);
+    // P4 (2026-10-14): exige "etiquetas, ortografía y capitalización definidas"; capitalización, orden y la etiqueta del tipo de
+    // solicitud no tienen fuente aprobada (expectativas pendientes de definición en data/expectativas-presentacion.yaml).
+    expect(pend.map((p) => p.n)).toEqual([4, 12, 17, 28]);
     expect(maximoAlcanzable(casoMatriz('HU06-CP01'), esc('HU06-CP01'))).toBe('REAL_PASS_PARCIAL');
     // P28 sigue en la matriz y en el escenario oficial (no se eliminó para mejorar la métrica).
     expect(casoMatriz('HU06-CP01').pasos.some((p) => p.n === 28)).toBe(true);
@@ -186,6 +213,6 @@ test.describe('H7 — pendientes reales para REAL_PASS @unit', () => {
   test('la trazabilidad generada declara el máximo y los pendientes de cada CP (P28 incluido en HU06-CP01)', ({}, testInfo) => {
     const md = generarTrazabilidad({}, testInfo.outputPath('no-existe'), null);
     const seccion = md.slice(md.indexOf('## HU06-CP01 — '), md.indexOf('## ', md.indexOf('## HU06-CP01 — ') + 5));
-    expect(seccion).toContain('**Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P12 (mixto), P17 (mixto), P28 (mixto)');
+    expect(seccion).toContain('**Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P4 (mixto), P12 (mixto), P17 (mixto), P28 (mixto)');
   });
 });

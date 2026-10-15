@@ -1,0 +1,18 @@
+# Bloque de PRESENTACIÓN del formulario de inicio (reunión QA 2026-10-14: ortografía, orden, obligatoriedad).
+# Expectativas en data/expectativas-presentacion.yaml: las aprobadas citan su fuente (matriz o norma RAE/DLE) y se
+# verifican; las pendientes de definición dejan el paso NOT_AUTOMATED (nunca verde) hasta que exista la fuente.
+# No bloqueante: un defecto de presentación deja el CP en FAIL pero el recorrido de negocio continúa.
+descripcion: Ortografía, etiquetas aprobadas, orden y obligatoriedad del formulario de inicio.
+parametros: [p_matriz]
+pasos:
+  - matriz: "${param:p_matriz}"
+    hacer: verificar
+    no_bloqueante: true
+    verificar:
+      - expectativa: INI-ORTOGRAFIA
+      - expectativa: INI-ETIQUETAS-INFORMACION-INICIAL
+      - expectativa: INI-ETIQUETA-TIPO-SOLICITUD
+      - expectativa: INI-ORDEN-CAMPOS
+      - expectativa: INI-OBLIGATORIEDAD
+      - expectativa: INI-CAPITALIZACION
+      - expectativa: INI-SI-AFIRMATIVO

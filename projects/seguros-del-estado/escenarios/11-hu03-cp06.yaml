@@ -30,9 +30,13 @@ pasos:
       - visible: Número de Póliza
       - obligatorio: [Número de Póliza]
 
+  # Presentación (reunión QA 2026-10-14): ortografía (norma RAE/DLE), etiquetas aprobadas y expectativas pendientes de definición.
+  - incluir: presentacion-inicio
+    con: { p_matriz: [6] }
+
   - matriz: [6]
     hacer: no_automatizado
-    razon: Tipo de dato/longitud y ortografía global sin especificación ni glosario.
+    razon: La matriz no especifica tipo de dato ni longitud por campo (Requirement 231442 no disponible); no hay criterio verificable.
 
   - matriz: [7]
     hacer: diligenciar
@@ -67,9 +71,13 @@ pasos:
     verificar:
       - editable: [Comentarios]
 
-  - matriz: [17, 18]
+  - matriz: [17]
     hacer: no_automatizado
-    razon: Tipos documentales de Completar información y nomenclatura completa sin especificación de referencia.
+    razon: Tipos documentales de Completar información sin especificación de referencia.
+
+  # Presentación de Completar información (UI-09: nunca observada; listo para cuando SISE responda).
+  - incluir: presentacion-completar
+    con: { p_matriz: [18] }
 
   - incluir: cierre-completar
     con: { actor: intermediario, p_botones: [19], p_confirmar: [20], p_accion: [20, 21] }

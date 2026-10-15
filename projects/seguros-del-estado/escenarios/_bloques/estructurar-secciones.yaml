@@ -1,10 +1,24 @@
-# Bloque HU06: Observaciones, Documentos de la solicitud y Seguimiento de "Estructurar información".
+# Bloque HU06: campo Observaciones y pestañas Documentos de la solicitud / Seguimiento de "Estructurar información".
 # Pestañas calibradas contra QA el 2026-10-13 (caso 426): ambas se activan con su panel; Seguimiento muestra la
 # actividad "Estructurar información". Va al FINAL del escenario: tras cambiar de pestaña la grilla deja de verse.
-# Observaciones: se asierta el texto de la matriz; la UI muestra "Observaciónes" (BUG-04) y el paso falla mientras siga.
-descripcion: Pestañas Documentos/Seguimiento con contenido y campo Observaciones.
+# Observaciones se verifica ANTES de las pestañas: al abrir Seguimiento el campo deja de verse (caso 571, 2026-10-14).
+# En el caso 571 la etiqueta ya es "Observaciones": BUG-04 ("Observaciónes") no se reprodujo el 2026-10-14.
+descripcion: Campo Observaciones y pestañas Documentos/Seguimiento con contenido.
 parametros: [p_pestanas, p_observaciones]
 pasos:
+  # Primero el TEXTO aprobado de la etiqueta: si reaparece "Observaciónes" (BUG-04), el fallo se informa como diferencia
+  # de ortografía observada, no como una etiqueta "no encontrada" por la automatización.
+  - matriz: "${param:p_observaciones}"
+    hacer: verificar
+    no_bloqueante: true
+    verificar:
+      - expectativa: EST-ETIQUETA-OBSERVACIONES
+
+  - matriz: "${param:p_observaciones}"
+    hacer: verificar
+    verificar:
+      - editable: [Observaciones]
+
   - matriz: "${param:p_pestanas}"
     hacer: abrir_pestana
     pestana: Documentos de la solicitud
@@ -13,8 +27,3 @@ pasos:
     hacer: abrir_pestana
     pestana: Seguimiento/Trazabilidad
     contiene: [Estructurar información]
-
-  - matriz: "${param:p_observaciones}"
-    hacer: verificar
-    verificar:
-      - editable: [Observaciones]

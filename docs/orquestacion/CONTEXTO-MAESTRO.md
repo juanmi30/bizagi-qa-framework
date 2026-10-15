@@ -18,7 +18,7 @@ Principios:
 | Componente | Ruta | Qué hace |
 |---|---|---|
 | Configuración Playwright | `playwright.config.ts` | Elige el proyecto con `PROJECT` (lo fija `tools/run.mjs`); carga `projects/<p>/.env`. Acepta ajustes por proyecto en `projects/<p>/playwright.project.json` (p. ej. `workers`) |
-| Ejecutor | `tools/run.mjs` | `node tools/run.mjs <proyecto> [args de Playwright]`. En Windows lanza Playwright con `shell: true`: ver §8 |
+| Ejecutor | `tools/run.mjs` | `node tools/run.mjs <proyecto> [args de Playwright]`. Invoca el CLI de Playwright con el mismo Node y sin shell: los argumentos llegan literales (D-29) |
 | Núcleo | `shared/core`, `shared/runner`, `shared/utils`, `shared/baseObjects` | Login por dominio/lista, motor de escenarios genérico, cliente API de Bizagi, historial de casos, ZIP/XLSX sin dependencias |
 | Herramientas | `tools/*.mjs` | Crear proyectos y page objects, grabar, adoptar grabaciones, depurar, limpiar, resumir; herramientas AFI de Colsubsidio |
 | Proyectos | `projects/_template`, `demo`, `colsubsidio`, `conpre`, `seguros-del-estado` | Cada uno con su `.env`, objetos, escenarios y pruebas |
@@ -37,6 +37,7 @@ Principios:
 | Capacidades UI | `sde/capacidades.ts`, `sde/ui.ts` | Login, nuevo caso, diligenciar, adjuntar, pulsar, ruta, tablas, pestañas, pruebas negativas, protección de solo lectura, barrera de pop-ups |
 | Selectores | `baseObjects/sde.objects.ts` | Único lugar de selectores, cada uno marcado [VERIFICADO] o [PENDIENTE] |
 | Pop-ups permitidos | `data/popups-calibrados.yaml` + `sde/popups.ts` | Barrera BUG-03: sin calibración y cierre seguro verificados, no se abre ningún pop-up |
+| Expectativas de presentación | `data/expectativas-presentacion.yaml` + `sde/presentacion.ts` (lógica genérica en `shared/utils/ValidacionesPresentacion.ts`) | Ortografía (reglas RAE/DLE), etiquetas aprobadas, orden y obligatoriedad, cada una con su fuente; lo no definido queda `pendiente_definicion` y nunca es verde |
 | Métricas y trazabilidad | `sde/metricas.ts`, `sde/trazabilidad.ts` → `docs/TRAZABILIDAD-17-CP.md` | Tres indicadores independientes: implementado, ejecutado, aprobado |
 | Exportación sanitizada | `sde/exportar.ts`, `tests/exportar.tool.spec.ts` | Paquete para compartir con escaneo de secretos |
 
@@ -110,6 +111,7 @@ Evidencias: `test-results/<p>/` (local, nunca se comparte), copias sanitizadas e
 ## 8. Convenciones
 
 - **Comandos en Windows/PowerShell:** usar `node tools/run.mjs <proyecto> …`, con `--grep "@etiqueta"` entre comillas y sin espacios ni `|`. `npm test -- … --grep` no selecciona pruebas desde PowerShell.
+- **Verticales reales de SDE: solo con `SDE_E2E=1`** (P-06). Sin la variable, cada vertical queda BLOCKED por CONFIGURACION antes de tocar QA.
 - **SDE se ejecuta siempre en un worker** (`projects/seguros-del-estado/playwright.project.json`) y sin reintentos en verticales: crean casos reales.
 - **Todo cambio de código** pasa por `npx tsc --noEmit` y las unitarias del proyecto, más la regresión de Demo y Colsubsidio si toca piezas compartidas.
 - **Etiquetas:** cada vertical lleva `@<ID-CP>` (p. ej. `@HU06-CP05`), que es única; `@cp01` se repite entre historias de usuario.

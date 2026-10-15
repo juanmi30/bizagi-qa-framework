@@ -1,0 +1,199 @@
+# Expectativas de PRESENTACIÓN de SDE-CEL: textos, ortografía, orden y obligatoriedad de campos (reunión QA 2026-10-14).
+#
+# Regla: una expectativa solo se verifica si está APROBADA y cita su FUENTE (paso literal de la matriz de QA o norma
+# ortográfica). Lo que ninguna fuente aprobada define queda "pendiente_definicion", con qué falta y quién debe definirlo:
+# NO se deduce del comportamiento actual del portal. En los escenarios se usa { expectativa: <ID> } dentro de "verificar".
+#   - aprobada: el paso ejecuta "verificar"; si no se cumple → FAIL (PRODUCTO_POR_CONFIRMAR).
+#   - pendiente_definicion: el paso queda NOT_AUTOMATED (nunca verde) hasta que la fuente exista.
+#
+# Las listas de etiquetas usan el texto que la FUENTE escribe. Si el portal muestra el mismo texto con otra ortografía o
+# capitalización, la verificación lo informa como diferencia de ortografía (no como "ausente").
+
+# Pantallas que una verificación de ortografía debe IDENTIFICAR antes de revisar (R1, auditoría de Work del PR #2):
+# { ortografia: <pantalla> } exige que todos sus marcadores estén visibles y recogidos; si no, el resultado es NO
+# CONCLUYENTE (nunca aprobado). Los marcadores son etiquetas citadas literalmente en la matriz (fuente), no textos copiados
+# del portal; solo sirven para reconocer la pantalla, no son expectativas de presentación.
+pantallas:
+  inicio-radicacion:
+    descripcion: Formulario de inicio de "Gestión Solicitudes Centro Expedición" (Individual y Masiva).
+    marcadores: [Línea, Tipo de Radicación]
+    fuente: Matriz HU06-CP01 P4 ("Línea") y P6 ("Tipo de Radicación")
+  estructurar-informacion:
+    descripcion: Actividad "Estructurar información" (analista, HU06).
+    marcadores: [Número de Caso, Creador del Caso]
+    fuente: Matriz HU06-CP01 P14 ("Número de Caso, Creador del Caso")
+  completar-informacion:
+    descripcion: Actividad "Completar información de solicitud" (intermediario, HU03). Nunca observada (UI-09).
+    marcadores: [¿Requiere actualizar el correo electrónico?]
+    fuente: Matriz HU03-CP01 P17 ("regla ¿Requiere actualizar el correo electrónico?")
+
+# Reglas de la norma ortográfica (RAE-ASALE, "Ortografía de la lengua española", 2010; Diccionario de la lengua española).
+# Se aplican a los textos visibles de la pantalla (etiquetas de campo, títulos de grupo, opciones, botones y grillas) con
+# la verificación { ortografia: <pantalla> }. Solo reglas sin excepciones en etiquetas de formulario (alta precisión).
+reglas_ortograficas:
+  - id: ORT-AGUDA-CION
+    patron: '(?<!\p{L})\p{L}+[csx]ion(?!\p{L})'
+    banderas: i
+    descripcion: Las palabras agudas terminadas en -ción, -sión o -xión llevan tilde (p. ej. "Información", "Radicación").
+    fuente: RAE-ASALE, Ortografía 2010, reglas generales de acentuación (agudas terminadas en -n)
+  - id: ORT-PLURAL-ONES
+    patron: '(?<!\p{L})\p{L}+ónes(?!\p{L})'
+    banderas: i
+    descripcion: El plural de las palabras agudas en -ón es llano y no lleva tilde (p. ej. "Observaciones", no "Observaciónes").
+    fuente: RAE-ASALE, Ortografía 2010, reglas generales de acentuación (llanas terminadas en -s)
+  - id: ORT-TERMINO-POLIZA
+    patron: '(?<!\p{L})[Pp]olizas?(?!\p{L})'
+    descripcion: '"Póliza" y "Pólizas" son esdrújulas y llevan tilde.'
+    fuente: Diccionario de la lengua española (DLE), "póliza"
+    correcto: Póliza / Pólizas
+  - id: ORT-TERMINO-NUMERO
+    patron: '(?<!\p{L})[Nn]umeros?(?!\p{L})'
+    descripcion: 'El sustantivo "Número" es esdrújulo y lleva tilde (en una etiqueta no es la forma verbal "numero").'
+    fuente: Diccionario de la lengua española (DLE), "número"
+    correcto: Número
+  - id: ORT-TERMINO-DIGITO
+    patron: '(?<!\p{L})[Dd]igitos?(?!\p{L})'
+    descripcion: '"Dígito" es esdrújula y lleva tilde.'
+    fuente: Diccionario de la lengua española (DLE), "dígito"
+    correcto: Dígito
+  - id: ORT-TERMINO-LINEA
+    patron: '(?<!\p{L})[Ll]ineas?(?!\p{L})'
+    descripcion: '"Línea" es esdrújula (lí-ne-a) y lleva tilde.'
+    fuente: Diccionario de la lengua española (DLE), "línea"
+    correcto: Línea
+  - id: ORT-TERMINO-ELECTRONICO
+    patron: '(?<!\p{L})[Ee]lectronic[oa]s?(?!\p{L})'
+    descripcion: '"Electrónico/a" es esdrújula y lleva tilde.'
+    fuente: Diccionario de la lengua española (DLE), "electrónico"
+    correcto: Electrónico / Electrónica
+  - id: ORT-TERMINO-CODIGO
+    patron: '(?<!\p{L})[Cc]odigos?(?!\p{L})'
+    descripcion: '"Código" es esdrújula y lleva tilde.'
+    fuente: Diccionario de la lengua española (DLE), "código"
+    correcto: Código
+  - id: ORT-TERMINO-TELEFONO
+    patron: '(?<!\p{L})[Tt]elefonos?(?!\p{L})'
+    descripcion: '"Teléfono" es esdrújula y lleva tilde.'
+    fuente: Diccionario de la lengua española (DLE), "teléfono"
+    correcto: Teléfono
+  - id: ORT-PALABRA-REPETIDA
+    patron: '(?<!\p{L})(\p{L}+)\s+\1(?!\p{L})'
+    banderas: i
+    descripcion: Palabra repetida consecutivamente.
+    fuente: RAE-ASALE, Ortografía 2010 (errata tipográfica)
+  - id: ORT-ESPACIO-ANTES-DE-SIGNO
+    patron: '\p{L}\s+[:;,]'
+    descripcion: Los signos de puntuación se escriben pegados a la palabra que los precede (sin espacio antes de ":", ";" o ",").
+    fuente: RAE-ASALE, Ortografía 2010, uso de los signos de puntuación
+
+# Hallazgos YA REGISTRADOS (fragmento visible → identificador). Un texto que los contiene se informa con su ID para no
+# duplicar reportes. Fuente: docs/evidencia/2026-10-08_calibracion-y-bugs.txt y manifest/casos.yaml.
+conocidos:
+  'Observaciónes': BUG-04
+  'Informacion a Consultar': OBS-01
+  'Ramo :': OBS-03
+  'Detalle Polizas Asociadas': OBS-04
+  'Digito de Verificacion': OBS-10
+
+expectativas:
+  # ---------------------------------------------------------------- Formulario de inicio (HU06 y HU03)
+  INI-ORTOGRAFIA:
+    descripcion: Textos visibles del formulario de inicio sin errores de la norma ortográfica.
+    estado: aprobada
+    fuente: Matriz HU06-CP05 P6 / HU03 P6 ("correcta ortografía y capitalización") + reglas_ortograficas (RAE-ASALE, DLE)
+    verificar:
+      - ortografia: inicio-radicacion
+
+  INI-ETIQUETAS-INFORMACION-INICIAL:
+    descripcion: Etiquetas Línea, Ramo y Sucursal con la ortografía y capitalización de la matriz.
+    estado: aprobada
+    fuente: Matriz HU06-CP01 P4 ("Los campos Línea, Ramo, Tipo de Solicitud/Movimiento y Sucursal se presentan con las etiquetas, ortografía y capitalización definidas")
+    verificar:
+      - etiquetas: [Línea, Ramo, Sucursal]
+
+  INI-ETIQUETA-TIPO-SOLICITUD:
+    descripcion: Etiqueta exacta del campo de tipo de solicitud o movimiento.
+    estado: pendiente_definicion
+    pendiente: >-
+      La matriz lo nombra "Tipo de Solicitud/Movimiento", "Tipo de Solicitud" y "Tipo de Movimiento" (FUNC-01); el portal
+      muestra "Tipo de Solicitud" en el inicio y "Movimiento" en Estructurar (OBS-07). Definir el texto aprobado.
+    responsable: Daniel (escenarios funcionales) con Iván
+
+  INI-ORDEN-CAMPOS:
+    descripcion: Orden de los campos del formulario de inicio.
+    estado: pendiente_definicion
+    pendiente: >-
+      Ninguna fuente aprobada define el orden: la matriz enumera campos sin exigir orden y el requerimiento de formulario
+      (Requirement 228991 FRM - Inicio / 231442) no está en el repositorio. El inventario observado se entrega como
+      propuesta en docs/evidencia/ para su aprobación.
+    responsable: Daniel / Karen (fuente FRM del requerimiento)
+
+  INI-OBLIGATORIEDAD:
+    descripcion: Campos obligatorios y opcionales del formulario de inicio.
+    estado: pendiente_definicion
+    pendiente: >-
+      La matriz pide "validar obligatoriedad" (HU03 P6, HU06-CP01 P4) sin listar qué campos lo son, salvo el criterio de
+      consulta. El inventario observado (marca de obligatorio con el campo vacío) se entrega como propuesta.
+    responsable: Daniel / Karen (fuente FRM del requerimiento)
+
+  INI-SI-AFIRMATIVO:
+    descripcion: Opción afirmativa de las preguntas Sí/No ("Sí" con tilde diacrítica frente a "Si").
+    estado: pendiente_definicion
+    pendiente: >-
+      La forma "Si" solo es errata si la opción es la respuesta afirmativa; puede ser texto por defecto de la plataforma
+      Bizagi. Requiere confirmar el contexto y la fuente funcional antes de tratarla como defecto (observación de Work, PR #2).
+    responsable: Karen / Daniel
+
+  INI-CAPITALIZACION:
+    descripcion: Capitalización de etiquetas, grupos y opciones (p. ej. "Nuevo correo Electrónico de Facturación").
+    estado: pendiente_definicion
+    pendiente: >-
+      La norma no fija la capitalización de una etiqueta y la propia matriz no es uniforme. Requiere un glosario de
+      nomenclatura aprobado.
+    responsable: Karen / Daniel (glosario de nomenclatura)
+
+  INI-MASIVO-ELEMENTOS:
+    descripcion: Al elegir Masivo aparecen Descripción de la Solicitud (Masiva/Múltiple) y Documentos Anexos con ese texto.
+    estado: aprobada
+    fuente: Matriz HU06-CP01 P6 / HU06-CP02 P5
+    verificar:
+      - etiquetas: [Descripción de la Solicitud (Masiva/Múltiple), Documentos Anexos]
+
+  # ---------------------------------------------------------------- Estructurar información (HU06)
+  EST-ORTOGRAFIA:
+    descripcion: Textos visibles de Estructurar información sin errores de la norma ortográfica.
+    estado: aprobada
+    fuente: Matriz HU06-CP01 P1 (presentación de Estructurar información) + reglas_ortograficas (RAE-ASALE, DLE)
+    verificar:
+      - ortografia: estructurar-informacion
+
+  EST-ETIQUETA-OBSERVACIONES:
+    descripcion: Campo "Observaciones" con ese texto.
+    estado: aprobada
+    fuente: Matriz HU06-CP01 P27 / HU06-CP03 P24 ("campo Observaciones")
+    verificar:
+      - etiquetas: [Observaciones]
+
+  EST-NOMENCLATURA-ENCABEZADO:
+    descripcion: Etiquetas exactas de Encabezado y Tipo de Consulta ("Tipo de Movimiento" / "Movimiento", "Tipo de Radicación" / "Tipo Radicación").
+    estado: pendiente_definicion
+    pendiente: >-
+      La matriz describe los campos ("Tipo de Movimiento", "Tipo de Radicación") y el portal muestra "Tipo de Solicitud" (desde
+      el 2026-10-14, caso 571; antes "Movimiento") y "Tipo Radicación" (OBS-07). No es evidente si la matriz fija el texto de la etiqueta o solo el dato (FUNC-01).
+    responsable: Daniel con Iván
+
+  # ---------------------------------------------------------------- Completar información de solicitud (HU03)
+  COM-ORTOGRAFIA:
+    descripcion: Textos visibles de Completar información de solicitud sin errores de la norma ortográfica.
+    estado: aprobada
+    fuente: Matriz HU03-CP01 P19 / HU03-CP02 P18 ("nomenclatura definida") + reglas_ortograficas (RAE-ASALE, DLE)
+    verificar:
+      - ortografia: completar-informacion
+
+  COM-NOMENCLATURA:
+    descripcion: Nombres exactos de grupos, campos, mensajes y botones de Completar información de solicitud.
+    estado: pendiente_definicion
+    pendiente: >-
+      La actividad nunca se ha observado (UI-09: SISE y alertas no responden, ENV-03) y la matriz no trae glosario de la
+      pantalla completa.
+    responsable: Daniel / Iván (glosario) y QA (desbloqueo de SISE)

@@ -32,7 +32,8 @@ Copy-Item .env.example .env      # en esta carpeta; completar con datos de QA (n
 npm test -- seguros-del-estado --list
 npm test -- seguros-del-estado --grep "@unit"                 # sin red
 npm test -- seguros-del-estado --grep "@smoke" --workers=1    # ambiente + login real
-npm test -- seguros-del-estado --grep "@e2e" --workers=1 --trace off   # verticales (crean casos reales)
+$env:SDE_E2E="1"; node tools/run.mjs seguros-del-estado --grep "@e2e" --workers=1 --trace off   # verticales: crean casos reales; sin SDE_E2E=1 quedan BLOCKED (P-06)
+$env:SDE_PRECREACION="HU03-CP02,HU06-CP05"; node tools/run.mjs seguros-del-estado precreacion.real --grep "@precreacion" --workers=1 --trace off   # solo lectura + inventario de presentación
 $env:SDE_VERIFICAR_BLOQUEOS="1"; npm test -- seguros-del-estado bloqueos --workers=1   # ENV-03 / BUG-01 / BUG-02 en solo lectura
 $env:SDE_EXPORTAR="1"; npm test -- seguros-del-estado exportar.tool --workers=1        # paquete sanitizado para compartir
 $env:SDE_ACTUALIZAR_DOCS="1"; npm test -- seguros-del-estado matriz-manifest --grep @docs  # regenera la trazabilidad
@@ -40,6 +41,10 @@ $env:SDE_ACTUALIZAR_DOCS="1"; npm test -- seguros-del-estado matriz-manifest --g
 
 Para compartir el repositorio usar SOLO el paquete de `exportar.tool`: excluye `.env`, reportes, capturas, traces y logs,
 y escanea todo (también el interior de los .xlsx) contra los valores reales del `.env`.
+
+## Validaciones de presentación (reunión QA 2026-10-14)
+
+Ortografía, orden y obligatoriedad de campos se declaran en `data/expectativas-presentacion.yaml`: cada expectativa aprobada cita su fuente (paso de la matriz o norma RAE/DLE); lo que ninguna fuente define queda `pendiente_definicion` y el paso no puede quedar verde. Los escenarios las usan con `{ expectativa: <ID> }` (bloques `presentacion-inicio`, `presentacion-estructurar`, `presentacion-completar`). Un paso `verificar` con `no_bloqueante: true` deja el CP en FAIL ante un defecto de presentación, pero el recorrido continúa.
 
 ## Reglas
 

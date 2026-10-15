@@ -59,3 +59,50 @@ test.describe('Búsqueda de casos con subprocesos @unit', () => {
       .rejects.toThrow(/está en "Consultar SISE" \(ruta NO esperada\)/);
   });
 });
+
+test.describe('abrir_caso: el work item puede llegar después de la actividad (caso 637) @unit', () => {
+  // La fila lista "Estructurar información"; al pulsarla, la página pide WorkItems. El servidor sintético responde vacío
+  // las primeras N veces y luego entrega el work item y el formulario. Nada sale a QA.
+  async function portalConDemora(context: BrowserContext, page: Page, vaciasAntes: number) {
+    let pedidos = 0;
+    const html = portal(fila('637', PRINCIPAL, ['Estructurar información'])).replace('</body>', `<script>
+      document.addEventListener('click', async (ev) => {
+        if (!ev.target.closest('.ui-bizagi-wp-app-inbox-activity-name')) return;
+        const r = await fetch('/Rest/Cases/637/WorkItems'); const j = await r.json();
+        if (j.workItems.length) document.body.insertAdjacentHTML('beforeend', '<div class="ui-bizagi-button-container"><button>Guardar</button></div>');
+      });</script></body>`);
+    await context.route('**/*', (r) => {
+      if (r.request().url().includes('/Rest/Cases/637/WorkItems')) {
+        pedidos++;
+        const workItems = pedidos > vaciasAntes ? [{ displayName: 'Estructurar información' }] : [];
+        return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ workItems }) });
+      }
+      return r.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: html });
+    });
+    await page.goto('http://portal.sintetico.local/');
+    return () => pedidos;
+  }
+  const paso = { matriz: [10], hacer: 'abrir_caso', actor: 'analista', actividad: 'Estructurar información', maximo_minutos: 1 };
+  const preparar = (page: Page, browser: import('@playwright/test').Browser) => {
+    const ui: UiEntorno = { browser, paginaInicial: page, paginas: new Map([['analista', page]]), contextos: [], registrarCaso: () => undefined };
+    const ctx = crearContexto(cargarRegistro(), { ...process.env, SDE_PROCESO_RADICACION: PRINCIPAL }, 'u');
+    ctx.numeroCaso = '637';
+    return { capacidades: crearCapacidadesUi(ui).capacidades, ctx };
+  };
+
+  test('WorkItems vacío al primer intento: reintenta dentro del límite y abre la actividad', async ({ page, browser, context }) => {
+    test.setTimeout(90_000);
+    const pedidos = await portalConDemora(context, page, 1);
+    const { capacidades, ctx } = preparar(page, browser);
+    const r = await capacidades.abrir_caso(paso, ctx);
+    expect(r).toMatchObject({ detalle: expect.stringContaining('work item entregado en el intento 2') });
+    expect(pedidos()).toBe(2);
+  });
+
+  test('si Bizagi nunca entrega el work item, falla al agotar el límite con el motivo y los intentos', async ({ page, browser, context }) => {
+    test.setTimeout(120_000);
+    await portalConDemora(context, page, Infinity);
+    const { capacidades, ctx } = preparar(page, browser);
+    await expect(capacidades.abrir_caso({ ...paso, maximo_minutos: 0.2 }, ctx)).rejects.toThrow(/no entrega a "analista" el work item "Estructurar información" del caso 637 \(WorkItems: ninguno; \d+ intento\(s\)\)/);
+  });
+});

@@ -15,7 +15,7 @@ import {
 import { aplicarReglasOrtograficas, compararConAprobado, revisarOrden } from '../../../shared/utils/ValidacionesPresentacion';
 import {
   CalibracionError, NoConcluyenteError, adjuntar, botonesVisibles, campo, diligenciar, esObligatorio, esperarCarga, estaSoloLectura,
-  etiqueta, hayLineaExacta, hayTextoVisible, infoCampo, inventarioCampos, normaliza, textosVisibles, pulsar, paginaDe, rastrearAcciones, regexEtiqueta, regexExacto, teclear, textoInterno, unicoVisible, valorMostrado, type Ambito,
+  etiqueta, hayLineaExacta, hayTextoVisible, lineasQueContienen, infoCampo, inventarioCampos, normaliza, textosVisibles, pulsar, paginaDe, rastrearAcciones, regexEtiqueta, regexExacto, teclear, textoInterno, unicoVisible, valorMostrado, type Ambito,
 } from './ui';
 
 /**
@@ -240,7 +240,10 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       }
       case 'texto_exacto': {
         const n = await hayLineaExacta(amb, texto(val as string));
-        return { ok: n > 0, detalle: `línea de texto exacta “${val}” (${n})` };
+        if (n > 0) return { ok: true, detalle: `línea de texto exacta “${val}” (${n})` };
+        // Distingue "no está" de "está, pero dentro de una línea más larga" (p. ej. sin salto de línea): sigue siendo FAIL.
+        const dentro = await lineasQueContienen(amb, texto(val as string));
+        return { ok: false, detalle: `línea de texto exacta “${val}” (0)${dentro.length ? `; el texto aparece DENTRO de otra línea: ${dentro.map((l) => `«${l}»`).join(' | ')}` : ''}` };
       }
       case 'etiquetas': {
         const faltan: string[] = [];
@@ -557,31 +560,35 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       salirDeFormularioInicio(page, ctx); // se trabaja sobre un caso EXISTENTE
       const actividad = normaliza(p.actividad as string);
       const limite = Date.now() + ((p.maximo_minutos as number) ?? 8) * 60_000;
-      let e: EstadoCaso;
-      for (;;) {
-        e = await buscarCaso(page, ctx.numeroCaso, ctx.resolver('${config:SDE_PROCESO_RADICACION}'));
-        if (e.actividades.includes(actividad)) break;
-        if (Date.now() > limite) {
-          throw new Error(`El caso ${ctx.numeroCaso} no está en "${actividad}". Actividades actuales: ${describirEstados(e)}`);
+      // La actividad puede aparecer en el buscador ANTES de que Bizagi entregue su work item al usuario (caso 637,
+      // 2026-10-15: WorkItems vacío al primer intento y disponible minutos después). Ambas condiciones se sondean dentro del
+      // mismo límite: buscar es idempotente y un intento sin work item no abre la actividad (Bizagi no la entrega).
+      let ultimoMotivo = '';
+      let intento = 1;
+      for (; ; intento++) {
+        const e = await buscarCaso(page, ctx.numeroCaso, ctx.resolver('${config:SDE_PROCESO_RADICACION}'));
+        if (!e.actividades.includes(actividad)) {
+          ultimoMotivo = `El caso ${ctx.numeroCaso} no está en "${actividad}". Actividades actuales: ${describirEstados(e)}`;
+        } else {
+          // Abrir la actividad desde su fila y confirmar con Bizagi (WorkItems) que el usuario puede trabajarla.
+          const items = page.waitForResponse((r) => r.url().includes(`/Rest/Cases/${ctx.numeroCaso}/WorkItems`) && r.status() === 200, { timeout: 60_000 });
+          // La actividad puede estar en la fila de un subproceso: se pulsa en la fila que la lista.
+          const filasConActividad = e.filas.filter((f) => f.actividades.includes(actividad));
+          if (filasConActividad.length !== 1) throw new Error(`La actividad "${actividad}" aparece en ${filasConActividad.length} filas del caso ${ctx.numeroCaso}: no se elige una al azar.`);
+          const enFila = filasConActividad[0].fila.locator(SdeObjects.actividadesEnFila).filter({ hasText: regexExacto(actividad) });
+          await (await unicoVisible(enFila, `la actividad "${actividad}" en la fila del caso ${ctx.numeroCaso}`)).click();
+          const wi = await (await items).json() as { workItems?: { displayName: string }[] };
+          if ((wi.workItems ?? []).some((w) => normaliza(w.displayName) === actividad)) break;
+          ultimoMotivo = `Bizagi no entrega a "${p.actor}" el work item "${actividad}" del caso ${ctx.numeroCaso} (WorkItems: ${(wi.workItems ?? []).map((w) => w.displayName).join(', ') || 'ninguno'}; ${intento} intento(s)).`;
         }
-        await page.waitForTimeout(20_000); // sondeo acotado: la actividad puede tardar en asignarse (integraciones / Worker AI)
-      }
-      // Abrir la actividad desde su fila y confirmar con Bizagi (WorkItems) que el usuario puede trabajarla.
-      const items = page.waitForResponse((r) => r.url().includes(`/Rest/Cases/${ctx.numeroCaso}/WorkItems`) && r.status() === 200, { timeout: 60_000 });
-      // La actividad puede estar en la fila de un subproceso: se pulsa en la fila que la lista.
-      const filasConActividad = e.filas.filter((f) => f.actividades.includes(actividad));
-      if (filasConActividad.length !== 1) throw new Error(`La actividad "${actividad}" aparece en ${filasConActividad.length} filas del caso ${ctx.numeroCaso}: no se elige una al azar.`);
-      const enFila = filasConActividad[0].fila.locator(SdeObjects.actividadesEnFila).filter({ hasText: regexExacto(actividad) });
-      await (await unicoVisible(enFila, `la actividad "${actividad}" en la fila del caso ${ctx.numeroCaso}`)).click();
-      const wi = await (await items).json() as { workItems?: { displayName: string }[] };
-      if (!(wi.workItems ?? []).some((w) => normaliza(w.displayName) === actividad)) {
-        throw new Error(`Bizagi no entrega a "${p.actor}" el work item "${actividad}" del caso ${ctx.numeroCaso} (WorkItems: ${(wi.workItems ?? []).map((w) => w.displayName).join(', ') || 'ninguno'}).`);
+        if (Date.now() > limite) throw new Error(ultimoMotivo);
+        await page.waitForTimeout(20_000); // sondeo acotado: la actividad o su work item pueden tardar (integraciones / Worker AI)
       }
       await unicoVisible(page.locator(SdeObjects.areaBotones), `el formulario de "${actividad}"`, 60_000);
       await esperarCarga(page);
       ui.actual = p.actor as string;
       ctx.actividades.push(actividad);
-      return { detalle: `Caso ${ctx.numeroCaso} abierto por "${p.actor}" en "${actividad}"` };
+      return { detalle: `Caso ${ctx.numeroCaso} abierto por "${p.actor}" en "${actividad}"${intento > 1 ? ` (work item entregado en el intento ${intento})` : ''}` };
     },
 
     tabla_verificar: async (p) => {

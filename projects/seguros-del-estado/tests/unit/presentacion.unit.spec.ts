@@ -246,3 +246,23 @@ test.describe('Presentación — verificaciones sobre DOM sintético @unit', () 
     expect(r.detalle).toContain('"Placa" ausente');
   });
 });
+
+test.describe('texto_exacto: línea propia frente a texto dentro de otra línea (HU06-CP02 P6) @unit', () => {
+  const AYUDA = 'Masivo: Solicitud asociada a más de una póliza.';
+  test('como línea propia pasa (control)', async ({ page }) => {
+    await page.setContent(`<div class="ayuda">Individual: Solicitud asociada a una única póliza.<br>${AYUDA}</div>`);
+    expect(await verificarSintetico(page, { texto_exacto: AYUDA })).toMatchObject({ ok: true });
+  });
+  test('dentro de una línea más larga sigue siendo FAIL, pero el detalle muestra dónde aparece', async ({ page }) => {
+    await page.setContent(`<div class="ayuda">Individual: Solicitud asociada a una única póliza. ${AYUDA}</div>`);
+    const r = await verificarSintetico(page, { texto_exacto: AYUDA });
+    expect(r.ok).toBe(false);
+    expect(r.detalle).toContain('el texto aparece DENTRO de otra línea: «Individual: Solicitud asociada a una única póliza. Masivo:');
+  });
+  test('ausente: FAIL sin detalle adicional', async ({ page }) => {
+    await page.setContent('<div class="ayuda">Individual: Solicitud asociada a una única póliza.</div>');
+    const r = await verificarSintetico(page, { texto_exacto: AYUDA });
+    expect(r).toMatchObject({ ok: false });
+    expect(r.detalle).not.toContain('DENTRO');
+  });
+});

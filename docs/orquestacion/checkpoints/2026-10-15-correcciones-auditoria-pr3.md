@@ -82,3 +82,21 @@ Sin cambios: implementados 13/17 (completos 0) · ejecutados 2/17 · **aprobados
 - Componentes de escritura no listados quedan fuera de la capa DOM (la red sigue aplicando).
 - El efecto de abrir una actividad sigue sin calibrar (P-16).
 - Acumulación de casos SDE sin cierre hasta que exista P-17.
+
+## 7. Corrección final (hallazgos A y B de Work sobre `14c7b95`)
+
+- **A (ALTA), permiso de precreación obsoleto:**
+  - `marcarFormularioInicio` pone un token en el elemento exacto del diálogo de inicio (`concederPrecreacion`).
+  - La guardia de red llama a `precreacionVigente` en cada solicitud, sobre la página que la emite. Si el elemento ya no está, está oculto o fue reemplazado, aborta y revoca el permiso.
+  - La capa de capacidades hace la misma comprobación antes de diligenciar.
+- **B (MEDIA), instalación incompleta tomada como exitosa:**
+  - Estado `proteccion` (`instalando` / `completa` / `fallida`). El interceptor de red se registra primero y una sola vez (`rutas` = 1) y aborta toda acción mientras la protección no esté completa.
+  - Si falla una parte: `fallida` + `ProteccionNoInstaladaError`, clasificado como AUTOMATIZACION.
+  - Un reintento completa lo que faltó. Las capacidades no corren sobre un contexto no protegido por completo.
+- **Archivos:** `sde/soloLectura.ts`, `sde/capacidades.ts`, `sde/ejecutor.ts` (clasificación) y `tests/unit/solo-lectura.unit.spec.ts` (11 regresiones nuevas: A1–A6, B1–B6).
+- **Pruebas:**
+  - `tsc` sin errores; SDE `@unit` **215/215**.
+  - Controles de P-06 y del modo funcional: 6/6. El modo funcional sigue escribiendo: diligenciar con autoguardado, Guardar, crear, agregar filas y adjuntar.
+  - Las regresiones críticas (A2, A3, A4 y B con fallo transitorio y reintento), en una spec temporal no versionada, **fallan 4 de 4 con `14c7b95` y pasan 4 de 4 con la corrección**. Los archivos se restauraron con hash verificado.
+  - Sin ejecuciones contra Bizagi.
+- **Riesgo residual:** si el registro del propio interceptor de red falla, nada intercepta. La protección queda `fallida` y la inspección se detiene (`iniciar_sesion` lanza el error), pero el código que siga usando Playwright directo tras capturar ese error queda sin protección.

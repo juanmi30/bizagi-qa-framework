@@ -24,9 +24,24 @@ Una prueba que necesita guardar, adjuntar o abrir actividades **no** se fuerza a
 
 ### Evidencia positiva del formulario de inicio (F2)
 
-Escribir en un formulario solo se permite si `nuevo_caso` **abrió el formulario de inicio en esta ejecución y su diálogo sigue visible**. Lo marca `marcarFormularioInicio`, y lo retiran `iniciar_sesion`, `pulsar`, `verificar_ruta`, `abrir_caso` o la desaparición del diálogo.
+Escribir en un formulario solo se permite si `nuevo_caso` **abrió el formulario de inicio en esta ejecución y su diálogo sigue visible**.
+
+**Cómo funciona el permiso:**
+- `marcarFormularioInicio` concede un permiso **ligado al elemento exacto** del diálogo, con un token propio.
+- La guardia de red lo **revalida en cada solicitud**, en la página que la emite. Lo mismo hace la capa de capacidades antes de diligenciar.
+- Basta con que el elemento ya no esté, esté oculto o haya sido reemplazado (navegación, cambio de contenido de la SPA o un diálogo nuevo idéntico) para que el permiso se **revoque de forma definitiva**, también ante ediciones con Playwright directo.
+- Volver a un formulario exige una **nueva** identificación, con un token nuevo.
+- `iniciar_sesion`, `pulsar`, `verificar_ruta` y `abrir_caso` lo revocan explícitamente.
 
 La ausencia de número de caso **no** es evidencia de precreación: un formulario existente con `numeroCaso: null` queda denegado tanto en las capacidades como en la red.
+
+### Instalación de la protección
+
+`protegerSoloLectura` registra primero, y una sola vez, el interceptor de red. Mientras la protección no esté `completa`, ese interceptor aborta toda acción.
+
+- **Si falla una parte** (interceptor, script de inicio o guardia en las páginas abiertas), queda `fallida` y se lanza `ProteccionNoInstaladaError`. Es una falla de automatización que detiene la inspección.
+- **Ninguna capacidad corre** sobre un contexto cuya protección no esté completa.
+- **Un reintento** completa lo que faltó sin duplicar el interceptor. Una protección ya completa se devuelve tal cual.
 
 ### Clasificación de las capacidades (por efecto, no por el texto del botón)
 

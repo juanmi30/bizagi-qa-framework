@@ -26,7 +26,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | HU06-CP02 | F-MASIVO-ESTRUCTURAR | 2 | 4-hu06-cp02.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-AUTOS-MASIVO: MISSING | PARCIAL (19/2/0/0/0 de 21) | NO EJECUTADO<br>último intento: BLOCKED (HU06-CP02_20261013-095835.json) | **BLOCKED** | no |
 | HU06-CP03 | F-MASIVO-ESTRUCTURAR | 2 | 5-hu06-cp03.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-CUMPL-MASIVO-SIN-RCE: MISSING | PARCIAL (23/1/0/0/0 de 24) | NO EJECUTADO<br>último intento: BLOCKED (HU06-CP03_20261013-095835.json) | **BLOCKED** | no |
 | HU06-CP04 | F-MASIVO-ESTRUCTURAR | 2 | 6-hu06-cp04.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-CUMPL-MASIVO-CON-RCE: MISSING | PARCIAL (20/1/0/1/0 de 22) | NO EJECUTADO<br>último intento: BLOCKED (HU06-CP04_20261013-095835.json) | **BLOCKED** | no |
-| HU06-CP05 | F-INDIVIDUAL-RUTA | 1 | 1-hu06-cp05.yaml | analista: READY | CFG-PROCESO: READY<br>INI-INDIVIDUAL-RUTA: READY | PARCIAL (6/2/0/0/0 de 8) | HU06-CP05_20261015-151217.json (caso 630) | **REAL_PASS_PARCIAL** | no |
+| HU06-CP05 | F-INDIVIDUAL-RUTA | 1 | 1-hu06-cp05.yaml | analista: READY | CFG-PROCESO: READY<br>INI-INDIVIDUAL-RUTA: READY | PARCIAL (5/3/0/0/0 de 8) | HU06-CP05_20261015-151217.json (caso 630) | **REAL_PASS_PARCIAL** | no |
 | HU03-CP01 | F-INDIVIDUAL-CONSULTA | 2 | 7-hu03-cp01.yaml | intermediario: READY | CFG-PROCESO: READY<br>PLACA-MULTIPOLIZA: MISSING | PARCIAL (13/5/3/0/0 de 21) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP01_20261013-095835.json) | **BLOCKED** | no |
 | HU03-CP02 | F-INDIVIDUAL-CONSULTA | 1 | 2-hu03-cp02.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-AUTOS-VIGENTE: MISSING | PARCIAL (13/5/2/0/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP02_20261013-155239.json) | **BLOCKED** | no |
 | HU03-CP03 | F-INDIVIDUAL-CONSULTA | 2 | 8-hu03-cp03.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-GENERALES-VIGENTE: MISSING | PARCIAL (12/5/3/0/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP03_20261013-095835.json) | **BLOCKED** | no |
@@ -193,7 +193,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-INDIVIDUAL-RUTA · **Fase:** 1 · **Prioridad:** P1
 - **Escenario:** `escenarios/1-hu06-cp05.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-10 (FUNCTIONAL_AMBIGUITY)
-- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P9 (mixto)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P8 (mixto), P9 (mixto)
 - **Estado:** REAL_PASS_PARCIAL — Sesión y caso reales, sin fallos; 3 paso(s) de la matriz no verificados directamente: P1=NOT_AUTOMATED, P6=NOT_AUTOMATED, P9=INTEGRATION_NOT_VERIFIED
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |

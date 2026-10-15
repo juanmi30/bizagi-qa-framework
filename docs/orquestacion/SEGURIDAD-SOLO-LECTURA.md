@@ -129,6 +129,9 @@ El diagnóstico solo navega menús y consulta. No crea, no abre, no modifica ni 
 - No se valida ni se implementa una cancelación administrativa: ningún actor configurado puede encontrar los casos.
 - No se creó un caso desechable solo para probar el cierre.
 - Se implementó la **barrera contra la acumulación** (punto 5 de la propuesta): cada vertical informa los casos propios pendientes. Con `SDE_MAX_CASOS_PENDIENTES=<n>`, la vertical queda BLOCKED por CONFIGURACION antes de crear otro caso si ya hay n o más pendientes. El umbral lo acuerda QA; sin la variable, solo se informa.
+  - **Cupo atómico** (corrección de Work, PR #4): el conteo y el límite se evalúan dentro del bloqueo de ejecución real (H6), que se mantiene hasta registrar el caso creado. Dos corridas simultáneas con 19 pendientes y límite 20 no pueden ser autorizadas ambas.
+  - La reserva es el propio bloqueo y se libera en `finally`.
+  - **Alcance:** un mismo equipo y su histórico local; no protege entre computadores distintos.
 
 ### Propuesta operativa (requiere a QA, P-17)
 

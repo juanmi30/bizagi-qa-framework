@@ -38,6 +38,7 @@ Principios:
 | Selectores | `baseObjects/sde.objects.ts` | Único lugar de selectores, cada uno marcado [VERIFICADO] o [PENDIENTE] |
 | Pop-ups permitidos | `data/popups-calibrados.yaml` + `sde/popups.ts` | Barrera BUG-03: sin calibración y cierre seguro verificados, no se abre ningún pop-up |
 | Expectativas de presentación | `data/expectativas-presentacion.yaml` + `sde/presentacion.ts` (lógica genérica en `shared/utils/ValidacionesPresentacion.ts`) | Ortografía (reglas RAE/DLE), etiquetas aprobadas, orden y obligatoriedad, cada una con su fuente; lo no definido queda `pendiente_definicion` y nunca es verde |
+| Solo lectura (P-15) | `sde/soloLectura.ts` + `docs/orquestacion/SEGURIDAD-SOLO-LECTURA.md` | Capacidades clasificadas por efecto (escritura rechazada antes de ejecutarse; lo no clasificado se deniega), guardia DOM y guardia de red. Complementa a P-06. No es una garantía universal: ver límites |
 | Métricas y trazabilidad | `sde/metricas.ts`, `sde/trazabilidad.ts` → `docs/TRAZABILIDAD-17-CP.md` | Tres indicadores independientes: implementado, ejecutado, aprobado |
 | Exportación sanitizada | `sde/exportar.ts`, `tests/exportar.tool.spec.ts` | Paquete para compartir con escaneo de secretos |
 

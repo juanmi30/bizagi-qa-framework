@@ -381,7 +381,9 @@ test.describe('P-15 — hallazgo B: instalación consistente de la protección @
   test('B2 y B4. error durante la instalación: NO queda protegida; entre el fallo y el reintento nada sale y las capacidades se detienen', async ({ page, context }) => {
     const servidor = await portalSinProteger(context, page);
     const conFallos = contextoConFallos(context, { addInitScript: 1 });
-    await expect(protegerSoloLectura(conFallos)).rejects.toBeInstanceOf(ProteccionNoInstaladaError);
+    const error = await protegerSoloLectura(conFallos).catch((e: Error) => e);
+    expect(error).toBeInstanceOf(ProteccionNoInstaladaError);
+    expect(String(error)).toMatch(/interceptor de red está registrado y aborta toda acción/);
     expect(registroDe(conFallos)!.estado.proteccion).toBe('fallida');
     // B4: el interceptor quedó instalado y falla cerrado mientras la protección no está completa.
     await autoguardar(page);
@@ -411,7 +413,11 @@ test.describe('P-15 — hallazgo B: instalación consistente de la protección @
   test('B4 (variante). si falla el propio interceptor, la protección NO se da por instalada y el reintento lo registra una sola vez', async ({ page, context }) => {
     await portalSinProteger(context, page);
     const conFallos = contextoConFallos(context, { route: 1 });
-    await expect(protegerSoloLectura(conFallos)).rejects.toThrow(/PROTECCIÓN SOLO LECTURA NO INSTALADA: fallo inyectado en route/);
+    const error = await protegerSoloLectura(conFallos).catch((e: Error) => e);
+    expect(String(error)).toMatch(/PROTECCIÓN SOLO LECTURA NO INSTALADA: fallo inyectado en route/);
+    // Observación BAJA de Work: sin interceptor registrado el mensaje NO puede afirmar que la red aborta.
+    expect(String(error)).toMatch(/interceptor de red NO quedó registrado: ninguna solicitud se intercepta/);
+    expect(String(error)).not.toMatch(/aborta toda acción/);
     expect(registroDe(conFallos)!.estado.proteccion).toBe('fallida');
     expect(registroDe(conFallos)!.rutas).toBe(0);
     const registro = await protegerSoloLectura(conFallos);

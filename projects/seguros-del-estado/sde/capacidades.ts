@@ -98,14 +98,26 @@ async function pulsarYCapturarCaso(page: Page, accion: () => Promise<void>, alCr
   return creado.CaseNumber;
 }
 
-export interface EstadoCaso { numero: string; actividades: string[]; fila: Locator }
+export interface FilaCaso { fila: Locator; actividades: string[] }
+export interface EstadoCaso {
+  numero: string;
+  /** Actividades actuales de TODAS las filas del caso (proceso principal y subprocesos). */
+  actividades: string[];
+  /** Fila del proceso principal. */
+  fila: Locator;
+  /** Cada fila del caso: el buscador lista aparte los subprocesos con el mismo número (observado en QA 2026-10-15, caso 628). */
+  filas: FilaCaso[];
+}
 
 /**
- * Busca el caso con el buscador global y devuelve sus actividades ACTUALES tal como Bizagi las lista en la fila de
+ * Busca el caso con el buscador global y devuelve sus actividades ACTUALES tal como Bizagi las lista en las filas de
  * resultados (ul.gridListWorkItems, una por work item, con su idTask). No abre ni modifica el caso.
+ * Un caso con subprocesos aparece en VARIAS filas con el mismo número (p. ej. «Consultar Información de Solicitud» →
+ * «Consultar SISE»): las actividades son la unión de todas y la fila principal es la del `proceso` dado. Sin `proceso`,
+ * varias filas son una ambigüedad (no se elige una al azar).
  * Nota: SummaryGuid.currentState se descartó como fuente porque Bizagi lo filtra por usuario (el analista solo veía el evento).
  */
-export async function buscarCaso(page: Page, numero: string): Promise<EstadoCaso> {
+export async function buscarCaso(page: Page, numero: string, proceso?: string): Promise<EstadoCaso> {
   // Recarga real del portal en cada consulta: el buscador del SPA reutiliza resultados previos (observado en QA).
   if ((await new LoginActions(page).navegarAlPortal({ timeout: 120_000, intervalo: 4_000 })) !== 'sesion') throw new Error('La sesión expiró: el portal volvió al login.');
   await unicoVisible(page.locator(SdeObjects.bandeja), 'el menú de la bandeja', 30_000);
@@ -114,11 +126,25 @@ export async function buscarCaso(page: Page, numero: string): Promise<EstadoCaso
   await caja.fill(numero);
   await caja.press('Enter');
   await esperarCarga(page);
-  const fila = await unicoVisible(page.locator(SdeObjects.filaResultado)
-    .filter({ has: page.locator(SdeObjects.numeroEnFila).filter({ hasText: regexExacto(numero) }) }),
-  `la fila del caso ${numero} en los resultados de búsqueda`, 30_000);
-  const actividades = (await fila.locator(SdeObjects.actividadesEnFila).allInnerTexts()).map(normaliza).filter(Boolean);
-  return { numero, actividades, fila };
+  const delCaso = page.locator(SdeObjects.filaResultado)
+    .filter({ has: page.locator(SdeObjects.numeroEnFila).filter({ hasText: regexExacto(numero) }) }).filter({ visible: true });
+  await delCaso.first().waitFor({ state: 'visible', timeout: 30_000 })
+    .catch(() => { throw new Error(`El caso ${numero} no aparece en los resultados de búsqueda.`); });
+  const filas: FilaCaso[] = [];
+  for (let i = 0, n = await delCaso.count(); i < n; i++) {
+    const fila = delCaso.nth(i);
+    filas.push({ fila, actividades: (await fila.locator(SdeObjects.actividadesEnFila).allInnerTexts()).map(normaliza).filter(Boolean) });
+  }
+  const principal = proceso
+    ? await unicoVisible(delCaso.filter({ has: page.locator('td').filter({ hasText: regexExacto(proceso) }) }),
+      `la fila del caso ${numero} del proceso "${proceso}" en los resultados de búsqueda`)
+    : filas.length === 1 ? filas[0].fila : null;
+  if (!principal) {
+    throw new Error(`Se esperaba exactamente 1 elemento visible para la fila del caso ${numero} en los resultados de búsqueda; hay ${filas.length} ` +
+      '(proceso y subprocesos). Ambigüedad: no se elige uno al azar; indica el proceso principal.');
+  }
+  const actividades = [...new Set(filas.flatMap((f) => f.actividades))];
+  return { numero, actividades, fila: principal, filas };
 }
 
 const describirEstados = (e: EstadoCaso) => e.actividades.join(' | ') || '—';
@@ -503,7 +529,7 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       let consultas = 0;
       for (;;) {
         // Buscar el caso es idempotente (solo lectura): se repite hasta que el motor llegue a la actividad.
-        ultimo = await buscarCaso(page, ctx.numeroCaso);
+        ultimo = await buscarCaso(page, ctx.numeroCaso, ctx.resolver('${config:SDE_PROCESO_RADICACION}'));
         consultas++;
         for (const a of ultimo.actividades) if (!vistos.includes(a)) { vistos.push(a); ctx.actividades.push(a); }
         const prohibida = prohibidas.find((x) => ultimo.actividades.includes(x));
@@ -533,7 +559,7 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       const limite = Date.now() + ((p.maximo_minutos as number) ?? 8) * 60_000;
       let e: EstadoCaso;
       for (;;) {
-        e = await buscarCaso(page, ctx.numeroCaso);
+        e = await buscarCaso(page, ctx.numeroCaso, ctx.resolver('${config:SDE_PROCESO_RADICACION}'));
         if (e.actividades.includes(actividad)) break;
         if (Date.now() > limite) {
           throw new Error(`El caso ${ctx.numeroCaso} no está en "${actividad}". Actividades actuales: ${describirEstados(e)}`);
@@ -542,7 +568,10 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       }
       // Abrir la actividad desde su fila y confirmar con Bizagi (WorkItems) que el usuario puede trabajarla.
       const items = page.waitForResponse((r) => r.url().includes(`/Rest/Cases/${ctx.numeroCaso}/WorkItems`) && r.status() === 200, { timeout: 60_000 });
-      const enFila = e.fila.locator(SdeObjects.actividadesEnFila).filter({ hasText: regexExacto(actividad) });
+      // La actividad puede estar en la fila de un subproceso: se pulsa en la fila que la lista.
+      const filasConActividad = e.filas.filter((f) => f.actividades.includes(actividad));
+      if (filasConActividad.length !== 1) throw new Error(`La actividad "${actividad}" aparece en ${filasConActividad.length} filas del caso ${ctx.numeroCaso}: no se elige una al azar.`);
+      const enFila = filasConActividad[0].fila.locator(SdeObjects.actividadesEnFila).filter({ hasText: regexExacto(actividad) });
       await (await unicoVisible(enFila, `la actividad "${actividad}" en la fila del caso ${ctx.numeroCaso}`)).click();
       const wi = await (await items).json() as { workItems?: { displayName: string }[] };
       if (!(wi.workItems ?? []).some((w) => normaliza(w.displayName) === actividad)) {

@@ -50,8 +50,12 @@ test.describe('Ejecutor SDE @unit', () => {
     expect(r.estado).toBe('REAL_PASS_PARCIAL');
     expect(r.numero_caso).toBe('4321');
     const porPaso = Object.fromEntries(r.matriz.map((m) => [m.n, m.estado]));
-    expect(porPaso).toEqual({ 1: 'NOT_AUTOMATED', 2: 'PASS', 3: 'PASS', 4: 'PASS', 5: 'PASS', 6: 'NOT_AUTOMATED', 7: 'PASS', 8: 'UI_PASS', 9: 'INTEGRATION_NOT_VERIFIED' });
-    expect(r.motivo).toContain('P9=INTEGRATION_NOT_VERIFIED');
+    expect(porPaso).toEqual({ 1: 'NOT_AUTOMATED', 2: 'PASS', 3: 'PASS', 4: 'PASS', 5: 'PASS', 6: 'NOT_AUTOMATED', 7: 'PASS', 8: 'NOT_AUTOMATED', 9: 'NOT_AUTOMATED' });
+    // P-18: aunque la capacidad de ruta responda UI_PASS, la expectativa pendiente deja P8 sin aprobar. P9 la comparte
+    // (verificar_ruta cubre [8, 9]) y el motor la agrega como NOT_AUTOMATED; la integración sigue registrada en su paso.
+    expect(r.pasos.find((p) => p.hacer === 'integracion')?.estado).toBe('INTEGRATION_NOT_VERIFIED');
+    expect(r.motivo).toContain('P8=NOT_AUTOMATED');
+    expect(r.motivo).toContain('P9=NOT_AUTOMATED');
   });
 
   test('sin número de caso real no hay E2E: FAIL aunque todo lo demás "pase"', async () => {

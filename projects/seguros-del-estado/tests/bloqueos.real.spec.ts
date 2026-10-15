@@ -132,7 +132,7 @@ test.describe('Re-verificación de bloqueos SDE (modalidad declarada por prueba)
     const casos: Record<string, unknown> = {};
     const secretos = crearContexto(registro, process.env, 'bloqueos').secretos;
     for (const n of CASOS_BUG02) {
-      casos[n] = await buscarCaso(page, n)
+      casos[n] = await buscarCaso(page, n, process.env.SDE_PROCESO_RADICACION)
         .then(async (e) => ({ actividades: e.actividades, fila: sanitizar((await e.fila.locator('td').allInnerTexts()).map((x) => x.replace(/\s+/g, ' ').trim()).join(' | '), secretos) }))
         .catch((e: Error) => `ERROR: ${e.message.split('\n')[0]}`);
     }
@@ -147,7 +147,7 @@ test.describe('Re-verificación de bloqueos SDE (modalidad declarada por prueba)
     await crearCapacidadesUi(ui).capacidades.iniciar_sesion({ matriz: [2], hacer: 'iniciar_sesion', actor: 'analista' }, crearContexto(registro, process.env, 'bloqueos'));
     const res: Record<string, unknown> = {};
     for (const n of casos) {
-      const e = await buscarCaso(page, n);
+      const e = await buscarCaso(page, n, process.env.SDE_PROCESO_RADICACION);
       const item = e.fila.locator(SdeObjects.actividadesEnFila).filter({ hasText: /^\s*Estructurar información\s*$/ });
       if ((await item.count()) !== 1) { res[n] = { actividades: e.actividades, abierto: false }; continue; }
       await item.click();
@@ -189,7 +189,7 @@ test.describe('Re-verificación de bloqueos SDE (modalidad declarada por prueba)
         }
       };
       page.on('response', oir);
-      const e = await buscarCaso(page, n);
+      const e = await buscarCaso(page, n, process.env.SDE_PROCESO_RADICACION);
       await e.fila.locator(SdeObjects.numeroEnFila).click();
       await esperarCarga(page);
       const linea = page.getByText('Linea de tiempo', { exact: true }).filter({ visible: true });
@@ -292,7 +292,7 @@ test.describe('Re-verificación de bloqueos SDE (modalidad declarada por prueba)
       const cuerpos: Promise<string>[] = [];
       const oir = (r: { url(): string; status(): number; text(): Promise<string> }) => { if (r.url().includes('/Rest/Handlers/Render') && r.status() === 200) cuerpos.push(r.text().catch(() => '')); };
       page.on('response', oir);
-      const e = await buscarCaso(page, n).catch((err: Error) => ({ error: err.message.split('\n')[0] }) as unknown as Awaited<ReturnType<typeof buscarCaso>>);
+      const e = await buscarCaso(page, n, process.env.SDE_PROCESO_RADICACION).catch((err: Error) => ({ error: err.message.split('\n')[0] }) as unknown as Awaited<ReturnType<typeof buscarCaso>>);
       if ('error' in (e as object)) { res[n] = e; page.off('response', oir); continue; }
       await e.fila.locator(SdeObjects.numeroEnFila).click();
       await esperarCarga(page);

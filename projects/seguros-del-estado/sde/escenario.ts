@@ -143,6 +143,29 @@ function validarVerificaciones(v: unknown, donde: string, problemas: string[], p
   });
 }
 
+/**
+ * P-18 (corrección de Work, PR #4): una llegada que solo se OBSERVÓ en QA no es una expectativa aprobada. Si "llega_a"
+ * incluye una actividad listada en `actividades_observadas` de una expectativa pendiente, el paso debe declarar esa
+ * expectativa: el ejecutor lo deja NOT_AUTOMATED y nunca verde por coincidir con un nombre observado. Vale para todo
+ * escenario, variante o bloque que pase por este validador.
+ */
+function rutaSoloObservada(p: Record<string, unknown>, donde: string): string[] {
+  const clave = (t: string) => t.normalize('NFC').replace(/\s+/g, ' ').trim().toLowerCase();
+  const llegadas = (Array.isArray(p.llega_a) ? p.llega_a : [p.llega_a]).filter(esTexto).map(clave);
+  const declaradas = new Set((Array.isArray(p.verificar) ? p.verificar : [])
+    .map((v) => (v && typeof v === 'object' ? (v as Record<string, unknown>).expectativa : undefined)).filter(esTexto));
+  const problemas: string[] = [];
+  for (const [id, e] of Object.entries(cargarPresentacion().expectativas)) {
+    if (e.estado !== 'pendiente_definicion' || !e.actividades_observadas) continue;
+    const observadas = e.actividades_observadas.filter((a) => llegadas.includes(clave(a)));
+    if (observadas.length && !declaradas.has(id)) {
+      problemas.push(`${donde}: "llega_a" incluye actividades solo OBSERVADAS en QA y no aprobadas (${observadas.join(', ')}); ` +
+        `declare { expectativa: ${id} } (pendiente de definición) para que el paso no quede aprobado por coincidir con un nombre observado`);
+    }
+  }
+  return problemas;
+}
+
 function validarCampos(v: unknown, donde: string, problemas: string[]): void {
   if (!Array.isArray(v) || v.length === 0) { problemas.push(`${donde}: "campos" debe ser una lista no vacía`); return; }
   v.forEach((c, i) => {
@@ -257,6 +280,7 @@ export function cargarEscenario(ruta: string, registro: Registro): EscenarioSde 
     }
     if (p.hacer === 'verificar_ruta' && !(esTexto(p.llega_a) || (Array.isArray(p.llega_a) && (p.llega_a as unknown[]).length > 0 && (p.llega_a as unknown[]).every(esTexto))))
       problemas.push(`${donde}: "llega_a" debe ser una actividad o una lista de actividades aceptables`);
+    if (p.hacer === 'verificar_ruta') problemas.push(...rutaSoloObservada(p, donde));
     const extra = Object.keys(p).filter((k) => !permitidas.includes(k));
     if (extra.length) problemas.push(`${donde} (${p.hacer}): claves no soportadas ${extra.join(', ')}`);
     if (p.hacer === 'verificar' && !Array.isArray(p.verificar)) problemas.push(`${donde}: "verificar" requiere la lista "verificar"`);

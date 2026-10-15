@@ -81,9 +81,15 @@ pasos:
   - matriz: [8, 9]
     hacer: verificar_ruta
     actor: analista
-    llega_a: [Consultar Alertas Intermediario, Completar información de solicitud]
+    # P-18 (corrección de Work, PR #4): «Consultar información de solicitud» y «Consultar SISE» solo se OBSERVARON en QA
+    # (casos 628 y 630); no son una ruta aprobada. Se conservan en llega_a para registrar la observación técnica (y para no
+    # esperar 8 min a una actividad que depende de SISE), pero la expectativa RUTA-CONSULTA-UNITARIA, pendiente de
+    # definición (Daniel/Karen), deja el paso NOT_AUTOMATED: nunca PASS. «Estructurar información» sigue prohibida.
+    llega_a: [Consultar información de solicitud, Consultar SISE, Consultar Alertas Intermediario, Completar información de solicitud]
     no_llega_a: [Estructurar información]
     maximo_minutos: 8
+    verificar:
+      - expectativa: RUTA-CONSULTA-UNITARIA
 
   - matriz: [9]
     hacer: integracion

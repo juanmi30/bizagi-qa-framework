@@ -247,7 +247,11 @@ async function instalar(contexto: BrowserContext, previo: RegistroSoloLectura | 
     return registro;
   } catch (e) {
     registro.estado.proteccion = 'fallida';
-    throw new ProteccionNoInstaladaError(`${(e as Error).message.split('\n')[0]} — el contexto queda NO protegido: la red aborta toda acción y la inspección de solo lectura se detiene.`);
+    // El mensaje dice lo que REALMENTE queda (observación BAJA de Work): sin interceptor registrado, nada se intercepta.
+    const red = registro.rutas > 0
+      ? 'el interceptor de red está registrado y aborta toda acción mientras la protección no esté completa'
+      : 'el interceptor de red NO quedó registrado: ninguna solicitud se intercepta';
+    throw new ProteccionNoInstaladaError(`${(e as Error).message.split('\n')[0]} — el contexto queda NO protegido (${red}); la inspección de solo lectura se detiene.`);
   }
 }
 

@@ -6,7 +6,7 @@
 > (sesión real) de `test-results/seguros-del-estado/sde/`; un intento BLOCKED en preflight se muestra aparte y no tapa
 > la evidencia. Sin reporte ejecutado: estado del manifest. Ningún estado verde sin reporte.
 
-> **Fuentes de ejecución:** historial local `test-results/`: 55 reporte(s) · evidencia versionada `docs/evidencia/`: 8 reporte(s). Si un reporte está en ambas, prevalece la copia local.
+> **Fuentes de ejecución:** historial local `test-results/`: 59 reporte(s) · evidencia versionada `docs/evidencia/`: 11 reporte(s). Si un reporte está en ambas, prevalece la copia local.
 
 ## Cobertura (tres indicadores independientes)
 
@@ -14,7 +14,7 @@
 |---|---|---|
 | Implementada | 13/17 (completa: 0) | Escenario declarativo válido. Completa = TODOS los pasos verificados solo por UI (ninguno mixto, con integración pendiente o no automatizado) |
 | Ejecutada | 2/17 | Reporte con sesión real contra QA (no cuenta un BLOCKED de preflight) |
-| Aprobada | 0/17 | Último reporte ejecutado = REAL_PASS. No cuenta REAL_PASS_PARCIAL (0), FAIL (2) ni BLOCKED (11) |
+| Aprobada | 0/17 | Último reporte ejecutado = REAL_PASS. No cuenta REAL_PASS_PARCIAL (1), FAIL (1) ni BLOCKED (11) |
 
 Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuestra la integración con SISE.
 
@@ -22,11 +22,11 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 
 | CP | Familia | Fase | Escenario | Actores (credenciales) | Datos | Implementación (pasos solo UI / mixtos UI+pendiente / integración / no autom. / sin cubrir) | Ejecución (evidencia) | Estado funcional | Aprobado |
 |---|---|---|---|---|---|---|---|---|---|
-| HU06-CP01 | F-MASIVO-ESTRUCTURAR | 1 | 3-hu06-cp01.yaml | analista: READY | CFG-PROCESO: READY<br>INI-GENERALES-MASIVO: READY<br>DOC-SOPORTE: READY<br>DOCS-OBLIGATORIOS: READY | PARCIAL (24/4/0/0/0 de 28) | HU06-CP01_20261013-120048.json | **FAIL** | no |
+| HU06-CP01 | F-MASIVO-ESTRUCTURAR | 1 | 3-hu06-cp01.yaml | analista: READY | CFG-PROCESO: READY<br>INI-GENERALES-MASIVO: READY<br>DOC-SOPORTE: READY<br>DOCS-OBLIGATORIOS: READY | PARCIAL (24/4/0/0/0 de 28) | HU06-CP01_20261015-151304.json | **FAIL** | no |
 | HU06-CP02 | F-MASIVO-ESTRUCTURAR | 2 | 4-hu06-cp02.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-AUTOS-MASIVO: MISSING | PARCIAL (19/2/0/0/0 de 21) | NO EJECUTADO<br>último intento: BLOCKED (HU06-CP02_20261013-095835.json) | **BLOCKED** | no |
 | HU06-CP03 | F-MASIVO-ESTRUCTURAR | 2 | 5-hu06-cp03.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-CUMPL-MASIVO-SIN-RCE: MISSING | PARCIAL (23/1/0/0/0 de 24) | NO EJECUTADO<br>último intento: BLOCKED (HU06-CP03_20261013-095835.json) | **BLOCKED** | no |
 | HU06-CP04 | F-MASIVO-ESTRUCTURAR | 2 | 6-hu06-cp04.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-CUMPL-MASIVO-CON-RCE: MISSING | PARCIAL (20/1/0/1/0 de 22) | NO EJECUTADO<br>último intento: BLOCKED (HU06-CP04_20261013-095835.json) | **BLOCKED** | no |
-| HU06-CP05 | F-INDIVIDUAL-RUTA | 1 | 1-hu06-cp05.yaml | analista: READY | CFG-PROCESO: READY<br>INI-INDIVIDUAL-RUTA: READY | PARCIAL (6/2/0/0/0 de 8) | HU06-CP05_20261014-145128.json | **FAIL** | no |
+| HU06-CP05 | F-INDIVIDUAL-RUTA | 1 | 1-hu06-cp05.yaml | analista: READY | CFG-PROCESO: READY<br>INI-INDIVIDUAL-RUTA: READY | PARCIAL (5/3/0/0/0 de 8) | HU06-CP05_20261015-151217.json (caso 630) | **REAL_PASS_PARCIAL** | no |
 | HU03-CP01 | F-INDIVIDUAL-CONSULTA | 2 | 7-hu03-cp01.yaml | intermediario: READY | CFG-PROCESO: READY<br>PLACA-MULTIPOLIZA: MISSING | PARCIAL (13/5/3/0/0 de 21) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP01_20261013-095835.json) | **BLOCKED** | no |
 | HU03-CP02 | F-INDIVIDUAL-CONSULTA | 1 | 2-hu03-cp02.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-AUTOS-VIGENTE: MISSING | PARCIAL (13/5/2/0/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP02_20261013-155239.json) | **BLOCKED** | no |
 | HU03-CP03 | F-INDIVIDUAL-CONSULTA | 2 | 8-hu03-cp03.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-GENERALES-VIGENTE: MISSING | PARCIAL (12/5/3/0/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP03_20261013-095835.json) | **BLOCKED** | no |
@@ -47,14 +47,14 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Escenario:** `escenarios/3-hu06-cp01.yaml`
 - **Brechas:** BUG-01 (FUNCTIONAL_AMBIGUITY), BUG-05 (FUNCTIONAL_DEFECT), BUG-06 (FUNCTIONAL_DEFECT), BUG-03 (FUNCTIONAL_DEFECT), BUG-04 (FUNCTIONAL_DEFECT), UI-10 (UI_CAPABILITY_GAP), DATA-03 (TEST_DATA_GAP), UI-03 (UI_CAPABILITY_GAP), UI-04 (UI_CAPABILITY_GAP), INT-02 (INTEGRATION_VISIBILITY_GAP), FUNC-04 (FUNCTIONAL_AMBIGUITY), FUNC-06 (FUNCTIONAL_AMBIGUITY), FUNC-10 (FUNCTIONAL_AMBIGUITY)
 - **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P4 (mixto), P12 (mixto), P17 (mixto), P28 (mixto)
-- **Estado:** FAIL — Al menos un paso de la matriz falló.
+- **Estado:** FAIL — Al menos un paso de la matriz falló (causa: PRODUCTO_POR_CONFIRMAR) — comportamiento observado distinto al esperado: posible defecto, POR CONFIRMAR funcionalmente.
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
 |---|---|---|---|---|
-| 1 | Objetivo: | Validar la radicación Masiva para la línea Generales, verificando las reglas del formulario inicial, la ruta de la compuerta ¿Masivo? y el comportamiento de la actividad Estructurar Información, incluyendo la visualización, edición y obligatoriedad de los campos de la tabla de pólizas asociadas. | #17 verificar (UI: aserciones) | FAIL |
+| 1 | Objetivo: | Validar la radicación Masiva para la línea Generales, verificando las reglas del formulario inicial, la ruta de la compuerta ¿Masivo? y el comportamiento de la actividad Estructurar Información, incluyendo la visualización, edición y obligatoriedad de los campos de la tabla de pólizas asociadas. | #17 verificar (UI: aserciones) | NOT_RUN |
 | 2 | Ingresar al ambiente Bizagi mediante la URL: https://test-aiprocesos-sde.bizagi.com/ | El ambiente de pruebas de Bizagi se encuentra disponible y permite iniciar la gestión de una nueva Radicación. | #1 iniciar_sesion (UI: login real)<br>#2 nuevo_caso (UI: abrir formulario) | PASS |
 | 3 | Crear un nuevo caso de Radicación y seleccionar Línea = Generales, junto con un Ramo y Tipo de Solicitud válidos para la prueba. | El formulario presenta la información correspondiente a la Línea, Ramo y Tipo de Solicitud seleccionados. | #2 nuevo_caso (UI: abrir formulario)<br>#3 diligenciar (UI: diligenciar + post-condición) | PASS |
-| 4 | Validar la sección de información inicial antes de seleccionar el tipo de radicación. | Los campos Línea, Ramo, Tipo de Solicitud/Movimiento y Sucursal se presentan con las etiquetas, ortografía y capitalización definidas. | #4 verificar (UI: aserciones)<br>#5 verificar (UI: aserciones) | PASS |
+| 4 | Validar la sección de información inicial antes de seleccionar el tipo de radicación. | Los campos Línea, Ramo, Tipo de Solicitud/Movimiento y Sucursal se presentan con las etiquetas, ortografía y capitalización definidas. | #4 verificar (UI: aserciones)<br>#5 verificar (UI: aserciones) | NOT_AUTOMATED |
 | 5 | Seleccionar una Sucursal válida. | La Sucursal queda registrada y se mantiene disponible como dato requerido para continuar con la radicación. | #4 verificar (UI: aserciones)<br>#6 diligenciar (UI: diligenciar + post-condición) | PASS |
 | 6 | Seleccionar Tipo de Radicación = Masivo. | Se habilitan los elementos correspondientes a la modalidad Masivo, incluyendo Descripción de la Solicitud (Masiva/Múltiple) y Documentos Anexos. | #7 diligenciar (UI: diligenciar + post-condición)<br>#8 verificar (UI: aserciones) | PASS |
 | 7 | Validar el texto de ayuda presentado para Masivo. | Para Generales se muestra: “Masivo: Solicitud asociada a más de una póliza.”, conservando ortografía, tildes y capitalización. | #9 verificar (UI: aserciones) | PASS |
@@ -193,20 +193,20 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-INDIVIDUAL-RUTA · **Fase:** 1 · **Prioridad:** P1
 - **Escenario:** `escenarios/1-hu06-cp05.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-10 (FUNCTIONAL_AMBIGUITY)
-- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P9 (mixto)
-- **Estado:** FAIL — Al menos un paso de la matriz falló (causa: NO_CLASIFICADO) — NO atribuible al producto (automatización, ambiente o excepción sin clasificar): revisar antes de reportar.
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P8 (mixto), P9 (mixto)
+- **Estado:** REAL_PASS_PARCIAL — Sesión y caso reales, sin fallos; 3 paso(s) de la matriz no verificados directamente: P1=NOT_AUTOMATED, P6=NOT_AUTOMATED, P9=INTEGRATION_NOT_VERIFIED
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
 |---|---|---|---|---|
-| 1 | Objetivo: | Validar que una solicitud con Tipo de Radicación Individual tome la transición correspondiente en la compuerta ¿Masivo? y continúe por el flujo regular, sin ingresar a Estructurar Información. | Agregado del CP | FAIL |
+| 1 | Objetivo: | Validar que una solicitud con Tipo de Radicación Individual tome la transición correspondiente en la compuerta ¿Masivo? y continúe por el flujo regular, sin ingresar a Estructurar Información. | Agregado del CP | NOT_AUTOMATED |
 | 2 | Ingresar al ambiente Bizagi mediante la URL: https://test-aiprocesos-sde.bizagi.com/ | El ambiente de pruebas se encuentra disponible y permite iniciar una nueva Radicación. | #1 iniciar_sesion (UI: login real)<br>#2 nuevo_caso (UI: abrir formulario) | PASS |
-| 3 | Crear un nuevo caso y seleccionar una combinación válida de Línea, Ramo y Tipo de Solicitud. | El formulario presenta la configuración correspondiente a los valores seleccionados. | #2 nuevo_caso (UI: abrir formulario)<br>#3 diligenciar (UI: diligenciar + post-condición) | FAIL |
-| 4 | Seleccionar una Sucursal válida. | La Sucursal queda registrada correctamente. | #4 diligenciar (UI: diligenciar + post-condición) | NOT_RUN |
-| 5 | Seleccionar Tipo de Radicación = Individual. | El formulario cambia a la modalidad Individual y no presenta los elementos exclusivos de la modalidad Masivo que no correspondan a esta ruta. | #5 diligenciar (UI: diligenciar + post-condición) | NOT_RUN |
-| 6 | Validar el formulario de inicio. | Los campos, etiquetas, opciones y textos visibles presentan correcta ortografía y capitalización. | #6 verificar (UI: aserciones)<br>#7 verificar (UI: aserciones) | NOT_RUN |
-| 7 | Diligenciar la información requerida para la radicación Individual y crear el caso. | El caso es creado con Tipo de Radicación = Individual. | #8 diligenciar (UI: diligenciar + post-condición)<br>#9 pulsar (UI: botón) | NOT_RUN |
-| 8 | Validar la compuerta ¿Masivo?. | La compuerta identifica el valor Individual y selecciona la transición correspondiente al flujo regular. | #10 verificar_ruta (Actividad actual según Bizagi (buscador)) | NOT_RUN |
-| 9 | Validar la actividad posterior a la compuerta. | El caso continúa por el camino regular hacia el flujo de consulta unitaria y no es enviado al Worker AI ni a Estructurar Información. | #10 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#11 integracion (INTEGRATION_NOT_VERIFIED) | NOT_RUN |
+| 3 | Crear un nuevo caso y seleccionar una combinación válida de Línea, Ramo y Tipo de Solicitud. | El formulario presenta la configuración correspondiente a los valores seleccionados. | #2 nuevo_caso (UI: abrir formulario)<br>#3 diligenciar (UI: diligenciar + post-condición) | PASS |
+| 4 | Seleccionar una Sucursal válida. | La Sucursal queda registrada correctamente. | #4 diligenciar (UI: diligenciar + post-condición) | PASS |
+| 5 | Seleccionar Tipo de Radicación = Individual. | El formulario cambia a la modalidad Individual y no presenta los elementos exclusivos de la modalidad Masivo que no correspondan a esta ruta. | #5 diligenciar (UI: diligenciar + post-condición) | PASS |
+| 6 | Validar el formulario de inicio. | Los campos, etiquetas, opciones y textos visibles presentan correcta ortografía y capitalización. | #6 verificar (UI: aserciones)<br>#7 verificar (UI: aserciones) | NOT_AUTOMATED |
+| 7 | Diligenciar la información requerida para la radicación Individual y crear el caso. | El caso es creado con Tipo de Radicación = Individual. | #8 diligenciar (UI: diligenciar + post-condición)<br>#9 pulsar (UI: botón) | PASS |
+| 8 | Validar la compuerta ¿Masivo?. | La compuerta identifica el valor Individual y selecciona la transición correspondiente al flujo regular. | #10 verificar_ruta (Actividad actual según Bizagi (buscador)) | PASS |
+| 9 | Validar la actividad posterior a la compuerta. | El caso continúa por el camino regular hacia el flujo de consulta unitaria y no es enviado al Worker AI ni a Estructurar Información. | #10 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#11 integracion (INTEGRATION_NOT_VERIFIED) | INTEGRATION_NOT_VERIFIED |
 
 ## HU03-CP01 — SDE - CEL - HU03 - Validar radicación Individual de Autos mediante consulta por Placa
 

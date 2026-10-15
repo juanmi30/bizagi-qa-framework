@@ -21,6 +21,8 @@ export interface ExpectativaPendiente {
   estado: 'pendiente_definicion';
   pendiente: string;
   responsable: string;
+  /** Solo rutas (P-18): actividades OBSERVADAS en QA, conservadas como evidencia; nunca son una expectativa aprobada. */
+  actividades_observadas?: string[];
 }
 export type Expectativa = ExpectativaAprobada | ExpectativaPendiente;
 
@@ -72,7 +74,9 @@ export function problemasCatalogo(c: Partial<CatalogoPresentacion> | undefined):
       if (sobran.length) p.push(`${donde}: claves desconocidas ${sobran.join(', ')}`);
     } else if (e?.estado === 'pendiente_definicion') {
       if (!esTexto(e.pendiente) || !esTexto(e.responsable)) p.push(`${donde}: una expectativa pendiente requiere "pendiente" (qué falta) y "responsable"`);
-      const sobran = Object.keys(e).filter((k) => !['descripcion', 'estado', 'pendiente', 'responsable'].includes(k));
+      if (e.actividades_observadas != null && !(Array.isArray(e.actividades_observadas) && e.actividades_observadas.length > 0 && e.actividades_observadas.every(esTexto)))
+        p.push(`${donde}: "actividades_observadas" debe ser una lista no vacía de textos`);
+      const sobran = Object.keys(e).filter((k) => !['descripcion', 'estado', 'pendiente', 'responsable', 'actividades_observadas'].includes(k));
       if (sobran.length) p.push(`${donde}: claves desconocidas ${sobran.join(', ')} (una pendiente no se verifica)`);
     } else {
       p.push(`${donde}: "estado" debe ser aprobada | pendiente_definicion`);

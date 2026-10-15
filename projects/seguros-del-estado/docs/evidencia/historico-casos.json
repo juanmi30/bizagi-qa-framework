@@ -124,5 +124,19 @@
     "escenario": "CALIBRACION Estructurar (Masiva Generales/Modificación) [analista] 20261014-181230 CLEANUP_NOT_APPLICABLE — único caso autorizado por Juan Miguel en la fase de validaciones (2026-10-14): Masiva Generales/Modificación, texto sintético sin pólizas reales; Estructurar información verificada en solo lectura, sin abrir pop-ups",
     "modoCreacion": "portal",
     "estadoDepuracion": "Pendiente de depurar"
+  },
+  {
+    "numeroCaso": "628",
+    "fechaHora": "2026-10-15T20:04:14.226Z",
+    "escenario": "HU06-CP05 [analista] 20261015-150353 CLEANUP_NOT_APPLICABLE",
+    "modoCreacion": "portal",
+    "estadoDepuracion": "Pendiente de depurar"
+  },
+  {
+    "numeroCaso": "630",
+    "fechaHora": "2026-10-15T20:12:39.364Z",
+    "escenario": "HU06-CP05 [analista] 20261015-151217 CLEANUP_NOT_APPLICABLE",
+    "modoCreacion": "portal",
+    "estadoDepuracion": "Pendiente de depurar"
   }
 ]

@@ -27,6 +27,20 @@ export const SdeObjects = {
   /** Menú "Nuevo Caso" → "Todos los procesos" → categorías (li.category > h3) → proceso (li.process > span). */
   nuevoCaso: '#menuListNew',
   todosLosProcesos: '#breadcrumbRoot',
+  /**
+   * Administración de casos (P-17), patrón del Work Portal verificado en Colsubsidio: menú Admin → "Administración de procesos"
+   * → categoría "Casos" → diálogo con búsqueda por número. [VERIFICADO SDE 2026-10-15: analista sí, intermediario no]
+   * `adminInvalidar` («Cancelar casos»; en Colsubsidio el id es #btn-admin-case-invalidate) cancela casos: solo se detecta su presencia y está en componentesEscritura (nunca se pulsa en diagnóstico).
+   */
+  menuAdmin: '#menuListAdmin',
+  adminCategorias: '#categories',
+  adminCasoNumero: '#caseInput',
+  adminCasoBuscar: '#btn-admin-case-search',
+  /** Consulta de Administrar Casos (GET, solo lectura). [VERIFICADO SDE 2026-10-15] */
+  rutaBusquedaAdmin: '/Rest/Queries/SearchCases',
+  adminInvalidar: '#btn-admin-cases-invalidate',
+  /** Botones de administración que ESCRIBEN (Terminar caso, copiar/revocar permisos): solo se detectan. [VERIFICADO SDE 2026-10-15] */
+  adminEscritura: ['#btn-admin-case-finish', '#btn-copyPermissions', '#btn-revokePermissions'],
   arbolCategoria: '#allProcesses li.category',
   arbolCategoriaTexto: 'h3',
   arbolProceso: '#allProcesses li.process',
@@ -113,7 +127,8 @@ export const SdeObjects = {
    * Cancelar, Subir) y controles de carga de archivos. Clasificados por su función en Bizagi, no por el texto del botón.
    */
   componentesEscritura: ['.ui-bizagi-button-container button', '.ui-bizagi-button-container input', 'li[data-action]',
-    '.ui-dialog-buttonpane button', '.ui-dialog-titlebar-close', 'li.ui-bizagi-render-upload-wrapper > a', 'input[type="file"]'],
+    '.ui-dialog-buttonpane button', '.ui-dialog-titlebar-close', 'li.ui-bizagi-render-upload-wrapper > a', 'input[type="file"]',
+    '#btn-admin-cases-invalidate', '#btn-admin-case-finish', '#btn-copyPermissions', '#btn-revokePermissions'],
   /** Notificación de Bizagi ("Debe revisar lo siguiente:"). Se registra como hallazgo, no se oculta. */
   notificacion: '.ui-bizagi-notifications-container, #NotificationCenter',
 };

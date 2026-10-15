@@ -13,7 +13,7 @@ import { cargarManifest } from '../../sde/manifest';
 import { maximoAlcanzable, pendientesParaRealPass } from '../../sde/metricas';
 import { RUTA_BLOQUEO_EJECUCION_REAL } from '../../sde/registro';
 import { generarTrazabilidad } from '../../sde/trazabilidad';
-import { activacionE2e } from '../../sde/verticales';
+import { activacionE2e, conCupoDeCreacion, limiteCasosPendientes } from '../../sde/verticales';
 
 /** Fase "confiabilidad SDE-CEL": H4 (causas), H6 (concurrencia) y H7 (pendientes de REAL_PASS). Sin QA ni navegador. */
 
@@ -184,6 +184,126 @@ test.describe('P-06 — activación explícita de las verticales reales (aprobad
   });
 });
 
+test.describe('P-17 — límite contra la acumulación de casos pendientes @unit', () => {
+  test('sin SDE_MAX_CASOS_PENDIENTES solo se informa; con el límite alcanzado la vertical queda BLOCKED por CONFIGURACION', () => {
+    expect(limiteCasosPendientes({}, 500)).toEqual([]);
+    expect(limiteCasosPendientes({ SDE_MAX_CASOS_PENDIENTES: '20' }, 19)).toEqual([]);
+    for (const [env, n] of [[{ SDE_MAX_CASOS_PENDIENTES: '20' }, 20], [{ SDE_MAX_CASOS_PENDIENTES: ' 0 ' }, 0], [{ SDE_MAX_CASOS_PENDIENTES: 'x' }, 0], [{ SDE_MAX_CASOS_PENDIENTES: '-1' }, 0]] as const) {
+      const b = limiteCasosPendientes(env, n);
+      expect(b, JSON.stringify(env)).toHaveLength(1);
+      expect(causaDeBloqueo(b[0])).toBe('CONFIGURACION');
+    }
+    const r = reporteBloqueado(cp05, crearContexto(reg, ENV, 'u'), limiteCasosPendientes({ SDE_MAX_CASOS_PENDIENTES: '1' }, 19));
+    expect(r).toMatchObject({ estado: 'BLOCKED', causas: ['CONFIGURACION'], numero_caso: null });
+  });
+
+  test('el runner cuenta y aplica el límite DENTRO del bloqueo de ejecución real (cupo atómico), después de P-06/preflight', () => {
+    const fuente = readFileSync(resolve(__dirname, '..', '..', 'sde', 'verticales.ts'), 'utf8');
+    const runner = fuente.slice(fuente.indexOf('export function registrarVerticales'));
+    expect(runner).not.toContain('limiteCasosPendientes(');
+    expect(runner).not.toContain('listarPendientes()).length;\n');
+    const iCupo = runner.indexOf('await conCupoDeCreacion({');
+    expect(iCupo).toBeGreaterThan(runner.indexOf('...activacionE2e(process.env)'));
+    expect(runner.indexOf('adquirirBloqueo(RUTA_BLOQUEO_EJECUCION_REAL')).toBeGreaterThan(iCupo);
+    expect(runner.indexOf('await ejecutarVertical()')).toBeGreaterThan(iCupo);
+  });
+});
+
+test.describe('P-17 — cupo de creación atómico (corrección de Work, PR #4) @unit', () => {
+  // Servicios simulados: histórico de pendientes en memoria y el bloqueo REAL de archivo en una ruta temporal. Sin Bizagi.
+  const LIMITE = { SDE_MAX_CASOS_PENDIENTES: '20' };
+  const entorno = (testInfo: { outputPath(n: string): string }) => {
+    const pendientes = Array.from({ length: 19 }, (_, i) => String(i));
+    const ruta = testInfo.outputPath('cupo.lock');
+    return {
+      pendientes, ruta,
+      opciones: (env: Record<string, string | undefined>, esperaMs = 10_000) => ({
+        env, adquirir: () => adquirirBloqueo(ruta, { esperaMs, descripcion: 'cupo' }),
+        contarPendientes: async () => pendientes.length,
+      }),
+    };
+  };
+  /** Ejecución simulada que crea y registra un caso tras una pausa (el registro ocurre dentro de la ejecución). */
+  const crearYRegistrar = (pendientes: string[], numero: string) => async () => { await new Promise((r) => setTimeout(r, 150)); pendientes.push(numero); };
+
+  test('defecto reproducido con la secuencia anterior (contar y luego bloquear): dos corridas con 19 y límite 20 terminan en 21', async ({}, testInfo) => {
+    const e = entorno(testInfo);
+    const anterior = async (numero: string) => {
+      if (limiteCasosPendientes(LIMITE, e.pendientes.length).length) return false;
+      await conBloqueo(e.ruta, crearYRegistrar(e.pendientes, numero), { esperaMs: 10_000 });
+      return true;
+    };
+    expect(await Promise.all([anterior('A'), anterior('B')])).toEqual([true, true]);
+    expect(e.pendientes).toHaveLength(21);
+  });
+
+  test('1. dos corridas simultáneas con 19 pendientes y límite 20: solo una obtiene autorización para crear', async ({}, testInfo) => {
+    const e = entorno(testInfo);
+    const ejecuciones: string[] = [];
+    const corrida = (n: string) => conCupoDeCreacion(e.opciones(LIMITE), async () => { ejecuciones.push(n); await crearYRegistrar(e.pendientes, n)(); });
+    const r = await Promise.all([corrida('A'), corrida('B')]);
+    expect(r.filter((x) => x.admitida)).toHaveLength(1);
+    const rechazada = r.find((x) => !x.admitida)!;
+    expect(rechazada).toMatchObject({ admitida: false, pendientes: 20 });
+    expect(causaDeBloqueo((rechazada as { bloqueos: string[] }).bloqueos[0])).toBe('CONFIGURACION');
+    expect(ejecuciones).toHaveLength(1);
+    expect(e.pendientes).toHaveLength(20);
+    // Sin espera, la segunda corrida simultánea tampoco se autoriza (CONCURRENCIA), nunca ambas.
+    e.pendientes.pop();
+    const sinEspera = await Promise.all([conCupoDeCreacion(e.opciones(LIMITE, 0), crearYRegistrar(e.pendientes, 'C')), conCupoDeCreacion(e.opciones(LIMITE, 0), crearYRegistrar(e.pendientes, 'D'))]);
+    expect(sinEspera.filter((x) => x.admitida)).toHaveLength(1);
+    expect(e.pendientes).toHaveLength(20);
+  });
+
+  test('2. corrida rechazada: no ejecuta (no crea caso) y libera el bloqueo', async ({}, testInfo) => {
+    const e = entorno(testInfo);
+    e.pendientes.push('X'); // 20 con límite 20
+    let ejecutada = false;
+    const r = await conCupoDeCreacion(e.opciones(LIMITE, 0), async () => { ejecutada = true; });
+    expect(r).toMatchObject({ admitida: false, pendientes: 20 });
+    expect(ejecutada).toBe(false);
+    expect(existsSync(e.ruta)).toBe(false);
+    const libre = intentarBloqueo(e.ruta);
+    expect(libre).not.toBeNull();
+    libre!.liberar();
+  });
+
+  test('3. error durante la creación: se propaga, libera el bloqueo y no deja una reserva fantasma', async ({}, testInfo) => {
+    const e = entorno(testInfo);
+    await expect(conCupoDeCreacion(e.opciones(LIMITE, 0), async () => { throw new Error('fallo simulado al crear'); })).rejects.toThrow('fallo simulado al crear');
+    expect(existsSync(e.ruta)).toBe(false);
+    expect(e.pendientes).toHaveLength(19);
+    const siguiente = await conCupoDeCreacion(e.opciones(LIMITE, 0), crearYRegistrar(e.pendientes, 'Y'));
+    expect(siguiente).toMatchObject({ admitida: true, pendientes: 19 });
+  });
+
+  test('4. registro exitoso: la siguiente corrida observa el nuevo pendiente', async ({}, testInfo) => {
+    const e = entorno(testInfo);
+    const env = { SDE_MAX_CASOS_PENDIENTES: '25' };
+    expect(await conCupoDeCreacion(e.opciones(env, 0), crearYRegistrar(e.pendientes, 'N1'))).toMatchObject({ admitida: true, pendientes: 19 });
+    expect(await conCupoDeCreacion(e.opciones(env, 0), async (n) => n)).toMatchObject({ admitida: true, pendientes: 20, resultado: 20 });
+  });
+
+  test('5. sin SDE_MAX_CASOS_PENDIENTES: solo informa y no bloquea (comportamiento documentado); el bloqueo H6 sigue serializando', async ({}, testInfo) => {
+    const e = entorno(testInfo);
+    for (let i = 0; i < 50; i++) e.pendientes.push(`extra${i}`);
+    const r = await Promise.all([conCupoDeCreacion(e.opciones({}), crearYRegistrar(e.pendientes, 'A')), conCupoDeCreacion(e.opciones({}), crearYRegistrar(e.pendientes, 'B'))]);
+    expect(r.map((x) => x.admitida)).toEqual([true, true]);
+    expect(r.map((x) => x.pendientes).sort()).toEqual([69, 70]); // serializadas: la segunda vio el caso de la primera
+  });
+
+  test('bloqueo ocupado por otra ejecución: CONCURRENCIA, sin contar ni ejecutar', async ({}, testInfo) => {
+    const e = entorno(testInfo);
+    const otro = intentarBloqueo(e.ruta)!;
+    let contado = false;
+    const r = await conCupoDeCreacion({ ...e.opciones(LIMITE, 0), contarPendientes: async () => { contado = true; return 0; } }, async () => 'no');
+    otro.liberar();
+    expect(r).toMatchObject({ admitida: false, pendientes: null });
+    expect(causaDeBloqueo((r as { bloqueos: string[] }).bloqueos[0])).toBe('CONCURRENCIA');
+    expect(contado).toBe(false);
+  });
+});
+
 test.describe('H7 — pendientes reales para REAL_PASS @unit', () => {
   const man = cargarManifest();
   const esc = (id: string) => { const c = man.casos.find((x) => x.id === id)!; return c.escenario ? cargarEscenario(resolve(DIR_ESCENARIOS, c.escenario), reg) : undefined; };
@@ -200,8 +320,8 @@ test.describe('H7 — pendientes reales para REAL_PASS @unit', () => {
     expect(man.casos.find((c) => c.id === 'HU06-CP01')!.brechas).toEqual(expect.arrayContaining(['UI-04', 'INT-02']));
   });
 
-  test('HU06-CP05: P6 y P9 pendientes; ningún CP con pendientes promete REAL_PASS', () => {
-    expect(pendientesParaRealPass(casoMatriz('HU06-CP05'), esc('HU06-CP05')).map((p) => p.n)).toEqual([6, 9]);
+  test('HU06-CP05: P6, P8 (ruta pendiente de definición, P-18) y P9 pendientes; ningún CP con pendientes promete REAL_PASS', () => {
+    expect(pendientesParaRealPass(casoMatriz('HU06-CP05'), esc('HU06-CP05')).map((p) => p.n)).toEqual([6, 8, 9]);
     for (const c of man.casos) {
       const e = esc(c.id);
       const max = maximoAlcanzable(casoMatriz(c.id), e);

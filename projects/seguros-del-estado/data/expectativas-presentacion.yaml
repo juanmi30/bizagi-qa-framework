@@ -197,3 +197,18 @@ expectativas:
       La actividad nunca se ha observado (UI-09: SISE y alertas no responden, ENV-03) y la matriz no trae glosario de la
       pantalla completa.
     responsable: Daniel / Iván (glosario) y QA (desbloqueo de SISE)
+
+  # ---------------------------------------------------------------- Ruta del caso (P-18; mismo mecanismo declarativo)
+  # No es presentación: es la llegada de verificar_ruta. Las actividades OBSERVADAS en QA se conservan como evidencia de la
+  # interfaz, no como expectativa aprobada. El validador exige que todo verificar_ruta cuyo "llega_a" incluya alguna de
+  # ellas declare esta expectativa: así el paso queda NOT_AUTOMATED y nunca verde por coincidir con un nombre observado.
+  RUTA-CONSULTA-UNITARIA:
+    descripcion: Actividades del camino regular de consulta unitaria tras radicar Individual (HU06-CP05 P8–P9).
+    estado: pendiente_definicion
+    pendiente: >-
+      La matriz dice "continúa por el camino regular hacia el flujo de consulta unitaria" sin nombrar actividades. En QA
+      (2026-10-15, casos 628 y 630) se observó el subproceso «Consultar información de solicitud» con la actividad
+      «Consultar SISE»; falta confirmar que ese es el camino regular y su relación con «Consultar Alertas Intermediario» y
+      «Completar información de solicitud» (P-18).
+    responsable: Daniel / Karen (P-18)
+    actividades_observadas: [Consultar información de solicitud, Consultar SISE]

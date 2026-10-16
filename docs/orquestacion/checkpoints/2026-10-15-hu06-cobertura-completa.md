@@ -41,7 +41,7 @@
 | 17:32 | Estado de los casos propios (buscador, solo lectura) | — | 628 y 630 en «Consultar SISE»; los 18 históricos sin actividad |
 | ~17:35 | Precreación de solo lectura CP02/CP03/CP04 (×2 para CP02) | — | CP02 P2–P5 y P7 PASS. P6 falló en la precreación, pero en las 3 corridas reales pasó: probablemente es un artefacto del modo de solo lectura, no del producto (inferencia; la causa exacta no se aisló). CP03/CP04 BLOCKED en P3 |
 | — | 2 sondas DOM temporales de solo lectura (no versionadas, borradas) | — | No concluyentes |
-| 17:40 | HU06-CP02 oficial | **637** | P2–P9 PASS. P10 FAIL de automatización (WorkItems vacío) |
+| 17:40 | HU06-CP02 oficial | **637** | P2–P8 PASS. P9: ruta a Estructurar observada, pero el paso de la matriz queda INTEGRATION_NOT_VERIFIED (Worker AI). P10 FAIL de automatización (WorkItems vacío) |
 | 17:42 | Lectura controlada de Estructurar (calibración, sin guardar) | 637 | Se abre; encabezado y pestañas PASS; **1 fila** en la grilla; OBS-04 |
 | 17:44 | HU06-CP02 oficial (con D-46) | **638** | P2–P11 PASS (work item en el 2.º intento). P12 FAIL: 0 filas |
 | 17:45 y 17:50 | Lecturas controladas | 638 | 0 filas, 1 y 6 minutos después de crearlo |

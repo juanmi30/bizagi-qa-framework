@@ -6,7 +6,7 @@
 > (sesión real) de `test-results/seguros-del-estado/sde/`; un intento BLOCKED en preflight se muestra aparte y no tapa
 > la evidencia. Sin reporte ejecutado: estado del manifest. Ningún estado verde sin reporte.
 
-> **Fuentes de ejecución:** historial local `test-results/`: 62 reporte(s) · evidencia versionada `docs/evidencia/`: 14 reporte(s). Si un reporte está en ambas, prevalece la copia local.
+> **Fuentes de ejecución:** historial local `test-results/`: 68 reporte(s) · evidencia versionada `docs/evidencia/`: 20 reporte(s). Si un reporte está en ambas, prevalece la copia local.
 
 ## Cobertura (tres indicadores independientes)
 
@@ -14,7 +14,7 @@
 |---|---|---|
 | Implementada | 13/17 (completa: 0) | Escenario declarativo válido. Completa = TODOS los pasos verificados solo por UI (ninguno mixto, con integración pendiente o no automatizado) |
 | Ejecutada | 3/17 | Reporte con sesión real contra QA (no cuenta un BLOCKED de preflight) |
-| Aprobada | 0/17 | Último reporte ejecutado = REAL_PASS. No cuenta REAL_PASS_PARCIAL (1), FAIL (1) ni BLOCKED (11) |
+| Aprobada | 0/17 | Último reporte ejecutado = REAL_PASS. No cuenta REAL_PASS_PARCIAL (1), FAIL (2) ni BLOCKED (10) |
 
 Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuestra la integración con SISE.
 
@@ -22,11 +22,11 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 
 | CP | Familia | Fase | Escenario | Actores (credenciales) | Datos | Implementación (pasos solo UI / mixtos UI+pendiente / integración / no autom. / sin cubrir) | Ejecución (evidencia) | Estado funcional | Aprobado |
 |---|---|---|---|---|---|---|---|---|---|
-| HU06-CP01 | F-MASIVO-ESTRUCTURAR | 1 | 3-hu06-cp01.yaml | analista: READY | CFG-PROCESO: READY<br>INI-GENERALES-MASIVO: READY<br>DOC-SOPORTE: READY<br>DOCS-OBLIGATORIOS: READY | PARCIAL (24/4/0/0/0 de 28) | HU06-CP01_20261015-151304.json | **FAIL** | no |
-| HU06-CP02 | F-MASIVO-ESTRUCTURAR | 2 | 4-hu06-cp02.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-AUTOS-MASIVO: READY | PARCIAL (19/2/0/0/0 de 21) | HU06-CP02_20261015-175046.json (caso 639) | **BLOCKED** | no |
+| HU06-CP01 | F-MASIVO-ESTRUCTURAR | 1 | 3-hu06-cp01.yaml | analista: READY | CFG-PROCESO: READY<br>INI-GENERALES-MASIVO: READY<br>DOC-SOPORTE: READY<br>DOCS-OBLIGATORIOS: READY | PARCIAL (25/3/0/0/0 de 28) | HU06-CP01_20261016-154400.json | **FAIL** | no |
+| HU06-CP02 | F-MASIVO-ESTRUCTURAR | 2 | 4-hu06-cp02.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-AUTOS-MASIVO: READY<br>EST-FILA-AUTOS-PLACA: READY | PARCIAL (20/1/0/0/0 de 21) | HU06-CP02_20261016-153702.json (caso 654) | **FAIL** | no |
 | HU06-CP03 | F-MASIVO-ESTRUCTURAR | 2 | 5-hu06-cp03.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-CUMPL-MASIVO-SIN-RCE: MISSING | PARCIAL (23/1/0/0/0 de 24) | NO EJECUTADO<br>último intento: BLOCKED (HU06-CP03_20261013-095835.json) | **BLOCKED** | no |
 | HU06-CP04 | F-MASIVO-ESTRUCTURAR | 2 | 6-hu06-cp04.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-CUMPL-MASIVO-CON-RCE: MISSING | PARCIAL (20/1/0/1/0 de 22) | NO EJECUTADO<br>último intento: BLOCKED (HU06-CP04_20261013-095835.json) | **BLOCKED** | no |
-| HU06-CP05 | F-INDIVIDUAL-RUTA | 1 | 1-hu06-cp05.yaml | analista: READY | CFG-PROCESO: READY<br>INI-INDIVIDUAL-RUTA: READY | PARCIAL (5/3/0/0/0 de 8) | HU06-CP05_20261015-151217.json (caso 630) | **REAL_PASS_PARCIAL** | no |
+| HU06-CP05 | F-INDIVIDUAL-RUTA | 1 | 1-hu06-cp05.yaml | analista: READY | CFG-PROCESO: READY<br>INI-INDIVIDUAL-RUTA: READY | PARCIAL (5/3/0/0/0 de 8) | HU06-CP05_20261016-154035.json (caso 656) | **REAL_PASS_PARCIAL** | no |
 | HU03-CP01 | F-INDIVIDUAL-CONSULTA | 2 | 7-hu03-cp01.yaml | intermediario: READY | CFG-PROCESO: READY<br>PLACA-MULTIPOLIZA: MISSING | PARCIAL (13/5/3/0/0 de 21) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP01_20261013-095835.json) | **BLOCKED** | no |
 | HU03-CP02 | F-INDIVIDUAL-CONSULTA | 1 | 2-hu03-cp02.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-AUTOS-VIGENTE: MISSING | PARCIAL (13/5/2/0/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP02_20261013-155239.json) | **BLOCKED** | no |
 | HU03-CP03 | F-INDIVIDUAL-CONSULTA | 2 | 8-hu03-cp03.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-GENERALES-VIGENTE: MISSING | PARCIAL (12/5/3/0/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP03_20261013-095835.json) | **BLOCKED** | no |
@@ -46,7 +46,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-MASIVO-ESTRUCTURAR · **Fase:** 1 · **Prioridad:** P1
 - **Escenario:** `escenarios/3-hu06-cp01.yaml`
 - **Brechas:** BUG-01 (FUNCTIONAL_AMBIGUITY), BUG-05 (FUNCTIONAL_DEFECT), BUG-06 (FUNCTIONAL_DEFECT), BUG-03 (FUNCTIONAL_DEFECT), BUG-04 (FUNCTIONAL_DEFECT), UI-10 (UI_CAPABILITY_GAP), DATA-03 (TEST_DATA_GAP), UI-03 (UI_CAPABILITY_GAP), UI-04 (UI_CAPABILITY_GAP), INT-02 (INTEGRATION_VISIBILITY_GAP), FUNC-04 (FUNCTIONAL_AMBIGUITY), FUNC-06 (FUNCTIONAL_AMBIGUITY), FUNC-10 (FUNCTIONAL_AMBIGUITY)
-- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P4 (mixto), P12 (mixto), P17 (mixto), P28 (mixto)
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P4 (mixto), P12 (mixto), P28 (mixto)
 - **Estado:** FAIL — Al menos un paso de la matriz falló (causa: PRODUCTO_POR_CONFIRMAR) — comportamiento observado distinto al esperado: posible defecto, POR CONFIRMAR funcionalmente.
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
@@ -67,7 +67,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | 14 | Validar la sección Encabezado. | Se muestran en solo lectura Número de Caso, Creador del Caso, Fecha de Creación, Línea, Ramo y Tipo de Movimiento. | #18 verificar (UI: aserciones) | NOT_RUN |
 | 15 | Validar la sección Tipo de Consulta. | Se muestran en solo lectura el Tipo de Radicación = Masivo y la Sucursal asociada al caso. | #19 verificar (UI: aserciones) | NOT_RUN |
 | 16 | Validar la sección Información a Consultar. | Se muestra la narrativa original registrada por el intermediario y el campo permanece no editable. | #20 verificar (UI: aserciones) | NOT_RUN |
-| 17 | Validar la tabla Pólizas asociadas a la solicitud. | La tabla se encuentra disponible y contiene la información estructurada por el Worker AI, incluyendo las columnas definidas para la actividad. | #15 integracion (INTEGRATION_NOT_VERIFIED)<br>#21 tabla_verificar (UI: tabla)<br>#22 tabla_verificar (UI: tabla) | NOT_RUN |
+| 17 | Validar la tabla Pólizas asociadas a la solicitud. | La tabla se encuentra disponible y contiene la información estructurada por el Worker AI, incluyendo las columnas definidas para la actividad. | #21 tabla_verificar (UI: tabla)<br>#22 tabla_verificar (UI: tabla) | NOT_RUN |
 | 18 | Validar la posibilidad de seleccionar un registro de la tabla para editarlo. | Se habilita el formulario de edición correspondiente al registro seleccionado. | #23 tabla_abrir_fila (UI: editar fila) | NOT_RUN |
 | 19 | Validar el formulario de edición para Línea Generales – Movimiento Póliza Nueva. | La Forma de Consulta se encuentra asignada automáticamente como Identificación de Tomador y no permite modificación. | #24 verificar (UI: aserciones) | NOT_RUN |
 | 20 | Validar los campos disponibles en el formulario de edición. | Se presentan como obligatorios Tipo de Documento Tomador y Número de Documento Tomador. | #25 verificar (UI: aserciones) | NOT_RUN |
@@ -87,12 +87,12 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Familia:** F-MASIVO-ESTRUCTURAR · **Fase:** 2 · **Prioridad:** P2
 - **Escenario:** `escenarios/4-hu06-cp02.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-01 (FUNCTIONAL_AMBIGUITY), BUG-03 (FUNCTIONAL_DEFECT), BUG-04 (FUNCTIONAL_DEFECT), DATA-06 (TEST_DATA_GAP), UI-03 (UI_CAPABILITY_GAP), UI-05 (UI_CAPABILITY_GAP), INT-02 (INTEGRATION_VISIBILITY_GAP), FUNC-10 (FUNCTIONAL_AMBIGUITY), UI-10 (UI_CAPABILITY_GAP)
-- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P9 (mixto), P12 (mixto)
-- **Estado:** BLOCKED — Ejecutado contra QA (caso 639) sin fallos, pero 11 paso(s) de la matriz quedaron BLOCKED (causa: DATO): P1, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21.
+- **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P9 (mixto)
+- **Estado:** FAIL — Al menos un paso de la matriz falló (causa: AUTOMATIZACION) — falla de AUTOMATIZACIÓN/calibración, NO atribuible al producto.
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
 |---|---|---|---|---|
-| 1 | Objetivo: | Validar la radicación Masiva para la línea Autos, verificando el formulario inicial, la ruta Masiva y las reglas de Estructurar Información relacionadas con la consulta por Placa. | Agregado del CP | BLOCKED |
+| 1 | Objetivo: | Validar la radicación Masiva para la línea Autos, verificando el formulario inicial, la ruta Masiva y las reglas de Estructurar Información relacionadas con la consulta por Placa. | Agregado del CP | FAIL |
 | 2 | Ingresar al ambiente Bizagi mediante la URL: https://test-aiprocesos-sde.bizagi.com/ | El ambiente de pruebas se encuentra disponible y permite iniciar una nueva Radicación. | #1 iniciar_sesion (UI: login real)<br>#2 nuevo_caso (UI: abrir formulario) | PASS |
 | 3 | Crear un nuevo caso y seleccionar Línea = Autos, junto con un Ramo y Tipo de Solicitud válidos. | El formulario presenta la información correspondiente a la configuración seleccionada. | #2 nuevo_caso (UI: abrir formulario)<br>#3 diligenciar (UI: diligenciar + post-condición) | PASS |
 | 4 | Seleccionar una Sucursal válida. | La Sucursal queda registrada y permite continuar con el diligenciamiento del formulario. | #4 diligenciar (UI: diligenciar + post-condición) | PASS |
@@ -103,17 +103,17 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | 9 | Validar la compuerta ¿Masivo?. | El caso toma la transición Masivo y continúa hacia el procesamiento del Worker AI. | #10 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#11 integracion (INTEGRATION_NOT_VERIFIED) | INTEGRATION_NOT_VERIFIED |
 | 10 | Validar la llegada a Estructurar Información. | El caso queda disponible para el Analista Centro de Expedición en la actividad Estructurar Información. | #9 iniciar_sesion (UI: login real)<br>#12 abrir_caso (UI: abrir caso por número) | PASS |
 | 11 | Validar encabezado, Tipo de Consulta e Información a Consultar. | Se muestran los datos maestros en solo lectura, Tipo de Radicación Masivo, Sucursal y narrativa original de la solicitud. | #13 verificar (UI: aserciones) | PASS |
-| 12 | Validar la tabla Pólizas asociadas a la solicitud. | La tabla presenta los registros estructurados por el Worker AI y las columnas correspondientes a la información de consulta. | #11 integracion (INTEGRATION_NOT_VERIFIED)<br>#14 tabla_verificar (UI: tabla)<br>#15 tabla_verificar (UI: tabla) | BLOCKED |
-| 13 | Seleccionar un registro para editarlo. | Se presenta el formulario de edición correspondiente al registro seleccionado. | #16 tabla_abrir_fila (UI: editar fila) | BLOCKED |
-| 14 | Validar las opciones disponibles para la Forma de Consulta de acuerdo con la configuración del caso. | La Forma de Consulta y sus campos se presentan de acuerdo con la Línea, Tipo de Solicitud/Movimiento y reglas configuradas. | #17 verificar (UI: aserciones) | BLOCKED |
-| 15 | Seleccionar la Forma de Consulta Placa, cuando la configuración del caso corresponda a esta opción. | Se muestra únicamente el campo Placa para diligenciar la información de consulta. | #17 verificar (UI: aserciones) | BLOCKED |
-| 16 | Intentar confirmar el registro sin diligenciar Placa. | El formulario no permite confirmar el registro mientras el campo obligatorio Placa se encuentre vacío. | #18 intentar_diligenciar (UI: prueba negativa de campo)<br>#19 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
-| 17 | Ingresar una Placa con caracteres alfanuméricos dentro de la longitud permitida. | El valor ingresado es aceptado y el registro puede ser confirmado. | #21 intentar_diligenciar (UI: prueba negativa de campo)<br>#22 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
-| 18 | Ingresar una Placa que supere los 6 caracteres. | El sistema impide registrar un valor que supere la longitud máxima definida para el campo Placa. | #20 intentar_diligenciar (UI: prueba negativa de campo) | BLOCKED |
-| 19 | Confirmar la edición. | La información de consulta queda actualizada en la tabla Pólizas asociadas a la solicitud. | #22 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
-| 20 | Agregar un nuevo registro mediante el formulario de adición. | El formulario presenta las mismas reglas de visibilidad y obligatoriedad correspondientes al caso. | #23 tabla_agregar (UI: agregar fila) | BLOCKED |
-| 21 | Diligenciar y confirmar un registro válido. | El nuevo registro queda almacenado en la tabla de pólizas asociadas. | #24 diligenciar (UI: diligenciar + post-condición)<br>#25 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
-| 22 | Validar Observaciones, Documentos y Seguimiento. | Las tres secciones presentan la información correspondiente al caso y la trazabilidad registrada. | #26 verificar (UI: aserciones)<br>#27 verificar (UI: aserciones)<br>#28 abrir_pestana (UI: pestaña + contenido)<br>#29 abrir_pestana (UI: pestaña + contenido) | PASS |
+| 12 | Validar la tabla Pólizas asociadas a la solicitud. | La tabla presenta los registros estructurados por el Worker AI y las columnas correspondientes a la información de consulta. | #14 tabla_verificar (UI: tabla)<br>#15 tabla_verificar (UI: tabla) | INTEGRATION_NOT_VERIFIED |
+| 13 | Seleccionar un registro para editarlo. | Se presenta el formulario de edición correspondiente al registro seleccionado. | #16 tabla_abrir_fila (UI: editar fila) | PASS |
+| 14 | Validar las opciones disponibles para la Forma de Consulta de acuerdo con la configuración del caso. | La Forma de Consulta y sus campos se presentan de acuerdo con la Línea, Tipo de Solicitud/Movimiento y reglas configuradas. | #17 verificar (UI: aserciones) | PASS |
+| 15 | Seleccionar la Forma de Consulta Placa, cuando la configuración del caso corresponda a esta opción. | Se muestra únicamente el campo Placa para diligenciar la información de consulta. | #18 diligenciar (UI: diligenciar + post-condición) | PASS |
+| 16 | Intentar confirmar el registro sin diligenciar Placa. | El formulario no permite confirmar el registro mientras el campo obligatorio Placa se encuentre vacío. | #19 intentar_diligenciar (UI: prueba negativa de campo)<br>#20 dialogo_confirmar (UI: confirmar pop-up) | PASS |
+| 17 | Ingresar una Placa con caracteres alfanuméricos dentro de la longitud permitida. | El valor ingresado es aceptado y el registro puede ser confirmado. | #21 intentar_diligenciar (UI: prueba negativa de campo)<br>#22 dialogo_confirmar (UI: confirmar pop-up) | PASS |
+| 18 | Ingresar una Placa que supere los 6 caracteres. | El sistema impide registrar un valor que supere la longitud máxima definida para el campo Placa. | #26 tabla_abrir_fila (UI: editar fila)<br>#27 diligenciar (UI: diligenciar + post-condición)<br>#28 dialogo_confirmar (UI: confirmar pop-up)<br>#29 diligenciar (UI: diligenciar + post-condición)<br>#30 dialogo_confirmar (UI: confirmar pop-up) | FAIL |
+| 19 | Confirmar la edición. | La información de consulta queda actualizada en la tabla Pólizas asociadas a la solicitud. | #22 dialogo_confirmar (UI: confirmar pop-up) | PASS |
+| 20 | Agregar un nuevo registro mediante el formulario de adición. | El formulario presenta las mismas reglas de visibilidad y obligatoriedad correspondientes al caso. | #23 tabla_agregar (UI: agregar fila) | PASS |
+| 21 | Diligenciar y confirmar un registro válido. | El nuevo registro queda almacenado en la tabla de pólizas asociadas. | #24 diligenciar (UI: diligenciar + post-condición)<br>#25 dialogo_confirmar (UI: confirmar pop-up) | PASS |
+| 22 | Validar Observaciones, Documentos y Seguimiento. | Las tres secciones presentan la información correspondiente al caso y la trazabilidad registrada. | #31 verificar (UI: aserciones)<br>#32 verificar (UI: aserciones)<br>#33 abrir_pestana (UI: pestaña + contenido)<br>#34 abrir_pestana (UI: pestaña + contenido) | PASS |
 
 ## HU06-CP03 — SDE - CEL - HU06 - Validar radicación Masiva de Cumplimiento sin propiedad Póliza RCE
 
@@ -194,7 +194,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Escenario:** `escenarios/1-hu06-cp05.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-02 (FUNCTIONAL_AMBIGUITY), INT-01 (INTEGRATION_VISIBILITY_GAP), FUNC-10 (FUNCTIONAL_AMBIGUITY)
 - **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P6 (mixto), P8 (mixto), P9 (mixto)
-- **Estado:** REAL_PASS_PARCIAL — Sesión y caso reales, sin fallos; 3 paso(s) de la matriz no verificados directamente: P1=NOT_AUTOMATED, P6=NOT_AUTOMATED, P9=INTEGRATION_NOT_VERIFIED
+- **Estado:** REAL_PASS_PARCIAL — Sesión y caso reales, sin fallos; 4 paso(s) de la matriz no verificados directamente: P1=NOT_AUTOMATED, P6=NOT_AUTOMATED, P8=NOT_AUTOMATED, P9=NOT_AUTOMATED
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
 |---|---|---|---|---|
@@ -205,8 +205,8 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | 5 | Seleccionar Tipo de Radicación = Individual. | El formulario cambia a la modalidad Individual y no presenta los elementos exclusivos de la modalidad Masivo que no correspondan a esta ruta. | #5 diligenciar (UI: diligenciar + post-condición) | PASS |
 | 6 | Validar el formulario de inicio. | Los campos, etiquetas, opciones y textos visibles presentan correcta ortografía y capitalización. | #6 verificar (UI: aserciones)<br>#7 verificar (UI: aserciones) | NOT_AUTOMATED |
 | 7 | Diligenciar la información requerida para la radicación Individual y crear el caso. | El caso es creado con Tipo de Radicación = Individual. | #8 diligenciar (UI: diligenciar + post-condición)<br>#9 pulsar (UI: botón) | PASS |
-| 8 | Validar la compuerta ¿Masivo?. | La compuerta identifica el valor Individual y selecciona la transición correspondiente al flujo regular. | #10 verificar_ruta (Actividad actual según Bizagi (buscador)) | PASS |
-| 9 | Validar la actividad posterior a la compuerta. | El caso continúa por el camino regular hacia el flujo de consulta unitaria y no es enviado al Worker AI ni a Estructurar Información. | #10 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#11 integracion (INTEGRATION_NOT_VERIFIED) | INTEGRATION_NOT_VERIFIED |
+| 8 | Validar la compuerta ¿Masivo?. | La compuerta identifica el valor Individual y selecciona la transición correspondiente al flujo regular. | #10 verificar_ruta (Actividad actual según Bizagi (buscador)) | NOT_AUTOMATED |
+| 9 | Validar la actividad posterior a la compuerta. | El caso continúa por el camino regular hacia el flujo de consulta unitaria y no es enviado al Worker AI ni a Estructurar Información. | #10 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#11 integracion (INTEGRATION_NOT_VERIFIED) | NOT_AUTOMATED |
 
 ## HU03-CP01 — SDE - CEL - HU03 - Validar radicación Individual de Autos mediante consulta por Placa
 

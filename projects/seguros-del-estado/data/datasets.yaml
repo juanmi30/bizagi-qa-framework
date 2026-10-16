@@ -109,24 +109,66 @@ datasets:
     usado_por: [HU06-CP01]
     limpieza: Las filas se crean/eliminan DENTRO del caso creado por la prueba; nunca sobre casos ajenos.
 
+  EST-FILA-AUTOS-PLACA:
+    descripcion: HU06-CP02 pasos 13–21. Placas de QA para editar/agregar filas de Detalle Polizas Asociadas (consulta por Placa).
+    actor: analista
+    propiedades:
+      - { nombre: placa, fuente: qa, env: SDE_AUTOS_PLACA, sensible: true }
+      - { nombre: placa_nueva_fila, fuente: qa, env: SDE_AUTOS_PLACA_2, sensible: true }
+    usado_por: [HU06-CP02]
+    limpieza: Las filas se crean/editan DENTRO del caso creado por la prueba; nunca sobre casos ajenos.
+
+  NARRATIVA-REAL-GENERALES:
+    descripcion: HU06-CP01 P17. Narrativa con pólizas/tomadores REALES de QA para que el Worker AI estructure filas (se agrega a la narrativa al crear).
+    actor: intermediario
+    propiedades:
+      - { nombre: narrativa_polizas, fuente: qa, env: SDE_GEN_MASIVO_NARRATIVA_POLIZAS, sensible: true }
+    usado_por: [HU06-CP01]
+
+  NARRATIVA-REAL-AUTOS:
+    descripcion: HU06-CP02 P12. Narrativa con placas/pólizas REALES de QA para que el Worker AI estructure filas (se agrega a la narrativa al crear).
+    actor: intermediario
+    propiedades:
+      - { nombre: narrativa_polizas, fuente: qa, env: SDE_AUTOS_MASIVO_NARRATIVA, sensible: true }
+    usado_por: [HU06-CP02]
+
   INI-AUTOS-MASIVO:
     descripcion: HU06-CP02. Masivo Autos; edición por Placa (máx. 6 caracteres).
     actor: intermediario
     propiedades:
       - { nombre: linea, fuente: matriz, valor: Autos }
       - { nombre: ramo, fuente: qa, env: SDE_AUTOS_RAMO }
-      - { nombre: movimiento, fuente: qa, env: SDE_AUTOS_MASIVO_MOVIMIENTO }
+      # Mismo Ramo Autos de QA que HU03/HU06-CP05: su Tipo de Solicitud se asigna automáticamente (verificado en el inicio,
+      # HU06-CP05 P3, 2026-10-15). Confirmar con Iván si Masivo Autos debe usar otro Ramo o movimiento (P-12).
+      - { nombre: movimiento, fuente: qa, env: SDE_AUTOS_MOVIMIENTO }
       - { nombre: sucursal, fuente: qa, env: SDE_SUCURSAL }
       - { nombre: tipo_radicacion, fuente: matriz, valor: Masiva }
       - { nombre: narrativa, fuente: generado, valor: "Prueba QA automatizada ${unico}: solicitud masiva Autos para más de una póliza." }
       - { nombre: narrativa_polizas, fuente: qa, env: SDE_AUTOS_MASIVO_NARRATIVA, sensible: true, opcional: true }
-      - { nombre: placa, fuente: qa, env: SDE_AUTOS_PLACA, sensible: true }
-      - { nombre: placa_nueva_fila, fuente: qa, env: SDE_AUTOS_PLACA_2, sensible: true }
     nota: >-
-      placa_nueva_fila debe ser DISTINTA de placa (la fila agregada se identifica por su valor exacto). La narrativa con
+      Las placas de las filas están en EST-FILA-AUTOS-PLACA (placa_nueva_fila DISTINTA de placa). La narrativa con
       placas/pólizas reales (narrativa_polizas) es la que permite al Worker AI estructurar filas editables.
     usado_por: [HU06-CP02]
     limpieza: CLEANUP_NOT_APPLICABLE.
+
+  EST-FILA-CUMPL-SIN-RCE:
+    descripcion: HU06-CP03 pasos 12–23. Póliza de Cumplimiento y datos RCE de QA para editar la fila de Detalle Polizas Asociadas.
+    actor: analista
+    propiedades:
+      - { nombre: poliza, fuente: qa, env: SDE_CUMPL_POLIZA_SIN_RCE, sensible: true }
+      - { nombre: ramo_rce, fuente: qa, env: SDE_CUMPL_RAMO_RCE }
+      - { nombre: poliza_rce, fuente: qa, env: SDE_CUMPL_POLIZA_RCE, sensible: true }
+    usado_por: [HU06-CP03]
+    limpieza: Las filas se editan DENTRO del caso creado por la prueba; nunca sobre casos ajenos.
+
+  EST-FILA-CUMPL-CON-RCE:
+    descripcion: HU06-CP04 pasos 12–22. Pólizas de QA para editar, agregar y eliminar filas (poliza_nueva_fila DISTINTA de poliza).
+    actor: analista
+    propiedades:
+      - { nombre: poliza, fuente: qa, env: SDE_CUMPL_POLIZA_CON_RCE, sensible: true }
+      - { nombre: poliza_nueva_fila, fuente: qa, env: SDE_CUMPL_POLIZA_CON_RCE_2, sensible: true }
+    usado_por: [HU06-CP04]
+    limpieza: Las filas se crean/eliminan DENTRO del caso creado por la prueba; nunca sobre casos ajenos.
 
   INI-CUMPL-MASIVO-SIN-RCE:
     descripcion: HU06-CP03. Cumplimiento (Fianzas), Ramo SIN propiedad Póliza RCE, Movimiento Modificación.
@@ -139,9 +181,6 @@ datasets:
       - { nombre: tipo_radicacion, fuente: matriz, valor: Masiva }
       - { nombre: narrativa, fuente: generado, valor: "Prueba QA automatizada ${unico}: solicitud masiva de Cumplimiento para más de una póliza." }
       - { nombre: narrativa_polizas, fuente: qa, env: SDE_CUMPL_MASIVO_NARRATIVA, sensible: true, opcional: true }
-      - { nombre: poliza, fuente: qa, env: SDE_CUMPL_POLIZA_SIN_RCE, sensible: true }
-      - { nombre: ramo_rce, fuente: qa, env: SDE_CUMPL_RAMO_RCE }
-      - { nombre: poliza_rce, fuente: qa, env: SDE_CUMPL_POLIZA_RCE, sensible: true }
     usado_por: [HU06-CP03]
     limpieza: CLEANUP_NOT_APPLICABLE.
 
@@ -156,9 +195,7 @@ datasets:
       - { nombre: tipo_radicacion, fuente: matriz, valor: Masiva }
       - { nombre: narrativa, fuente: generado, valor: "Prueba QA automatizada ${unico}: solicitud masiva de Cumplimiento y RCE para más de una póliza." }
       - { nombre: narrativa_polizas, fuente: qa, env: SDE_CUMPL_MASIVO_NARRATIVA, sensible: true, opcional: true }
-      - { nombre: poliza, fuente: qa, env: SDE_CUMPL_POLIZA_CON_RCE, sensible: true }
-      - { nombre: poliza_nueva_fila, fuente: qa, env: SDE_CUMPL_POLIZA_CON_RCE_2, sensible: true }
-    nota: poliza_nueva_fila (DISTINTA de poliza) se agrega y luego se elimina por su valor exacto (P20–P22).
+    nota: Las pólizas de las filas están en EST-FILA-CUMPL-CON-RCE.
     usado_por: [HU06-CP04]
     limpieza: CLEANUP_NOT_APPLICABLE.
 

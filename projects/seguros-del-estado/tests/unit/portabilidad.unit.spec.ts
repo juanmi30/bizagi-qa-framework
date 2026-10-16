@@ -36,7 +36,7 @@ test.describe('Portabilidad del repositorio @unit', () => {
     expect(cp05.every((r) => r.origen === 'versionado')).toBe(true);
     const md = generarTrazabilidad({}, sinLocal);
     expect(md).toContain('**NO disponible en este equipo**');
-    expect(md).toMatch(/\| Ejecutada \| 2\/17 /); // HU06-CP01 (FAIL) y HU06-CP05 (PARCIAL), con evidencia versionada
+    expect(md).toMatch(/\| Ejecutada \| 3\/17 /); // HU06-CP01 (FAIL), HU06-CP02 (caso 639) y HU06-CP05 (PARCIAL), con evidencia versionada
     expect(md).toMatch(/\| Aprobada \| 0\/17 /);
   });
 

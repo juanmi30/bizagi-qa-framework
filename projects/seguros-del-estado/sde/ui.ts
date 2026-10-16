@@ -381,3 +381,11 @@ export async function hayLineaExacta(ambito: Ambito, texto: string): Promise<num
   const lineas = await candidatos.evaluateAll((els) => els.flatMap((e) => (e as HTMLElement).innerText.split('\n')));
   return lineas.map((l) => l.replace(/\s+/g, ' ').trim()).filter((l) => l === objetivo).length;
 }
+
+/** Líneas visibles que CONTIENEN el texto sin ser exactamente él (diagnóstico de texto_exacto: presente, pero no como línea propia). */
+export async function lineasQueContienen(ambito: Ambito, texto: string): Promise<string[]> {
+  const objetivo = normaliza(texto);
+  const candidatos = textoInterno(ambito, new RegExp(escapar(objetivo).replace(/ /g, '\\s+'))).filter({ visible: true });
+  const lineas = await candidatos.evaluateAll((els) => els.flatMap((e) => (e as HTMLElement).innerText.split('\n')));
+  return [...new Set(lineas.map((l) => l.replace(/\s+/g, ' ').trim()).filter((l) => l !== objetivo && l.includes(objetivo)))];
+}

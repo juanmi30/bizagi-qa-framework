@@ -6,14 +6,14 @@
 > (sesión real) de `test-results/seguros-del-estado/sde/`; un intento BLOCKED en preflight se muestra aparte y no tapa
 > la evidencia. Sin reporte ejecutado: estado del manifest. Ningún estado verde sin reporte.
 
-> **Fuentes de ejecución:** historial local `test-results/`: 59 reporte(s) · evidencia versionada `docs/evidencia/`: 11 reporte(s). Si un reporte está en ambas, prevalece la copia local.
+> **Fuentes de ejecución:** historial local `test-results/`: 62 reporte(s) · evidencia versionada `docs/evidencia/`: 14 reporte(s). Si un reporte está en ambas, prevalece la copia local.
 
 ## Cobertura (tres indicadores independientes)
 
 | Indicador | CP | Definición |
 |---|---|---|
 | Implementada | 13/17 (completa: 0) | Escenario declarativo válido. Completa = TODOS los pasos verificados solo por UI (ninguno mixto, con integración pendiente o no automatizado) |
-| Ejecutada | 2/17 | Reporte con sesión real contra QA (no cuenta un BLOCKED de preflight) |
+| Ejecutada | 3/17 | Reporte con sesión real contra QA (no cuenta un BLOCKED de preflight) |
 | Aprobada | 0/17 | Último reporte ejecutado = REAL_PASS. No cuenta REAL_PASS_PARCIAL (1), FAIL (1) ni BLOCKED (11) |
 
 Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuestra la integración con SISE.
@@ -23,7 +23,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | CP | Familia | Fase | Escenario | Actores (credenciales) | Datos | Implementación (pasos solo UI / mixtos UI+pendiente / integración / no autom. / sin cubrir) | Ejecución (evidencia) | Estado funcional | Aprobado |
 |---|---|---|---|---|---|---|---|---|---|
 | HU06-CP01 | F-MASIVO-ESTRUCTURAR | 1 | 3-hu06-cp01.yaml | analista: READY | CFG-PROCESO: READY<br>INI-GENERALES-MASIVO: READY<br>DOC-SOPORTE: READY<br>DOCS-OBLIGATORIOS: READY | PARCIAL (24/4/0/0/0 de 28) | HU06-CP01_20261015-151304.json | **FAIL** | no |
-| HU06-CP02 | F-MASIVO-ESTRUCTURAR | 2 | 4-hu06-cp02.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-AUTOS-MASIVO: MISSING | PARCIAL (19/2/0/0/0 de 21) | NO EJECUTADO<br>último intento: BLOCKED (HU06-CP02_20261013-095835.json) | **BLOCKED** | no |
+| HU06-CP02 | F-MASIVO-ESTRUCTURAR | 2 | 4-hu06-cp02.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-AUTOS-MASIVO: READY | PARCIAL (19/2/0/0/0 de 21) | HU06-CP02_20261015-175046.json (caso 639) | **BLOCKED** | no |
 | HU06-CP03 | F-MASIVO-ESTRUCTURAR | 2 | 5-hu06-cp03.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-CUMPL-MASIVO-SIN-RCE: MISSING | PARCIAL (23/1/0/0/0 de 24) | NO EJECUTADO<br>último intento: BLOCKED (HU06-CP03_20261013-095835.json) | **BLOCKED** | no |
 | HU06-CP04 | F-MASIVO-ESTRUCTURAR | 2 | 6-hu06-cp04.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-CUMPL-MASIVO-CON-RCE: MISSING | PARCIAL (20/1/0/1/0 de 22) | NO EJECUTADO<br>último intento: BLOCKED (HU06-CP04_20261013-095835.json) | **BLOCKED** | no |
 | HU06-CP05 | F-INDIVIDUAL-RUTA | 1 | 1-hu06-cp05.yaml | analista: READY | CFG-PROCESO: READY<br>INI-INDIVIDUAL-RUTA: READY | PARCIAL (5/3/0/0/0 de 8) | HU06-CP05_20261015-151217.json (caso 630) | **REAL_PASS_PARCIAL** | no |
@@ -67,19 +67,19 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | 14 | Validar la sección Encabezado. | Se muestran en solo lectura Número de Caso, Creador del Caso, Fecha de Creación, Línea, Ramo y Tipo de Movimiento. | #18 verificar (UI: aserciones) | NOT_RUN |
 | 15 | Validar la sección Tipo de Consulta. | Se muestran en solo lectura el Tipo de Radicación = Masivo y la Sucursal asociada al caso. | #19 verificar (UI: aserciones) | NOT_RUN |
 | 16 | Validar la sección Información a Consultar. | Se muestra la narrativa original registrada por el intermediario y el campo permanece no editable. | #20 verificar (UI: aserciones) | NOT_RUN |
-| 17 | Validar la tabla Pólizas asociadas a la solicitud. | La tabla se encuentra disponible y contiene la información estructurada por el Worker AI, incluyendo las columnas definidas para la actividad. | #15 integracion (INTEGRATION_NOT_VERIFIED)<br>#21 tabla_verificar (UI: tabla) | NOT_RUN |
-| 18 | Validar la posibilidad de seleccionar un registro de la tabla para editarlo. | Se habilita el formulario de edición correspondiente al registro seleccionado. | #22 tabla_abrir_fila (UI: editar fila) | NOT_RUN |
-| 19 | Validar el formulario de edición para Línea Generales – Movimiento Póliza Nueva. | La Forma de Consulta se encuentra asignada automáticamente como Identificación de Tomador y no permite modificación. | #23 verificar (UI: aserciones) | NOT_RUN |
-| 20 | Validar los campos disponibles en el formulario de edición. | Se presentan como obligatorios Tipo de Documento Tomador y Número de Documento Tomador. | #24 verificar (UI: aserciones) | NOT_RUN |
-| 21 | Seleccionar Tipo de Documento Tomador = NIT. | Se muestra el campo Dígito de Verificación como campo no editable y asociado al tipo de identificación seleccionado. | #25 diligenciar (UI: diligenciar + post-condición) | NOT_RUN |
-| 22 | Intentar cerrar/confirmar el formulario sin diligenciar los campos obligatorios. | El sistema mantiene abierto el formulario y evita confirmar el registro mientras los campos obligatorios no se encuentren diligenciados. | #26 dialogo_confirmar (UI: confirmar pop-up) | NOT_RUN |
-| 23 | Diligenciar los campos obligatorios y confirmar la edición. | El registro queda actualizado en la tabla Pólizas asociadas a la solicitud con la información diligenciada. | #27 diligenciar (UI: diligenciar + post-condición)<br>#28 dialogo_confirmar (UI: confirmar pop-up) | NOT_RUN |
-| 24 | Validar la opción para agregar un nuevo registro. | Se presenta el formulario de adición con las reglas correspondientes a Línea Generales y al Tipo de Movimiento seleccionado. | #29 tabla_agregar (UI: agregar fila) | NOT_RUN |
-| 25 | Agregar un registro válido y confirmar. | El nuevo registro queda incorporado en la colección Pólizas asociadas a la solicitud. | #30 diligenciar (UI: diligenciar + post-condición)<br>#31 dialogo_confirmar (UI: confirmar pop-up) | NOT_RUN |
-| 26 | Seleccionar un registro y ejecutar la opción de eliminación. | El registro seleccionado es eliminado de la colección de pólizas asociadas. | #32 tabla_eliminar_fila (UI: eliminar fila) | NOT_RUN |
-| 27 | Validar el campo Observaciones. | El analista dispone de un campo editable para registrar observaciones relacionadas con la estructuración del caso. | #33 verificar (UI: aserciones) | NOT_RUN |
-| 28 | Validar las pestañas Documentos de la solicitud y Seguimiento. | La pestaña de documentos permite consultar los soportes asociados y la pestaña Seguimiento presenta la trazabilidad del caso. | #34 verificar (UI: aserciones)<br>#35 no_automatizado (NOT_AUTOMATED) | NOT_RUN |
-| 29 | Intentar modificar Línea, Ramo, Tipo de Solicitud, Sucursal o Tipo de Radicación desde Estructurar Información. | Los datos maestros permanecen en solo lectura y no pueden ser modificados por el analista. | #36 verificar (UI: aserciones) | NOT_RUN |
+| 17 | Validar la tabla Pólizas asociadas a la solicitud. | La tabla se encuentra disponible y contiene la información estructurada por el Worker AI, incluyendo las columnas definidas para la actividad. | #15 integracion (INTEGRATION_NOT_VERIFIED)<br>#21 tabla_verificar (UI: tabla)<br>#22 tabla_verificar (UI: tabla) | NOT_RUN |
+| 18 | Validar la posibilidad de seleccionar un registro de la tabla para editarlo. | Se habilita el formulario de edición correspondiente al registro seleccionado. | #23 tabla_abrir_fila (UI: editar fila) | NOT_RUN |
+| 19 | Validar el formulario de edición para Línea Generales – Movimiento Póliza Nueva. | La Forma de Consulta se encuentra asignada automáticamente como Identificación de Tomador y no permite modificación. | #24 verificar (UI: aserciones) | NOT_RUN |
+| 20 | Validar los campos disponibles en el formulario de edición. | Se presentan como obligatorios Tipo de Documento Tomador y Número de Documento Tomador. | #25 verificar (UI: aserciones) | NOT_RUN |
+| 21 | Seleccionar Tipo de Documento Tomador = NIT. | Se muestra el campo Dígito de Verificación como campo no editable y asociado al tipo de identificación seleccionado. | #26 diligenciar (UI: diligenciar + post-condición) | NOT_RUN |
+| 22 | Intentar cerrar/confirmar el formulario sin diligenciar los campos obligatorios. | El sistema mantiene abierto el formulario y evita confirmar el registro mientras los campos obligatorios no se encuentren diligenciados. | #27 dialogo_confirmar (UI: confirmar pop-up) | NOT_RUN |
+| 23 | Diligenciar los campos obligatorios y confirmar la edición. | El registro queda actualizado en la tabla Pólizas asociadas a la solicitud con la información diligenciada. | #28 diligenciar (UI: diligenciar + post-condición)<br>#29 dialogo_confirmar (UI: confirmar pop-up) | NOT_RUN |
+| 24 | Validar la opción para agregar un nuevo registro. | Se presenta el formulario de adición con las reglas correspondientes a Línea Generales y al Tipo de Movimiento seleccionado. | #30 tabla_agregar (UI: agregar fila) | NOT_RUN |
+| 25 | Agregar un registro válido y confirmar. | El nuevo registro queda incorporado en la colección Pólizas asociadas a la solicitud. | #31 diligenciar (UI: diligenciar + post-condición)<br>#32 dialogo_confirmar (UI: confirmar pop-up) | NOT_RUN |
+| 26 | Seleccionar un registro y ejecutar la opción de eliminación. | El registro seleccionado es eliminado de la colección de pólizas asociadas. | #33 tabla_eliminar_fila (UI: eliminar fila) | NOT_RUN |
+| 27 | Validar el campo Observaciones. | El analista dispone de un campo editable para registrar observaciones relacionadas con la estructuración del caso. | #34 verificar (UI: aserciones) | NOT_RUN |
+| 28 | Validar las pestañas Documentos de la solicitud y Seguimiento. | La pestaña de documentos permite consultar los soportes asociados y la pestaña Seguimiento presenta la trazabilidad del caso. | #35 verificar (UI: aserciones)<br>#36 no_automatizado (NOT_AUTOMATED) | NOT_RUN |
+| 29 | Intentar modificar Línea, Ramo, Tipo de Solicitud, Sucursal o Tipo de Radicación desde Estructurar Información. | Los datos maestros permanecen en solo lectura y no pueden ser modificados por el analista. | #37 verificar (UI: aserciones) | NOT_RUN |
 
 ## HU06-CP02 — SDE - CEL - HU06 - Validar radicación Masiva para línea Autos y estructuración por Placa
 
@@ -88,32 +88,32 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Escenario:** `escenarios/4-hu06-cp02.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-01 (FUNCTIONAL_AMBIGUITY), BUG-03 (FUNCTIONAL_DEFECT), BUG-04 (FUNCTIONAL_DEFECT), DATA-06 (TEST_DATA_GAP), UI-03 (UI_CAPABILITY_GAP), UI-05 (UI_CAPABILITY_GAP), INT-02 (INTEGRATION_VISIBILITY_GAP), FUNC-10 (FUNCTIONAL_AMBIGUITY), UI-10 (UI_CAPABILITY_GAP)
 - **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P9 (mixto), P12 (mixto)
-- **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA INI-AUTOS-MASIVO: faltan SDE_AUTOS_MASIVO_MOVIMIENTO, SDE_AUTOS_PLACA, SDE_AUTOS_PLACA_2
+- **Estado:** BLOCKED — Ejecutado contra QA (caso 639) sin fallos, pero 11 paso(s) de la matriz quedaron BLOCKED (causa: DATO): P1, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21.
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
 |---|---|---|---|---|
 | 1 | Objetivo: | Validar la radicación Masiva para la línea Autos, verificando el formulario inicial, la ruta Masiva y las reglas de Estructurar Información relacionadas con la consulta por Placa. | Agregado del CP | BLOCKED |
-| 2 | Ingresar al ambiente Bizagi mediante la URL: https://test-aiprocesos-sde.bizagi.com/ | El ambiente de pruebas se encuentra disponible y permite iniciar una nueva Radicación. | #1 iniciar_sesion (UI: login real)<br>#2 nuevo_caso (UI: abrir formulario) | BLOCKED |
-| 3 | Crear un nuevo caso y seleccionar Línea = Autos, junto con un Ramo y Tipo de Solicitud válidos. | El formulario presenta la información correspondiente a la configuración seleccionada. | #2 nuevo_caso (UI: abrir formulario)<br>#3 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 4 | Seleccionar una Sucursal válida. | La Sucursal queda registrada y permite continuar con el diligenciamiento del formulario. | #4 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 5 | Seleccionar Tipo de Radicación = Masivo. | Se habilitan la Descripción de la Solicitud (Masiva/Múltiple) y la sección Documentos Anexos. | #5 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 6 | Validar el texto de ayuda de Masivo. | Se presenta el texto correspondiente a la modalidad Masivo para la línea Autos: “Masivo: Solicitud asociada a más de una póliza.” | #6 verificar (UI: aserciones) | BLOCKED |
-| 7 | Diligenciar la narrativa, los campos obligatorios y los documentos requeridos. | El formulario queda diligenciado y permite crear la solicitud. | #7 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 8 | Crear el caso. | Se crea correctamente la solicitud masiva. | #8 pulsar (UI: botón) | BLOCKED |
-| 9 | Validar la compuerta ¿Masivo?. | El caso toma la transición Masivo y continúa hacia el procesamiento del Worker AI. | #10 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#11 integracion (INTEGRATION_NOT_VERIFIED) | BLOCKED |
-| 10 | Validar la llegada a Estructurar Información. | El caso queda disponible para el Analista Centro de Expedición en la actividad Estructurar Información. | #9 iniciar_sesion (UI: login real)<br>#12 abrir_caso (UI: abrir caso por número) | BLOCKED |
-| 11 | Validar encabezado, Tipo de Consulta e Información a Consultar. | Se muestran los datos maestros en solo lectura, Tipo de Radicación Masivo, Sucursal y narrativa original de la solicitud. | #13 verificar (UI: aserciones) | BLOCKED |
-| 12 | Validar la tabla Pólizas asociadas a la solicitud. | La tabla presenta los registros estructurados por el Worker AI y las columnas correspondientes a la información de consulta. | #11 integracion (INTEGRATION_NOT_VERIFIED)<br>#14 tabla_verificar (UI: tabla) | BLOCKED |
-| 13 | Seleccionar un registro para editarlo. | Se presenta el formulario de edición correspondiente al registro seleccionado. | #15 tabla_abrir_fila (UI: editar fila) | BLOCKED |
-| 14 | Validar las opciones disponibles para la Forma de Consulta de acuerdo con la configuración del caso. | La Forma de Consulta y sus campos se presentan de acuerdo con la Línea, Tipo de Solicitud/Movimiento y reglas configuradas. | #16 verificar (UI: aserciones) | BLOCKED |
-| 15 | Seleccionar la Forma de Consulta Placa, cuando la configuración del caso corresponda a esta opción. | Se muestra únicamente el campo Placa para diligenciar la información de consulta. | #16 verificar (UI: aserciones) | BLOCKED |
-| 16 | Intentar confirmar el registro sin diligenciar Placa. | El formulario no permite confirmar el registro mientras el campo obligatorio Placa se encuentre vacío. | #17 intentar_diligenciar (UI: prueba negativa de campo)<br>#18 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
-| 17 | Ingresar una Placa con caracteres alfanuméricos dentro de la longitud permitida. | El valor ingresado es aceptado y el registro puede ser confirmado. | #20 intentar_diligenciar (UI: prueba negativa de campo)<br>#21 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
-| 18 | Ingresar una Placa que supere los 6 caracteres. | El sistema impide registrar un valor que supere la longitud máxima definida para el campo Placa. | #19 intentar_diligenciar (UI: prueba negativa de campo) | BLOCKED |
-| 19 | Confirmar la edición. | La información de consulta queda actualizada en la tabla Pólizas asociadas a la solicitud. | #21 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
-| 20 | Agregar un nuevo registro mediante el formulario de adición. | El formulario presenta las mismas reglas de visibilidad y obligatoriedad correspondientes al caso. | #22 tabla_agregar (UI: agregar fila) | BLOCKED |
-| 21 | Diligenciar y confirmar un registro válido. | El nuevo registro queda almacenado en la tabla de pólizas asociadas. | #23 diligenciar (UI: diligenciar + post-condición)<br>#24 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
-| 22 | Validar Observaciones, Documentos y Seguimiento. | Las tres secciones presentan la información correspondiente al caso y la trazabilidad registrada. | #25 verificar (UI: aserciones)<br>#26 verificar (UI: aserciones)<br>#27 abrir_pestana (UI: pestaña + contenido)<br>#28 abrir_pestana (UI: pestaña + contenido) | BLOCKED |
+| 2 | Ingresar al ambiente Bizagi mediante la URL: https://test-aiprocesos-sde.bizagi.com/ | El ambiente de pruebas se encuentra disponible y permite iniciar una nueva Radicación. | #1 iniciar_sesion (UI: login real)<br>#2 nuevo_caso (UI: abrir formulario) | PASS |
+| 3 | Crear un nuevo caso y seleccionar Línea = Autos, junto con un Ramo y Tipo de Solicitud válidos. | El formulario presenta la información correspondiente a la configuración seleccionada. | #2 nuevo_caso (UI: abrir formulario)<br>#3 diligenciar (UI: diligenciar + post-condición) | PASS |
+| 4 | Seleccionar una Sucursal válida. | La Sucursal queda registrada y permite continuar con el diligenciamiento del formulario. | #4 diligenciar (UI: diligenciar + post-condición) | PASS |
+| 5 | Seleccionar Tipo de Radicación = Masivo. | Se habilitan la Descripción de la Solicitud (Masiva/Múltiple) y la sección Documentos Anexos. | #5 diligenciar (UI: diligenciar + post-condición) | PASS |
+| 6 | Validar el texto de ayuda de Masivo. | Se presenta el texto correspondiente a la modalidad Masivo para la línea Autos: “Masivo: Solicitud asociada a más de una póliza.” | #6 verificar (UI: aserciones) | PASS |
+| 7 | Diligenciar la narrativa, los campos obligatorios y los documentos requeridos. | El formulario queda diligenciado y permite crear la solicitud. | #7 diligenciar (UI: diligenciar + post-condición) | PASS |
+| 8 | Crear el caso. | Se crea correctamente la solicitud masiva. | #8 pulsar (UI: botón) | PASS |
+| 9 | Validar la compuerta ¿Masivo?. | El caso toma la transición Masivo y continúa hacia el procesamiento del Worker AI. | #10 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#11 integracion (INTEGRATION_NOT_VERIFIED) | INTEGRATION_NOT_VERIFIED |
+| 10 | Validar la llegada a Estructurar Información. | El caso queda disponible para el Analista Centro de Expedición en la actividad Estructurar Información. | #9 iniciar_sesion (UI: login real)<br>#12 abrir_caso (UI: abrir caso por número) | PASS |
+| 11 | Validar encabezado, Tipo de Consulta e Información a Consultar. | Se muestran los datos maestros en solo lectura, Tipo de Radicación Masivo, Sucursal y narrativa original de la solicitud. | #13 verificar (UI: aserciones) | PASS |
+| 12 | Validar la tabla Pólizas asociadas a la solicitud. | La tabla presenta los registros estructurados por el Worker AI y las columnas correspondientes a la información de consulta. | #11 integracion (INTEGRATION_NOT_VERIFIED)<br>#14 tabla_verificar (UI: tabla)<br>#15 tabla_verificar (UI: tabla) | BLOCKED |
+| 13 | Seleccionar un registro para editarlo. | Se presenta el formulario de edición correspondiente al registro seleccionado. | #16 tabla_abrir_fila (UI: editar fila) | BLOCKED |
+| 14 | Validar las opciones disponibles para la Forma de Consulta de acuerdo con la configuración del caso. | La Forma de Consulta y sus campos se presentan de acuerdo con la Línea, Tipo de Solicitud/Movimiento y reglas configuradas. | #17 verificar (UI: aserciones) | BLOCKED |
+| 15 | Seleccionar la Forma de Consulta Placa, cuando la configuración del caso corresponda a esta opción. | Se muestra únicamente el campo Placa para diligenciar la información de consulta. | #17 verificar (UI: aserciones) | BLOCKED |
+| 16 | Intentar confirmar el registro sin diligenciar Placa. | El formulario no permite confirmar el registro mientras el campo obligatorio Placa se encuentre vacío. | #18 intentar_diligenciar (UI: prueba negativa de campo)<br>#19 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
+| 17 | Ingresar una Placa con caracteres alfanuméricos dentro de la longitud permitida. | El valor ingresado es aceptado y el registro puede ser confirmado. | #21 intentar_diligenciar (UI: prueba negativa de campo)<br>#22 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
+| 18 | Ingresar una Placa que supere los 6 caracteres. | El sistema impide registrar un valor que supere la longitud máxima definida para el campo Placa. | #20 intentar_diligenciar (UI: prueba negativa de campo) | BLOCKED |
+| 19 | Confirmar la edición. | La información de consulta queda actualizada en la tabla Pólizas asociadas a la solicitud. | #22 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
+| 20 | Agregar un nuevo registro mediante el formulario de adición. | El formulario presenta las mismas reglas de visibilidad y obligatoriedad correspondientes al caso. | #23 tabla_agregar (UI: agregar fila) | BLOCKED |
+| 21 | Diligenciar y confirmar un registro válido. | El nuevo registro queda almacenado en la tabla de pólizas asociadas. | #24 diligenciar (UI: diligenciar + post-condición)<br>#25 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
+| 22 | Validar Observaciones, Documentos y Seguimiento. | Las tres secciones presentan la información correspondiente al caso y la trazabilidad registrada. | #26 verificar (UI: aserciones)<br>#27 verificar (UI: aserciones)<br>#28 abrir_pestana (UI: pestaña + contenido)<br>#29 abrir_pestana (UI: pestaña + contenido) | PASS |
 
 ## HU06-CP03 — SDE - CEL - HU06 - Validar radicación Masiva de Cumplimiento sin propiedad Póliza RCE
 

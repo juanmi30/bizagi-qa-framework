@@ -82,7 +82,7 @@ export const CAPACIDADES: Record<string, { req: string[]; opt: string[] }> = {
   pulsar: { req: ['boton'], opt: ['capturar_numero_caso', 'esperar_hasta', 'maximo_minutos'] },
   verificar_ruta: { req: ['actor', 'llega_a'], opt: ['no_llega_a', 'maximo_minutos'] },
   abrir_caso: { req: ['actor', 'actividad'], opt: ['maximo_minutos'] },
-  tabla_verificar: { req: ['tabla'], opt: ['columnas', 'minimo_filas'] },
+  tabla_verificar: { req: ['tabla'], opt: ['columnas', 'minimo_filas', 'comparar'] },
   // "formulario": id del pop-up en data/popups-calibrados.yaml; la barrera H3 decide en ejecución si puede abrirse.
   tabla_abrir_fila: { req: ['tabla', 'fila', 'formulario'], opt: [] },          // abre el pop-up de edición de la fila N (1..n)
   tabla_agregar: { req: ['tabla', 'formulario'], opt: [] },                     // abre el pop-up de adición
@@ -291,6 +291,8 @@ export function cargarEscenario(ruta: string, registro: Registro): EscenarioSde 
       problemas.push(`${donde}: "espera" debe ser "cierra" o "permanece_abierto"`);
     if (p.fila != null && p.fila !== 'ultima' && !(Number.isInteger(p.fila) && (p.fila as number) >= 1))
       problemas.push(`${donde}: "fila" debe ser un entero >= 1 o "ultima"`);
+    if (p.comparar != null && (typeof p.comparar !== 'object' || Array.isArray(p.comparar) || !Object.values(p.comparar as object).every((v) => Array.isArray(v) && v.length > 0 && v.every(esTexto))))
+      problemas.push(`${donde}: "comparar" debe ser un mapa { columna: [valores introducidos] }`);
     for (const k of ['fila_resultante', 'fila_con']) {
       if (p[k] != null && (typeof p[k] !== 'object' || Array.isArray(p[k]) || Object.keys(p[k] as object).length === 0))
         problemas.push(`${donde}: "${k}" debe ser un mapa no vacío { columna: valor }`);

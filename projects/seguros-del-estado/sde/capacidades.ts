@@ -160,6 +160,13 @@ async function contenedorTabla(ambito: Ambito, tabla: string): Promise<{ cont: L
   return { cont, columnas, filas: cont.locator(SdeObjects.filaDatos).filter({ visible: true }) };
 }
 
+/** Textos normalizados de las celdas de la fila i (1..n) de una grilla por su título (calibración UI-10: antes y después de guardar). */
+export async function celdasDeFila(ambito: Ambito, tabla: string, i: number): Promise<string[] | null> {
+  const { filas } = await contenedorTabla(ambito, tabla);
+  if (i < 1 || i > (await filas.count())) return null;
+  return (await filas.nth(i - 1).locator('td').allInnerTexts()).map(normaliza);
+}
+
 /** Índices (0..n-1) de las filas cuyas columnas tienen EXACTAMENTE los valores dados. */
 async function filasQueCoinciden(tabla: string, columnas: string[], filas: Locator, esperadas: Record<string, string>, ctx: ContextoEjecucion): Promise<number[]> {
   const pares = Object.entries(esperadas).map(([col, v]) => ({ col, idx: columnas.indexOf(normaliza(col)), valor: normaliza(ctx.resolver(v)) }));
@@ -591,13 +598,30 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       return { detalle: `Caso ${ctx.numeroCaso} abierto por "${p.actor}" en "${actividad}"${intento > 1 ? ` (work item entregado en el intento ${intento})` : ''}` };
     },
 
-    tabla_verificar: async (p) => {
+    tabla_verificar: async (p, ctx) => {
       const { columnas, filas } = await contenedorTabla(ambitoActual(ui), p.tabla as string);
       const faltan = ((p.columnas as string[]) ?? []).filter((c) => !columnas.includes(normaliza(c)));
       const n = await filas.count();
       if (faltan.length) throw new Error(`"${p.tabla}": faltan columnas ${faltan.join(', ')} (vistas: ${columnas.filter(Boolean).join(', ')})`);
-      if (p.minimo_filas != null && n < (p.minimo_filas as number)) throw new Error(`"${p.tabla}": ${n} fila(s), mínimo ${p.minimo_filas}`);
-      return { detalle: `"${p.tabla}": ${n} fila(s); columnas [${columnas.filter(Boolean).join(', ')}]` };
+      // "comparar" (HU06, extracción del Worker AI): valores introducidos en la narrativa frente a los observados por columna.
+      // Es OBSERVACIÓN, no aserción: el contrato de extracción (granularidad, número de filas) no está confirmado por QA.
+      const comparacion: string[] = [];
+      for (const [col, esperados] of Object.entries((p.comparar as Record<string, string[]>) ?? {})) {
+        const idx = columnas.indexOf(normaliza(col));
+        if (idx < 0) throw new Error(`"${p.tabla}": columna "${col}" inexistente para comparar (vistas: ${columnas.filter(Boolean).join(', ')})`);
+        const observados: string[] = [];
+        for (let k = 0; k < n; k++) observados.push(normaliza((await filas.nth(k).locator('td').allInnerTexts())[idx] ?? ''));
+        const valores = esperados.map((v) => normaliza(ctx.resolver(v)));
+        const encontrados = valores.filter((v) => observados.includes(v));
+        const extra = observados.filter((v) => v && !valores.includes(v));
+        comparacion.push(`${col}: ${encontrados.length} de ${valores.length} introducidos aparecen` +
+          `${valores.length > encontrados.length ? ` (faltan: ${valores.filter((v) => !encontrados.includes(v)).join(', ')})` : ''}` +
+          `${extra.length ? `; otros valores: ${[...new Set(extra)].join(', ')}` : ''}`);
+      }
+      if (p.minimo_filas != null && n < (p.minimo_filas as number)) {
+        throw new Error(`"${p.tabla}": ${n} fila(s), mínimo ${p.minimo_filas}${comparacion.length ? ` | ${comparacion.join(' | ')}` : ''}`);
+      }
+      return { detalle: `"${p.tabla}": ${n} fila(s); columnas [${columnas.filter(Boolean).join(', ')}]${comparacion.length ? ` | ${comparacion.join(' | ')}` : ''}` };
     },
 
     tabla_abrir_fila: async (p, ctx) => {
@@ -646,18 +670,25 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       const t = ui.tabla;
       ui.dialogo = undefined;
       ctx.dialogoAbierto = false;
-      const { columnas, filas } = await contenedorTabla(page, t.tabla);
-      const n = await filas.count();
       const esperadas = (p.fila_resultante as Record<string, string>) ?? {};
       const hayEsperadas = Object.keys(esperadas).length > 0;
-      const coinciden = hayEsperadas ? await filasQueCoinciden(t.tabla, columnas, filas, esperadas, ctx) : [];
-      if (t.fila === null) {
-        if (n !== t.filasAntes + 1) throw new Error(`"${t.tabla}": se esperaban ${t.filasAntes + 1} filas tras agregar; hay ${n}.`);
-        if (hayEsperadas && coinciden.length !== 1) throw new Error(`"${t.tabla}": la fila agregada con los valores esperados aparece ${coinciden.length} vez/veces.`);
-      } else {
-        if (n !== t.filasAntes) throw new Error(`"${t.tabla}": la edición cambió el número de filas (${t.filasAntes} → ${n}).`);
-        if (hayEsperadas && !coinciden.includes(t.fila - 1)) throw new Error(`"${t.tabla}": la fila ${t.fila} no quedó con los valores esperados.`);
+      // La grilla puede tardar en reflejar lo guardado (caso 651, 2026-10-16: sin refresco inmediato; sí al reabrir). Se relee
+      // durante un tiempo acotado y se decide con la última lectura.
+      let n = 0;
+      let problema = '';
+      for (const limite = Date.now() + 15_000; ;) {
+        const { columnas, filas } = await contenedorTabla(page, t.tabla);
+        n = await filas.count();
+        const coinciden = hayEsperadas ? await filasQueCoinciden(t.tabla, columnas, filas, esperadas, ctx) : [];
+        problema = t.fila === null
+          ? (n !== t.filasAntes + 1 ? `se esperaban ${t.filasAntes + 1} filas tras agregar; hay ${n}`
+            : hayEsperadas && coinciden.length !== 1 ? `la fila agregada con los valores esperados aparece ${coinciden.length} vez/veces` : '')
+          : (n !== t.filasAntes ? `la edición cambió el número de filas (${t.filasAntes} → ${n})`
+            : hayEsperadas && !coinciden.includes(t.fila - 1) ? `la fila ${t.fila} no quedó con los valores esperados` : '');
+        if (!problema || Date.now() > limite) break;
+        await page.waitForTimeout(1_500);
       }
+      if (problema) throw new Error(`"${t.tabla}": ${problema} (tras releer la grilla durante 15 s).`);
       const resumen = Object.entries(esperadas).map(([c, v]) => `${c}=${describir(v, ctx.registro, ctx.unico, ctx.env)}`).join(', ');
       ui.tabla = undefined;
       return { detalle: `Pop-up confirmado; "${t.tabla}" con ${n} fila(s)${resumen ? `; fila verificada: ${resumen}` : ''}` };

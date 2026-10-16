@@ -3,7 +3,7 @@ import { cargarRegistro } from '../sde/datos';
 import { resolve } from 'node:path';
 import { cargarEscenario, DIR_ESCENARIOS, type EscenarioSde, type PasoSde } from '../sde/escenario';
 import { crearContexto, ejecutarEscenario } from '../sde/ejecutor';
-import { crearCapacidadesUi, VIEWPORT_SDE, type UiEntorno } from '../sde/capacidades';
+import { celdasDeFila, crearCapacidadesUi, VIEWPORT_SDE, type UiEntorno } from '../sde/capacidades';
 import { registrarCasoCreado } from '../sde/registro';
 import { esperarCarga, inventarioCampos, textosVisibles } from '../sde/ui';
 import { cargarPresentacion } from '../sde/presentacion';
@@ -24,6 +24,14 @@ import { exclusividadEjecucionReal } from '../sde/verticales';
  * - SDE_CALIBRAR_POPUP=DESTRUYE_CASO: abre el pop-up de la fila 1 y vuelca su estructura. ADVERTENCIA (2026-10-13, caso 426):
  *   salir del pop-up sin "Guardar" (Cancelar O cerrar la sesión con el pop-up abierto) deja el caso inutilizable
  *   ("Invalid scope action type", BUG-03). Usar solo con un caso de calibración desechable.
+ * - SDE_CALIBRAR_POPUP=GUARDAR_SIN_CAMBIOS (UI-10, 2026-10-16): abre la fila 1 del formulario SDE_CALIBRAR_FORMULARIO, vuelca sus
+ *   controles y lo cierra con "Guardar" SIN cambiar nada; comprueba que la fila y el número de filas no cambian. Solo pasa la
+ *   barrera si ese formulario está "en_calibracion" y SDE_AUTORIZO_CALIBRACION_POPUP es el caso en ejecución. Si "Guardar" no
+ *   cierra el pop-up, el recorrido se detiene (nunca se pulsa Cancelar). Usar solo con un caso PROPIO y desechable.
+ * - SDE_CALIBRAR_POPUP=GUARDAR_CON_CAMBIO: igual, pero antes de "Guardar" diligencia UN campo del pop-up (SDE_CALIBRAR_CAMPO,
+ *   SDE_CALIBRAR_VALOR, SDE_CALIBRAR_TIPO; por defecto "lista"), vuelca los controles después del cambio y compara la fila.
+ * - Modo "nuevo": la narrativa es la del Ciclo 1 aportada por Daniel (QA), FICTICIA (Generales/Modificación, 4 pólizas); P17
+ *   compara las pólizas introducidas con las observadas en la grilla (observación, no aserción).
  * - NO es un resultado del CP: el reporte se imprime y adjunta como calibración.
  */
 test.use({ viewport: VIEWPORT_SDE, trace: 'off' }); // trace off: registraría la clave tecleada
@@ -38,6 +46,16 @@ test('calibración Estructurar información sobre caso propio @calibracion', asy
   const registro = cargarRegistro();
   const nuevo = numero === 'nuevo';
   const popup = process.env.SDE_CALIBRAR_POPUP === 'DESTRUYE_CASO'; // ver advertencia BUG-03 en la cabecera
+  const guardarConCambio = process.env.SDE_CALIBRAR_POPUP === 'GUARDAR_CON_CAMBIO';
+  const guardarSinCambios = process.env.SDE_CALIBRAR_POPUP === 'GUARDAR_SIN_CAMBIOS' || guardarConCambio;
+  const cambio = guardarConCambio
+    ? { campo: process.env.SDE_CALIBRAR_CAMPO ?? '', valor: process.env.SDE_CALIBRAR_VALOR ?? '', tipo: process.env.SDE_CALIBRAR_TIPO ?? 'lista' }
+    : null;
+  if (cambio && (!cambio.campo || !cambio.valor)) throw new Error('GUARDAR_CON_CAMBIO exige SDE_CALIBRAR_CAMPO y SDE_CALIBRAR_VALOR.');
+  const formulario = process.env.SDE_CALIBRAR_FORMULARIO ?? 'detalle-polizas-modificacion-generales';
+  // Narrativa del Ciclo 1 (Daniel, QA): datos FICTICIOS; la extracción del Worker AI no exige pólizas existentes (V1.1).
+  const POLIZAS_CICLO1 = ['100245678', '1109876543', '9023456781', '12012345678'];
+  const NARRATIVA_CICLO1 = `Se solicita realizar la modificación de las pólizas ${POLIZAS_CICLO1.slice(0, 3).join(', ')} y ${POLIZAS_CICLO1[3]}. El cambio corresponde a la actualización de información registrada en cada una de las pólizas, de acuerdo con las condiciones definidas para la solicitud. Se requiere validar que la modificación sea aplicada correctamente a todas las pólizas relacionadas, manteniendo sin cambios la información que no haga parte del ajuste solicitado.`;
   // SDE_CALIBRAR_EDICION=ACEPTO_RIESGO_BUG03: ejecuta EXACTAMENTE los pasos P18–P26 del escenario oficial de HU06-CP01 (edición/adición/eliminación
   // de filas). Cada pop-up se cierra con "Guardar" (si algo falla dentro, el ejecutor sigue hasta cerrarlo: política BUG-03).
   // DESTRUCTIVO si alguna etiqueta del pop-up no coincide (caso 430 quedó inutilizable el 2026-10-13): exige confirmación explícita.
@@ -58,7 +76,7 @@ test('calibración Estructurar información sobre caso propio @calibracion', asy
     // Campo obligatorio fuera de la matriz (OBS-08).
     P([9], 'diligenciar', { campos: [
       { campo: '¿Su solicitud requiere cambio de intermediario?', valor: 'No', tipo: 'radio' },
-      { campo: 'Descripción de la Solicitud (Masiva/Múltiple)', valor: `CALIBRACIÓN QA automatizada ${unico}: texto sintético sin pólizas reales.`, tipo: 'area' },
+      { campo: 'Descripción de la Solicitud (Masiva/Múltiple)', valor: `Ref. QA ${unico}. ${NARRATIVA_CICLO1}`, tipo: 'area' },
     ] }),
     P([10], 'pulsar', { boton: 'Crear', capturar_numero_caso: true }),
     P([11], 'verificar_ruta', { actor: 'analista', llega_a: 'Estructurar información', no_llega_a: ['Consultar Alertas Intermediario'], maximo_minutos: 15 }),
@@ -78,9 +96,15 @@ test('calibración Estructurar información sobre caso propio @calibracion', asy
       P([16], 'verificar', { verificar: [{ visible: 'Información a Consultar' }, { solo_lectura: ['Descripción Solicitud Masiva'] }] }),
       // Solo estructura de la grilla (las filas dependen de la narrativa real). NO se abre ni cancela el pop-up:
       // Cancelar deja el caso inutilizable ("Invalid scope action type", BUG-03 reproducido en casos 342 y 350).
-      P([17], 'tabla_verificar', { tabla: 'Detalle Polizas Asociadas', columnas: ['Forma Consulta', 'Tipo documento del Tomador', 'Número de Documento Tomador', 'Placa', 'Número Póliza', '¿Requiere modificar RCE?', 'Ramo RCE', 'Número Póliza RCE'] }),
+      P([17], 'tabla_verificar', { tabla: 'Detalle Polizas Asociadas', columnas: ['Forma Consulta', 'Tipo documento del Tomador', 'Número de Documento Tomador', 'Placa', 'Número Póliza', '¿Requiere modificar RCE?', 'Ramo RCE', 'Número Póliza RCE'],
+        ...(nuevo ? { comparar: { 'Número Póliza': POLIZAS_CICLO1 } } : {}) }),
       // Modo DESTRUCTIVO: abre el pop-up de la fila 1, vuelca su estructura y termina (el caso queda inutilizable, BUG-03).
-      ...(edicion ? pasosEdicion : popup ? [P([18], 'tabla_abrir_fila', { tabla: 'Detalle Polizas Asociadas', fila: 1, formulario: 'detalle-polizas-modificacion-generales' })] : [
+      ...(edicion ? pasosEdicion : popup ? [P([18], 'tabla_abrir_fila', { tabla: 'Detalle Polizas Asociadas', fila: 1, formulario: 'detalle-polizas-modificacion-generales' })] : guardarSinCambios ? [
+        P([18], 'tabla_abrir_fila', { tabla: 'Detalle Polizas Asociadas', fila: 1, formulario }),
+        ...(cambio ? [P([19], 'diligenciar', { campos: [cambio] })] : []),
+        P([19], 'dialogo_confirmar', { espera: 'cierra' }),
+        P([17], 'tabla_verificar', { tabla: 'Detalle Polizas Asociadas', minimo_filas: 1 }),
+      ] : [
         P([28], 'verificar', { verificar: [{ visible: 'Documentos de la solicitud' }, { visible: 'Seguimiento/Trazabilidad' }] }),
         P([29], 'verificar', { verificar: [{ solo_lectura: ['Línea', 'Ramo', 'Tipo de Solicitud', 'Sucursal', 'Tipo Radicación'] }] }),
         // UI-04: navegación real de pestañas (solo lectura; calibrada en los casos 426 y 571).
@@ -103,8 +127,35 @@ test('calibración Estructurar información sobre caso propio @calibracion', asy
   const { capacidades, verificar } = crearCapacidadesUi(ui);
   // Inventario de presentación de Estructurar al abrir la actividad (propuesta para QA; sin valores del caso).
   let presentacion: Record<string, unknown> | null = null;
+  let estructuraPopup: unknown = null;
+  let filaAntes: string | null = null;
+  let filaDespues: string | null = null;
+  let estructuraTrasCambio: unknown = null;
   const r = await ejecutarEscenario(esc, {
-    capacidades: { ...capacidades, abrir_caso: async (p, c) => {
+    capacidades: { ...capacidades,
+      // UI-10: estructura del pop-up (rótulos y tipo de control, sin valores) y contenido de la fila ANTES de guardar sin cambios.
+      tabla_abrir_fila: async (p, c) => {
+        const salida = await capacidades.tabla_abrir_fila(p, c);
+        if (ui.dialogo) {
+          estructuraPopup = await inventarioCampos(ui.dialogo);
+          filaAntes = ui.tabla?.contenidoFila?.join(' | ') ?? null;
+        }
+        return salida;
+      },
+      diligenciar: async (p, c) => {
+        const salida = await capacidades.diligenciar(p, c);
+        if (ui.dialogo && cambio) estructuraTrasCambio = await inventarioCampos(ui.dialogo);
+        return salida;
+      },
+      dialogo_confirmar: async (p, c) => {
+        const salida = await capacidades.dialogo_confirmar(p, c);
+        if (guardarSinCambios && filaAntes != null) {
+          const pg = ui.actual ? ui.paginas.get(ui.actual)! : page;
+          filaDespues = (await celdasDeFila(pg, 'Detalle Polizas Asociadas', 1))?.join(' | ') ?? '(sin fila 1)';
+        }
+        return salida;
+      },
+      abrir_caso: async (p, c) => {
       const salida = await capacidades.abrir_caso(p, c);
       if (!presentacion && ui.actual) {
         const pg = ui.paginas.get(ui.actual)!;
@@ -118,6 +169,10 @@ test('calibración Estructurar información sobre caso propio @calibracion', asy
     } }, verificar, soloLectura: ui.soloLectura,
     evidencia: async (n) => { const f = await page.screenshot({ fullPage: true }).catch(() => null); if (f) await testInfo.attach(n, { body: f, contentType: 'image/png' }); return n; },
   }, ctx);
+  if (estructuraPopup || filaDespues != null) {
+    // Solo rótulos y tipos de control del pop-up; la fila contiene datos FICTICIOS de la narrativa controlada.
+    console.log(`UI10-POPUP ${JSON.stringify({ formulario, estructura: estructuraPopup, cambio, estructura_tras_cambio: estructuraTrasCambio, fila_antes: filaAntes, fila_despues: filaDespues })}`);
+  }
   if (presentacion) {
     mkdirSync(DIR_SALIDA, { recursive: true });
     writeFileSync(`${DIR_SALIDA}/PRESENTACION_ESTRUCTURAR_${Date.now()}.json`, JSON.stringify(presentacion, null, 2) + '\n', 'utf8');

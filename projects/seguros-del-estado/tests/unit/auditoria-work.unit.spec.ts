@@ -33,10 +33,14 @@ test.describe('H3 — barrera de apertura de pop-ups @unit', () => {
   const bloquea = (f: string | undefined, reg_: RegistroPopups, caso: string | null = '430', aut?: string) =>
     (() => { try { autorizarAperturaPopup(f, 'T', caso, reg_, aut); return ''; } catch (e) { return (e as Error).message; } })();
 
-  test('el registro real del proyecto NO permite abrir ningún pop-up hoy (UI-10)', () => {
+  test('el registro real solo permite abrir los pop-ups calibrados con evidencia y cierre seguro verificado (UI-10)', () => {
     const real = cargarPopups();
     expect(Object.keys(real).length).toBeGreaterThan(0);
-    for (const [id, f] of Object.entries(real)) expect(() => autorizarAperturaPopup(id, f.tabla, '1', real, undefined), id).toThrow(BarreraPopupError);
+    // 2026-10-16: detalle-polizas-autos calibrado en el caso propio 651 (abrir → cambiar → Guardar → persiste al reabrir).
+    const abiertos = Object.entries(real).filter(([id, f]) => { try { autorizarAperturaPopup(id, f.tabla, '1', real, undefined); return true; } catch { return false; } }).map(([id]) => id);
+    expect(abiertos).toEqual(['detalle-polizas-autos']);
+    for (const id of abiertos) expect(real[id]).toMatchObject({ estado: 'calibrado', cierre_seguro_verificado: true, evidencia: expect.stringContaining('651') });
+    for (const [id, f] of Object.entries(real).filter(([x]) => !abiertos.includes(x))) expect(() => autorizarAperturaPopup(id, f.tabla, '1', real, undefined), id).toThrow(BarreraPopupError);
   });
 
   test('exige formulario declarado, registrado, de la misma tabla, calibrado, con mapeo, evidencia y cierre seguro', () => {

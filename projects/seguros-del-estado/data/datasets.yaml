@@ -82,55 +82,38 @@ datasets:
       - { nombre: sucursal, fuente: qa, env: SDE_SUCURSAL }
       # La matriz dice "Masivo"; la opción REAL del radio en QA es "Masiva" (hallazgo de nomenclatura OBS-02).
       - { nombre: tipo_radicacion, fuente: matriz, valor: Masiva }
-      - { nombre: narrativa, fuente: generado, valor: "Prueba QA automatizada ${unico}: solicitud masiva para más de una póliza." }
-      - { nombre: narrativa_polizas, fuente: qa, env: SDE_GEN_MASIVO_NARRATIVA_POLIZAS, sensible: true, opcional: true }
+      - { nombre: narrativa, fuente: generado, valor: "Ref. QA ${unico}." }
+      # Narrativa FICTICIA y controlada (HU06 V1.1 + aclaración de Daniel, 2026-10-16): la extracción del Worker AI no exige
+      # pólizas existentes en SISE. Máx. 500 caracteres en total con la referencia de la corrida (regresión unitaria).
+      - { nombre: narrativa_polizas, fuente: generado, valor: "Se solicita la expedición de pólizas nuevas para los tomadores identificados con NIT 900123456, 800765432 y 901234567. Cada póliza debe emitirse con las condiciones definidas para la solicitud y la información de cada tomador debe validarse antes de la expedición." }
     nota: >-
-      Para que el Worker AI estructure filas con datos reales la narrativa debe mencionar pólizas/tomadores existentes
-      (narrativa_polizas). Es opcional para CREAR el caso; los pasos que validan el contenido estructurado la exigen
-      (requiere: [NARRATIVA-POLIZAS]).
+      La narrativa (narrativa_polizas) es FICTICIA y controlada: la extracción del Worker AI no exige tomadores existentes
+      (V1.1 y aclaración de Daniel, 2026-10-16). P17 compara los NIT introducidos con los observados en la grilla.
     usado_por: [HU06-CP01]
     limpieza: CLEANUP_NOT_APPLICABLE — evidencia de radicación masiva.
-
-  NARRATIVA-POLIZAS:
-    descripcion: HU06-CP01 pasos 17–26. Texto con pólizas/tomadores reales para que el Worker AI estructure filas verificables.
-    actor: analista
-    propiedades:
-      - { nombre: texto, fuente: qa, env: SDE_GEN_MASIVO_NARRATIVA_POLIZAS, sensible: true }
-    usado_por: [HU06-CP01]
-    limpieza: No aplica (texto de entrada).
 
   EST-FILA-GENERALES-PN:
     descripcion: HU06-CP01 pasos 21–25. Datos para editar/agregar fila en Pólizas asociadas (Forma de Consulta Identificación de Tomador).
     actor: analista
     propiedades:
       - { nombre: tipo_documento, fuente: matriz, valor: NIT }
-      - { nombre: numero_documento, fuente: qa, env: SDE_EST_TOMADOR_NIT, sensible: true }
-      - { nombre: numero_documento_nueva_fila, fuente: qa, env: SDE_EST_TOMADOR_NIT_2, sensible: true }
+      # FICTICIOS (2026-10-16, aclaración de Daniel): la edición de filas no consulta servicios externos. Distintos de la narrativa.
+      - { nombre: numero_documento, fuente: generado, valor: "900456789" }
+      - { nombre: numero_documento_nueva_fila, fuente: generado, valor: "900987654" }
     usado_por: [HU06-CP01]
     limpieza: Las filas se crean/eliminan DENTRO del caso creado por la prueba; nunca sobre casos ajenos.
 
   EST-FILA-AUTOS-PLACA:
-    descripcion: HU06-CP02 pasos 13–21. Placas de QA para editar/agregar filas de Detalle Polizas Asociadas (consulta por Placa).
+    descripcion: HU06-CP02 pasos 13–21. Placas ficticias para editar/agregar filas de Detalle Polizas Asociadas (consulta por Placa).
     actor: analista
     propiedades:
-      - { nombre: placa, fuente: qa, env: SDE_AUTOS_PLACA, sensible: true }
-      - { nombre: placa_nueva_fila, fuente: qa, env: SDE_AUTOS_PLACA_2, sensible: true }
+      # Placas FICTICIAS (2026-10-16, aclaración de Daniel): la edición de filas no consulta servicios externos. Distintas de las de la
+      # narrativa (ABC123, XYZ987, KLM456) para identificar la fila editada o agregada por su valor exacto. V1.1: alfanumérica, máx. 6.
+      - { nombre: placa, fuente: generado, valor: DEF456 }
+      - { nombre: placa_nueva_fila, fuente: generado, valor: GHJ789 }
+      - { nombre: placa_larga, fuente: generado, valor: MNP4567 }
     usado_por: [HU06-CP02]
     limpieza: Las filas se crean/editan DENTRO del caso creado por la prueba; nunca sobre casos ajenos.
-
-  NARRATIVA-REAL-GENERALES:
-    descripcion: HU06-CP01 P17. Narrativa con pólizas/tomadores REALES de QA para que el Worker AI estructure filas (se agrega a la narrativa al crear).
-    actor: intermediario
-    propiedades:
-      - { nombre: narrativa_polizas, fuente: qa, env: SDE_GEN_MASIVO_NARRATIVA_POLIZAS, sensible: true }
-    usado_por: [HU06-CP01]
-
-  NARRATIVA-REAL-AUTOS:
-    descripcion: HU06-CP02 P12. Narrativa con placas/pólizas REALES de QA para que el Worker AI estructure filas (se agrega a la narrativa al crear).
-    actor: intermediario
-    propiedades:
-      - { nombre: narrativa_polizas, fuente: qa, env: SDE_AUTOS_MASIVO_NARRATIVA, sensible: true }
-    usado_por: [HU06-CP02]
 
   INI-AUTOS-MASIVO:
     descripcion: HU06-CP02. Masivo Autos; edición por Placa (máx. 6 caracteres).
@@ -143,8 +126,10 @@ datasets:
       - { nombre: movimiento, fuente: qa, env: SDE_AUTOS_MOVIMIENTO }
       - { nombre: sucursal, fuente: qa, env: SDE_SUCURSAL }
       - { nombre: tipo_radicacion, fuente: matriz, valor: Masiva }
-      - { nombre: narrativa, fuente: generado, valor: "Prueba QA automatizada ${unico}: solicitud masiva Autos para más de una póliza." }
-      - { nombre: narrativa_polizas, fuente: qa, env: SDE_AUTOS_MASIVO_NARRATIVA, sensible: true, opcional: true }
+      - { nombre: narrativa, fuente: generado, valor: "Ref. QA ${unico}." }
+      # Narrativa FICTICIA y controlada (HU06 V1.1 + aclaración de Daniel, 2026-10-16): la extracción del Worker AI no exige
+      # pólizas existentes en SISE. Máx. 500 caracteres en total con la referencia de la corrida (regresión unitaria).
+      - { nombre: narrativa_polizas, fuente: generado, valor: "Se solicita realizar la modificación de las pólizas de automóviles 100245678 y 1109876543, asociadas a los vehículos de placas ABC123 y XYZ987, y de la póliza 9023456781 del vehículo de placa KLM456. El cambio corresponde a la actualización de la información registrada, manteniendo sin cambios los datos que no hagan parte del ajuste solicitado." }
     nota: >-
       Las placas de las filas están en EST-FILA-AUTOS-PLACA (placa_nueva_fila DISTINTA de placa). La narrativa con
       placas/pólizas reales (narrativa_polizas) es la que permite al Worker AI estructurar filas editables.
@@ -155,9 +140,11 @@ datasets:
     descripcion: HU06-CP03 pasos 12–23. Póliza de Cumplimiento y datos RCE de QA para editar la fila de Detalle Polizas Asociadas.
     actor: analista
     propiedades:
-      - { nombre: poliza, fuente: qa, env: SDE_CUMPL_POLIZA_SIN_RCE, sensible: true }
+      # FICTICIOS (2026-10-16, aclaración de Daniel): la edición de filas no consulta servicios externos. Distintos de la narrativa.
+      - { nombre: poliza, fuente: generado, valor: "300123456" }
+      # Ramo RCE: opción de una lista paramétrica de QA (no se inventa).
       - { nombre: ramo_rce, fuente: qa, env: SDE_CUMPL_RAMO_RCE }
-      - { nombre: poliza_rce, fuente: qa, env: SDE_CUMPL_POLIZA_RCE, sensible: true }
+      - { nombre: poliza_rce, fuente: generado, valor: "400123456" }
     usado_por: [HU06-CP03]
     limpieza: Las filas se editan DENTRO del caso creado por la prueba; nunca sobre casos ajenos.
 
@@ -165,8 +152,9 @@ datasets:
     descripcion: HU06-CP04 pasos 12–22. Pólizas de QA para editar, agregar y eliminar filas (poliza_nueva_fila DISTINTA de poliza).
     actor: analista
     propiedades:
-      - { nombre: poliza, fuente: qa, env: SDE_CUMPL_POLIZA_CON_RCE, sensible: true }
-      - { nombre: poliza_nueva_fila, fuente: qa, env: SDE_CUMPL_POLIZA_CON_RCE_2, sensible: true }
+      # FICTICIOS (2026-10-16, aclaración de Daniel): la edición de filas no consulta servicios externos. Distintos de la narrativa.
+      - { nombre: poliza, fuente: generado, valor: "300654321" }
+      - { nombre: poliza_nueva_fila, fuente: generado, valor: "300789012" }
     usado_por: [HU06-CP04]
     limpieza: Las filas se crean/eliminan DENTRO del caso creado por la prueba; nunca sobre casos ajenos.
 
@@ -179,8 +167,10 @@ datasets:
       - { nombre: movimiento, fuente: matriz, valor: Modificación }
       - { nombre: sucursal, fuente: qa, env: SDE_SUCURSAL }
       - { nombre: tipo_radicacion, fuente: matriz, valor: Masiva }
-      - { nombre: narrativa, fuente: generado, valor: "Prueba QA automatizada ${unico}: solicitud masiva de Cumplimiento para más de una póliza." }
-      - { nombre: narrativa_polizas, fuente: qa, env: SDE_CUMPL_MASIVO_NARRATIVA, sensible: true, opcional: true }
+      - { nombre: narrativa, fuente: generado, valor: "Ref. QA ${unico}." }
+      # Narrativa del Ciclo 1 aportada por Daniel (QA), FICTICIA (HU06 V1.1 + aclaración de Daniel, 2026-10-16): la extracción del Worker AI no exige
+      # pólizas existentes en SISE. Máx. 500 caracteres en total con la referencia de la corrida (regresión unitaria).
+      - { nombre: narrativa_polizas, fuente: generado, valor: "Se solicita realizar la modificación de las pólizas 100245678, 1109876543, 9023456781 y 12012345678. El cambio corresponde a la actualización de información registrada en cada una de las pólizas, de acuerdo con las condiciones definidas para la solicitud. Se requiere validar que la modificación sea aplicada correctamente a todas las pólizas relacionadas, manteniendo sin cambios la información que no haga parte del ajuste solicitado." }
     usado_por: [HU06-CP03]
     limpieza: CLEANUP_NOT_APPLICABLE.
 
@@ -193,8 +183,10 @@ datasets:
       - { nombre: movimiento, fuente: qa, env: SDE_CUMPL_MOVIMIENTO }
       - { nombre: sucursal, fuente: qa, env: SDE_SUCURSAL }
       - { nombre: tipo_radicacion, fuente: matriz, valor: Masiva }
-      - { nombre: narrativa, fuente: generado, valor: "Prueba QA automatizada ${unico}: solicitud masiva de Cumplimiento y RCE para más de una póliza." }
-      - { nombre: narrativa_polizas, fuente: qa, env: SDE_CUMPL_MASIVO_NARRATIVA, sensible: true, opcional: true }
+      - { nombre: narrativa, fuente: generado, valor: "Ref. QA ${unico}." }
+      # Narrativa del Ciclo 1 aportada por Daniel (QA), FICTICIA (HU06 V1.1 + aclaración de Daniel, 2026-10-16): la extracción del Worker AI no exige
+      # pólizas existentes en SISE. Máx. 500 caracteres en total con la referencia de la corrida (regresión unitaria).
+      - { nombre: narrativa_polizas, fuente: generado, valor: "Se solicita realizar la modificación de las pólizas 100245678, 1109876543, 9023456781 y 12012345678. El cambio corresponde a la actualización de información registrada en cada una de las pólizas, de acuerdo con las condiciones definidas para la solicitud. Se requiere validar que la modificación sea aplicada correctamente a todas las pólizas relacionadas, manteniendo sin cambios la información que no haga parte del ajuste solicitado." }
     nota: Las pólizas de las filas están en EST-FILA-CUMPL-CON-RCE.
     usado_por: [HU06-CP04]
     limpieza: CLEANUP_NOT_APPLICABLE.

@@ -233,7 +233,8 @@ test.describe('Capabilities de tabla + ejecutor sobre DOM sintético @unit', () 
     const fallos = r.pasos.filter((p) => p.estado !== 'PASS').map((p) => `#${p.indice} ${p.hacer}: ${p.estado} ${p.detalle}`);
     expect(fallos).toEqual([]);
     const celdas = await page.locator('#filas tr').evaluateAll((trs) => trs.map((tr) => [...tr.querySelectorAll('td')].slice(0, 3).map((td) => td.textContent)));
-    expect(celdas).toEqual([['Identificación de Tomador', 'NIT', '900123456'], ['Identificación de Tomador', 'CC', '222']]);
+    // NIT ficticio versionado (EST-FILA-GENERALES-PN, 2026-10-16), ya no tomado del .env.
+    expect(celdas).toEqual([['Identificación de Tomador', 'NIT', '900456789'], ['Identificación de Tomador', 'CC', '222']]);
     // Sin número de caso real el CP jamás es verde, aunque todos los pasos sintéticos pasen.
     expect(r.estado).toBe('FAIL');
     expect(r.motivo).toMatch(/número de caso/);

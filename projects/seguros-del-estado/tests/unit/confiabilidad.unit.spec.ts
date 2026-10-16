@@ -308,11 +308,11 @@ test.describe('H7 — pendientes reales para REAL_PASS @unit', () => {
   const man = cargarManifest();
   const esc = (id: string) => { const c = man.casos.find((x) => x.id === id)!; return c.escenario ? cargarEscenario(resolve(DIR_ESCENARIOS, c.escenario), reg) : undefined; };
 
-  test('HU06-CP01: P4, P12, P17 y P28 siguen pendientes; el máximo alcanzable es REAL_PASS_PARCIAL', () => {
+  test('HU06-CP01: P4, P12 y P28 siguen pendientes (P17 se juzga por la grilla visible desde el 16/10); el máximo alcanzable es REAL_PASS_PARCIAL', () => {
     const pend = pendientesParaRealPass(casoMatriz('HU06-CP01'), esc('HU06-CP01'));
     // P4 (2026-10-14): exige "etiquetas, ortografía y capitalización definidas"; capitalización, orden y la etiqueta del tipo de
     // solicitud no tienen fuente aprobada (expectativas pendientes de definición en data/expectativas-presentacion.yaml).
-    expect(pend.map((p) => p.n)).toEqual([4, 12, 17, 28]);
+    expect(pend.map((p) => p.n)).toEqual([4, 12, 28]);
     expect(maximoAlcanzable(casoMatriz('HU06-CP01'), esc('HU06-CP01'))).toBe('REAL_PASS_PARCIAL');
     // P28 sigue en la matriz y en el escenario oficial (no se eliminó para mejorar la métrica).
     expect(casoMatriz('HU06-CP01').pasos.some((p) => p.n === 28)).toBe(true);
@@ -333,6 +333,6 @@ test.describe('H7 — pendientes reales para REAL_PASS @unit', () => {
   test('la trazabilidad generada declara el máximo y los pendientes de cada CP (P28 incluido en HU06-CP01)', ({}, testInfo) => {
     const md = generarTrazabilidad({}, testInfo.outputPath('no-existe'), null);
     const seccion = md.slice(md.indexOf('## HU06-CP01 — '), md.indexOf('## ', md.indexOf('## HU06-CP01 — ') + 5));
-    expect(seccion).toContain('**Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P4 (mixto), P12 (mixto), P17 (mixto), P28 (mixto)');
+    expect(seccion).toContain('**Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P4 (mixto), P12 (mixto), P28 (mixto)');
   });
 });

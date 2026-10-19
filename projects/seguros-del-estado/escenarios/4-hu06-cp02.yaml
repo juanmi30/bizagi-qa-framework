@@ -62,7 +62,7 @@ pasos:
       - { campo: Descripción de la Solicitud (Masiva/Múltiple), valor: "${dato:INI-AUTOS-MASIVO.narrativa} ${dato:INI-AUTOS-MASIVO.narrativa_polizas}", tipo: area }
 
   - incluir: masivo-hasta-estructurar
-    # p_worker solo [9]: la invocación del Worker no es observable; P12 (filas estructuradas visibles) lo juzga tabla_verificar (2026-10-16).
+    # p_worker [9]: recorrido gráfico hacia la tarea AI worker (2026-10-19); P12 (filas estructuradas visibles) lo juzga tabla_verificar.
     con: { p_crear: [8], p_compuerta: [9], p_worker: [9], p_estructurar: [10] }
 
   - matriz: [11]
@@ -152,9 +152,20 @@ pasos:
     fila_resultante:
       Placa: "${dato:EST-FILA-AUTOS-PLACA.placa_nueva_fila}"
 
-  # P18 después de P21 y ANTES de las pestañas (orden de calibración, 2026-10-16; al abrir una pestaña la grilla deja de verse, caso 654): «impide REGISTRAR un valor de más de 6 caracteres». El campo admite teclear 7
-  # (caso 652); con 7 caracteres «Guardar» no debe cerrar el pop-up. Después se intenta registrar un valor válido: en el caso 653
-  # ese guardado posterior NO cerró el pop-up (comportamiento por confirmar con QA). Si vuelve a ocurrir, el recorrido se detiene con el pop-up abierto y P22 no se ejecuta.
+  - incluir: estructurar-secciones
+    con: { p_pestanas: [22], p_observaciones: [22] }
+
+  # Si tras restaurar un valor válido «Guardar» no cierra (P-21a, casos 653 y 669), el pop-up queda abierto al terminar: por eso va al final.
+  # P18 AL FINAL, tras reabrir la actividad (las pestañas de P22 ocultan la grilla; caso 654): «impide REGISTRAR un valor
+  # de más de 6 caracteres». QA mostró dos comportamientos (P-21e): el pop-up queda abierto (caso 653) o se cierra sin guardar
+  # el valor (caso 668, la fila conservó DEF456). Se exige que el valor NO quede registrado; si queda abierto, se restaura el
+  # valor válido en el mismo paso.
+  - matriz: [18]
+    hacer: abrir_caso
+    actor: analista
+    actividad: Estructurar información
+    maximo_minutos: 3
+
   - matriz: [18]
     hacer: tabla_abrir_fila
     formulario: detalle-polizas-autos
@@ -168,18 +179,7 @@ pasos:
 
   - matriz: [18]
     hacer: dialogo_confirmar
-    espera: permanece_abierto
-
-  - matriz: [18]
-    hacer: diligenciar
-    campos:
-      - { campo: Placa, valor: "${dato:EST-FILA-AUTOS-PLACA.placa}", tipo: texto }
-
-  - matriz: [18]
-    hacer: dialogo_confirmar
-    espera: cierra
-    fila_resultante:
-      Placa: "${dato:EST-FILA-AUTOS-PLACA.placa}"
-
-  - incluir: estructurar-secciones
-    con: { p_pestanas: [22], p_observaciones: [22] }
+    espera: no_registra
+    campo: Placa
+    valor_rechazado: "${dato:EST-FILA-AUTOS-PLACA.placa_larga}"
+    restaurar: "${dato:EST-FILA-AUTOS-PLACA.placa}"

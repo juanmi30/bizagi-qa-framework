@@ -37,7 +37,8 @@ test.describe('Portabilidad del repositorio @unit', () => {
     const md = generarTrazabilidad({}, sinLocal);
     expect(md).toContain('**NO disponible en este equipo**');
     expect(md).toMatch(/\| Ejecutada \| 3\/17 /); // HU06-CP01 (FAIL), HU06-CP02 (caso 639) y HU06-CP05 (PARCIAL), con evidencia versionada
-    expect(md).toMatch(/\| Aprobada \| 0\/17 /);
+    // 2026-10-19: HU06-CP02 REAL_PASS en el caso 670 (resultado técnico de la automatización, sujeto a revisión de QA).
+    expect(md).toMatch(/\| Aprobada \| 1\/17 /);
   });
 
   test('si un reporte está en ambas fuentes prevalece la copia local', ({}, testInfo) => {

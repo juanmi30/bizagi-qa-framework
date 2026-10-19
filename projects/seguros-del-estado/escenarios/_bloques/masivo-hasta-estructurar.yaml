@@ -21,10 +21,20 @@ pasos:
     no_llega_a: [Consultar Alertas Intermediario, Completar información de solicitud]
     maximo_minutos: 15
 
+  # Recorrido por la compuerta hacia la tarea AI worker «Estructurar información», con la «Consulta Gráfica» (botón «Ruta»), que QA
+  # confirmó como evidencia válida el 2026-10-19. La extracción se comprueba aparte, con los datos estructurados de la grilla.
   - matriz: "${param:p_worker}"
-    hacer: integracion
-    nombre: Worker AI
-    esperado: Procesa la narrativa y estructura las pólizas asociadas; sin acceso a su traza/log no se verifica el procesamiento, solo su resultado visible.
+    hacer: verificar_recorrido_grafico
+    actor: analista
+    recorrido: [Estructurar información]
+    recorrido_tipo: [aiworkertask]
+
+  # Bizagi asigna la actividad por carga; QA autorizó reasignarla al analista de pruebas (2026-10-19). Si ya es suya, no se toca.
+  - matriz: "${param:p_estructurar}"
+    hacer: asegurar_asignacion
+    actor: analista
+    actividad: Estructurar información
+    maximo_minutos: 5
 
   - matriz: "${param:p_estructurar}"
     hacer: abrir_caso

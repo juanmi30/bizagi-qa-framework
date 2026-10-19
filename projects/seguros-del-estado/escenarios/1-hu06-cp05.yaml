@@ -91,7 +91,11 @@ pasos:
     verificar:
       - expectativa: RUTA-CONSULTA-UNITARIA
 
+  # P9 (matriz): «no es enviado al Worker AI ni a Estructurar Información». En el modelo, «Estructurar información» es la tarea AI
+  # worker; la «Consulta Gráfica» (evidencia válida según QA, 2026-10-19) muestra si fue recorrida. Los nombres del camino regular
+  # siguen pendientes (P-18) y no se exigen aquí.
   - matriz: [9]
-    hacer: integracion
-    nombre: Worker AI
-    esperado: No es invocado para radicación Individual (la ausencia de invocación no es observable; la línea de tiempo del caso está vacía).
+    hacer: verificar_recorrido_grafico
+    actor: analista
+    no_recorrido: [Estructurar información]
+    no_recorrido_tipo: [aiworkertask]

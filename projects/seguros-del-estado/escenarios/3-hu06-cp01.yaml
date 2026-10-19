@@ -105,11 +105,20 @@ pasos:
     no_llega_a: [Consultar Alertas Intermediario, Completar información de solicitud]
     maximo_minutos: 15
 
-  # Solo [12]: la invocación del Worker no es observable; P17 (filas estructuradas visibles) lo juzga tabla_verificar (2026-10-16).
+  # P12: recorrido hacia la tarea AI worker «Estructurar información» con la «Consulta Gráfica» (evidencia válida según QA,
+  # 2026-10-19). P17 (filas estructuradas visibles) lo juzga tabla_verificar.
   - matriz: [12]
-    hacer: integracion
-    nombre: Worker AI
-    esperado: Procesa la narrativa y estructura las pólizas asociadas; sin acceso a su traza/log no se verifica el procesamiento, solo su resultado visible.
+    hacer: verificar_recorrido_grafico
+    actor: analista
+    recorrido: [Estructurar información]
+    recorrido_tipo: [aiworkertask]
+
+  # Asignación por carga: QA autorizó reasignar al analista de pruebas (2026-10-19). Si ya es suya, no se toca.
+  - matriz: [13]
+    hacer: asegurar_asignacion
+    actor: analista
+    actividad: Estructurar información
+    maximo_minutos: 5
 
   - matriz: [13]
     hacer: abrir_caso

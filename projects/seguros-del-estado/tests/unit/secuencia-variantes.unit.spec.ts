@@ -60,7 +60,7 @@ function violacionesPopup(esc: EscenarioSde): string[] {
   const malas: string[] = [];
   esc.pasos.forEach((p, i) => {
     if (!['tabla_abrir_fila', 'tabla_agregar'].includes(p.hacer)) return;
-    const j = esc.pasos.findIndex((q, k) => k > i && q.hacer === 'dialogo_confirmar' && q.espera === 'cierra');
+    const j = esc.pasos.findIndex((q, k) => k > i && q.hacer === 'dialogo_confirmar' && ['cierra', 'no_registra'].includes(q.espera as string)); // no_registra también termina con «Guardar» (D-54)
     if (j < 0) { malas.push(`${esc.archivo} paso #${i + 1}: abre un pop-up que el escenario nunca cierra con "Guardar"`); return; }
     const garantizados = new Set([...esc.datasets, ...(p.requiere ?? [])]);
     const usados = new Set(esc.pasos.slice(i, j + 1).flatMap((q) => [...referencias(q), ...(q.requiere ?? []).map((d) => `dato:${d}.`)])

@@ -87,11 +87,22 @@ pasos:
     campos:
       - { campo: Descripción de la Solicitud (Masiva/Múltiple), valor: "${dato:INI-GENERALES-MASIVO.narrativa} ${dato:INI-GENERALES-MASIVO.narrativa_polizas}", tipo: area }
 
+  # P9 (P-02; Juan Miguel, 2026-10-19: los documentos solo son obligatorios si la parametrización del formulario lo exige; se
+  # permiten documentos sintéticos autorizados). Adjunta SOLO con evidencia positiva de obligatoriedad (marca de la grilla). El tipo
+  # configurado se usa para elegir, no como evidencia. Calibrado el 2026-10-19 sin «Crear»: sin marca y sin tipos ofrecidos.
   - matriz: [9]
     hacer: adjuntar_en_grilla
     grilla: Documentos Anexos
+    secuencia: segun_obligatoriedad
     tipo_documental: "${dato:DOCS-OBLIGATORIOS.tipos_generales_masivo}"
     archivo: "${dato:DOC-SOPORTE.archivo}"
+
+  # Precondición de «Crear»: la combinación del CP (Generales + Póliza Nueva). Si no coincide, el recorrido se detiene sin crear.
+  - matriz: [9]
+    hacer: verificar
+    verificar:
+      - valor: { campo: Línea, igual: "${dato:INI-GENERALES-MASIVO.linea}" }
+      - valor: { campo: Tipo de Solicitud, igual: "${dato:INI-GENERALES-MASIVO.movimiento}" }
 
   - matriz: [10]
     hacer: pulsar
@@ -149,8 +160,8 @@ pasos:
       - solo_lectura: [Descripción Solicitud Masiva]
 
   # Estructura de la grilla: siempre. Filas del Worker AI con narrativa FICTICIA controlada (V1.1 y aclaración de Daniel, 2026-10-16:
-  # la extracción no exige pólizas reales). "comparar" registra valores introducidos frente a observados; no se exige un número
-  # exacto de filas porque el contrato de extracción (granularidad) no está confirmado. Antes: narrativa sin identificadores (casos 637–639).
+  # la extracción no exige pólizas reales). "comparar" es una ASERCIÓN (F1 de Work, PR #7): cada NIT de la narrativa debe aparecer y
+  # ningún valor ajeno a ella; no se exige un número exacto de filas (granularidad no confirmada). Antes: narrativa sin identificadores (casos 637–639).
   - matriz: [17]
     hacer: tabla_verificar
     tabla: Detalle Polizas Asociadas

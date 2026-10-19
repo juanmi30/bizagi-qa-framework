@@ -73,8 +73,8 @@ pasos:
       - visible: Información a Consultar
 
   # Estructura de la grilla: siempre. Filas del Worker AI con narrativa FICTICIA controlada (V1.1 y aclaración de Daniel, 2026-10-16:
-  # la extracción no exige pólizas reales). "comparar" registra valores introducidos frente a observados; no se exige un número
-  # exacto de filas porque el contrato de extracción (granularidad) no está confirmado. Antes: narrativa sin identificadores (casos 637–639).
+  # la extracción no exige pólizas reales). "comparar" es una ASERCIÓN (F1 de Work, PR #7): cada póliza y placa de la narrativa debe
+  # aparecer y ningún valor ajeno a ella; no se exige un número exacto de filas (granularidad no confirmada). Antes: narrativa sin identificadores (casos 637–639).
   - matriz: [12]
     hacer: tabla_verificar
     tabla: Detalle Polizas Asociadas
@@ -157,9 +157,9 @@ pasos:
 
   # Si tras restaurar un valor válido «Guardar» no cierra (P-21a, casos 653 y 669), el pop-up queda abierto al terminar: por eso va al final.
   # P18 AL FINAL, tras reabrir la actividad (las pestañas de P22 ocultan la grilla; caso 654): «impide REGISTRAR un valor
-  # de más de 6 caracteres». QA mostró dos comportamientos (P-21e): el pop-up queda abierto (caso 653) o se cierra sin guardar
-  # el valor (caso 668, la fila conservó DEF456). Se exige que el valor NO quede registrado; si queda abierto, se restaura el
-  # valor válido en el mismo paso.
+  # de más de 6 caracteres». QA mostró dos comportamientos (P-21e): el pop-up queda abierto (653, 669) o se cierra (668, 670).
+  # Ninguno prueba por sí solo que no se registró (F2 de Work, PR #7): decide una lectura INDEPENDIENTE de la fila (otra pestaña)
+  # hecha antes de restaurar. Si queda abierto, se restaura el valor válido; si «Guardar» no cierra, es un incidente aparte (P-21a).
   - matriz: [18]
     hacer: abrir_caso
     actor: analista

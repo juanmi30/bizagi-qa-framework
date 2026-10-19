@@ -2,21 +2,21 @@
   {
     "numeroCaso": "336",
     "fechaHora": "2026-10-08T14:36:00.000Z",
-    "escenario": "EXPLORACION calibración [analista] Individual Autos / criterio sintético «oculto» CLEANUP_NOT_APPLICABLE",
+    "escenario": "EXPLORACION calibración [analista] Individual «env:SDE_RUTA_LINEA» / criterio sintético «env:SDE_RUTA_CRITERIO_VALOR» CLEANUP_NOT_APPLICABLE",
     "modoCreacion": "portal",
     "estadoDepuracion": "Pendiente de depurar"
   },
   {
     "numeroCaso": "342",
     "fechaHora": "2026-10-08T15:04:00.000Z",
-    "escenario": "EXPLORACION calibración [analista] Masiva Autos / narrativa sintética CLEANUP_NOT_APPLICABLE",
+    "escenario": "EXPLORACION calibración [analista] Masiva «env:SDE_RUTA_LINEA» / narrativa sintética CLEANUP_NOT_APPLICABLE",
     "modoCreacion": "portal",
     "estadoDepuracion": "Pendiente de depurar"
   },
   {
     "numeroCaso": "343",
     "fechaHora": "2026-10-08T15:20:00.000Z",
-    "escenario": "EXPLORACION calibración [analista] Masiva Generales Modificación / narrativa sintética CLEANUP_NOT_APPLICABLE",
+    "escenario": "EXPLORACION calibración [analista] Masiva Generales «env:SDE_RUTA_MOVIMIENTO» / narrativa sintética CLEANUP_NOT_APPLICABLE",
     "modoCreacion": "portal",
     "estadoDepuracion": "Pendiente de depurar"
   },
@@ -51,7 +51,7 @@
   {
     "numeroCaso": "350",
     "fechaHora": "2026-10-08T16:10:00.000Z",
-    "escenario": "EXPLORACION reproducción BUG-03 [analista] Masiva Autos; queda inutilizable tras Adicionar→Cancelar CLEANUP_NOT_APPLICABLE",
+    "escenario": "EXPLORACION reproducción BUG-03 [analista] Masiva «env:SDE_RUTA_LINEA»; queda inutilizable tras Adicionar→Cancelar CLEANUP_NOT_APPLICABLE",
     "modoCreacion": "portal",
     "estadoDepuracion": "Pendiente de depurar"
   },
@@ -72,56 +72,56 @@
   {
     "numeroCaso": "426",
     "fechaHora": "2026-10-13T14:20:57.313Z",
-    "escenario": "CALIBRACION Estructurar (Masiva Generales/Modificación) [analista] 20261013-091948 CLEANUP_NOT_APPLICABLE — INUTILIZABLE desde 2026-10-13 09:27 (BUG-03: pop-up abandonado sin Guardar durante la calibración)",
+    "escenario": "CALIBRACION Estructurar (Masiva Generales/«env:SDE_RUTA_MOVIMIENTO») [analista] 20261013-091948 CLEANUP_NOT_APPLICABLE",
     "modoCreacion": "portal",
     "estadoDepuracion": "Pendiente de depurar"
   },
   {
     "numeroCaso": "427",
     "fechaHora": "2026-10-13T14:57:39.188Z",
-    "escenario": "HU06-CP05 [analista] 20261013-095717 CLEANUP_NOT_APPLICABLE — creado por una ejecución NO intencional de HU06-CP05 (09:57); mismo resultado que el 425",
+    "escenario": "HU06-CP05 [analista] 20261013-095717 CLEANUP_NOT_APPLICABLE",
     "modoCreacion": "portal",
     "estadoDepuracion": "Pendiente de depurar"
   },
   {
     "numeroCaso": "428",
     "fechaHora": "2026-10-13T16:46:09.242Z",
-    "escenario": "DIAGNOSTICO BUG-01 secuencia producto (no es resultado de CP) [analista] diag CLEANUP_NOT_APPLICABLE — diagnóstico BUG-01: primera radicación Masiva Póliza Nueva creada (secuencia del producto)",
+    "escenario": "DIAGNOSTICO BUG-01 secuencia producto (no es resultado de CP) [analista] diag CLEANUP_NOT_APPLICABLE",
     "modoCreacion": "portal",
     "estadoDepuracion": "Pendiente de depurar"
   },
   {
     "numeroCaso": "429",
     "fechaHora": "2026-10-13T16:53:00.113Z",
-    "escenario": "VARIANTE_HU06-CP01 [analista] 20261013-115152 CLEANUP_NOT_APPLICABLE — variante declarativa de HU06-CP01 con la secuencia del producto (no cuenta para el CP)",
+    "escenario": "VARIANTE_HU06-CP01 [analista] 20261013-115152 CLEANUP_NOT_APPLICABLE",
     "modoCreacion": "portal",
     "estadoDepuracion": "Pendiente de depurar"
   },
   {
     "numeroCaso": "430",
     "fechaHora": "2026-10-13T17:24:37.870Z",
-    "escenario": "DIAGNOSTICO BUG-01 secuencia producto (no es resultado de CP) [analista] diag CLEANUP_NOT_APPLICABLE — prueba de eliminación del tipo 3 (Crear ACEPTÓ un documento de tipo Otros, BUG-06). INUTILIZABLE desde la calibración de edición P18–P26 (BUG-03, UI-10)",
+    "escenario": "DIAGNOSTICO BUG-01 secuencia producto (no es resultado de CP) [analista] diag CLEANUP_NOT_APPLICABLE",
     "modoCreacion": "portal",
     "estadoDepuracion": "Pendiente de depurar"
   },
   {
     "numeroCaso": "431",
     "fechaHora": "2026-10-13T17:26:44.803Z",
-    "escenario": "DIAGNOSTICO BUG-01 secuencia producto (no es resultado de CP) [analista] diag CLEANUP_NOT_APPLICABLE — prueba de eliminación del tipo 3 (Crear ACEPTÓ un documento de tipo Sarlaft, BUG-06)",
+    "escenario": "DIAGNOSTICO BUG-01 secuencia producto (no es resultado de CP) [analista] diag CLEANUP_NOT_APPLICABLE",
     "modoCreacion": "portal",
     "estadoDepuracion": "Pendiente de depurar"
   },
   {
     "numeroCaso": "434",
     "fechaHora": "2026-10-14T04:12:48.913Z",
-    "escenario": "HU06-CP05 [analista] 20261013-231227 CLEANUP_NOT_APPLICABLE — creado por una ejecución NO intencional de HU06-CP05 (incidente del 2026-10-13, P-07); REAL_PASS_PARCIAL, sin pop-ups",
+    "escenario": "HU06-CP05 [analista] 20261013-231227 CLEANUP_NOT_APPLICABLE",
     "modoCreacion": "portal",
     "estadoDepuracion": "Pendiente de depurar"
   },
   {
     "numeroCaso": "571",
     "fechaHora": "2026-10-14T23:13:13.102Z",
-    "escenario": "CALIBRACION Estructurar (Masiva Generales/Modificación) [analista] 20261014-181230 CLEANUP_NOT_APPLICABLE — único caso autorizado por Juan Miguel en la fase de validaciones (2026-10-14): Masiva Generales/Modificación, texto sintético sin pólizas reales; Estructurar información verificada en solo lectura, sin abrir pop-ups",
+    "escenario": "CALIBRACION Estructurar (Masiva Generales/«env:SDE_RUTA_MOVIMIENTO») [analista] 20261014-181230 CLEANUP_NOT_APPLICABLE",
     "modoCreacion": "portal",
     "estadoDepuracion": "Pendiente de depurar"
   },
@@ -191,7 +191,7 @@
   {
     "numeroCaso": "655",
     "fechaHora": "2026-10-16T20:40:15.223Z",
-    "escenario": "CALIBRACION Estructurar (Masiva Generales/Modificación) [analista] 20261016-153924 CLEANUP_NOT_APPLICABLE",
+    "escenario": "CALIBRACION Estructurar (Masiva Generales/«env:SDE_RUTA_MOVIMIENTO») [analista] 20261016-153924 CLEANUP_NOT_APPLICABLE",
     "modoCreacion": "portal",
     "estadoDepuracion": "Pendiente de depurar"
   },
@@ -227,6 +227,13 @@
     "numeroCaso": "671",
     "fechaHora": "2026-10-19T15:30:45.830Z",
     "escenario": "HU06-CP05 [analista] 20261019-103023 CLEANUP_NOT_APPLICABLE",
+    "modoCreacion": "portal",
+    "estadoDepuracion": "Pendiente de depurar"
+  },
+  {
+    "numeroCaso": "673",
+    "fechaHora": "2026-10-19T19:32:41.479Z",
+    "escenario": "HU06-CP01 [analista] 20261019-143141 CLEANUP_NOT_APPLICABLE",
     "modoCreacion": "portal",
     "estadoDepuracion": "Pendiente de depurar"
   }

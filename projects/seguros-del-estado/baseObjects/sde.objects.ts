@@ -54,6 +54,9 @@ export const SdeObjects = {
   dialogoConsultaGrafica: '.ui-dialog:has(.ui-dialog-title:text-is("Consulta Gráfica"))',
   nodoGrafico: '.processviewer-hotspot',
   nodoRecorrido: '.processviewer-hotspot.processviewer-highlighted',
+  /** Respuestas que el portal pide para la Consulta Gráfica (GET, solo lectura). [VERIFICADO SDE 2026-10-19, sonda sobre 654, 670 y 671] */
+  rutaCasoGrafico: '/Rest/Cases/WorkitemsGuid',       // al abrir el diálogo: currentCase { idCase, radicationNumber }
+  rutaTransicionesCaso: '/Rest/Cases/TransitionLog',  // al pulsar «Ruta»: [{ guidTaskFrom, guidTaskTo, ... }] = ruta completa
   adminReasignar: '#btn-admin-case-reassign',
   adminUsuarioReasignar: '#userNameReassignInput',
   adminBuscarUsuario: '#btn-users-table-search',

@@ -76,7 +76,9 @@ export const CAPACIDADES: Record<string, { req: string[]; opt: string[] }> = {
   adjuntar: { req: ['campo', 'archivo'], opt: ['tipo_documental'] },
   // Grilla de documentos Bizagi (edición en línea): Adicionar → Tipo Documental → Guardar fila → subir archivo.
   // secuencia: matriz (por defecto: tipo → guardar → archivo) | guardar_primero (secuencia observada en el producto, exige
-  // "refrescar_con" { campo, valor_temporal, valor }: la grilla no se actualiza sola tras guardar la fila).
+  // "refrescar_con" { campo, valor_temporal, valor }: la grilla no se actualiza sola tras guardar la fila) |
+  // segun_obligatoriedad (P-02, 2026-10-19): adjunta SOLO si hay evidencia positiva de documentos obligatorios; tipo_documental
+  // admite varios tipos separados por "|"; si los tipos aparecen recién tras guardar la fila, se guarda y se reactiva la fila.
   adjuntar_en_grilla: { req: ['grilla', 'archivo'], opt: ['tipo_documental', 'secuencia', 'refrescar_con'] },
   verificar: { req: [], opt: [] },
   pulsar: { req: ['boton'], opt: ['capturar_numero_caso', 'esperar_hasta', 'maximo_minutos'] },
@@ -306,7 +308,7 @@ export function cargarEscenario(ruta: string, registro: Registro): EscenarioSde 
     if (['tabla_abrir_fila', 'tabla_agregar'].includes(p.hacer as string) && esTexto(p.formulario) && !cargarPopups()[p.formulario as string])
       problemas.push(`${donde}: el formulario "${p.formulario}" no existe en data/popups-calibrados.yaml`);
     if (p.hacer === 'adjuntar_en_grilla') {
-      if (p.secuencia != null && !['matriz', 'guardar_primero'].includes(p.secuencia as string)) problemas.push(`${donde}: "secuencia" debe ser "matriz" o "guardar_primero"`);
+      if (p.secuencia != null && !['matriz', 'guardar_primero', 'segun_obligatoriedad'].includes(p.secuencia as string)) problemas.push(`${donde}: "secuencia" debe ser "matriz", "guardar_primero" o "segun_obligatoriedad"`);
       const r = p.refrescar_con as Record<string, unknown> | undefined;
       const refrescoValido = !!r && esTexto(r.campo) && esTexto(r.valor_temporal) && esTexto(r.valor) && Object.keys(r).length === 3;
       if (p.secuencia === 'guardar_primero' && !refrescoValido) problemas.push(`${donde}: "guardar_primero" exige "refrescar_con" { campo, valor_temporal, valor }`);

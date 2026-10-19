@@ -1,0 +1,52 @@
+{
+  "fecha": "2026-10-19",
+  "fase": "Correcciones de la auditoría de Work del PR #7 (F1–F4) y desbloqueo de HU06-CP01 P9",
+  "head_auditado": "b728e8f4013c08f36f8e78958ec37984084478be",
+  "nota": "Sin datos personales ni valores del .env. Nombres de nodos y de tipos son del modelo de proceso. Las capturas quedan locales (muestran el usuario de la sesión).",
+  "sonda_recorrido_grafico": {
+    "modalidad": "solo lectura (casos propios 654, 670 y 671; sonda temporal borrada)",
+    "animacion": "temporizador: un elemento cada ~215 ms; sin animaciones jQuery ni CSS, sin elementos SVG animados y sin cambio del botón «Ruta» (#bz-gq-button-path) al terminar",
+    "senal_dom_de_fin": "ninguna",
+    "respuestas_del_portal": {
+      "al_abrir_el_dialogo": "GET /Rest/Cases/WorkitemsGuid?idCase=…&idWorkFlow=… → currentCase { idCase, radicationNumber }",
+      "al_pulsar_ruta": "GET /Rest/Cases/TransitionLog?idCase=…&idWorkFlow=… → [{ guidTransition, guidTaskFrom, tskNameFrom, guidTaskTo, tskNameTo }] (16 registros en 671)",
+      "modelo": "GET /Rest/Reports/Components/ProcessDefinition → flowElements { id, displayName, elementType } («Estructurar información» = AIWorkerTask)"
+    },
+    "correspondencia": "el atributo id de cada hotspot (.processviewer-hotspot) es el GUID del elemento del modelo y coincide con guidTaskFrom/guidTaskTo"
+  },
+  "validacion_recorrido_qa": {
+    "modalidad": "solo lectura, spec @recorrido-grafico",
+    "resultados": {
+      "654": { "tipo": "masivo", "estado": "PASS", "registro_servidor": 8, "dibujo": 8, "conclusion": "ruta positiva observada: «Estructurar información» (aiworkertask) recorrida" },
+      "656": { "tipo": "individual", "estado": "PASS", "registro_servidor": 9, "dibujo": 9, "conclusion": "negativa probada con evidencia completa: no recorre «Estructurar información» ni ningún aiworkertask" },
+      "670": { "tipo": "masivo", "estado": "PASS", "registro_servidor": 8, "dibujo": 8, "conclusion": "ruta positiva observada" },
+      "671": { "tipo": "individual", "estado": "PASS", "registro_servidor": 9, "dibujo": 9, "conclusion": "negativa probada con evidencia completa (CP05 P9)" }
+    },
+    "estado_de_los_casos": "los cuatro terminan en «Solicitud finalizada por vencimiento» (P-17)"
+  },
+  "calibracion_documentos_cp01": {
+    "modalidad": "funcional controlada en el formulario de INICIO (Generales / Póliza Nueva / Masiva); nunca se pulsó «Crear»: no se creó ningún caso",
+    "observado": [
+      "la grilla «Documentos Anexos» empieza vacía; columnas Tipo Documental, Documento y ¿Necesitas ayuda?",
+      "sin marca de obligatoriedad en la grilla ni en sus columnas",
+      "Adicionar crea una fila con el combo «Tipo Documental» y el aviso «Por favor guarde el registro antes de subir el archivo»",
+      "el combo solo ofrece «-------------» antes de guardar la fila",
+      "Guardar persiste la fila (cambia su clave) y muestra el control de carga («No hay archivos»); el combo sigue sin tipos",
+      "pulsar de nuevo la celda o el combo no ofrece tipos; diligenciar la narrativa tampoco",
+      "cambiar y restaurar la Sucursal repinta el formulario y VACÍA la grilla (la fila desaparece)",
+      "Escape cierra el formulario de inicio (la automatización no lo usa)"
+    ],
+    "conclusion": "no hay evidencia positiva de documentos obligatorios en el formulario; el tipo configurado (13/10) fue una inferencia de un rechazo de «Crear» anterior al despliegue y no se usa como evidencia"
+  },
+  "comparacion_con_head_auditado": {
+    "metodo": "worktree temporal en b728e8f (fuera del repositorio, eliminado después) con las regresiones nuevas copiadas; URL base sintética por variable de entorno; sin .env",
+    "resultado": "32 de 44 regresiones fallan en b728e8f; con las correcciones pasan 44 de 44",
+    "detectan_el_defecto_original": {
+      "F1": "faltan pólizas, falta una placa, ninguno de los esperados, valor inesperado y expectativa insuficiente: b728e8f devolvía PASS",
+      "F2": "valor persistido con el pop-up cerrado o abierto y persistencia no verificable: b728e8f devolvía PASS; P-21a quedaba como advertencia dentro del PASS",
+      "F3": "pausa larga y luego el nodo prohibido, dibujo incompleto, identidad del caso según el servidor y evidencia insuficiente: b728e8f devolvía PASS o no detectaba",
+      "F4": "dos work items tras reasignar y work item con otra identidad: b728e8f devolvía éxito"
+    },
+    "fallan_por_texto_o_api_nueva": "extracción exacta, repeticiones, J (detalle con el idWorkItem), evaluación pura y casos PASS de F2/F3 cuyo detalle cambió"
+  }
+}

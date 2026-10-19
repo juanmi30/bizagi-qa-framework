@@ -6,7 +6,7 @@ import { LoginObjects } from '../../../shared/baseObjects/login.objects';
 import { SdeObjects } from '../baseObjects/sde.objects';
 import { describir } from './datos';
 import type { CampoSde, PasoSde, Verificacion } from './escenario';
-import { EntornoError, type Capacidad, type ContextoEjecucion, type Verificador } from './ejecutor';
+import { EntornoError, type Capacidad, type ContextoEjecucion, type SalidaCapacidad, type Verificador } from './ejecutor';
 import { autorizarAperturaPopup, cargarPopups, type RegistroPopups } from './popups';
 import { cargarPresentacion } from './presentacion';
 import {
@@ -149,62 +149,181 @@ export async function buscarCaso(page: Page, numero: string, proceso?: string): 
 
 const describirEstados = (e: EstadoCaso) => e.actividades.join(' | ') || '—';
 
-/** Nodo del diagrama de la «Consulta Gráfica»: tipos BPMN de Bizagi (p. ej. aiworkertask, exclusivegateway) y su estado en la ruta. */
-export interface NodoGrafico { nombre: string; tipos: string[]; recorrido: boolean; actual: boolean }
+/**
+ * Extracción del Worker AI frente a la narrativa (corrección F1 de Work, PR #7). Por columna: cada valor esperado debe aparecer
+ * y ningún valor no vacío ajeno a la narrativa puede aparecer (sería un valor que el Worker no pudo extraer de ella). Las
+ * repeticiones se informan sin fallar: la granularidad de filas no está confirmada por QA. Sin valores esperados suficientes
+ * (columna sin valores o valor que no se pudo resolver) no concluye: NOT_AUTOMATED, nunca PASS.
+ */
+export function evaluarExtraccion(observados: Record<string, string[]>, esperados: Record<string, string[]>, filas: number): { estado: 'PASS' | 'FAIL' | 'NOT_AUTOMATED'; detalle: string } {
+  const columnas = Object.keys(esperados);
+  const insuficientes = columnas.filter((c) => esperados[c].length === 0 || esperados[c].some((v) => !normaliza(v)));
+  if (columnas.length === 0 || insuficientes.length) {
+    return { estado: 'NOT_AUTOMATED', detalle: `expectativa de extracción insuficiente${insuficientes.length ? ` (${insuficientes.join(', ')})` : ''}: no se puede concluir; queda pendiente` };
+  }
+  const partes: string[] = [];
+  let ok = true;
+  for (const col of columnas) {
+    const obs = (observados[col] ?? []).map(normaliza).filter(Boolean);
+    const esp = esperados[col].map(normaliza);
+    const faltan = esp.filter((v) => !obs.includes(v));
+    const inesperados = [...new Set(obs.filter((v) => !esp.includes(v)))];
+    const repetidos = [...new Set(obs.filter((v, i) => obs.indexOf(v) !== i))];
+    if (faltan.length || inesperados.length) ok = false;
+    partes.push(`${col}: ${esp.length - faltan.length} de ${esp.length} esperados extraídos` +
+      `${faltan.length ? `; FALTAN ${faltan.join(', ')}` : ''}${inesperados.length ? `; INESPERADOS ${inesperados.join(', ')}` : ''}` +
+      `${repetidos.length ? `; repetidos ${repetidos.join(', ')}` : ''}`);
+  }
+  return { estado: ok ? 'PASS' : 'FAIL', detalle: `${filas} fila(s) verificadas · ${partes.join(' | ')}` };
+}
+
+/**
+ * «Impide registrar» (corrección F2 de Work, PR #7). La visibilidad del pop-up NO es evidencia: decide lo que muestra una lectura
+ * INDEPENDIENTE de la fila (formulario renderizado de nuevo por el servidor en otra pestaña), hecha ANTES de restaurar.
+ * - persistido = valor rechazado → FAIL (se quede abierto o se cierre el pop-up);
+ * - persistido null (no se pudo leer) → NOT_AUTOMATED: no concluyente, nunca PASS;
+ * - si tras restaurar un valor válido «Guardar» no cierra (P-21a), es un INCIDENTE SEPARADO, no una advertencia del PASS.
+ */
+export interface ObservacionNoRegistra { rechazado: string; persistido: string | null; popupAbierto: boolean; recuperacion: 'no_requerida' | 'cerro' | 'no_cerro' }
+export function evaluarNoRegistra(o: ObservacionNoRegistra): { estado: 'PASS' | 'FAIL' | 'NOT_AUTOMATED'; detalle: string; incidente?: string } {
+  const rechazado = normaliza(o.rechazado);
+  const comportamiento = o.popupAbierto ? 'el pop-up quedó abierto tras «Guardar»' : 'el pop-up se cerró tras «Guardar»';
+  const incidente = o.recuperacion === 'no_cerro'
+    ? 'P-21a: tras restaurar un valor válido, «Guardar» no cerró el pop-up; queda abierto y el caso puede quedar inutilizable (BUG-03).'
+    : undefined;
+  const recuperacion = o.recuperacion === 'cerro' ? '; se restauró un valor válido y «Guardar» cerró el pop-up' : '';
+  if (o.persistido === null) {
+    return { estado: 'NOT_AUTOMATED', detalle: `${comportamiento}, pero la persistencia de «${rechazado}» NO se pudo verificar (lectura independiente fallida): no concluyente${recuperacion}.`, incidente };
+  }
+  const persistido = normaliza(o.persistido);
+  if (persistido === rechazado) return { estado: 'FAIL', detalle: `${comportamiento} y quedó registrado «${rechazado}» (lectura independiente de la fila): debía impedirse${recuperacion}.`, incidente };
+  return { estado: 'PASS', detalle: `No registra «${rechazado}»: ${comportamiento} y la lectura independiente de la fila muestra «${persistido || '(vacío)'}»${recuperacion}.`, incidente };
+}
+
+/**
+ * Lectura INDEPENDIENTE de una celda persistida: abre la actividad del caso en una pestaña NUEVA del mismo contexto (el servidor
+ * vuelve a renderizar el formulario), lee la celda y cierra la pestaña. No pulsa nada más que la actividad: no guarda ni toca la
+ * pestaña de trabajo (ni su pop-up). Ante cualquier error devuelve null (no verificable), nunca un valor supuesto.
+ */
+export async function leerCeldaPersistida(page: Page, numero: string, proceso: string | undefined, actividad: string, tabla: string, fila: number, columna: string): Promise<string | null> {
+  const otra = await page.context().newPage();
+  try {
+    const e = await buscarCaso(otra, numero, proceso);
+    const conActividad = e.filas.filter((f) => f.actividades.includes(normaliza(actividad)));
+    if (conActividad.length !== 1) return null;
+    await (await unicoVisible(conActividad[0].fila.locator(SdeObjects.actividadesEnFila).filter({ hasText: regexExacto(normaliza(actividad)) }), `la actividad "${actividad}"`)).click();
+    await unicoVisible(otra.locator(SdeObjects.areaBotones), `el formulario de "${actividad}"`, 60_000);
+    await esperarCarga(otra);
+    const celdas = await celdasDeFila(otra, tabla, fila);
+    const { columnas } = await contenedorTabla(otra, tabla);
+    const idx = columnas.indexOf(normaliza(columna));
+    return celdas && idx >= 0 ? (celdas[idx] ?? '') : null;
+  } catch {
+    return null;
+  } finally {
+    await otra.close().catch(() => undefined);
+  }
+}
+
+/**
+ * Nodo del diagrama de la «Consulta Gráfica»: `id` = GUID del elemento del modelo (atributo id del hotspot), tipos BPMN de Bizagi
+ * (p. ej. aiworkertask, exclusivegateway) y si el dibujo de la ruta ya lo marcó.
+ */
+export interface NodoGrafico { id?: string; nombre: string; tipos: string[]; recorrido: boolean; actual: boolean }
 export interface RecorridoEsperado { recorrido?: string[]; no_recorrido?: string[]; recorrido_tipo?: string[]; no_recorrido_tipo?: string[] }
+/**
+ * Lectura de la ruta de una instancia. Dos fuentes (sonda de solo lectura del 2026-10-19 sobre 654, 670 y 671):
+ * - `registro`: GUIDs de origen y destino de TODAS las transiciones del caso (GET /Rest/Cases/TransitionLog, que el portal pide al
+ *   pulsar «Ruta» y del que dibuja la animación). Es la ruta completa; null si no se capturó o no corresponde al caso.
+ * - `nodos[].recorrido`: lo que el dibujo marcó. La animación es un temporizador (~215 ms por elemento, sin animaciones CSS/jQuery ni
+ *   cambio del botón): el DOM no ofrece señal de fin. El dibujo terminó cuando todos los nodos del registro están marcados.
+ * `identidadServidor`: currentCase.radicationNumber de GET /Rest/Cases/WorkitemsGuid (al abrir el diálogo).
+ */
+export interface LecturaRecorrido { numero: string; encabezado: string; identidadServidor?: string | null; nodos: NodoGrafico[]; registro?: string[] | null }
 
 /**
  * Evalúa la ruta REAL de una instancia (confirmación de QA, 2026-10-19: la visualización gráfica es evidencia válida del recorrido).
- * Solo cuentan los nodos marcados como recorridos por el portal (botón «Ruta»), nunca su mera presencia en el modelo.
- * Sin ningún nodo recorrido no hay evidencia suficiente: el paso queda para revisión humana, nunca PASS.
+ * Corrección F3 de Work (PR #7): la estabilidad del dibujo NO prueba que terminó. Se distinguen:
+ * - ruta positiva observada (lo exigido aparece recorrido) → PASS de la parte positiva;
+ * - negativa probada con evidencia completa (registro del servidor + dibujo que lo refleja entero, sin contradicciones) → PASS;
+ * - todavía dibujando (el registro tiene nodos aún sin marcar) → NOT_AUTOMATED para lo que dependa de ellos;
+ * - finalización incierta (sin registro) → una aserción negativa NUNCA es PASS: revisión humana con la evidencia visual;
+ * - contradicción funcional (un nodo prohibido aparece recorrido en cualquier fuente, o uno exigido falta con evidencia completa) → FAIL.
+ * Fuentes que no coinciden (el dibujo marca algo que el registro no tiene) → NOT_AUTOMATED (revisión humana).
  */
-export function evaluarRecorrido(caso: { numero: string; encabezado: string; nodos: NodoGrafico[]; completo?: boolean }, e: RecorridoEsperado): { estado: 'PASS' | 'FAIL' | 'NOT_AUTOMATED'; detalle: string } {
+export function evaluarRecorrido(caso: LecturaRecorrido, e: RecorridoEsperado): { estado: 'PASS' | 'FAIL' | 'NOT_AUTOMATED'; detalle: string } {
   if (normaliza(caso.encabezado) !== normaliza(caso.numero)) {
     throw new Error(`La «Consulta Gráfica» abierta corresponde al caso ${caso.encabezado || '—'}, no al ${caso.numero}: no se evalúa.`);
   }
-  const recorridos = caso.nodos.filter((n) => n.recorrido);
+  if (caso.identidadServidor != null && normaliza(caso.identidadServidor) !== normaliza(caso.numero)) {
+    throw new Error(`La «Consulta Gráfica» abierta corresponde al caso ${caso.identidadServidor} según el servidor, no al ${caso.numero}: no se evalúa.`);
+  }
+  const registro = caso.registro ? new Set(caso.registro) : null;
+  const enRegistro = (n: NodoGrafico) => !!registro && !!n.id && registro.has(n.id);
+  const recorrido = (n: NodoGrafico) => n.recorrido || enRegistro(n);
+  const recorridos = caso.nodos.filter(recorrido);
   const nombres = (l: NodoGrafico[]) => l.map((n) => `${n.nombre || '(sin nombre)'} [${n.tipos.join(' ')}]${n.actual ? ' (actual)' : ''}`).join(' → ');
-  if (recorridos.length === 0) return { estado: 'NOT_AUTOMATED', detalle: `Caso ${caso.numero}: el diagrama no marca ningún nodo recorrido; evidencia insuficiente, queda para revisión humana.` };
-  if (caso.completo === false) return { estado: 'NOT_AUTOMATED', detalle: `Caso ${caso.numero}: la ruta marcada no terminó de dibujarse (${recorridos.length} nodos, nodo actual sin marcar); evidencia insuficiente, queda para revisión humana.` };
   const enModelo = (nombre: string) => caso.nodos.some((n) => normaliza(n.nombre) === normaliza(nombre));
   const pasa = (nombre: string) => recorridos.some((n) => normaliza(n.nombre) === normaliza(nombre));
   const faltaModelo = [...(e.recorrido ?? []), ...(e.no_recorrido ?? [])].filter((x) => !enModelo(x));
   if (faltaModelo.length) throw new Error(`[calibrar recorrido] el diagrama no contiene ${faltaModelo.map((x) => `"${x}"`).join(', ')} (nombres del modelo: ${[...new Set(caso.nodos.map((n) => n.nombre).filter(Boolean))].join(', ')}).`);
-  const problemas = [
-    ...(e.recorrido ?? []).filter((x) => !pasa(x)).map((x) => `"${x}" está en el modelo pero NO fue recorrido`),
+  const sinMarcar = registro ? caso.nodos.filter((n) => enRegistro(n) && !n.recorrido) : [];
+  const ajenos = registro ? caso.nodos.filter((n) => n.recorrido && n.id && !registro.has(n.id)) : [];
+  const evidenciaCompleta = !!registro && registro.size > 0 && sinMarcar.length === 0 && ajenos.length === 0;
+  const base = `Caso ${caso.numero}, recorrido (${registro ? `registro del servidor: ${registro.size} elementos; ` : 'SIN registro del servidor; '}dibujo: ${caso.nodos.filter((n) => n.recorrido).length} nodos marcados): ${nombres(recorridos) || '—'}`;
+  // Contradicción funcional: lo prohibido recorrido (en cualquier fuente) es FAIL; lo exigido ausente solo con evidencia completa.
+  const prohibidos = [
     ...(e.no_recorrido ?? []).filter((x) => pasa(x)).map((x) => `"${x}" fue recorrido (ruta NO esperada)`),
-    ...(e.recorrido_tipo ?? []).filter((t) => !recorridos.some((n) => n.tipos.includes(t))).map((t) => `ningún nodo de tipo ${t} fue recorrido`),
     ...(e.no_recorrido_tipo ?? []).filter((t) => recorridos.some((n) => n.tipos.includes(t))).map((t) => `se recorrió un nodo de tipo ${t} (ruta NO esperada)`),
   ];
-  const base = `Caso ${caso.numero}, recorrido marcado por el portal: ${nombres(recorridos)}`;
-  return problemas.length ? { estado: 'FAIL', detalle: `${base}. ${problemas.join('; ')}.` } : { estado: 'PASS', detalle: `${base}. Coincide con lo esperado.` };
+  const faltantes = [
+    ...(e.recorrido ?? []).filter((x) => !pasa(x)).map((x) => `"${x}" está en el modelo pero NO fue recorrido`),
+    ...(e.recorrido_tipo ?? []).filter((t) => !recorridos.some((n) => n.tipos.includes(t))).map((t) => `ningún nodo de tipo ${t} fue recorrido`),
+  ];
+  if (prohibidos.length || (faltantes.length && evidenciaCompleta)) return { estado: 'FAIL', detalle: `${base}. ${[...prohibidos, ...(evidenciaCompleta ? faltantes : [])].join('; ')}.` };
+  const negativas = (e.no_recorrido?.length ?? 0) + (e.no_recorrido_tipo?.length ?? 0) > 0;
+  if (!faltantes.length && !negativas) {
+    if (recorridos.length === 0) return { estado: 'NOT_AUTOMATED', detalle: `${base}. Sin nodos recorridos: evidencia insuficiente, queda para revisión humana.` };
+    return { estado: 'PASS', detalle: `${base}. Ruta positiva observada: coincide con lo esperado.` };
+  }
+  if (!registro || registro.size === 0) {
+    return { estado: 'NOT_AUTOMATED', detalle: `${base}. Finalización INCIERTA (sin registro de transiciones del servidor): ${negativas ? 'una aserción negativa no se da por probada' : faltantes.join('; ')}; revisión humana con la evidencia visual.` };
+  }
+  if (ajenos.length) return { estado: 'NOT_AUTOMATED', detalle: `${base}. Las fuentes no coinciden: el dibujo marca ${nombres(ajenos)} y el registro no; revisión humana.` };
+  if (sinMarcar.length) return { estado: 'NOT_AUTOMATED', detalle: `${base}. El dibujo NO terminó (faltan por marcar ${nombres(sinMarcar)}): ${faltantes.length ? faltantes.join('; ') : 'la negativa no se da por probada'}; revisión humana.` };
+  return { estado: 'PASS', detalle: `${base}. Evidencia completa (registro del servidor y dibujo coinciden): coincide con lo esperado.` };
 }
 
-/** Abre la «Consulta Gráfica» del caso desde su fila del buscador, pulsa «Ruta» y lee los nodos (solo lectura). */
-export async function leerRecorridoGrafico(page: Page, numero: string, proceso?: string): Promise<{ numero: string; encabezado: string; nodos: NodoGrafico[]; completo: boolean }> {
+/**
+ * Abre la «Consulta Gráfica» del caso desde su fila del buscador, pulsa «Ruta» y lee las dos fuentes (solo lectura): el registro
+ * de transiciones del servidor y el dibujo. Espera a que el dibujo marque todos los nodos del registro (señal de fin real); si no
+ * llega en el límite, devuelve lo leído y evaluarRecorrido lo trata como «todavía dibujando».
+ */
+export async function leerRecorridoGrafico(page: Page, numero: string, proceso?: string): Promise<LecturaRecorrido> {
   const e = await buscarCaso(page, numero, proceso);
+  const respuestaCaso = page.waitForResponse((r) => r.url().includes(SdeObjects.rutaCasoGrafico) && r.status() === 200, { timeout: 30_000 }).catch(() => null);
   await (await unicoVisible(e.fila.locator(SdeObjects.iconoConsultaGrafica), `el ícono «Ver Consulta Gráfica» del caso ${numero}`)).click();
   const dialogo = await unicoVisible(page.locator(SdeObjects.dialogoConsultaGrafica), 'el diálogo «Consulta Gráfica»', 30_000);
   await dialogo.locator(SdeObjects.nodoGrafico).first().waitFor({ state: 'attached', timeout: 30_000 });
+  const caso = await respuestaCaso;
+  const actual = caso ? ((await caso.json().catch(() => ({}))) as { currentCase?: { idCase?: number | string; radicationNumber?: string } }).currentCase : undefined;
+  const identidadServidor = actual?.radicationNumber != null ? String(actual.radicationNumber) : null;
   const ruta = dialogo.getByText('Ruta', { exact: true }).filter({ visible: true });
-  let completo = false;
+  let registro: string[] | null = null;
   if ((await ruta.count()) === 1) {
+    const respuestaRuta = page.waitForResponse((r) => r.url().includes(SdeObjects.rutaTransicionesCaso) && r.status() === 200, { timeout: 30_000 }).catch(() => null);
     await ruta.click();
-    // El portal marca la ruta de forma progresiva (animación; casos 654/656/668, 2026-10-19): leer antes de terminar haría
-    // pasar trivialmente una aserción negativa. Completa = el conteo de marcados es estable y el nodo actual ya está marcado.
-    let previo = -1;
-    let estables = 0;
-    for (const limite = Date.now() + 30_000; Date.now() < limite;) {
-      const estado = await dialogo.locator(SdeObjects.nodoGrafico).evaluateAll((els) => {
-        const cl = els.map((el) => el.getAttribute('class') ?? '');
-        const marcados = cl.filter((c) => c.includes('processviewer-highlighted')).length;
-        const actuales = cl.filter((c) => c.includes('processviewer-shape-selected'));
-        return { marcados, actualesMarcados: actuales.length > 0 && actuales.every((c) => c.includes('processviewer-highlighted')) };
-      });
-      estables = estado.marcados === previo ? estables + 1 : 0;
-      previo = estado.marcados;
-      if (estables >= 3 && estado.actualesMarcados) { completo = true; break; }
-      await page.waitForTimeout(1_000);
+    const tl = await respuestaRuta;
+    // Solo cuenta si el registro es del MISMO caso que identificó el servidor (idCase de la consulta = currentCase.idCase).
+    if (tl && actual?.idCase != null && new URL(tl.url()).searchParams.get('idCase') === String(actual.idCase)) {
+      const transiciones = (await tl.json().catch(() => null)) as { guidTaskFrom?: string; guidTaskTo?: string }[] | null;
+      if (Array.isArray(transiciones)) registro = [...new Set(transiciones.flatMap((t) => [t.guidTaskFrom, t.guidTaskTo]).filter((g): g is string => !!g))];
+    }
+    if (registro?.length) {
+      // Señal de fin: todos los hotspots del registro marcados. El límite solo acota la espera; no alcanzarlo NO es «completo».
+      await page.waitForFunction(({ sel, ids }) => [...document.querySelectorAll(sel)]
+        .filter((el) => ids.includes(el.id)).every((el) => el.classList.contains('processviewer-highlighted')),
+      { sel: SdeObjects.nodoGrafico, ids: registro }, { timeout: 60_000, polling: 250 }).catch(() => undefined);
     }
   }
   // Encabezado «Caso:» (encabezado de fila) seguido de su valor (caso 654, 2026-10-19).
@@ -212,13 +331,14 @@ export async function leerRecorridoGrafico(page: Page, numero: string, proceso?:
   const nodos = await dialogo.locator(SdeObjects.nodoGrafico).evaluateAll((els) => els.map((el) => {
     const clases = (el.getAttribute('class') ?? '').split(/\s+/).filter(Boolean);
     return {
+      id: el.id || undefined,
       nombre: (el.textContent ?? '').replace(/\s+/g, ' ').replace(/^\d+(?=\S)/, '').trim(),
       tipos: clases.filter((c) => !c.startsWith('processviewer-')),
       recorrido: clases.includes('processviewer-highlighted'),
       actual: clases.includes('processviewer-shape-selected'),
     };
   }));
-  return { numero, encabezado: encabezado.trim(), nodos, completo };
+  return { numero, encabezado: encabezado.trim(), identidadServidor, nodos, registro };
 }
 
 /** Bloqueo de asignación (permiso, disponibilidad o ambigüedad): BLOCKED con causa ASIGNACION, nunca defecto del producto. */
@@ -315,11 +435,17 @@ export async function asegurarAsignacionActividad(
   if ((await botonUsuario.count()) !== 1) throw new AsignacionError(`el usuario de pruebas no aparece una sola vez como asignable (${await botonUsuario.count()} coincidencias).`);
   await botonUsuario.click();
   await esperarCarga(page);
-  // Verificación: la reasignación solo cuenta si persiste al volver a consultar.
+  // Verificación (corrección F4 de Work, PR #7): la reasignación solo cuenta si, al volver a consultar, la actividad tiene UN
+  // SOLO work item, es el MISMO (idWorkItem original) y está asignado al usuario objetivo. Nunca se toma el primero que coincida.
   for (const fin = Date.now() + (o.maximoMs ?? 60_000); ;) {
     const d = await abrirAdministracionCasos(page);
-    const ahora = (await consultarTareasAdmin(page, d, numero)).find((t) => t.taskName === nombre);
-    if (ahora && usuarioDe(ahora.assignee) === meta) return { reasignada: true, detalle: `"${actividad}" del caso ${numero} ${previa}; se reasignó al usuario de pruebas y la consulta posterior lo confirma.` };
+    const coinciden = (await consultarTareasAdmin(page, d, numero)).filter((t) => t.taskName === nombre);
+    if (coinciden.length > 1) throw new AsignacionError(`tras reasignar, "${actividad}" tiene ${coinciden.length} work items en el caso ${numero}: ambigüedad, no se da por reasignada.`);
+    const ahora = coinciden[0];
+    if (ahora && ahora.idWorkItem !== tarea.idWorkItem) {
+      throw new AsignacionError(`tras reasignar, el work item de "${actividad}" (caso ${numero}) ya no es el original (${tarea.idWorkItem} → ${ahora.idWorkItem}): no se da por reasignada.`);
+    }
+    if (ahora && usuarioDe(ahora.assignee) === meta) return { reasignada: true, detalle: `"${actividad}" del caso ${numero} ${previa}; se reasignó al usuario de pruebas y la consulta posterior confirma el MISMO work item (${tarea.idWorkItem}), único y asignado al usuario de pruebas.` };
     if (Date.now() > fin) throw new Error(`La reasignación de "${actividad}" (caso ${numero}) no persistió: la consulta posterior no la muestra asignada al usuario de pruebas.`);
     await page.waitForTimeout(o.intervaloMs ?? 5_000);
   }
@@ -396,6 +522,112 @@ async function confirmarDialogo(dialogo: Locator): Promise<void> {
   const botones = dialogo.getByRole('button').filter({ visible: true }).filter({ hasText: new RegExp(`^\\s*(${nombres.join('|')})\\s*$`) });
   const b = await unicoVisible(botones, `el botón de confirmación del pop-up (${nombres.join('/')})`);
   await b.click();
+}
+
+/**
+ * Evidencia POSITIVA de documentos obligatorios en una grilla de documentos (P-02; Juan Miguel, 2026-10-19: solo son obligatorios
+ * si la parametrización del formulario lo exige): la marca de obligatoriedad que Bizagi pone a la grilla. El tipo configurado en
+ * DOCS-OBLIGATORIOS NO es evidencia (13/10 se infirió de un rechazo de «Crear» anterior al despliegue): solo se usa para ELEGIR el
+ * tipo si la obligatoriedad se evidencia. Si la parametrización exige un documento sin marcarlo, lo prueba el rechazo de
+ * CREATENEWCASE (sin caso creado). Filas precargadas (no observadas en QA) son calibración pendiente, nunca un PASS.
+ * Calibración del 2026-10-19 (formulario de inicio de Generales / Póliza Nueva / Masiva, sin «Crear»): grilla vacía, sin marca de
+ * obligatoriedad y el combo sin tipos antes y después de guardar la fila; al repintar con otra Sucursal, Bizagi vacía la grilla.
+ */
+export async function evidenciaDocumentosObligatorios(cont: Locator, filas: Locator): Promise<{ obligatorio: boolean; detalle: string }> {
+  const precargadas = await filas.count();
+  if (precargadas > 0) throw new CalibracionError('documentos', `la grilla trae ${precargadas} fila(s) precargada(s): comportamiento no calibrado (¿documentos obligatorios por parametrización?).`);
+  const marca = await cont.evaluate((el) => el.matches('.ui-bizagi-render-required, .control-required')
+    || !!el.querySelector('.ui-bizagi-render-required, .control-required')
+    || /\*\s*$/.test((el.querySelector('.bz-rn-grid-header-title, .ui-bizagi-label label')?.textContent ?? '').trim()));
+  return marca
+    ? { obligatorio: true, detalle: 'obligatoriedad evidenciada (la grilla está marcada como obligatoria)' }
+    : { obligatorio: false, detalle: 'sin evidencia de documentos obligatorios (la grilla no está marcada como obligatoria y no trae filas precargadas)' };
+}
+
+/** Opciones reales del combo «Tipo Documental» de una fila (sin el marcador «-----»). Cierra la lista sin Escape (Escape cierra el formulario de inicio). */
+async function opcionesTipoDocumental(page: Page, fila: Locator): Promise<string[]> {
+  const combo = fila.locator(SdeObjects.combo).filter({ visible: true });
+  if ((await combo.count()) !== 1) return [];
+  const lista = await combo.getAttribute('aria-controls');
+  if (!lista) throw new CalibracionError('combo', 'el combo de la fila no declara aria-controls.');
+  const opciones = page.locator(SdeObjects.opcionesDe(lista)).filter({ visible: true });
+  await combo.click();
+  await opciones.first().waitFor({ state: 'visible', timeout: 5_000 }).catch(() => undefined);
+  const textos = (await opciones.allInnerTexts()).map(normaliza);
+  const marcador = opciones.filter({ hasText: /^\s*-+\s*$/ });
+  if (await marcador.count()) await marcador.first().click();
+  else if (await opciones.count()) await combo.click();
+  return textos.filter((o) => o && !/^-+$/.test(o));
+}
+
+/**
+ * P9 de HU06-CP01 (P-02, 2026-10-19): adjunta SOLO si hay evidencia positiva de documentos obligatorios. Por cada tipo obligatorio:
+ * Adicionar → (si la lista ya ofrece tipos, se usa; si no, Guardar la fila, esperar el repintado y reactivar la fila pulsando su
+ * combo: que los tipos aparezcan recién tras guardar NO se declara defecto) → tipo → Guardar → archivo sintético → comprobación
+ * de que el documento quedó registrado (archivo visible en la fila y tipo conservado). Nunca pulsa Escape ni «Crear».
+ */
+async function adjuntarSegunObligatoriedad(page: Page, amb: Ambito, grilla: string, ruta: string, tiposTexto: string): Promise<SalidaCapacidad> {
+  const tipos = tiposTexto.split('|').map((t) => t.trim()).filter(Boolean);
+  const inicial = await contenedorTabla(amb, grilla);
+  const evidencia = await evidenciaDocumentosObligatorios(inicial.cont, inicial.filas);
+  if (!evidencia.obligatorio) return { detalle: `"${grilla}": ${evidencia.detalle}; se continúa SIN adjuntar (si la parametrización exigiera un documento, Bizagi rechazará «Crear» sin crear el caso).` };
+  const nombre = ruta.split(/[\\/]/).pop()!;
+  const hechos: string[] = [];
+  for (const tipo of tipos.length ? tipos : ['']) {
+    const { cont, filas } = await contenedorTabla(amb, grilla);
+    const antes = await filas.count();
+    await esperarCarga(page);
+    await (await unicoVisible(cont.locator(SdeObjects.accionGrilla('add')), `la acción Adicionar de "${grilla}"`)).click();
+    await esperarCarga(page);
+    let fila = filas.nth(antes);
+    await fila.waitFor({ state: 'visible', timeout: 30_000 });
+    let opciones = await opcionesTipoDocumental(page, fila);
+    let momento = 'al agregar la fila';
+    if (!opciones.length) {
+      const guardar = cont.locator(SdeObjects.accionGrilla('save')).filter({ visible: true });
+      if ((await guardar.count()) === 1) {
+        await guardar.click();
+        await esperarCarga(page);
+        // Al persistir, Bizagi cambia la clave de la fila y la repinta: se vuelve a localizar y se reactiva con su combo.
+        for (const limite = Date.now() + 20_000; !opciones.length && Date.now() < limite;) {
+          fila = (await contenedorTabla(amb, grilla)).filas.nth(antes);
+          await fila.waitFor({ state: 'visible', timeout: 10_000 });
+          opciones = await opcionesTipoDocumental(page, fila);
+          if (!opciones.length) await page.waitForTimeout(2_000);
+        }
+        momento = 'tras guardar la fila y reactivarla';
+      }
+    }
+    if (!opciones.length) {
+      throw new Error(`"${grilla}": el combo "Tipo Documental" no ofrece ninguna opción (solo "-------------") ni al agregar la fila ni tras guardarla y reactivarla; no es posible registrar ${tipo ? `el documento obligatorio "${tipo}"` : 'el documento obligatorio'} (${evidencia.detalle}).`);
+    }
+    if (!tipo) return { estado: 'BLOCKED', causa: 'DATO', detalle: `"${grilla}": ${evidencia.detalle}; tipos ofrecidos ${momento}: ${opciones.join(' | ')}. Falta indicar cuál es obligatorio (DOCS-OBLIGATORIOS).` };
+    if (!opciones.includes(normaliza(tipo))) return { estado: 'BLOCKED', causa: 'DATO', detalle: `"${grilla}": el tipo obligatorio "${tipo}" no está entre los ofrecidos ${momento} (${opciones.join(' | ')}).` };
+    const combo = fila.locator(SdeObjects.combo).filter({ visible: true });
+    await combo.click();
+    await (await unicoVisible(page.locator(SdeObjects.opcionesDe((await combo.getAttribute('aria-controls'))!)).filter({ visible: true }).filter({ hasText: regexExacto(normaliza(tipo)) }), `el tipo documental "${tipo}"`)).click();
+    await esperarCarga(page);
+    const guardar = cont.locator(SdeObjects.accionGrilla('save')).filter({ visible: true });
+    if ((await guardar.count()) === 1) { await guardar.click(); await esperarCarga(page); }
+    fila = (await contenedorTabla(amb, grilla)).filas.nth(antes);
+    const control = fila.locator(SdeObjects.cargaArchivoFila);
+    if ((await control.count()) !== 1) throw new Error(`"${grilla}": la fila del tipo "${tipo}" no ofrece carga de archivo (${await control.count()} controles).`);
+    await control.click();
+    const dlg = await unicoVisible(page.locator(SdeObjects.dialogo).filter({ has: page.locator('.ui-dialog-title').filter({ hasText: regexExacto(SdeObjects.dialogoCargaTitulo) }) }), `el diálogo "${SdeObjects.dialogoCargaTitulo}"`, 30_000);
+    await dlg.locator('input[type="file"]').setInputFiles(ruta);
+    await (await unicoVisible(dlg.getByRole('button', { name: SdeObjects.botonSubir, exact: true }), `"${SdeObjects.botonSubir}" del diálogo de carga`)).click();
+    await dlg.waitFor({ state: 'hidden', timeout: 60_000 }).catch(() => { throw new Error(`El diálogo "${SdeObjects.dialogoCargaTitulo}" no se cerró tras "${SdeObjects.botonSubir}".`); });
+    await esperarCarga(page);
+    // Registro efectivo: archivo visible en la fila y tipo documental conservado (relectura de la grilla).
+    fila = (await contenedorTabla(amb, grilla)).filas.nth(antes);
+    const archivoVisible = await fila.getByText(nombre, { exact: true }).first().waitFor({ state: 'visible', timeout: 30_000 }).then(() => true).catch(() => false);
+    const tipoActual = normaliza(await fila.locator(SdeObjects.combo).first().inputValue().catch(async () => (await fila.innerText()).toString()));
+    if (!archivoVisible || !tipoActual.includes(normaliza(tipo))) {
+      throw new Error(`"${grilla}": el documento "${tipo}" no quedó registrado (archivo visible: ${archivoVisible ? 'sí' : 'no'}; tipo en la fila: "${tipoActual || '—'}").`);
+    }
+    hechos.push(`"${tipo}" (tipos ofrecidos ${momento}) con "${nombre}" registrado`);
+  }
+  return { detalle: `"${grilla}": ${evidencia.detalle}; ${hechos.join('; ')}.` };
 }
 
 export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string, Capacidad>; verificar: Verificador } {
@@ -606,6 +838,7 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       const ruta = resolve(DIR_PROYECTO, 'resources', ctx.resolver(p.archivo as string));
       if (!existsSync(ruta)) throw new Error(`No existe el archivo a adjuntar: resources/${ctx.resolver(p.archivo as string)}`);
       const nombreGrilla = ctx.resolver(p.grilla as string);
+      if (p.secuencia === 'segun_obligatoriedad') return adjuntarSegunObligatoriedad(page, ambitoActual(ui), nombreGrilla, ruta, p.tipo_documental ? ctx.resolver(p.tipo_documental as string) : '');
       const productoPrimero = p.secuencia === 'guardar_primero';
       const grillaVisible = async () => contenedorTabla(ambitoActual(ui), nombreGrilla);
       let { cont, filas } = await grillaVisible();
@@ -800,25 +1033,23 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       const faltan = ((p.columnas as string[]) ?? []).filter((c) => !columnas.includes(normaliza(c)));
       const n = await filas.count();
       if (faltan.length) throw new Error(`"${p.tabla}": faltan columnas ${faltan.join(', ')} (vistas: ${columnas.filter(Boolean).join(', ')})`);
-      // "comparar" (HU06, extracción del Worker AI): valores introducidos en la narrativa frente a los observados por columna.
-      // Es OBSERVACIÓN, no aserción: el contrato de extracción (granularidad, número de filas) no está confirmado por QA.
-      const comparacion: string[] = [];
-      for (const [col, esperados] of Object.entries((p.comparar as Record<string, string[]>) ?? {})) {
+      // "comparar" (HU06, extracción del Worker AI): ASERCIÓN (corrección F1 de Work, PR #7). Cada valor de la narrativa debe
+      // aparecer en su columna y ningún valor no vacío ajeno a la narrativa puede aparecer. No se exige un número exacto de filas.
+      const esperados = Object.fromEntries(Object.entries((p.comparar as Record<string, string[]>) ?? {}).map(([c, v]) => [c, v.map((x) => ctx.resolver(x))]));
+      const observados: Record<string, string[]> = {};
+      for (const col of Object.keys(esperados)) {
         const idx = columnas.indexOf(normaliza(col));
         if (idx < 0) throw new Error(`"${p.tabla}": columna "${col}" inexistente para comparar (vistas: ${columnas.filter(Boolean).join(', ')})`);
-        const observados: string[] = [];
-        for (let k = 0; k < n; k++) observados.push(normaliza((await filas.nth(k).locator('td').allInnerTexts())[idx] ?? ''));
-        const valores = esperados.map((v) => normaliza(ctx.resolver(v)));
-        const encontrados = valores.filter((v) => observados.includes(v));
-        const extra = observados.filter((v) => v && !valores.includes(v));
-        comparacion.push(`${col}: ${encontrados.length} de ${valores.length} introducidos aparecen` +
-          `${valores.length > encontrados.length ? ` (faltan: ${valores.filter((v) => !encontrados.includes(v)).join(', ')})` : ''}` +
-          `${extra.length ? `; otros valores: ${[...new Set(extra)].join(', ')}` : ''}`);
+        observados[col] = [];
+        for (let k = 0; k < n; k++) observados[col].push((await filas.nth(k).locator('td').allInnerTexts())[idx] ?? '');
       }
+      const extraccion = Object.keys(esperados).length ? evaluarExtraccion(observados, esperados, n) : null;
       if (p.minimo_filas != null && n < (p.minimo_filas as number)) {
-        throw new Error(`"${p.tabla}": ${n} fila(s), mínimo ${p.minimo_filas}${comparacion.length ? ` | ${comparacion.join(' | ')}` : ''}`);
+        throw new Error(`"${p.tabla}": ${n} fila(s), mínimo ${p.minimo_filas}${extraccion ? ` | ${extraccion.detalle}` : ''}`);
       }
-      return { detalle: `"${p.tabla}": ${n} fila(s); columnas [${columnas.filter(Boolean).join(', ')}]${comparacion.length ? ` | ${comparacion.join(' | ')}` : ''}` };
+      if (extraccion?.estado === 'FAIL') throw new Error(`"${p.tabla}": extracción distinta de la narrativa (NO coincide): ${extraccion.detalle}`);
+      if (extraccion?.estado === 'NOT_AUTOMATED') return { estado: 'NOT_AUTOMATED', causa: 'NO_AUTOMATIZADO', detalle: `"${p.tabla}": ${n} fila(s) | ${extraccion.detalle}` };
+      return { detalle:`"${p.tabla}": ${n} fila(s); columnas [${columnas.filter(Boolean).join(', ')}]${extraccion ? ` | ${extraccion.detalle}` : ''}` };
     },
 
     tabla_abrir_fila: async (p, ctx) => {
@@ -860,35 +1091,31 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       await confirmarDialogo(dialogo);
       await esperarCarga(page);
       if (p.espera === 'no_registra') {
-        // «Impide registrar» (HU06-CP02 P18): QA mostró dos comportamientos válidos en cuanto al registro: el pop-up queda abierto
-        // (caso 653) o se cierra SIN guardar el valor (caso 668, la fila conserva el anterior). Se exige que el valor no quede
-        // registrado; si queda abierto, se restaura el valor válido y se cierra con «Guardar» en este mismo paso.
+        // «Impide registrar» (HU06-CP02 P18): QA mostró dos comportamientos: el pop-up queda abierto (casos 653 y 669) o se cierra
+        // (668 y 670). Ninguno prueba por sí solo que el valor no se registró (F2 de Work): decide una lectura independiente de la
+        // fila hecha ANTES de restaurar (evaluarNoRegistra). La grilla de esta pestaña no sirve: no se refresca al guardar (caso 651).
         const campo = ctx.resolver(p.campo as string);
-        const rechazado = normaliza(ctx.resolver(p.valor_rechazado as string));
+        const rechazado = ctx.resolver(p.valor_rechazado as string);
         const t = ui.tabla;
-        if (await dialogo.isVisible()) {
+        if (t?.fila == null) throw new Error('no_registra solo aplica a la edición de una fila existente.');
+        if (!ctx.numeroCaso || !ctx.actividades.length) throw new Error('no_registra requiere el caso y la actividad abiertos.');
+        const leer = () => leerCeldaPersistida(page, ctx.numeroCaso!, ctx.resolver('${config:SDE_PROCESO_RADICACION}'), ctx.actividades[ctx.actividades.length - 1], t.tabla, t.fila!, campo);
+        const popupAbierto = await dialogo.isVisible();
+        const persistido = await leer();
+        let recuperacion: ObservacionNoRegistra['recuperacion'] = 'no_requerida';
+        if (popupAbierto) {
+          // Recuperación SEPARADA de la validación: se restaura el valor válido y se cierra con «Guardar» (BUG-03: nunca sin guardar).
           await diligenciar(dialogo, campo, ctx.resolver(p.restaurar as string), 'texto');
           await confirmarDialogo(dialogo);
           await esperarCarga(page);
-          // Lo exigido por la matriz (no registrar) se cumplió. Que tras restaurar un valor válido «Guardar» no cierre (casos 653 y
-          // 669) es un comportamiento aparte, por confirmar (P-21a): se informa sin convertirlo en el resultado de este paso.
-          if (await dialogo.isVisible()) return { detalle: `No registra «${rechazado}»: el pop-up quedó abierto. ⚠ P-21a: tras restaurar un valor válido, «Guardar» no cerró el pop-up; queda abierto (el caso puede quedar inutilizable).` };
-          ui.dialogo = undefined; ctx.dialogoAbierto = false; ui.tabla = undefined;
-          return { detalle: `No registra «${rechazado}»: el pop-up quedó abierto; se restauró un valor válido y «Guardar» lo cerró.` };
+          recuperacion = (await dialogo.isVisible()) ? 'no_cerro' : 'cerro';
         }
-        ui.dialogo = undefined; ctx.dialogoAbierto = false; ui.tabla = undefined;
-        if (t?.fila == null) throw new Error('no_registra solo aplica a la edición de una fila existente.');
-        const { columnas, filas } = await contenedorTabla(page, t.tabla);
-        const idx = columnas.indexOf(normaliza(campo));
-        if (idx < 0) throw new Error(`"${t.tabla}": columna "${campo}" inexistente.`);
-        let valor = '';
-        for (const limite = Date.now() + 15_000; ;) {
-          valor = normaliza((await filas.nth(t.fila - 1).locator('td').allInnerTexts())[idx] ?? '');
-          if (valor === rechazado || Date.now() > limite) break;
-          await page.waitForTimeout(1_500);
-        }
-        if (valor === rechazado) throw new Error(`"${t.tabla}": se registró «${rechazado}» en la fila ${t.fila} (debía impedirse).`);
-        return { detalle: `No registra «${rechazado}»: el pop-up se cerró y la fila ${t.fila} conserva «${valor}».` };
+        if (recuperacion !== 'no_cerro') { ui.dialogo = undefined; ctx.dialogoAbierto = false; ui.tabla = undefined; }
+        const r = evaluarNoRegistra({ rechazado, persistido, popupAbierto, recuperacion });
+        const incidente = r.incidente ? { causa: 'PRODUCTO_POR_CONFIRMAR' as const, detalle: r.incidente } : undefined;
+        if (r.estado === 'FAIL') return { estado: 'FAIL', causa: 'PRODUCTO_POR_CONFIRMAR', detalle: `"${t.tabla}" fila ${t.fila}: ${r.detalle}`, incidente };
+        if (r.estado === 'NOT_AUTOMATED') return { estado: 'NOT_AUTOMATED', causa: 'NO_AUTOMATIZADO', detalle: r.detalle, incidente };
+        return { detalle: r.detalle, incidente };
       }
       if (p.espera === 'permanece_abierto') {
         if (!(await dialogo.isVisible())) throw new Error('El pop-up se cerró: se confirmó sin los campos obligatorios.');

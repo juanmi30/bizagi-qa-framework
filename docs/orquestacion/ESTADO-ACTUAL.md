@@ -1,14 +1,14 @@
 # Estado actual del framework
 
-**Actualizado: 2026-10-19, por Claude Code — fase «HU06: reasignación autorizada, evidencia gráfica y avances».** Repositorio: `juanmi30/bizagi-qa-framework` (privado). `main` = `129a45e` (merge del PR #6, autorizado por Juan Miguel sin auditoría de Work). Esta página describe la rama `feat/sde-hu06-asignacion-grafico` (PR en borrador, sin fusionar); checkpoint `docs/orquestacion/checkpoints/2026-10-19-hu06-asignacion-grafico.md`; **reporte para la reunión: `projects/seguros-del-estado/docs/REPORTE-AVANCES-HU06-2026-10-19.md`**. Fase anterior: `2026-10-16-hu06-e2e-post-despliegue.md`. Todo dato de esta página se verificó en esta sesión, salvo lo marcado como *no auditado*.
+**Actualizado: 2026-10-19 (tarde), por Claude Code — correcciones de la auditoría de Work del PR #7 (F1–F4) y desbloqueo de HU06-CP01 P9.** Repositorio: `juanmi30/bizagi-qa-framework` (privado). `main` = `129a45e` (merge del PR #6, autorizado por Juan Miguel sin auditoría de Work). Esta página describe la rama `feat/sde-hu06-asignacion-grafico` (PR en borrador, sin fusionar); checkpoints `docs/orquestacion/checkpoints/2026-10-19-hu06-asignacion-grafico.md` y `2026-10-19-correcciones-pr7.md`; **reporte para la reunión: `projects/seguros-del-estado/docs/REPORTE-AVANCES-HU06-2026-10-19.md`**. Fase anterior: `2026-10-16-hu06-e2e-post-despliegue.md`. Todo dato de esta página se verificó en esta sesión, salvo lo marcado como *no auditado*.
 
 ## Verificaciones técnicas de esta fecha (rama HU06 completa)
 
 | Control | Resultado |
 |---|---|
 | `npx tsc --noEmit` | Sin errores |
-| SDE `@unit` | **254/254**: 240 de `main` + 7 de recorrido gráfico + 7 de asignación (A–G) |
-| Ejecuciones reales del 19/10 (Claude Code, autorizadas) | HU06-CP02 ×3 (casos **668**, **669** y **670**: REAL_PASS en 670), HU06-CP05 (**671**), calibración del recorrido gráfico (654, 656 y 668) y de la asignación (668). Detalle en el checkpoint |
+| SDE `@unit` | **284/284**: 254 de la mañana + 30 regresiones de las correcciones (F1–F4 y CP01 P9). Contra el HEAD auditado `b728e8f`, 32 de las 44 regresiones de estos tres archivos fallan |
+| Ejecuciones reales del 19/10 (Claude Code, autorizadas) | Mañana: HU06-CP02 ×3 (casos **668**, **669** y **670**), HU06-CP05 (**671**), calibraciones (654, 656, 668). Tarde: sondas de solo lectura del recorrido (654, 656, 670, 671), calibración de documentos SIN «Crear» y **una** corrida controlada de HU06-CP01 (**caso 673**). Detalle en los checkpoints |
 | Demo, Colsubsidio, CONPRE | Sin cambios de código compartido (`shared/`, `tools/`) en esta rama; no se reejecutaron |
 | Escaneo de credenciales y PII | Diff y evidencia nueva revisados contra todos los valores del `.env` (ver checkpoint) |
 
@@ -21,13 +21,13 @@
 | Escenarios declarados (implementados) | **13/17** (HU03 CP09–CP12 sin escenario) | `docs/TRAZABILIDAD-17-CP.md` |
 | Implementación completa (todos los pasos solo UI) | **0/17**: todos tienen pasos mixtos, de integración o no automatizados | Métrica corregida (H2) |
 | CP con ejecución real (último reporte con sesión) | **3/17** (HU06-CP01, HU06-CP02 y HU06-CP05) | `test-results/seguros-del-estado/sde/` y `docs/evidencia/` |
-| CP aprobados | **1/17** (HU06-CP02, REAL_PASS técnico de la automatización en el caso 670; sujeto a revisión de QA) | `docs/TRAZABILIDAD-17-CP.md` |
+| CP aprobados | **1/17 según la métrica** (HU06-CP02, REAL_PASS histórico del caso 670). **No es definitivo:** con las verificaciones corregidas, P18 de 670 debe repetirse (D-56) | `docs/TRAZABILIDAD-17-CP.md` |
 
 | CP | Estado real | Última ejecución | Detalle |
 |---|---|---|---|
-| HU06-CP05 | **REAL_PASS_PARCIAL** (no es aprobación) | 2026-10-19, **caso 671** | **PASS:** P2–P5 y P7. **P9** comprobado en la Consulta Gráfica: el caso NO recorre «Estructurar información» ni la tarea AI worker (D-53). **P6** parcial (P-11); **P8 y P9** quedan NOT_AUTOMATED mientras no se confirme la ruta regular (P-18) |
-| HU06-CP01 (oficial) | FAIL (`PRODUCTO_POR_CONFIRMAR`; no es defecto de negocio confirmado) | 2026-10-16 15:44, sin caso | **PASS:** P2, P3 y P5–P8. **P4** parcial. **P9:** BUG-01 se reproduce después del despliegue y la secuencia alternativa del producto ya no funciona: no hay forma de crear el caso (P-02, crítico) |
-| HU06-CP02 | **REAL_PASS** (técnico, sujeto a revisión de QA) | 2026-10-19, **caso 670** | **22/22 pasos de la matriz PASS**: radicación por el intermediario, ruta gráfica a la tarea AI worker, asignación (ya era del analista), extracción 3/3 pólizas y 3/3 placas, edición (Placa, obligatoriedad, guardado, adición, persistencia), P18 (7 caracteres no se registran) y P22. Condiciones: Ramo Autos para Masivo (P-12), oráculo de P18 (D-54) y P-21 |
+| HU06-CP05 | **REAL_PASS_PARCIAL** (no es aprobación) | 2026-10-19, **caso 671** | **PASS:** P2–P5 y P7. **P9:** la Consulta Gráfica prueba con evidencia completa (registro del servidor y dibujo coinciden, D-57) que el caso NO recorre «Estructurar información» ni la tarea AI worker. **P6** parcial (P-11); **P8 y P9** quedan NOT_AUTOMATED mientras no se confirme la ruta regular (P-18) |
+| HU06-CP01 (oficial) | FAIL (`PRODUCTO_POR_CONFIRMAR` solo por presentación: OBS-04 «Polizas» en P1, no bloqueante) | 2026-10-19 14:31, **caso 673** | **P9 desbloqueado (D-59):** sin evidencia de documentos obligatorios se continuó sin adjuntar y Bizagi aceptó «Crear». **PASS:** P2, P3 y P5–P17 (ruta y recorrido gráfico a «Estructurar información», asignación, apertura, encabezado y extracción 3/3 NIT). **P4** parcial. **P18 BLOCKED** por la barrera UI-10 (pop-up de Póliza Nueva sin calibrar, no se abrió); P19–P29 sin correr |
+| HU06-CP02 | **REAL_PASS histórico, no definitivo** | 2026-10-19, **caso 670** | 22/22 con las verificaciones de la mañana. Con las corregidas: **21 se sostienen** con la evidencia existente (extracción 3/3 + 3/3 sin valores extra, D-55; ruta positiva, D-57; asignación «ya asignada»). **P18 por repetir** con la lectura independiente (D-56). P-12 resuelta para esta combinación (Autos, Ramo 48, Modificación, Masiva) |
 | HU06-CP03 / CP04 | BLOCKED (dato paramétrico) | Precreación 2026-10-15 (sin caso) | P2 PASS; P3 BLOCKED: falta saber qué Ramos de Cumplimiento tienen o no tienen la propiedad «Póliza RCE» (P-22). Narrativa del Ciclo 1 y pólizas de edición ya son ficticias |
 | HU06-CP01 (variante, no cuenta) | Diagnóstico | Caso 429 | Pasos observados en QA sumando todas las fuentes: P2–P11, P13–P16, P18, P22, P28 y P29 (**18 de 29**). P12 y P17 son integración no verificable (Worker AI); P19–P26 bloqueados por UI-10; P27 falla por BUG-04 |
 | HU03-CP01 a CP05 | BLOCKED (datos) | Precreación 2026-10-15 (CP01, CP02; solo lectura, sin crear casos) | CP01 y CP02: **P2–P5 PASS** con INT-013403 (ENV-03 verificado hoy: el intermediario sí ve el proceso); **P6 parcial** (etiquetas y ortografía PASS + expectativas sin fuente, NOT_AUTOMATED; en CP02 además un subpaso no automatizable); **P7 BLOCKED por dato**: placa multipóliza (CP01) y póliza Autos vigente (CP02). Completar información depende de SISE |

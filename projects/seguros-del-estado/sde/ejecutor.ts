@@ -63,7 +63,7 @@ export function causaDeExcepcion(e: unknown): CausaPaso {
   if (nombre === 'NoConcluyenteError' || /^NO CONCLUYENTE:/.test(m)) return 'AUTOMATIZACION';
   // La protección de solo lectura no quedó instalada: la inspección se detiene (falla técnica, nunca defecto de Bizagi).
   if (nombre === 'ProteccionNoInstaladaError' || /^PROTECCIÓN SOLO LECTURA NO INSTALADA:/.test(m)) return 'AUTOMATIZACION';
-  if (/Bizagi rechazó|no ofrece ninguna opción|ruta NO esperada|NO fue recorrido|no quedó marcada|el formulario muestra .* tras diligenciar|se confirmó sin los campos obligatorios|no muestra "/.test(m)) return 'PRODUCTO_POR_CONFIRMAR';
+  if (/Bizagi rechazó|no ofrece ninguna opción|ruta NO esperada|NO fue recorrido|no quedó marcada|el formulario muestra .* tras diligenciar|se confirmó sin los campos obligatorios|no muestra "|extracción distinta de la narrativa|quedó registrado «/.test(m)) return 'PRODUCTO_POR_CONFIRMAR';
   return 'NO_CLASIFICADO';
 }
 
@@ -80,7 +80,11 @@ export function causaDeBloqueo(bloqueo: string): CausaPaso {
   return 'NO_CLASIFICADO';
 }
 
-export interface SalidaCapacidad { estado?: EstadoPaso; detalle?: string; causa?: CausaPaso }
+/**
+ * `incidente`: hecho distinto del resultado del paso que no debe ocultarse como advertencia (p. ej. P-21a: tras restaurar un
+ * valor válido «Guardar» no cierra el pop-up). Se registra aparte, detiene el recorrido e impide que el CP quede REAL_PASS.
+ */
+export interface SalidaCapacidad { estado?: EstadoPaso; detalle?: string; causa?: CausaPaso; incidente?: { causa: CausaPaso; detalle: string } }
 export type Capacidad = (paso: PasoSde, ctx: ContextoEjecucion) => Promise<SalidaCapacidad | void>;
 export type Verificador = (v: Verificacion, ctx: ContextoEjecucion) => Promise<{ ok: boolean; detalle: string }>;
 
@@ -203,6 +207,16 @@ function clasificar(matriz: ResultadoPasoMatriz[], ctx: ContextoEjecucion, pasos
     return { estado: 'FAIL', atribucion: 'NO_ATRIBUIBLE_AL_PRODUCTO', motivo: 'Sin sesión real o sin número de caso real: no puede considerarse E2E.' };
   }
   const pendientes = matriz.filter((m) => !['PASS', 'UI_PASS'].includes(m.estado));
+  // Un incidente separado (p. ej. P-21a) no se oculta tras un CP verde: el CP queda parcial hasta que QA lo resuelva.
+  const incidentes = pasos.filter((p) => p.incidente);
+  if (pendientes.length === 0 && incidentes.length) {
+    return {
+      estado: 'REAL_PASS_PARCIAL',
+      atribucion: 'NO_APLICA',
+      motivo: `Sesión y caso reales y todos los pasos de la matriz verificados, pero hubo ${incidentes.length} incidente(s) separado(s) ` +
+        `que impiden darlo por aprobado: ${incidentes.map((p) => `${p.incidente!.causa}: ${p.incidente!.detalle}`).join('; ')}`,
+    };
+  }
   if (pendientes.length === 0) return { estado: 'REAL_PASS', atribucion: 'NO_APLICA', motivo: 'Todos los pasos de la matriz verificados en QA.' };
   return {
     estado: 'REAL_PASS_PARCIAL',
@@ -307,6 +321,11 @@ export async function ejecutarEscenario(esc: EscenarioSde, deps: Dependencias, c
       // Verificación no cumplida = comportamiento observado distinto al esperado (por confirmar, nunca "defecto" directo).
       r.causa = !ok ? 'PRODUCTO_POR_CONFIRMAR' : pendientes.length ? 'NO_AUTOMATIZADO' : (salida.causa ?? CAUSA_DE_ESTADO[r.estado]);
       r.detalle = notas.join(' | ');
+      if (salida.incidente) {
+        r.incidente = { causa: salida.incidente.causa, detalle: sanitizar(salida.incidente.detalle, ctx.secretos) };
+        incidente = true;
+        r.detalle += ` | ⚠ INCIDENTE SEPARADO (${salida.incidente.causa}; no forma parte del resultado del paso): ${salida.incidente.detalle}`;
+      }
     } catch (e) {
       const causa = causaDeExcepcion(e);
       const mensaje = (e as Error).message.split('\n').slice(0, 3).join(' ');
@@ -338,10 +357,10 @@ export async function ejecutarEscenario(esc: EscenarioSde, deps: Dependencias, c
     const sigue = !incidente && paso.hacer === 'verificar' && paso.no_bloqueante === true && r.estado === 'FAIL' && r.causa === 'PRODUCTO_POR_CONFIRMAR';
     if (sigue) r.detalle += ' | No bloqueante: el recorrido continúa (el CP queda FAIL).';
     // Un FAIL (o un dato o ambiente que faltaba a mitad de un paso) detiene: el estado de la UI ya no es confiable.
-    if (!sigue && (r.estado === 'FAIL' || r.estado === 'BLOCKED')) {
+    if (!sigue && (r.estado === 'FAIL' || r.estado === 'BLOCKED' || r.incidente)) {
       // Si lo que falló fue el intento de cerrar el pop-up con "Guardar", ya no hay nada más que hacer: se detiene
       // (caso 430, 2026-10-13: seguir intentando pasos con el pop-up abierto no lo salva).
-      const cierreFallido = paso.hacer === 'dialogo_confirmar' && paso.espera === 'cierra';
+      const cierreFallido = paso.hacer === 'dialogo_confirmar' && (paso.espera === 'cierra' || paso.espera === 'no_registra');
       if (ctx.dialogoAbierto && !cierreFallido) {
         detenerAlCerrar = true;
         r.detalle += ' | Pop-up abierto: se continúa SOLO hasta cerrarlo con "Guardar" (salir sin guardar destruye el caso, BUG-03).';

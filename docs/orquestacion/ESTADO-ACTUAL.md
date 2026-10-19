@@ -1,5 +1,7 @@
 # Estado actual del framework
 
+> **Actualización focalizada de Codex, 2026-10-19 — PR #7, A/B/C:** comparación vacía rechazada y expectativa dinámica insuficiente inconclusa; identidad gráfica vinculada a radicación, instancia y flujo, con contradicciones clasificadas como AUTOMATIZACION. **P18 de HU06-CP02 queda NOT_AUTOMATED por falta de identidad estable calibrada del registro (D-60); no basta repetirlo con una lectura por posición.** **TypeScript sin errores; 310/310 unitarias y 62/62 focalizadas aprobadas.** Sin nuevas ejecuciones QA ni casos. Los resultados reales e indicadores históricos de abajo no se recertifican. Validación técnica y límites: `checkpoints/2026-10-19-codex-pr7-abc.md`.
+
 **Actualizado: 2026-10-19 (tarde), por Claude Code — correcciones de la auditoría de Work del PR #7 (F1–F4) y desbloqueo de HU06-CP01 P9.** Repositorio: `juanmi30/bizagi-qa-framework` (privado). `main` = `129a45e` (merge del PR #6, autorizado por Juan Miguel sin auditoría de Work). Esta página describe la rama `feat/sde-hu06-asignacion-grafico` (PR en borrador, sin fusionar); checkpoints `docs/orquestacion/checkpoints/2026-10-19-hu06-asignacion-grafico.md` y `2026-10-19-correcciones-pr7.md`; **reporte para la reunión: `projects/seguros-del-estado/docs/REPORTE-AVANCES-HU06-2026-10-19.md`**. Fase anterior: `2026-10-16-hu06-e2e-post-despliegue.md`. Todo dato de esta página se verificó en esta sesión, salvo lo marcado como *no auditado*.
 
 ## Verificaciones técnicas de esta fecha (rama HU06 completa)

@@ -297,7 +297,7 @@ export function cargarEscenario(ruta: string, registro: Registro): EscenarioSde 
       problemas.push(`${donde}: "espera" debe ser "cierra" o "permanece_abierto"`);
     if (p.fila != null && p.fila !== 'ultima' && !(Number.isInteger(p.fila) && (p.fila as number) >= 1))
       problemas.push(`${donde}: "fila" debe ser un entero >= 1 o "ultima"`);
-    if (p.comparar != null && (typeof p.comparar !== 'object' || Array.isArray(p.comparar) || !Object.values(p.comparar as object).every((v) => Array.isArray(v) && v.length > 0 && v.every(esTexto))))
+    if ('comparar' in p && (!p.comparar || typeof p.comparar !== 'object' || Array.isArray(p.comparar) || Object.keys(p.comparar).length === 0 || !Object.entries(p.comparar).every(([c, v]) => esTexto(c) && Array.isArray(v) && v.length > 0 && v.every(esTexto))))
       problemas.push(`${donde}: "comparar" debe ser un mapa { columna: [valores introducidos] }`);
     for (const k of ['fila_resultante', 'fila_con']) {
       if (p[k] != null && (typeof p[k] !== 'object' || Array.isArray(p[k]) || Object.keys(p[k] as object).length === 0))

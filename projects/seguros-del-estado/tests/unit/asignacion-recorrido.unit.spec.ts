@@ -17,7 +17,7 @@ const MODELO = (masivo: boolean): NodoGrafico[] => [
 /** Registro de transiciones del servidor (TransitionLog) de la ruta: GUIDs de origen y destino; incluye elementos sin hotspot. */
 const REGISTRO = (masivo: boolean) => ['g-inicio', 'g-compuerta', masivo ? 'g-estructurar' : 'g-consultar', 'g-flujo-sin-hotspot'];
 const L = (numero: string, nodos: NodoGrafico[], registro: string[] | null, o: Partial<LecturaRecorrido> = {}): LecturaRecorrido =>
-  ({ numero, encabezado: numero, identidadServidor: numero, nodos, registro, ...o });
+  ({ numero, encabezado: numero, identidadServidor: numero, idCasoServidor: '100', idCasoConsulta: '100', idFlujoCaso: '10', idFlujoRegistro: '10', nodos, registro, ...o });
 const MASIVO = { recorrido: ['Estructurar información'], recorrido_tipo: ['aiworkertask'] };
 const INDIVIDUAL = { no_recorrido: ['Estructurar información'], no_recorrido_tipo: ['aiworkertask'] };
 

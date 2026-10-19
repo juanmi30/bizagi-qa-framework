@@ -26,6 +26,21 @@ test.describe('F1: tabla_verificar «comparar» es una aserción @unit', () => {
     await page.setContent(GRILLA(filas));
     return crearCapacidadesUi(uiDe(page)).capacidades.tabla_verificar(P([12], 'tabla_verificar', paso), crearContexto(reg, {}, 'u'));
   };
+  for (const comparar of [{}, null, undefined, { Placa: [] }, { Placa: ['   '] }, { Placa: null }, { ' ': ['ABC123'] }]) {
+    test(`A: comparación sin contenido ${JSON.stringify(comparar)} nunca PASS`, async ({ page }) => {
+      expect(await verificarCon(page, [['100245678', 'ABC123']], { ...COMPARAR, comparar })).toMatchObject({ estado: 'NOT_AUTOMATED' });
+    });
+  }
+  test('A: una expectativa resuelta a blanco queda inconclusa', async ({ page }) => {
+    await page.setContent(GRILLA([['100245678', 'ABC123']]));
+    const ctx = crearContexto(reg, {}, 'u');
+    ctx.resolver = () => '   ';
+    expect(await crearCapacidadesUi(uiDe(page)).capacidades.tabla_verificar(P([12], 'tabla_verificar', COMPARAR), ctx)).toMatchObject({ estado: 'NOT_AUTOMATED' });
+  });
+  test('A: tabla sin comparación conserva la verificación de estructura', async ({ page }) => {
+    const r = await verificarCon(page, [['100245678', 'ABC123']], { tabla: COMPARAR.tabla, columnas: ['Placa'], minimo_filas: 1 });
+    expect((r as { estado?: string }).estado).toBeUndefined();
+  });
   test('extracción exacta: PASS con el detalle de filas verificadas', async ({ page }) => {
     const r = await verificarCon(page, [[POLIZAS[0], PLACAS[0]], [POLIZAS[1], PLACAS[1]], [POLIZAS[2], PLACAS[2]]]);
     expect(r).toMatchObject({ detalle: expect.stringContaining('3 fila(s) verificadas') });
@@ -115,40 +130,33 @@ async function noRegistra(page: Page) {
 
 test.describe('F2: «no_registra» exige evidencia de que el valor no persistió @unit', () => {
   test.setTimeout(120_000);
-  test('valor inválido no persistido (pop-up abierto, se recupera): PASS', async ({ page, context }) => {
-    await portal(context, page, 'abierto_no_persiste');
-    const r = await noRegistra(page);
-    expect(r).toMatchObject({ detalle: expect.stringMatching(/No registra «MNP4567»: el pop-up quedó abierto .*muestra «DEF456»; se restauró/) });
-    expect((r as { estado?: string; incidente?: unknown }).estado).toBeUndefined();
-    expect((r as { incidente?: unknown }).incidente).toBeUndefined();
-  });
-  test('valor inválido persistido con el pop-up cerrado: FAIL (la grilla de la pestaña no se refresca y lo ocultaba)', async ({ page, context }) => {
-    const s = await portal(context, page, 'cerrado_persiste');
-    const r = await noRegistra(page);
-    expect(s.guardados).toEqual(['MNP4567']);
-    expect(r).toMatchObject({ estado: 'FAIL', causa: 'PRODUCTO_POR_CONFIRMAR', detalle: expect.stringContaining('quedó registrado «MNP4567»') });
-  });
-  test('pop-up abierto con el valor inválido persistido: FAIL (la visibilidad del pop-up no es evidencia)', async ({ page, context }) => {
-    await portal(context, page, 'abierto_persiste');
-    expect(await noRegistra(page)).toMatchObject({ estado: 'FAIL', detalle: expect.stringContaining('el pop-up quedó abierto tras «Guardar» y quedó registrado «MNP4567»') });
-  });
-  test('pop-up cerrado sin persistencia: PASS', async ({ page, context }) => {
-    await portal(context, page, 'cerrado_no_persiste');
-    const r = await noRegistra(page);
-    expect(r).toMatchObject({ detalle: expect.stringContaining('el pop-up se cerró tras «Guardar» y la lectura independiente de la fila muestra «DEF456»') });
-    expect((r as { estado?: string }).estado).toBeUndefined();
-  });
-  test('persistencia no verificable: NOT_AUTOMATED (no concluyente), nunca PASS', async ({ page, context }) => {
-    await portal(context, page, 'sin_lectura');
-    expect(await noRegistra(page)).toMatchObject({ estado: 'NOT_AUTOMATED', causa: 'NO_AUTOMATIZADO', detalle: expect.stringContaining('NO se pudo verificar') });
-  });
-  test('falla de recuperación (P-21a): incidente SEPARADO, no una advertencia del PASS', async ({ page, context }) => {
-    await portal(context, page, 'no_cierra_tras_restaurar');
-    const r = await noRegistra(page) as { estado?: string; detalle: string; incidente?: { causa: string; detalle: string } };
-    expect(r.estado).toBeUndefined(); // lo exigido (no registrar) se cumplió y se verificó
-    expect(r.detalle).not.toMatch(/P-21a/);
-    expect(r.incidente).toMatchObject({ causa: 'PRODUCTO_POR_CONFIRMAR', detalle: expect.stringContaining('P-21a') });
-  });
+  // B: estos portales no acreditan identidad de registro. Su antigua aprobación por posición era el defecto.
+  for (const modo of ['abierto_no_persiste', 'abierto_persiste', 'cerrado_no_persiste', 'cerrado_persiste', 'sin_lectura', 'no_cierra_tras_restaurar'] as Modo[]) {
+    test(`B: ${modo}: inconcluso sin identidad, recuperación separada`, async ({ page, context }) => {
+      const servidor = await portal(context, page, modo);
+      const r = await noRegistra(page);
+      expect(r).toMatchObject({ estado: 'NOT_AUTOMATED', causa: 'AUTOMATIZACION', detalle: expect.stringContaining('sin identidad fiable') });
+      if (modo === 'cerrado_persiste') expect(servidor.guardados).toEqual(['MNP4567']);
+      if (modo === 'no_cierra_tras_restaurar') expect(r).toMatchObject({ incidente: { causa: 'PRODUCTO_POR_CONFIRMAR', detalle: expect.stringContaining('P-21a') } });
+      else expect((r as { incidente?: unknown }).incidente).toBeUndefined();
+    });
+  }
+  for (const orden of ['objetivo-primero', 'objetivo-segundo']) {
+    test(`B: dos filas ${orden}, inválida persistida y otra válida: nunca PASS`, async ({ page, context }) => {
+      const servidor = await portal(context, page, 'cerrado_persiste');
+      // IDs puramente sintéticos: NO son evidencia del DOM ni del modelo real de Bizagi.
+      // Antes de guardar, el objetivo es la primera de DOS filas. El servidor puede devolverlo en otra posición.
+      await page.locator('.ui-bizagi-grid-body').evaluate((el) => {
+        el.innerHTML = '<tr data-bizagi-component="cells" data-key="sint-objetivo"><td>DEF456</td></tr><tr data-bizagi-component="cells" data-key="sint-otra"><td>ABC123</td></tr>';
+      });
+      const filas = orden === 'objetivo-primero' ? [['sint-objetivo', 'MNP4567'], ['sint-otra', 'ABC123']] : [['sint-otra', 'ABC123'], ['sint-objetivo', 'MNP4567']];
+      const grilla = `<div class="bzg-form-grid"><div class="bz-rn-grid-header-title">Detalle Polizas Asociadas</div><table><thead><tr><th><label>Placa</label></th></tr></thead><tbody class="ui-bizagi-grid-body">${filas.map(([id, placa]) => `<tr data-bizagi-component="cells" data-key="${id}"><td>${placa}</td></tr>`).join('')}</tbody></table></div>`;
+      await context.route('**/estado', (r) => r.fulfill({ contentType: 'application/json', body: JSON.stringify({ grilla }) }));
+      const r = await noRegistra(page);
+      expect(servidor.guardados).toEqual(['MNP4567']);
+      expect(r).toMatchObject({ estado: 'NOT_AUTOMATED', causa: 'AUTOMATIZACION' });
+    });
+  }
   test('evaluación pura: validación y recuperación separadas', () => {
     expect(evaluarNoRegistra({ rechazado: 'MNP4567', persistido: 'MNP4567', popupAbierto: false, recuperacion: 'no_requerida' }).estado).toBe('FAIL');
     expect(evaluarNoRegistra({ rechazado: 'MNP4567', persistido: null, popupAbierto: true, recuperacion: 'cerro' }).estado).toBe('NOT_AUTOMATED');

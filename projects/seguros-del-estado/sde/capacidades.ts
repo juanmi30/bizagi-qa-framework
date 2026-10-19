@@ -193,7 +193,7 @@ export function evaluarNoRegistra(o: ObservacionNoRegistra): { estado: 'PASS' | 
     : undefined;
   const recuperacion = o.recuperacion === 'cerro' ? '; se restauró un valor válido y «Guardar» cerró el pop-up' : '';
   if (o.persistido === null) {
-    return { estado: 'NOT_AUTOMATED', detalle: `${comportamiento}, pero la persistencia de «${rechazado}» NO se pudo verificar (lectura independiente fallida): no concluyente${recuperacion}.`, incidente };
+    return { estado: 'NOT_AUTOMATED', detalle: `${comportamiento}, pero la persistencia de «${rechazado}» NO se pudo verificar (lectura independiente sin identidad fiable del registro; calibración pendiente): no concluyente${recuperacion}.`, incidente };
   }
   const persistido = normaliza(o.persistido);
   if (persistido === rechazado) return { estado: 'FAIL', detalle: `${comportamiento} y quedó registrado «${rechazado}» (lectura independiente de la fila): debía impedirse${recuperacion}.`, incidente };
@@ -201,28 +201,14 @@ export function evaluarNoRegistra(o: ObservacionNoRegistra): { estado: 'PASS' | 
 }
 
 /**
- * Lectura INDEPENDIENTE de una celda persistida: abre la actividad del caso en una pestaña NUEVA del mismo contexto (el servidor
- * vuelve a renderizar el formulario), lee la celda y cierra la pestaña. No pulsa nada más que la actividad: no guarda ni toca la
- * pestaña de trabajo (ni su pop-up). Ante cualquier error devuelve null (no verificable), nunca un valor supuesto.
+ * Barrera B (PR #7): NO hay una identidad estable de las filas de pólizas acreditada en la evidencia conservada.
+ * La posición, el contenido y un data-key sintético no identifican el registro. Hasta calibrar la vinculación
+ * radicación/instancia/registro ANTES de editar y reencontrarla de forma única en una lectura nueva del servidor,
+ * esta lectura no es verificable. No se abre otra pestaña para leer una fila por posición.
+ * Se conserva la firma para los consumidores; fila solo describe la selección original, nunca es identidad.
  */
-export async function leerCeldaPersistida(page: Page, numero: string, proceso: string | undefined, actividad: string, tabla: string, fila: number, columna: string): Promise<string | null> {
-  const otra = await page.context().newPage();
-  try {
-    const e = await buscarCaso(otra, numero, proceso);
-    const conActividad = e.filas.filter((f) => f.actividades.includes(normaliza(actividad)));
-    if (conActividad.length !== 1) return null;
-    await (await unicoVisible(conActividad[0].fila.locator(SdeObjects.actividadesEnFila).filter({ hasText: regexExacto(normaliza(actividad)) }), `la actividad "${actividad}"`)).click();
-    await unicoVisible(otra.locator(SdeObjects.areaBotones), `el formulario de "${actividad}"`, 60_000);
-    await esperarCarga(otra);
-    const celdas = await celdasDeFila(otra, tabla, fila);
-    const { columnas } = await contenedorTabla(otra, tabla);
-    const idx = columnas.indexOf(normaliza(columna));
-    return celdas && idx >= 0 ? (celdas[idx] ?? '') : null;
-  } catch {
-    return null;
-  } finally {
-    await otra.close().catch(() => undefined);
-  }
+export async function leerCeldaPersistida(_page: Page, _numero: string, _proceso: string | undefined, _actividad: string, _tabla: string, _fila: number, _columna: string): Promise<string | null> {
+  return null;
 }
 
 /**
@@ -239,7 +225,11 @@ export interface RecorridoEsperado { recorrido?: string[]; no_recorrido?: string
  *   cambio del botón): el DOM no ofrece señal de fin. El dibujo terminó cuando todos los nodos del registro están marcados.
  * `identidadServidor`: currentCase.radicationNumber de GET /Rest/Cases/WorkitemsGuid (al abrir el diálogo).
  */
-export interface LecturaRecorrido { numero: string; encabezado: string; identidadServidor?: string | null; nodos: NodoGrafico[]; registro?: string[] | null }
+export interface LecturaRecorrido {
+  numero: string; encabezado: string; identidadServidor?: string | null; nodos: NodoGrafico[]; registro?: string[] | null;
+  idCasoServidor?: string | null; idCasoConsulta?: string | null;
+  idFlujoCaso?: string | null; idFlujoRegistro?: string | null;
+}
 
 /**
  * Evalúa la ruta REAL de una instancia (confirmación de QA, 2026-10-19: la visualización gráfica es evidencia válida del recorrido).
@@ -253,10 +243,19 @@ export interface LecturaRecorrido { numero: string; encabezado: string; identida
  */
 export function evaluarRecorrido(caso: LecturaRecorrido, e: RecorridoEsperado): { estado: 'PASS' | 'FAIL' | 'NOT_AUTOMATED'; detalle: string } {
   if (normaliza(caso.encabezado) !== normaliza(caso.numero)) {
-    throw new Error(`La «Consulta Gráfica» abierta corresponde al caso ${caso.encabezado || '—'}, no al ${caso.numero}: no se evalúa.`);
+    throw new NoConcluyenteError(`La «Consulta Gráfica» abierta corresponde al caso ${caso.encabezado || '—'}, no al ${caso.numero}: no se evalúa.`);
   }
   if (caso.identidadServidor != null && normaliza(caso.identidadServidor) !== normaliza(caso.numero)) {
-    throw new Error(`La «Consulta Gráfica» abierta corresponde al caso ${caso.identidadServidor} según el servidor, no al ${caso.numero}: no se evalúa.`);
+    throw new NoConcluyenteError(`La «Consulta Gráfica» abierta corresponde al caso ${caso.identidadServidor} según el servidor, no al ${caso.numero}: no se evalúa.`);
+  }
+  const identidadCompleta = [caso.identidadServidor, caso.idCasoServidor, caso.idCasoConsulta, caso.idFlujoCaso, caso.idFlujoRegistro]
+    .every((v) => typeof v === 'string' && v.trim().length > 0);
+  if ((caso.idCasoServidor && caso.idCasoConsulta && caso.idCasoServidor !== caso.idCasoConsulta) ||
+      (caso.idFlujoCaso && caso.idFlujoRegistro && caso.idFlujoCaso !== caso.idFlujoRegistro)) {
+    throw new NoConcluyenteError('Identidad contradictoria entre la instancia de la Consulta Gráfica y el registro de transiciones.');
+  }
+  if (((e.no_recorrido?.length ?? 0) + (e.no_recorrido_tipo?.length ?? 0) > 0) && !identidadCompleta) {
+    return { estado: 'NOT_AUTOMATED', detalle: 'Identidad incompleta: no se acredita radicación, instancia y registro de transiciones; la negativa no se da por probada.' };
   }
   const registro = caso.registro ? new Set(caso.registro) : null;
   const enRegistro = (n: NodoGrafico) => !!registro && !!n.id && registro.has(n.id);
@@ -308,16 +307,29 @@ export async function leerRecorridoGrafico(page: Page, numero: string, proceso?:
   const caso = await respuestaCaso;
   const actual = caso ? ((await caso.json().catch(() => ({}))) as { currentCase?: { idCase?: number | string; radicationNumber?: string } }).currentCase : undefined;
   const identidadServidor = actual?.radicationNumber != null ? String(actual.radicationNumber) : null;
+  const idCasoServidor = actual?.idCase != null ? String(actual.idCase) : null;
+  const consultaCaso = caso ? new URL(caso.url()).searchParams : null;
+  const idFlujoCaso = consultaCaso?.get('idWorkFlow') ?? null;
+  if (idCasoServidor && consultaCaso?.get('idCase') !== idCasoServidor) {
+    throw new NoConcluyenteError('La respuesta de identidad no corresponde a la instancia solicitada por la Consulta Gráfica.');
+  }
+  let idCasoConsulta: string | null = null;
+  let idFlujoRegistro: string | null = null;
   const ruta = dialogo.getByText('Ruta', { exact: true }).filter({ visible: true });
   let registro: string[] | null = null;
   if ((await ruta.count()) === 1) {
     const respuestaRuta = page.waitForResponse((r) => r.url().includes(SdeObjects.rutaTransicionesCaso) && r.status() === 200, { timeout: 30_000 }).catch(() => null);
     await ruta.click();
     const tl = await respuestaRuta;
+    idCasoConsulta = tl ? new URL(tl.url()).searchParams.get('idCase') : null;
+    idFlujoRegistro = tl ? new URL(tl.url()).searchParams.get('idWorkFlow') : null;
     // Solo cuenta si el registro es del MISMO caso que identificó el servidor (idCase de la consulta = currentCase.idCase).
     if (tl && actual?.idCase != null && new URL(tl.url()).searchParams.get('idCase') === String(actual.idCase)) {
       const transiciones = (await tl.json().catch(() => null)) as { guidTaskFrom?: string; guidTaskTo?: string }[] | null;
-      if (Array.isArray(transiciones)) registro = [...new Set(transiciones.flatMap((t) => [t.guidTaskFrom, t.guidTaskTo]).filter((g): g is string => !!g))];
+      if (Array.isArray(transiciones) && transiciones.length > 0 && transiciones.every((t) =>
+        t && typeof t.guidTaskFrom === 'string' && t.guidTaskFrom.trim() && typeof t.guidTaskTo === 'string' && t.guidTaskTo.trim())) {
+        registro = [...new Set(transiciones.flatMap((t) => [t.guidTaskFrom!, t.guidTaskTo!]))];
+      }
     }
     if (registro?.length) {
       // Señal de fin: todos los hotspots del registro marcados. El límite solo acota la espera; no alcanzarlo NO es «completo».
@@ -338,7 +350,7 @@ export async function leerRecorridoGrafico(page: Page, numero: string, proceso?:
       actual: clases.includes('processviewer-shape-selected'),
     };
   }));
-  return { numero, encabezado: encabezado.trim(), identidadServidor, nodos, registro };
+  return { numero, encabezado: encabezado.trim(), identidadServidor, idCasoServidor, idCasoConsulta, idFlujoCaso, idFlujoRegistro, nodos, registro };
 }
 
 /** Bloqueo de asignación (permiso, disponibilidad o ambigüedad): BLOCKED con causa ASIGNACION, nunca defecto del producto. */
@@ -1029,6 +1041,10 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
     },
 
     tabla_verificar: async (p, ctx) => {
+      if ('comparar' in p && (!p.comparar || typeof p.comparar !== 'object' || Array.isArray(p.comparar) ||
+          !Object.entries(p.comparar).every(([c, v]) => normaliza(c) && Array.isArray(v) && v.every((x) => typeof x === 'string')))) {
+        return { estado: 'NOT_AUTOMATED', causa: 'NO_AUTOMATIZADO', detalle: 'Expectativa de comparación insuficiente o inválida.' };
+      }
       const { columnas, filas } = await contenedorTabla(ambitoActual(ui), p.tabla as string);
       const faltan = ((p.columnas as string[]) ?? []).filter((c) => !columnas.includes(normaliza(c)));
       const n = await filas.count();
@@ -1043,7 +1059,7 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
         observados[col] = [];
         for (let k = 0; k < n; k++) observados[col].push((await filas.nth(k).locator('td').allInnerTexts())[idx] ?? '');
       }
-      const extraccion = Object.keys(esperados).length ? evaluarExtraccion(observados, esperados, n) : null;
+      const extraccion = 'comparar' in p ? evaluarExtraccion(observados, esperados, n) : null;
       if (p.minimo_filas != null && n < (p.minimo_filas as number)) {
         throw new Error(`"${p.tabla}": ${n} fila(s), mínimo ${p.minimo_filas}${extraccion ? ` | ${extraccion.detalle}` : ''}`);
       }
@@ -1092,8 +1108,8 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       await esperarCarga(page);
       if (p.espera === 'no_registra') {
         // «Impide registrar» (HU06-CP02 P18): QA mostró dos comportamientos: el pop-up queda abierto (casos 653 y 669) o se cierra
-        // (668 y 670). Ninguno prueba por sí solo que el valor no se registró (F2 de Work): decide una lectura independiente de la
-        // fila hecha ANTES de restaurar (evaluarNoRegistra). La grilla de esta pestaña no sirve: no se refresca al guardar (caso 651).
+        // (668 y 670). Ninguno prueba por sí solo que el valor no se registró (F2 de Work). La lectura independiente queda
+        // bloqueada hasta calibrar una identidad estable (B); una fila por posición, aun en otra pestaña, no sirve como evidencia.
         const campo = ctx.resolver(p.campo as string);
         const rechazado = ctx.resolver(p.valor_rechazado as string);
         const t = ui.tabla;
@@ -1114,7 +1130,7 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
         const r = evaluarNoRegistra({ rechazado, persistido, popupAbierto, recuperacion });
         const incidente = r.incidente ? { causa: 'PRODUCTO_POR_CONFIRMAR' as const, detalle: r.incidente } : undefined;
         if (r.estado === 'FAIL') return { estado: 'FAIL', causa: 'PRODUCTO_POR_CONFIRMAR', detalle: `"${t.tabla}" fila ${t.fila}: ${r.detalle}`, incidente };
-        if (r.estado === 'NOT_AUTOMATED') return { estado: 'NOT_AUTOMATED', causa: 'NO_AUTOMATIZADO', detalle: r.detalle, incidente };
+        if (r.estado === 'NOT_AUTOMATED') return { estado: 'NOT_AUTOMATED', causa: 'AUTOMATIZACION', detalle: r.detalle, incidente };
         return { detalle: r.detalle, incidente };
       }
       if (p.espera === 'permanece_abierto') {

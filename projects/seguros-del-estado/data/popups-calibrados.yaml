@@ -32,10 +32,17 @@ formularios:
   detalle-polizas-autos:
     tabla: Detalle Polizas Asociadas
     descripcion: Edición/adición de fila — Masiva Autos (Forma Consulta Placa)
-    estado: sin_calibrar
-    mapeo_controles: null
-    evidencia: null
-    cierre_seguro_verificado: false
+    estado: calibrado
+    mapeo_controles:
+      Forma Consulta: lista (Número de póliza | Placa); al elegir una opción solo se muestra su campo (V1.1)
+      Número Póliza: texto (visible con Forma Consulta = Número de póliza)
+      Placa: texto (visible con Forma Consulta = Placa)
+    evidencia: >-
+      Caso propio 651 (2026-10-16, calibración UI-10 con tests/calibracion.real.spec.ts): (1) abrir fila 1 y «Guardar» sin cambios:
+      el pop-up cierra y la grilla conserva 3 filas; (2) Forma Consulta = Placa: se reemplaza «Número Póliza» por «Placa», «Guardar»
+      cierra; (3) al reabrir el caso la fila persiste con Forma Consulta = Placa. El caso sigue utilizable. Observado: al cambiar a
+      Placa se vacía el Número Póliza de la fila; la grilla no se refresca inmediatamente tras «Guardar» (sí al reabrir).
+    cierre_seguro_verificado: true
     brecha: UI-10
 
   detalle-polizas-cumplimiento:

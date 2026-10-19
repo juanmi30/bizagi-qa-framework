@@ -159,5 +159,47 @@
     "escenario": "HU06-CP02 [intermediario] 20261015-175046 CLEANUP_NOT_APPLICABLE",
     "modoCreacion": "portal",
     "estadoDepuracion": "Pendiente de depurar"
+  },
+  {
+    "numeroCaso": "651",
+    "fechaHora": "2026-10-16T20:23:46.081Z",
+    "escenario": "HU06-CP02 [intermediario] 20261016-152325 CLEANUP_NOT_APPLICABLE",
+    "modoCreacion": "portal",
+    "estadoDepuracion": "Pendiente de depurar"
+  },
+  {
+    "numeroCaso": "652",
+    "fechaHora": "2026-10-16T20:31:19.178Z",
+    "escenario": "HU06-CP02 [intermediario] 20261016-153058 CLEANUP_NOT_APPLICABLE",
+    "modoCreacion": "portal",
+    "estadoDepuracion": "Pendiente de depurar"
+  },
+  {
+    "numeroCaso": "653",
+    "fechaHora": "2026-10-16T20:32:56.314Z",
+    "escenario": "HU06-CP02 [intermediario] 20261016-153238 CLEANUP_NOT_APPLICABLE",
+    "modoCreacion": "portal",
+    "estadoDepuracion": "Pendiente de depurar"
+  },
+  {
+    "numeroCaso": "654",
+    "fechaHora": "2026-10-16T20:37:23.310Z",
+    "escenario": "HU06-CP02 [intermediario] 20261016-153702 CLEANUP_NOT_APPLICABLE",
+    "modoCreacion": "portal",
+    "estadoDepuracion": "Pendiente de depurar"
+  },
+  {
+    "numeroCaso": "655",
+    "fechaHora": "2026-10-16T20:40:15.223Z",
+    "escenario": "CALIBRACION Estructurar (Masiva Generales/Modificación) [analista] 20261016-153924 CLEANUP_NOT_APPLICABLE",
+    "modoCreacion": "portal",
+    "estadoDepuracion": "Pendiente de depurar"
+  },
+  {
+    "numeroCaso": "656",
+    "fechaHora": "2026-10-16T20:40:55.406Z",
+    "escenario": "HU06-CP05 [analista] 20261016-154035 CLEANUP_NOT_APPLICABLE",
+    "modoCreacion": "portal",
+    "estadoDepuracion": "Pendiente de depurar"
   }
 ]

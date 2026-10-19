@@ -1,0 +1,172 @@
+{
+  "fecha": "2026-10-16",
+  "nota": "Calibraciones controladas posteriores al despliegue de HU06 (16/10). Casos PROPIOS. Las filas contienen solo datos FICTICIOS de las narrativas controladas. No es resultado de un CP.",
+  "ui10_caso_651": {
+    "1_guardar_sin_cambios": {
+      "formulario": "detalle-polizas-autos",
+      "estructura": [
+        {
+          "etiqueta": "Información de Consulta",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Forma Consulta",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Número Póliza",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        }
+      ],
+      "fila_antes": "959 |  |  |  |  | ABC123 | 100245678 | No |  | ",
+      "fila_despues": "959 |  |  |  |  | ABC123 | 100245678 | No |  | "
+    },
+    "2_forma_consulta_placa_y_guardar": {
+      "formulario": "detalle-polizas-autos",
+      "estructura": [
+        {
+          "etiqueta": "Información de Consulta",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Forma Consulta",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Número Póliza",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        }
+      ],
+      "cambio": {
+        "campo": "Forma Consulta",
+        "valor": "Placa",
+        "tipo": "lista"
+      },
+      "estructura_tras_cambio": [
+        {
+          "etiqueta": "Información de Consulta",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Forma Consulta",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Placa",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        }
+      ],
+      "fila_antes": "959 |  | «env:SDE_RUTA_FORMA_CONSULTA» |  |  | ABC123 | 100245678 | No |  | ",
+      "fila_despues": "959 |  | «env:SDE_RUTA_FORMA_CONSULTA» |  |  | ABC123 | 100245678 | No |  | "
+    },
+    "3_releer_tras_reabrir": {
+      "formulario": "detalle-polizas-autos",
+      "estructura": [
+        {
+          "etiqueta": "Información de Consulta",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": true,
+          "conValor": false,
+          "controles": []
+        },
+        {
+          "etiqueta": "Forma Consulta",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        },
+        {
+          "etiqueta": "Placa",
+          "grupo": "",
+          "obligatorio": false,
+          "soloLectura": false,
+          "conValor": true,
+          "controles": [
+            "text"
+          ]
+        }
+      ],
+      "cambio": null,
+      "estructura_tras_cambio": null,
+      "fila_antes": "959 |  | Placa |  |  | ABC123 |  | No |  | ",
+      "fila_despues": "959 |  | Placa |  |  | ABC123 |  | No |  | "
+    },
+    "conclusion": "Abrir fila → (cambiar) → Guardar cierra el pop-up; la fila persiste al reabrir el caso; el caso sigue utilizable. La grilla no se refresca de inmediato tras Guardar. Al pasar a Placa se vacía el Número Póliza."
+  },
+  "extraccion_caso_655": {
+    "narrativa": "Ciclo 1 aportada por Daniel (QA), ficticia: pólizas 100245678, 1109876543, 9023456781, 12012345678",
+    "pasos": [
+      "#1 iniciar_sesion [PASS] P2 :: Sesión real iniciada como \"analista\".",
+      "#2 nuevo_caso [PASS] P2 :: Formulario de inicio de \"«env:SDE_PROCESO_RADICACION»\" abierto (ruta: «env:SDE_PROCESO_CATEGORIA»)",
+      "#3 diligenciar [PASS] P3 :: Diligenciado y confirmado: Línea=Generales; Ramo=«env:SDE_GEN_RAMO»; Tipo de Solicitud=«env:SDE_RUTA_MOVIMIENTO»; Sucursal=«env:SDE_SUCURSAL»; Tipo de Radicación=Masiva",
+      "#4 diligenciar [PASS] P9 :: Diligenciado y confirmado: ¿Su solicitud requiere cambio de intermediario?=No; Descripción de la Solicitud (Masiva/Múltiple)=Ref. QA 20261016-153924. Se solicita realizar la modificación de las pólizas 100245678, 1109876543, 9023456781 y 12012345678. El cambio corresponde a la actualización de información registrada en cada una de las pólizas, de acuerdo con las condici",
+      "#5 pulsar [PASS] P10 :: Botón \"Crear\" pulsado; Bizagi respondió CREATENEWCASE con CaseNumber 655 y la UI muestra \"Caso 655\"",
+      "#6 verificar_ruta [PASS] P11 :: Caso 655: Bizagi lista como actividad actual \"Estructurar información\" (work items del caso en el buscador); actividades observadas Máximo tiempo de radicación → Estructurar información → Deshabilitar cancelación; \"Consultar Alertas Intermediario\" no observada(s) en las 1 consulta(s) realizadas (el buscador solo muestra actividades actuales; no demuestra que nunca s",
+      "#7 abrir_caso [PASS] P13 :: Caso 655 abierto por \"analista\" en \"Estructurar información\"",
+      "#8 verificar [FAIL] P1 :: ✘ [EST-ORTOGRAFIA · fuente: Matriz HU06-CP01 P1 (presentación de Estructurar información) + reglas_ortograficas (RAE-ASALE, DLE)] ortografía (norma RAE/DLE) en \"estructurar-informacion\" (identificada por Número de Caso, Creador del Caso) sobre 29 textos visibles: 1 hallazgo(s): \"Detalle Polizas Asociadas\" → ORT-TERMINO-POLIZA (\"Polizas\"; correcto: Póliza / Pólizas) [ya re",
+      "#9 verificar [PASS] P27 :: ✔ [EST-ETIQUETA-OBSERVACIONES · fuente: Matriz HU06-CP01 P27 / HU06-CP03 P24 (\"campo Observaciones\")] etiquetas exactas presentes (1)",
+      "#10 verificar [PASS] P14 :: ✔ solo_lectura: Número de Caso, Creador del Caso, Fecha de Creación, Línea, Ramo, Tipo de Solicitud",
+      "#11 verificar [PASS] P15 :: ✔ solo_lectura: Tipo Radicación, Sucursal | ✔ \"Tipo Radicación\" = Masiva (coincide)",
+      "#12 verificar [PASS] P16 :: ✔ \"Información a Consultar\" visible (1) | ✔ solo_lectura: Descripción Solicitud Masiva",
+      "#13 tabla_verificar [PASS] P17 :: \"Detalle Polizas Asociadas\": 4 fila(s); columnas [id, Forma Consulta, Tipo documento del Tomador, Número de Documento Tomador, Placa, Número Póliza, ¿Requiere modificar RCE?, Ramo RCE, Número Póliza RCE] | Número Póliza: 4 de 4 introducidos aparecen",
+      "#14 verificar [PASS] P28 :: ✔ \"Documentos de la solicitud\" visible (1) | ✔ \"Seguimiento/Trazabilidad\" visible (1)",
+      "#15 verificar [PASS] P29 :: ✔ solo_lectura: Línea, Ramo, Tipo de Solicitud, Sucursal, Tipo Radicación",
+      "#16 verificar [PASS] P27 :: ✔ editable: Observaciones",
+      "#17 abrir_pestana [PASS] P28 :: Pestaña \"Documentos de la solicitud\" activa con su panel visible",
+      "#18 abrir_pestana [PASS] P28 :: Pestaña \"Seguimiento/Trazabilidad\" activa con su panel visible; muestra \"Estructurar información\""
+    ]
+  }
+}

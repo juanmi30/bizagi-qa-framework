@@ -105,7 +105,8 @@ pasos:
     no_llega_a: [Consultar Alertas Intermediario, Completar información de solicitud]
     maximo_minutos: 15
 
-  - matriz: [12, 17]
+  # Solo [12]: la invocación del Worker no es observable; P17 (filas estructuradas visibles) lo juzga tabla_verificar (2026-10-16).
+  - matriz: [12]
     hacer: integracion
     nombre: Worker AI
     esperado: Procesa la narrativa y estructura las pólizas asociadas; sin acceso a su traza/log no se verifica el procesamiento, solo su resultado visible.
@@ -138,9 +139,9 @@ pasos:
       - visible: Información a Consultar
       - solo_lectura: [Descripción Solicitud Masiva]
 
-  # Estructura de la grilla: siempre. Que el Worker AI deje filas estructuradas exige una narrativa con pólizas REALES de QA
-  # (NARRATIVA-REAL-GENERALES); con la narrativa sintética el resultado no es concluyente (2026-10-15: caso 637 con 1 fila, 638 con 0).
-  # Sin ese dato el paso queda BLOCKED por dato (no FAIL) y el recorrido sigue.
+  # Estructura de la grilla: siempre. Filas del Worker AI con narrativa FICTICIA controlada (V1.1 y aclaración de Daniel, 2026-10-16:
+  # la extracción no exige pólizas reales). "comparar" registra valores introducidos frente a observados; no se exige un número
+  # exacto de filas porque el contrato de extracción (granularidad) no está confirmado. Antes: narrativa sin identificadores (casos 637–639).
   - matriz: [17]
     hacer: tabla_verificar
     tabla: Detalle Polizas Asociadas
@@ -148,9 +149,10 @@ pasos:
 
   - matriz: [17]
     hacer: tabla_verificar
-    requiere: [NARRATIVA-REAL-GENERALES]
     tabla: Detalle Polizas Asociadas
     minimo_filas: 1
+    comparar:
+      Número de Documento Tomador: ["900123456", "800765432", "901234567"]
 
   # UI-10 (2026-10-13, caso 430): las etiquetas de P19–P25 NO coinciden con el pop-up real de Póliza Nueva ("Tipo documento del
   # Tomador" no existe como etiqueta; "Número de Documento Tomador" aparece 2 veces; Forma Consulta muestra otro valor). Ejecutar

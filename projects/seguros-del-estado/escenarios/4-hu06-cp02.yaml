@@ -19,7 +19,7 @@ id: HU06-CP02
 titulo: Masivo Autos — Worker AI, Estructurar información y reglas de Placa en Detalle Polizas Asociadas
 etiquetas: [hu06, fase2, masivo, autos, cp02]
 actores: [intermediario, analista]
-datasets: [CFG-PROCESO, INI-AUTOS-MASIVO]
+datasets: [CFG-PROCESO, INI-AUTOS-MASIVO, EST-FILA-AUTOS-PLACA]
 cleanup:
   politica: CLEANUP_NOT_APPLICABLE
   razon: El caso queda en Estructurar información con las filas editadas/agregadas por la prueba (identificable por ${unico}).
@@ -62,7 +62,8 @@ pasos:
       - { campo: Descripción de la Solicitud (Masiva/Múltiple), valor: "${dato:INI-AUTOS-MASIVO.narrativa} ${dato:INI-AUTOS-MASIVO.narrativa_polizas}", tipo: area }
 
   - incluir: masivo-hasta-estructurar
-    con: { p_crear: [8], p_compuerta: [9], p_worker: [9, 12], p_estructurar: [10] }
+    # p_worker solo [9]: la invocación del Worker no es observable; P12 (filas estructuradas visibles) lo juzga tabla_verificar (2026-10-16).
+    con: { p_crear: [8], p_compuerta: [9], p_worker: [9], p_estructurar: [10] }
 
   - matriz: [11]
     hacer: verificar
@@ -71,9 +72,9 @@ pasos:
       - valor: { campo: Tipo Radicación, igual: "${dato:INI-AUTOS-MASIVO.tipo_radicacion}" }
       - visible: Información a Consultar
 
-  # Estructura de la grilla: siempre. Que el Worker AI deje filas estructuradas exige una narrativa con pólizas REALES de QA
-  # (NARRATIVA-REAL-AUTOS); con la narrativa sintética el resultado no es concluyente (2026-10-15: caso 637 con 1 fila, 638 con 0).
-  # Sin ese dato el paso queda BLOCKED por dato (no FAIL) y el recorrido sigue.
+  # Estructura de la grilla: siempre. Filas del Worker AI con narrativa FICTICIA controlada (V1.1 y aclaración de Daniel, 2026-10-16:
+  # la extracción no exige pólizas reales). "comparar" registra valores introducidos frente a observados; no se exige un número
+  # exacto de filas porque el contrato de extracción (granularidad) no está confirmado. Antes: narrativa sin identificadores (casos 637–639).
   - matriz: [12]
     hacer: tabla_verificar
     tabla: Detalle Polizas Asociadas
@@ -81,66 +82,59 @@ pasos:
 
   - matriz: [12]
     hacer: tabla_verificar
-    requiere: [NARRATIVA-REAL-AUTOS]
     tabla: Detalle Polizas Asociadas
     minimo_filas: 1
+    comparar:
+      Número Póliza: ["100245678", "1109876543", "9023456781"]
+      Placa: ["ABC123", "XYZ987", "KLM456"]
 
-  # Pop-up de la fila (P13–P21): requiere los datos de EST-FILA-AUTOS-PLACA (placas de QA). Sin ellos cada paso queda
-  # BLOCKED por dato SIN abrir el pop-up y el recorrido sigue con P22 (mismo patrón que HU06-CP01). Aunque lleguen los datos,
-  # la barrera UI-10/BUG-03 impide abrirlo mientras detalle-polizas-autos siga sin calibrar.
+  # Pop-up de la fila (P13–P21), calibrado el 2026-10-16 en el caso propio 651 (UI-10): abrir fila → cambiar → «Guardar» cierra y
+  # la fila persiste al reabrir el caso. V1.1: el analista ELIGE la Forma de Consulta (Número de póliza o Placa) y solo se muestra
+  # el campo elegido. Placas FICTICIAS (EST-FILA-AUTOS-PLACA, fuente generado): la edición no exige placas reales de QA.
   - matriz: [13]
     hacer: tabla_abrir_fila
-    requiere: [EST-FILA-AUTOS-PLACA]
     formulario: detalle-polizas-autos
     tabla: Detalle Polizas Asociadas
     fila: 1
 
-  - matriz: [14, 15]
+  - matriz: [14]
     hacer: verificar
-    requiere: [EST-FILA-AUTOS-PLACA]
     verificar:
-      # [PENDIENTE] en Autos se espera la Forma de Consulta por Placa (la matriz la condiciona a la configuración del caso).
-      - valor: { campo: Forma Consulta, igual: Placa }
+      - visible: Forma Consulta
+      - no_visible: Número de Documento Tomador
+
+  - matriz: [15]
+    hacer: diligenciar
+    campos:
+      - { campo: Forma Consulta, valor: Placa, tipo: lista }
+    verificar:
       - visible: Placa
       - no_visible: Número Póliza
-      - no_visible: Número de Documento Tomador
 
   - matriz: [16]
     hacer: intentar_diligenciar
-    requiere: [EST-FILA-AUTOS-PLACA]
     campo: Placa
     valor: ""
     esperado_mostrado: ""
 
   - matriz: [16]
     hacer: dialogo_confirmar
-    requiere: [EST-FILA-AUTOS-PLACA]
     espera: permanece_abierto
-
-  - matriz: [18]
-    hacer: intentar_diligenciar
-    requiere: [EST-FILA-AUTOS-PLACA]
-    campo: Placa
-    valor: ABC1234
-    esperado_mostrado: ABC123
 
   - matriz: [17]
     hacer: intentar_diligenciar
-    requiere: [EST-FILA-AUTOS-PLACA]
     campo: Placa
     valor: "${dato:EST-FILA-AUTOS-PLACA.placa}"
     esperado_mostrado: "${dato:EST-FILA-AUTOS-PLACA.placa}"
 
   - matriz: [17, 19]
     hacer: dialogo_confirmar
-    requiere: [EST-FILA-AUTOS-PLACA]
     espera: cierra
     fila_resultante:
       Placa: "${dato:EST-FILA-AUTOS-PLACA.placa}"
 
   - matriz: [20]
     hacer: tabla_agregar
-    requiere: [EST-FILA-AUTOS-PLACA]
     formulario: detalle-polizas-autos
     tabla: Detalle Polizas Asociadas
     verificar:
@@ -148,16 +142,44 @@ pasos:
 
   - matriz: [21]
     hacer: diligenciar
-    requiere: [EST-FILA-AUTOS-PLACA]
     campos:
+      - { campo: Forma Consulta, valor: Placa, tipo: lista }
       - { campo: Placa, valor: "${dato:EST-FILA-AUTOS-PLACA.placa_nueva_fila}", tipo: texto }
 
   - matriz: [21]
     hacer: dialogo_confirmar
-    requiere: [EST-FILA-AUTOS-PLACA]
     espera: cierra
     fila_resultante:
       Placa: "${dato:EST-FILA-AUTOS-PLACA.placa_nueva_fila}"
+
+  # P18 después de P21 y ANTES de las pestañas (orden de calibración, 2026-10-16; al abrir una pestaña la grilla deja de verse, caso 654): «impide REGISTRAR un valor de más de 6 caracteres». El campo admite teclear 7
+  # (caso 652); con 7 caracteres «Guardar» no debe cerrar el pop-up. Después se intenta registrar un valor válido: en el caso 653
+  # ese guardado posterior NO cerró el pop-up (comportamiento por confirmar con QA). Si vuelve a ocurrir, el recorrido se detiene con el pop-up abierto y P22 no se ejecuta.
+  - matriz: [18]
+    hacer: tabla_abrir_fila
+    formulario: detalle-polizas-autos
+    tabla: Detalle Polizas Asociadas
+    fila: 1
+
+  - matriz: [18]
+    hacer: diligenciar
+    campos:
+      - { campo: Placa, valor: "${dato:EST-FILA-AUTOS-PLACA.placa_larga}", tipo: texto }
+
+  - matriz: [18]
+    hacer: dialogo_confirmar
+    espera: permanece_abierto
+
+  - matriz: [18]
+    hacer: diligenciar
+    campos:
+      - { campo: Placa, valor: "${dato:EST-FILA-AUTOS-PLACA.placa}", tipo: texto }
+
+  - matriz: [18]
+    hacer: dialogo_confirmar
+    espera: cierra
+    fila_resultante:
+      Placa: "${dato:EST-FILA-AUTOS-PLACA.placa}"
 
   - incluir: estructurar-secciones
     con: { p_pestanas: [22], p_observaciones: [22] }

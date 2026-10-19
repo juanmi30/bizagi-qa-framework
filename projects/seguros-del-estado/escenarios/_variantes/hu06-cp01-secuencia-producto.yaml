@@ -68,12 +68,13 @@ pasos:
     hacer: adjuntar_en_grilla
     grilla: Documentos Anexos
     secuencia: guardar_primero
-    refrescar_con: { campo: Sucursal, valor_temporal: MEDELLIN, valor: "${dato:INI-GENERALES-MASIVO.sucursal}" }
+    # Valor temporal con el formato «código - nombre» vigente desde el 14/10 (P-14); se restaura de inmediato.
+    refrescar_con: { campo: Sucursal, valor_temporal: "47 - AGENCIA VALLEDUPAR", valor: "${dato:INI-GENERALES-MASIVO.sucursal}" }
     tipo_documental: "${dato:DOCS-OBLIGATORIOS.tipos_generales_masivo}"
     archivo: "${dato:DOC-SOPORTE.archivo}"
 
   - incluir: masivo-hasta-estructurar
-    con: { p_crear: [10], p_compuerta: [11, 12], p_worker: [12, 17], p_estructurar: [13] }
+    con: { p_crear: [10], p_compuerta: [11, 12], p_worker: [12], p_estructurar: [13] }
 
   - matriz: [14]
     hacer: verificar

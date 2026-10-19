@@ -56,12 +56,14 @@ export function causaDeExcepcion(e: unknown): CausaPaso {
   if (/No se encontró visible|Se esperaba exactamente 1|Ambigüedad|locator\.|Timeout \d+ms exceeded|intercepts pointer|no está dentro de/.test(m)) return 'AUTOMATIZACION';
   // Acción rechazada por la política de solo lectura (P-15): no es un defecto ni una falla de automatización.
   if (nombre === 'SoloLecturaError' || /^POLÍTICA SOLO LECTURA:/.test(m)) return 'POLITICA_SOLO_LECTURA';
+  // Asignación de la actividad (confirmación de QA, 2026-10-19): permiso, disponibilidad o ambigüedad; nunca un defecto del producto.
+  if (nombre === 'AsignacionError' || /^ASIGNACIÓN:/.test(m)) return 'ASIGNACION';
   if (/^NO VERIFICABLE:/.test(m)) return 'AUTOMATIZACION';
   // Verificación sin evidencia suficiente (pantalla no identificada o vacía): nunca aprobada ni atribuida al producto (R1).
   if (nombre === 'NoConcluyenteError' || /^NO CONCLUYENTE:/.test(m)) return 'AUTOMATIZACION';
   // La protección de solo lectura no quedó instalada: la inspección se detiene (falla técnica, nunca defecto de Bizagi).
   if (nombre === 'ProteccionNoInstaladaError' || /^PROTECCIÓN SOLO LECTURA NO INSTALADA:/.test(m)) return 'AUTOMATIZACION';
-  if (/Bizagi rechazó|no ofrece ninguna opción|ruta NO esperada|no quedó marcada|el formulario muestra .* tras diligenciar|se confirmó sin los campos obligatorios|no muestra "/.test(m)) return 'PRODUCTO_POR_CONFIRMAR';
+  if (/Bizagi rechazó|no ofrece ninguna opción|ruta NO esperada|NO fue recorrido|no quedó marcada|el formulario muestra .* tras diligenciar|se confirmó sin los campos obligatorios|no muestra "/.test(m)) return 'PRODUCTO_POR_CONFIRMAR';
   return 'NO_CLASIFICADO';
 }
 
@@ -323,7 +325,7 @@ export async function ejecutarEscenario(esc: EscenarioSde, deps: Dependencias, c
         // Sin defecto previo: comportamiento anterior (BLOCKED o FAIL técnico según la causa), conservando lo observado.
         // Un rechazo de la política de solo lectura (P-15) es BLOCKED: ni defecto del producto ni de la automatización.
         r.causa = causa;
-        r.estado = causa === 'DATO' || causa === 'AMBIENTE' || causa === 'POLITICA_SOLO_LECTURA' || (e as Error)?.name === 'BarreraPopupError' ? 'BLOCKED' : 'FAIL';
+        r.estado = causa === 'DATO' || causa === 'AMBIENTE' || causa === 'POLITICA_SOLO_LECTURA' || causa === 'ASIGNACION' || (e as Error)?.name === 'BarreraPopupError' ? 'BLOCKED' : 'FAIL';
         r.detalle = `${previas}${mensaje}`;
       }
     }

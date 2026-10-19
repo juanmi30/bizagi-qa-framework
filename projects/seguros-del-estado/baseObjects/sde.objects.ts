@@ -39,6 +39,24 @@ export const SdeObjects = {
   /** Consulta de Administrar Casos (GET, solo lectura). [VERIFICADO SDE 2026-10-15] */
   rutaBusquedaAdmin: '/Rest/Queries/SearchCases',
   adminInvalidar: '#btn-admin-cases-invalidate',
+  /**
+   * Reasignación (Administrar Casos, calibrada en el caso propio 668, 2026-10-19): casilla del work item por actividad
+   * (value «caso|idWorkItem|actividad»), botón Reasignar, búsqueda del usuario por Nombre Usuario y botón «Reasignar» de su fila.
+   * En la misma vista existe «Cancelar» (#btn-admin-case-invalidate): NUNCA se usa.
+   */
+  adminWorkItem: 'input[name="workItemAdmin"]',
+  /**
+   * «Consulta Gráfica» de una instancia (calibrada en los casos propios 654 y 656, 2026-10-19): ícono de la fila del buscador,
+   * diálogo con encabezado «Caso:», nodos del diagrama tipados por BPMN y botón «Ruta», que marca los nodos recorridos.
+   */
+  // La clase cubre el caso en que el tooltip de jQuery UI retiró el atributo title (caso 668).
+  iconoConsultaGrafica: '.ui-bizagi-wp-app-inbox-cases-ico-view, [title="Ver Consulta Gráfica"]',
+  dialogoConsultaGrafica: '.ui-dialog:has(.ui-dialog-title:text-is("Consulta Gráfica"))',
+  nodoGrafico: '.processviewer-hotspot',
+  nodoRecorrido: '.processviewer-hotspot.processviewer-highlighted',
+  adminReasignar: '#btn-admin-case-reassign',
+  adminUsuarioReasignar: '#userNameReassignInput',
+  adminBuscarUsuario: '#btn-users-table-search',
   /** Botones de administración que ESCRIBEN (Terminar caso, copiar/revocar permisos): solo se detectan. [VERIFICADO SDE 2026-10-15] */
   adminEscritura: ['#btn-admin-case-finish', '#btn-copyPermissions', '#btn-revokePermissions'],
   arbolCategoria: '#allProcesses li.category',
@@ -128,7 +146,7 @@ export const SdeObjects = {
    */
   componentesEscritura: ['.ui-bizagi-button-container button', '.ui-bizagi-button-container input', 'li[data-action]',
     '.ui-dialog-buttonpane button', '.ui-dialog-titlebar-close', 'li.ui-bizagi-render-upload-wrapper > a', 'input[type="file"]',
-    '#btn-admin-cases-invalidate', '#btn-admin-case-finish', '#btn-copyPermissions', '#btn-revokePermissions'],
+    '#btn-admin-cases-invalidate', '#btn-admin-case-invalidate', '#btn-admin-case-reassign', '#btn-admin-case-release', '#btn-admin-case-finish', '#btn-copyPermissions', '#btn-revokePermissions'],
   /** Notificación de Bizagi ("Debe revisar lo siguiente:"). Se registra como hallazgo, no se oculta. */
   notificacion: '.ui-bizagi-notifications-container, #NotificationCenter',
 };

@@ -149,6 +149,182 @@ export async function buscarCaso(page: Page, numero: string, proceso?: string): 
 
 const describirEstados = (e: EstadoCaso) => e.actividades.join(' | ') || '—';
 
+/** Nodo del diagrama de la «Consulta Gráfica»: tipos BPMN de Bizagi (p. ej. aiworkertask, exclusivegateway) y su estado en la ruta. */
+export interface NodoGrafico { nombre: string; tipos: string[]; recorrido: boolean; actual: boolean }
+export interface RecorridoEsperado { recorrido?: string[]; no_recorrido?: string[]; recorrido_tipo?: string[]; no_recorrido_tipo?: string[] }
+
+/**
+ * Evalúa la ruta REAL de una instancia (confirmación de QA, 2026-10-19: la visualización gráfica es evidencia válida del recorrido).
+ * Solo cuentan los nodos marcados como recorridos por el portal (botón «Ruta»), nunca su mera presencia en el modelo.
+ * Sin ningún nodo recorrido no hay evidencia suficiente: el paso queda para revisión humana, nunca PASS.
+ */
+export function evaluarRecorrido(caso: { numero: string; encabezado: string; nodos: NodoGrafico[]; completo?: boolean }, e: RecorridoEsperado): { estado: 'PASS' | 'FAIL' | 'NOT_AUTOMATED'; detalle: string } {
+  if (normaliza(caso.encabezado) !== normaliza(caso.numero)) {
+    throw new Error(`La «Consulta Gráfica» abierta corresponde al caso ${caso.encabezado || '—'}, no al ${caso.numero}: no se evalúa.`);
+  }
+  const recorridos = caso.nodos.filter((n) => n.recorrido);
+  const nombres = (l: NodoGrafico[]) => l.map((n) => `${n.nombre || '(sin nombre)'} [${n.tipos.join(' ')}]${n.actual ? ' (actual)' : ''}`).join(' → ');
+  if (recorridos.length === 0) return { estado: 'NOT_AUTOMATED', detalle: `Caso ${caso.numero}: el diagrama no marca ningún nodo recorrido; evidencia insuficiente, queda para revisión humana.` };
+  if (caso.completo === false) return { estado: 'NOT_AUTOMATED', detalle: `Caso ${caso.numero}: la ruta marcada no terminó de dibujarse (${recorridos.length} nodos, nodo actual sin marcar); evidencia insuficiente, queda para revisión humana.` };
+  const enModelo = (nombre: string) => caso.nodos.some((n) => normaliza(n.nombre) === normaliza(nombre));
+  const pasa = (nombre: string) => recorridos.some((n) => normaliza(n.nombre) === normaliza(nombre));
+  const faltaModelo = [...(e.recorrido ?? []), ...(e.no_recorrido ?? [])].filter((x) => !enModelo(x));
+  if (faltaModelo.length) throw new Error(`[calibrar recorrido] el diagrama no contiene ${faltaModelo.map((x) => `"${x}"`).join(', ')} (nombres del modelo: ${[...new Set(caso.nodos.map((n) => n.nombre).filter(Boolean))].join(', ')}).`);
+  const problemas = [
+    ...(e.recorrido ?? []).filter((x) => !pasa(x)).map((x) => `"${x}" está en el modelo pero NO fue recorrido`),
+    ...(e.no_recorrido ?? []).filter((x) => pasa(x)).map((x) => `"${x}" fue recorrido (ruta NO esperada)`),
+    ...(e.recorrido_tipo ?? []).filter((t) => !recorridos.some((n) => n.tipos.includes(t))).map((t) => `ningún nodo de tipo ${t} fue recorrido`),
+    ...(e.no_recorrido_tipo ?? []).filter((t) => recorridos.some((n) => n.tipos.includes(t))).map((t) => `se recorrió un nodo de tipo ${t} (ruta NO esperada)`),
+  ];
+  const base = `Caso ${caso.numero}, recorrido marcado por el portal: ${nombres(recorridos)}`;
+  return problemas.length ? { estado: 'FAIL', detalle: `${base}. ${problemas.join('; ')}.` } : { estado: 'PASS', detalle: `${base}. Coincide con lo esperado.` };
+}
+
+/** Abre la «Consulta Gráfica» del caso desde su fila del buscador, pulsa «Ruta» y lee los nodos (solo lectura). */
+export async function leerRecorridoGrafico(page: Page, numero: string, proceso?: string): Promise<{ numero: string; encabezado: string; nodos: NodoGrafico[]; completo: boolean }> {
+  const e = await buscarCaso(page, numero, proceso);
+  await (await unicoVisible(e.fila.locator(SdeObjects.iconoConsultaGrafica), `el ícono «Ver Consulta Gráfica» del caso ${numero}`)).click();
+  const dialogo = await unicoVisible(page.locator(SdeObjects.dialogoConsultaGrafica), 'el diálogo «Consulta Gráfica»', 30_000);
+  await dialogo.locator(SdeObjects.nodoGrafico).first().waitFor({ state: 'attached', timeout: 30_000 });
+  const ruta = dialogo.getByText('Ruta', { exact: true }).filter({ visible: true });
+  let completo = false;
+  if ((await ruta.count()) === 1) {
+    await ruta.click();
+    // El portal marca la ruta de forma progresiva (animación; casos 654/656/668, 2026-10-19): leer antes de terminar haría
+    // pasar trivialmente una aserción negativa. Completa = el conteo de marcados es estable y el nodo actual ya está marcado.
+    let previo = -1;
+    let estables = 0;
+    for (const limite = Date.now() + 30_000; Date.now() < limite;) {
+      const estado = await dialogo.locator(SdeObjects.nodoGrafico).evaluateAll((els) => {
+        const cl = els.map((el) => el.getAttribute('class') ?? '');
+        const marcados = cl.filter((c) => c.includes('processviewer-highlighted')).length;
+        const actuales = cl.filter((c) => c.includes('processviewer-shape-selected'));
+        return { marcados, actualesMarcados: actuales.length > 0 && actuales.every((c) => c.includes('processviewer-highlighted')) };
+      });
+      estables = estado.marcados === previo ? estables + 1 : 0;
+      previo = estado.marcados;
+      if (estables >= 3 && estado.actualesMarcados) { completo = true; break; }
+      await page.waitForTimeout(1_000);
+    }
+  }
+  // Encabezado «Caso:» (encabezado de fila) seguido de su valor (caso 654, 2026-10-19).
+  const encabezado = await dialogo.getByRole('rowheader', { name: 'Caso:', exact: true }).first().locator('xpath=following-sibling::*[1]').innerText({ timeout: 10_000 }).catch(() => '');
+  const nodos = await dialogo.locator(SdeObjects.nodoGrafico).evaluateAll((els) => els.map((el) => {
+    const clases = (el.getAttribute('class') ?? '').split(/\s+/).filter(Boolean);
+    return {
+      nombre: (el.textContent ?? '').replace(/\s+/g, ' ').replace(/^\d+(?=\S)/, '').trim(),
+      tipos: clases.filter((c) => !c.startsWith('processviewer-')),
+      recorrido: clases.includes('processviewer-highlighted'),
+      actual: clases.includes('processviewer-shape-selected'),
+    };
+  }));
+  return { numero, encabezado: encabezado.trim(), nodos, completo };
+}
+
+/** Bloqueo de asignación (permiso, disponibilidad o ambigüedad): BLOCKED con causa ASIGNACION, nunca defecto del producto. */
+export class AsignacionError extends Error {
+  constructor(mensaje: string) { super(`ASIGNACIÓN: ${mensaje}`); this.name = 'AsignacionError'; }
+}
+
+/** Work item de una actividad tal como lo entrega Administrar Casos (respuesta de SearchCases del propio portal). */
+export interface TareaAdmin { idWorkItem: string; taskName: string; assignee?: string }
+
+/** Admin → Administración de procesos → Casos desde una carga limpia del portal. Devuelve el diálogo «Casos». */
+export async function abrirAdministracionCasos(page: Page): Promise<Locator> {
+  if ((await new LoginActions(page).navegarAlPortal({ timeout: 120_000, intervalo: 4_000 })) !== 'sesion') throw new Error('La sesión expiró: el portal volvió al login.');
+  const adminProcesos = page.getByText('Administración de procesos', { exact: false }).filter({ visible: true }).first();
+  // El menú puede no desplegarse al primer clic mientras el portal termina de cargar (calibración del 2026-10-19).
+  for (let i = 0; i < 4 && !(await adminProcesos.isVisible().catch(() => false)); i++) {
+    const menu = page.locator(SdeObjects.menuAdmin).filter({ visible: true });
+    if ((await menu.count()) === 0) throw new AsignacionError('el usuario no tiene el menú Admin (sin permiso de administrar casos).');
+    await menu.click();
+    await esperarCarga(page);
+    await page.waitForTimeout(1_500);
+  }
+  await adminProcesos.click();
+  await esperarCarga(page);
+  await page.locator(SdeObjects.adminCategorias).getByText('Casos', { exact: true }).filter({ visible: true }).first().click();
+  await esperarCarga(page);
+  const dialogo = page.getByRole('dialog', { name: 'Casos', exact: true });
+  await dialogo.locator(SdeObjects.adminCasoNumero).waitFor({ state: 'visible', timeout: 30_000 });
+  return dialogo;
+}
+
+/**
+ * Consulta en Administrar Casos los work items del caso EXACTO (proceso principal, no subprocesos) usando la respuesta de
+ * SearchCases que el propio portal pide al buscar. Solo consulta. Más de un caso con ese número = ambigüedad.
+ */
+export async function consultarTareasAdmin(page: Page, dialogo: Locator, numero: string): Promise<TareaAdmin[]> {
+  await dialogo.locator(SdeObjects.adminCasoNumero).fill(numero);
+  const respuesta = page.waitForResponse((r) => r.url().includes(SdeObjects.rutaBusquedaAdmin), { timeout: 30_000 });
+  await dialogo.locator(SdeObjects.adminCasoBuscar).click();
+  const cuerpo = await (await respuesta).json() as { rows?: { radNumber?: string; isSubprocess?: boolean; data?: unknown[] }[] };
+  await esperarCarga(page);
+  const filas = (cuerpo.rows ?? []).filter((r) => String(r.radNumber) === numero && !r.isSubprocess);
+  if (filas.length > 1) throw new AsignacionError(`el caso ${numero} aparece ${filas.length} veces en Administrar Casos: ambigüedad, no se modifica nada.`);
+  if (filas.length === 0) return [];
+  const tareas = (filas[0].data ?? []).find((d) => Array.isArray(d) && d.some((x) => typeof x === 'object' && x !== null && 'taskName' in x)) as TareaAdmin[] | undefined;
+  return (tareas ?? []).map((t) => ({ idWorkItem: String(t.idWorkItem), taskName: normaliza(t.taskName), assignee: t.assignee }));
+}
+
+/** Parte de usuario de un «dominio\\usuario» (comparación sin mayúsculas). */
+const usuarioDe = (asignado: string | undefined) => (asignado ?? '').split('\\').pop()!.trim().toLowerCase();
+
+/**
+ * Asegura que la actividad del caso quede asignada al usuario objetivo (confirmación de QA, 2026-10-19: Bizagi asigna
+ * «Estructurar información» por carga y QA autoriza reasignarla al analista de pruebas). Si ya está asignada, no toca nada.
+ * Si es de otro usuario, usa SOLO el mecanismo del portal (Administrar Casos → Reasignar) y verifica la persistencia
+ * volviendo a consultar. No informa nombres de terceros.
+ */
+export async function asegurarAsignacionActividad(
+  page: Page, numero: string, actividad: string, objetivo: string,
+  // `calibrarMecanismo`: SOLO calibración (tests/asignacion-recorrido.real.spec.ts): recorre la reasignación aunque ya sea del
+  // usuario de pruebas (mismo destino: sin efecto funcional). Las verticales nunca lo usan.
+  o: { maximoMs?: number; intervaloMs?: number; calibrarMecanismo?: boolean } = {},
+): Promise<{ reasignada: boolean; detalle: string }> {
+  const meta = objetivo.trim().toLowerCase();
+  if (!meta) throw new AsignacionError('no hay usuario objetivo configurado para el actor.');
+  const nombre = normaliza(actividad);
+  const limite = Date.now() + (o.maximoMs ?? 5 * 60_000);
+  let tarea: TareaAdmin | undefined;
+  let dialogo: Locator;
+  for (;;) {
+    dialogo = await abrirAdministracionCasos(page);
+    const tareas = (await consultarTareasAdmin(page, dialogo, numero)).filter((t) => t.taskName === nombre);
+    if (tareas.length > 1) throw new AsignacionError(`la actividad "${actividad}" tiene ${tareas.length} work items en el caso ${numero}: ambigüedad, no se modifica nada.`);
+    tarea = tareas[0];
+    if (tarea) break;
+    if (Date.now() > limite) throw new AsignacionError(`la actividad "${actividad}" no está disponible en el caso ${numero} (Administrar Casos) dentro del límite.`);
+    await page.waitForTimeout(o.intervaloMs ?? 20_000);
+  }
+  if (usuarioDe(tarea.assignee) === meta && !o.calibrarMecanismo) return { reasignada: false, detalle: `"${actividad}" del caso ${numero} ya está asignada al usuario de pruebas: sin reasignación.` };
+  const previa = usuarioDe(tarea.assignee) === meta ? 'ya era del usuario de pruebas (calibración del mecanismo hacia el mismo usuario)' : 'estaba asignada a otro usuario';
+  // Reasignación: casilla EXACTA del work item, botón Reasignar, usuario objetivo y su botón de fila.
+  const casilla = dialogo.locator(`${SdeObjects.adminWorkItem}[value^="${numero}|${tarea.idWorkItem}|"]`);
+  if ((await casilla.count()) !== 1) throw new AsignacionError(`no se encontró la casilla única del work item de "${actividad}" (caso ${numero}).`);
+  await casilla.check();
+  await dialogo.locator(SdeObjects.adminReasignar).click();
+  const campoUsuario = dialogo.locator(SdeObjects.adminUsuarioReasignar);
+  await campoUsuario.waitFor({ state: 'visible', timeout: 15_000 }).catch(() => { throw new AsignacionError('el portal no ofreció la reasignación (sin permiso o sin formulario de usuario).'); });
+  await campoUsuario.fill(objetivo.trim());
+  await dialogo.locator(SdeObjects.adminBuscarUsuario).click();
+  await esperarCarga(page);
+  // El botón «Reasignar» de cada fila lleva el Nombre Usuario en su atributo name (caso 668, 2026-10-19); sin mayúsculas.
+  const botonUsuario = dialogo.locator(`button[name="${objetivo.trim().replace(/"/g, '')}" i]`).filter({ hasText: /^\s*Reasignar\s*$/ });
+  await botonUsuario.first().waitFor({ state: 'visible', timeout: 15_000 }).catch(() => undefined);
+  if ((await botonUsuario.count()) !== 1) throw new AsignacionError(`el usuario de pruebas no aparece una sola vez como asignable (${await botonUsuario.count()} coincidencias).`);
+  await botonUsuario.click();
+  await esperarCarga(page);
+  // Verificación: la reasignación solo cuenta si persiste al volver a consultar.
+  for (const fin = Date.now() + (o.maximoMs ?? 60_000); ;) {
+    const d = await abrirAdministracionCasos(page);
+    const ahora = (await consultarTareasAdmin(page, d, numero)).find((t) => t.taskName === nombre);
+    if (ahora && usuarioDe(ahora.assignee) === meta) return { reasignada: true, detalle: `"${actividad}" del caso ${numero} ${previa}; se reasignó al usuario de pruebas y la consulta posterior lo confirma.` };
+    if (Date.now() > fin) throw new Error(`La reasignación de "${actividad}" (caso ${numero}) no persistió: la consulta posterior no la muestra asignada al usuario de pruebas.`);
+    await page.waitForTimeout(o.intervaloMs ?? 5_000);
+  }
+}
+
 async function contenedorTabla(ambito: Ambito, tabla: string): Promise<{ cont: Locator; columnas: string[]; filas: Locator }> {
   // Grilla Bizagi (bzg-form-grid) por su título exacto; si el portal no la usa, contenedor de campo por etiqueta.
   const page = paginaDe(ambito);
@@ -560,6 +736,27 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       };
     },
 
+    verificar_recorrido_grafico: async (p, ctx) => {
+      if (!ctx.numeroCaso) throw new Error('No hay número de caso capturado.');
+      const page = ui.paginas.get(p.actor as string);
+      if (!page) throw new Error(`El actor "${p.actor}" no tiene sesión.`);
+      salirDeFormularioInicio(page, ctx);
+      const caso = await leerRecorridoGrafico(page, ctx.numeroCaso, ctx.resolver('${config:SDE_PROCESO_RADICACION}'));
+      const r = evaluarRecorrido(caso, p as RecorridoEsperado);
+      if (r.estado === 'FAIL') throw new Error(r.detalle);
+      return r.estado === 'NOT_AUTOMATED' ? { estado: 'NOT_AUTOMATED', causa: 'NO_AUTOMATIZADO', detalle: r.detalle } : { detalle: r.detalle };
+    },
+
+    asegurar_asignacion: async (p, ctx) => {
+      if (!ctx.numeroCaso) throw new Error('No hay número de caso capturado.');
+      const page = ui.paginas.get(p.actor as string);
+      if (!page) throw new Error(`El actor "${p.actor}" no tiene sesión.`);
+      salirDeFormularioInicio(page, ctx);
+      const objetivo = ctx.env[`USUARIO_${p.actor}`] ?? '';
+      const r = await asegurarAsignacionActividad(page, ctx.numeroCaso, p.actividad as string, objetivo, { maximoMs: ((p.maximo_minutos as number) ?? 5) * 60_000 });
+      return { detalle: r.detalle };
+    },
+
     abrir_caso: async (p, ctx) => {
       if (!ctx.numeroCaso) throw new Error('No hay número de caso capturado.');
       const page = ui.paginas.get(p.actor as string);
@@ -662,6 +859,37 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       if (!dialogo || !ui.tabla) throw new Error('No hay pop-up de tabla abierto.');
       await confirmarDialogo(dialogo);
       await esperarCarga(page);
+      if (p.espera === 'no_registra') {
+        // «Impide registrar» (HU06-CP02 P18): QA mostró dos comportamientos válidos en cuanto al registro: el pop-up queda abierto
+        // (caso 653) o se cierra SIN guardar el valor (caso 668, la fila conserva el anterior). Se exige que el valor no quede
+        // registrado; si queda abierto, se restaura el valor válido y se cierra con «Guardar» en este mismo paso.
+        const campo = ctx.resolver(p.campo as string);
+        const rechazado = normaliza(ctx.resolver(p.valor_rechazado as string));
+        const t = ui.tabla;
+        if (await dialogo.isVisible()) {
+          await diligenciar(dialogo, campo, ctx.resolver(p.restaurar as string), 'texto');
+          await confirmarDialogo(dialogo);
+          await esperarCarga(page);
+          // Lo exigido por la matriz (no registrar) se cumplió. Que tras restaurar un valor válido «Guardar» no cierre (casos 653 y
+          // 669) es un comportamiento aparte, por confirmar (P-21a): se informa sin convertirlo en el resultado de este paso.
+          if (await dialogo.isVisible()) return { detalle: `No registra «${rechazado}»: el pop-up quedó abierto. ⚠ P-21a: tras restaurar un valor válido, «Guardar» no cerró el pop-up; queda abierto (el caso puede quedar inutilizable).` };
+          ui.dialogo = undefined; ctx.dialogoAbierto = false; ui.tabla = undefined;
+          return { detalle: `No registra «${rechazado}»: el pop-up quedó abierto; se restauró un valor válido y «Guardar» lo cerró.` };
+        }
+        ui.dialogo = undefined; ctx.dialogoAbierto = false; ui.tabla = undefined;
+        if (t?.fila == null) throw new Error('no_registra solo aplica a la edición de una fila existente.');
+        const { columnas, filas } = await contenedorTabla(page, t.tabla);
+        const idx = columnas.indexOf(normaliza(campo));
+        if (idx < 0) throw new Error(`"${t.tabla}": columna "${campo}" inexistente.`);
+        let valor = '';
+        for (const limite = Date.now() + 15_000; ;) {
+          valor = normaliza((await filas.nth(t.fila - 1).locator('td').allInnerTexts())[idx] ?? '');
+          if (valor === rechazado || Date.now() > limite) break;
+          await page.waitForTimeout(1_500);
+        }
+        if (valor === rechazado) throw new Error(`"${t.tabla}": se registró «${rechazado}» en la fila ${t.fila} (debía impedirse).`);
+        return { detalle: `No registra «${rechazado}»: el pop-up se cerró y la fila ${t.fila} conserva «${valor}».` };
+      }
       if (p.espera === 'permanece_abierto') {
         if (!(await dialogo.isVisible())) throw new Error('El pop-up se cerró: se confirmó sin los campos obligatorios.');
         return { detalle: 'El pop-up permanece abierto: no permite confirmar sin obligatorios.' };

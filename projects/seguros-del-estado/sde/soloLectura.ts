@@ -42,6 +42,8 @@ export const OPERACIONES: Record<string, Operacion> = {
   intentar_diligenciar: { clase: 'formulario_inicio', efecto: 'teclea un valor; sobre un caso existente Bizagi lo envía' },
   verificar: { clase: 'observacion', efecto: 'solo lee la pantalla' },
   verificar_ruta: { clase: 'observacion', efecto: 'consulta el caso en el buscador (idempotente)' },
+  verificar_recorrido_grafico: { clase: 'observacion', efecto: 'abre la «Consulta Gráfica» del caso y lee la ruta marcada (no modifica el caso)' },
+  asegurar_asignacion: { clase: 'escritura', efecto: 'Admin → Casos: consulta la asignación de la actividad y, si es de otro usuario, la reasigna al analista de pruebas' },
   abrir_caso: { clase: 'no_determinado', efecto: 'abre una actividad: Bizagi podría asignar o bloquear el work item (sin verificar contra QA)' },
   tabla_verificar: { clase: 'observacion', efecto: 'lee columnas y filas de una grilla' },
   abrir_pestana: { clase: 'observacion', efecto: 'cambia de pestaña y lee su panel' },

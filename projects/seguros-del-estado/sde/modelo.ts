@@ -45,6 +45,7 @@ export type CausaPaso =
   | 'INTEGRACION_NO_VERIFICADA'  // SISE / Worker AI / compuerta sin traza
   | 'NO_AUTOMATIZADO'            // paso sin criterio objetivo automatizable
   | 'POLITICA_SOLO_LECTURA'      // la política de solo lectura (P-15) rechazó una acción de escritura: no se ejecutó
+  | 'ASIGNACION'                 // la actividad no está disponible para el analista de pruebas o no se pudo reasignar (permiso, ambigüedad)
   | 'NO_CLASIFICADO';            // excepción sin patrón reconocido: revisar a mano
 
 export interface ResultadoPaso {

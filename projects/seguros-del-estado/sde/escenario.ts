@@ -82,11 +82,13 @@ export const CAPACIDADES: Record<string, { req: string[]; opt: string[] }> = {
   pulsar: { req: ['boton'], opt: ['capturar_numero_caso', 'esperar_hasta', 'maximo_minutos'] },
   verificar_ruta: { req: ['actor', 'llega_a'], opt: ['no_llega_a', 'maximo_minutos'] },
   abrir_caso: { req: ['actor', 'actividad'], opt: ['maximo_minutos'] },
+  asegurar_asignacion: { req: ['actor', 'actividad'], opt: ['maximo_minutos'] },
+  verificar_recorrido_grafico: { req: ['actor'], opt: ['recorrido', 'no_recorrido', 'recorrido_tipo', 'no_recorrido_tipo'] },
   tabla_verificar: { req: ['tabla'], opt: ['columnas', 'minimo_filas', 'comparar'] },
   // "formulario": id del pop-up en data/popups-calibrados.yaml; la barrera H3 decide en ejecución si puede abrirse.
   tabla_abrir_fila: { req: ['tabla', 'fila', 'formulario'], opt: [] },          // abre el pop-up de edición de la fila N (1..n)
   tabla_agregar: { req: ['tabla', 'formulario'], opt: [] },                     // abre el pop-up de adición
-  dialogo_confirmar: { req: ['espera'], opt: ['fila_resultante'] }, // espera: cierra | permanece_abierto
+  dialogo_confirmar: { req: ['espera'], opt: ['fila_resultante', 'campo', 'valor_rechazado', 'restaurar'] }, // espera: cierra | permanece_abierto | no_registra
   dialogo_cancelar: { req: [], opt: [] },                         // cierra el pop-up SIN guardar y verifica que no cambió la tabla
   tabla_eliminar_fila: { req: ['tabla'], opt: ['fila', 'fila_con'] },   // fila N | fila_con { columna: valor } (única)
   // UI-06: selecciona UNA fila (por número o por valores exactos) y exige que quede exactamente una seleccionada.
@@ -287,7 +289,9 @@ export function cargarEscenario(ruta: string, registro: Registro): EscenarioSde 
     if (p.actor != null && !actores.includes(p.actor as string)) problemas.push(`${donde}: actor "${p.actor}" no está en "actores" del escenario`);
     if (p.campos != null) validarCampos(p.campos, donde, problemas);
     validarVerificaciones(p.verificar, donde, problemas);
-    if (p.hacer === 'dialogo_confirmar' && !['cierra', 'permanece_abierto'].includes(p.espera as string))
+    if (p.hacer === 'dialogo_confirmar' && p.espera === 'no_registra' && !(esTexto(p.campo) && esTexto(p.valor_rechazado) && esTexto(p.restaurar)))
+      problemas.push(`${donde}: "no_registra" exige campo, valor_rechazado y restaurar`);
+    if (p.hacer === 'dialogo_confirmar' && !['cierra', 'permanece_abierto', 'no_registra'].includes(p.espera as string))
       problemas.push(`${donde}: "espera" debe ser "cierra" o "permanece_abierto"`);
     if (p.fila != null && p.fila !== 'ultima' && !(Number.isInteger(p.fila) && (p.fila as number) >= 1))
       problemas.push(`${donde}: "fila" debe ser un entero >= 1 o "ultima"`);

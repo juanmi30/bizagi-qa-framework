@@ -319,13 +319,14 @@ export function evaluarRecorrido(caso: LecturaRecorrido, e: RecorridoEsperado): 
     ...(e.recorrido ?? []).filter((x) => !pasa(x)).map((x) => `"${x}" está en el modelo pero NO fue recorrido`),
     ...(e.recorrido_tipo ?? []).filter((t) => !recorridos.some((n) => n.tipos.includes(t))).map((t) => `ningún nodo de tipo ${t} fue recorrido`),
   ];
-  // Precedencia (auditoría del PR #9): un nodo prohibido con GUID ÚNICO y ejecución demostrada (en el registro o marcado por
-  // el dibujo; criterio C del PR #7) es FAIL aunque OTRA parte del recorrido sea ambigua. Si la ambigüedad toca al propio nodo
-  // prohibido (GUID duplicado o sin GUID), queda inconcluso. Un nodo solo presente en el modelo nunca es FAIL.
+  // Precedencia (auditoría del PR #9): un nodo prohibido con GUID ÚNICO cuya ejecución DEMUESTRA el registro de transiciones de
+  // la instancia es FAIL aunque OTRA parte del recorrido sea ambigua. Decisión de Juan Miguel (20/10): si solo el dibujo lo marca
+  // y el registro no demuestra su ejecución, la evidencia es contradictoria → inconcluso (el dibujo se genera desde ese registro).
+  // Si la ambigüedad toca al propio nodo prohibido (GUID duplicado o sin GUID), inconcluso. Un nodo solo del modelo nunca es FAIL.
   const esProhibido = (n: NodoGrafico) => (e.no_recorrido ?? []).some((x) => normaliza(x) === normaliza(n.nombre)) ||
     (e.no_recorrido_tipo ?? []).some((t) => n.tipos.includes(t));
   const demostrados = caso.nodos.filter((n) => esProhibido(n) && !!n.id?.trim() && porId.get(n.id!)?.length === 1 &&
-    (n.recorrido || !!registro?.has(n.id!)));
+    !!registro?.has(n.id!));
   if (demostrados.length) return { estado: 'FAIL', detalle: `${base}. Actividad prohibida recorrida con identidad inequívoca: ${nombres(demostrados)}; ${prohibidos.join('; ')}.` };
   // Un GUID ambiguo no permite inferir qué actividad recorrió el registro.
   if (duplicados.length || sinIdentidad.length) return { estado: 'NOT_AUTOMATED', detalle: `${base}. Correspondencia ambigua: ${duplicados.length} GUID duplicado(s) relevantes y ${sinIdentidad.length} nodo(s) marcado(s) sin GUID; revisión humana.` };

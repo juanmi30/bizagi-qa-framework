@@ -53,8 +53,9 @@ test.describe('C: identidad desde las respuestas hasta el veredicto @unit', () =
         expect(causaDeExcepcion(error)).toBe('AUTOMATIZACION');
       } else {
         const resultado = await ejecutar();
-        // Un nodo prohibido en el dibujo contradice la expectativa: FAIL aunque falte en el registro.
-        expect(resultado.estado).toBe(modo === 'completa' ? 'PASS' : ['prohibido', 'contradictorio'].includes(modo) ? 'FAIL' : 'NOT_AUTOMATED');
+        // Decisión de Juan Miguel (20/10): FAIL solo si el registro de la instancia demuestra el nodo prohibido; marcado solo en el
+        // dibujo y ausente del registro ('contradictorio') es evidencia contradictoria → inconcluso.
+        expect(resultado.estado).toBe(modo === 'completa' ? 'PASS' : modo === 'prohibido' ? 'FAIL' : 'NOT_AUTOMATED');
       }
     });
   }

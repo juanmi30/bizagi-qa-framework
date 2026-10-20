@@ -59,3 +59,11 @@ Detalle, casos afectados y riesgos en el reporte ejecutivo.
 - **PR #9 `feb678e`:** decisión del 20/10 (marcado solo en el dibujo → inconcluso); 343/343. **PR #10:** merge del #9 (`6ac5351`) + sesión; 357/357.
 - **Métricas:** ejecutada 5/17, aprobada 0/17. El último reporte de CP02 es REAL_PASS_PARCIAL por P-21a.
 - **Histórico:** 38 casos. Sin casos adicionales ni recreaciones.
+
+## CP05 — caso 706 (autorización de un único caso, 20/10)
+
+- **Controles:** `SDE_E2E=1`, cupo 39 sobre 38 registrados, worker único. Código: rama del PR #10 en `46332b6` (incluye el PR #9; 357/357).
+- **Configuración:** Autos, Ramo 48, Modificación, Individual, Forma de Consulta Unitaria = Número de póliza (datos de QA del `.env`, los mismos de 656/671).
+- **Resultado:** 9/9 ejecutados. **PASS:** P2–P5 y P7. **NOT_AUTOMATED:** P1 (agregado), P6 (P-11) y P8–P9 (P-18) → REAL_PASS_PARCIAL.
+- **Ruta:** «¿Masivo o correo?» → «Consultar información de solicitud» → «Consultar SISE». La Consulta Gráfica da negativa completa (8/8: no recorre «Estructurar información» ni `aiworkertask`); es diagnóstico porque usa los PR sin integrar.
+- **Totales:** histórico 39 casos; métricas: ejecutada 5/17, aprobada 0/17. No se crearon más casos.

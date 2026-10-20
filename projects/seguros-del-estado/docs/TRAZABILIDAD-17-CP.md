@@ -6,7 +6,7 @@
 > (sesión real) de `test-results/seguros-del-estado/sde/`; un intento BLOCKED en preflight se muestra aparte y no tapa
 > la evidencia. Sin reporte ejecutado: estado del manifest. Ningún estado verde sin reporte.
 
-> **Fuentes de ejecución:** historial local `test-results/`: 77 reporte(s) · evidencia versionada `docs/evidencia/`: 29 reporte(s). Si un reporte está en ambas, prevalece la copia local.
+> **Fuentes de ejecución:** historial local `test-results/`: 78 reporte(s) · evidencia versionada `docs/evidencia/`: 30 reporte(s). Si un reporte está en ambas, prevalece la copia local.
 
 ## Cobertura (tres indicadores independientes)
 
@@ -26,7 +26,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | HU06-CP02 | F-MASIVO-ESTRUCTURAR | 2 | 4-hu06-cp02.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-AUTOS-MASIVO: READY<br>EST-FILA-AUTOS-PLACA: READY | COMPLETA (21/0/0/0/0 de 21) | HU06-CP02_20261020-142817.json (caso 705) | **REAL_PASS_PARCIAL** | no |
 | HU06-CP03 | F-MASIVO-ESTRUCTURAR | 2 | 5-hu06-cp03.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-CUMPL-MASIVO-SIN-RCE: READY<br>DOC-SOPORTE: READY | COMPLETA (24/0/0/0/0 de 24) | HU06-CP03_20261020-123853.json (caso 702) | **BLOCKED** | no |
 | HU06-CP04 | F-MASIVO-ESTRUCTURAR | 2 | 6-hu06-cp04.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-CUMPL-MASIVO-CON-RCE: READY<br>DOC-SOPORTE: READY | PARCIAL (21/0/0/1/0 de 22) | HU06-CP04_20261020-124051.json (caso 703) | **BLOCKED** | no |
-| HU06-CP05 | F-INDIVIDUAL-RUTA | 1 | 1-hu06-cp05.yaml | analista: READY | CFG-PROCESO: READY<br>INI-INDIVIDUAL-RUTA: READY | PARCIAL (5/3/0/0/0 de 8) | HU06-CP05_20261019-103023.json (caso 671) | **REAL_PASS_PARCIAL** | no |
+| HU06-CP05 | F-INDIVIDUAL-RUTA | 1 | 1-hu06-cp05.yaml | analista: READY | CFG-PROCESO: READY<br>INI-INDIVIDUAL-RUTA: READY | PARCIAL (5/3/0/0/0 de 8) | HU06-CP05_20261020-150944.json (caso 706) | **REAL_PASS_PARCIAL** | no |
 | HU03-CP01 | F-INDIVIDUAL-CONSULTA | 2 | 7-hu03-cp01.yaml | intermediario: READY | CFG-PROCESO: READY<br>PLACA-MULTIPOLIZA: MISSING | PARCIAL (13/5/3/0/0 de 21) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP01_20261013-095835.json) | **BLOCKED** | no |
 | HU03-CP02 | F-INDIVIDUAL-CONSULTA | 1 | 2-hu03-cp02.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-AUTOS-VIGENTE: MISSING | PARCIAL (13/5/2/0/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP02_20261013-155239.json) | **BLOCKED** | no |
 | HU03-CP03 | F-INDIVIDUAL-CONSULTA | 2 | 8-hu03-cp03.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-GENERALES-VIGENTE: MISSING | PARCIAL (12/5/3/0/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP03_20261013-095835.json) | **BLOCKED** | no |

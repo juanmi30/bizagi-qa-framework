@@ -2,7 +2,7 @@
 
 **Para:** Juan Miguel · **Preparado por:** Claude Code, 2026-10-20 (cierre de la sesión de ejecución). Se distingue lo histórico (19/10) de lo ejecutado hoy (20/10).
 
-## Resultado: los cinco CP de HU06 tienen ejecución real; cuatro se ejecutaron completos
+## Resultado: los cinco CP de HU06 se ejecutaron completos en QA
 
 | CP | Caso (hoy) | Configuración | Ejecutados | PASS | FAIL (por confirmar con QA) | Otros | ¿Completo? |
 |---|---|---|---|---|---|---|---|
@@ -10,11 +10,15 @@
 | **CP02** Autos | **705** (nuevo) | Autos · Ramo 48 · Modificación · Masiva | **22/22** | **22** | — | **Incidente separado P-21a** (tras restaurar una placa válida, «Guardar» no cerró) → REAL_PASS_PARCIAL | **Ejecutado completo; todos los pasos PASS** |
 | **CP03** Cumplimiento sin RCE | **702** (de hoy) | Ramo 44 (`bEsRCE` = false) · Modificación · Masiva | **25/25** | **21**: P2–P13, P15–P21, P24, P25 | **P14 y P22** (Número Póliza / Número Póliza RCE aceptan escribir letras) · **P23** (**Ramo RCE no se almacena**) | P1 agregado | **Ejecutado completo** |
 | **CP04** Cumplimiento con RCE | **703** (de hoy) | Ramo 40 (`bEsRCE` = true) · Modificación · Masiva | **23/23** | **18**: P2–P14, P18, P20–P23 | **P16–P17** (acepta letras) · **P19** (P-21a: tras rechazar 8 dígitos, una póliza válida no se confirma) | P15 NOT_AUTOMATED (la matriz no define el criterio) | **Ejecutado completo** |
-| **CP05** Individual | 671 (histórico, 19/10) | Individual | P1–P9 | 5: P2–P5, P7 | — | P6 parcial (P-11) · P8 y P9 pendientes (P-18 y PR #9/#10) | No (sin caso nuevo en esta fase, por instrucción) |
+| **CP05** Individual | **706** (nuevo) | Autos · Ramo 48 · Modificación · **Individual** (Forma de Consulta Unitaria = Número de póliza) | **9/9** | **5**: P2–P5, P7 | — | P1 agregado · P6 NOT_AUTOMATED (etiquetas y ortografía sin hallazgos; faltan las expectativas aprobadas, P-11) · **P8–P9 NOT_AUTOMATED** (camino regular sin definir, P-18) | **Sí** |
 
 **Ningún CP está aprobado por QA.**
 - **Candidato a aprobación funcional:** **CP02** (caso 705, 22/22 PASS), condicionado a que QA acepte el incidente P-21a como hallazgo aparte.
 - **Ejecutados completos con hallazgos por confirmar:** CP01, CP03 y CP04. No son candidatos hasta que QA decida sobre esos FAIL.
+- **CP05:** ejecutado completo, sin FAIL. Para aprobarlo, QA debe definir el camino regular (P-18) y las expectativas de presentación (P-11).
+  - **Ruta observada en 706:** «¿Masivo o correo?» → subproceso «Consultar información de solicitud» → «Consultar SISE» (actual), además del temporizador «Máximo tiempo de radicación» y «Deshabilitar cancelación».
+  - **No recorre** «Estructurar información» ni ninguna tarea del Worker AI. La negativa se probó con evidencia completa (registro del servidor y dibujo coinciden en 8 elementos de la instancia 706).
+  - Es **diagnóstico**: usa el código de los PR #9/#10 aún sin integrar (`46332b6`), así que no es una certificación.
 
 ## Hallazgos funcionales para QA (reproducidos; por confirmar)
 
@@ -28,7 +32,7 @@
 
 ## Cómo se obtuvo (seguridad)
 
-- **Casos nuevos: solo los 2 autorizados** (704 para CP01 y 705 para CP02). 702 y 703 eran de hoy. Controles respetados: `SDE_E2E=1`, cupo fijado para un caso por corrida (37 y 38) y worker único.
+- **Casos nuevos: solo los autorizados:** 704 (CP01), 705 (CP02) y 706 (CP05). 702 y 703 eran de hoy. Controles respetados: `SDE_E2E=1`, cupo fijado para un caso por corrida (37 y 38) y worker único.
 - **Pop-ups (UI-10):**
   - se calibraron sobre los casos propios con autorización explícita por caso;
   - nunca se usó Cancelar, Escape ni X;
@@ -43,6 +47,7 @@
 ## Evidencia
 
 - **Corridas completas:**
+  - `docs/evidencia/HU06-CP05_20261020-150944.json` (706)
   - `docs/evidencia/HU06-CP01_20261020-142223.json` (704)
   - `HU06-CP02_20261020-142817.json` (705)
   - `HU06-CP03_20261020-123853.json` (702)
@@ -69,4 +74,4 @@
 | CP02 | QA valida los 22 pasos y decide sobre P-21a → candidato a aprobación |
 | CP03 | QA confirma el hallazgo de Ramo RCE (P23) y si los campos numéricos deben bloquear letras al escribir (P14 y P22) |
 | CP04 | QA confirma P-21a (P19), las letras (P16–P17) y el criterio de P15 |
-| CP05 | Integrar los PR #9 y #10; QA confirma P-18 (camino regular). Después se puede re-evaluar sobre 656/671 sin crear casos |
+| CP05 | QA confirma P-18 (camino regular) y P-11. Integrar los PR #9 y #10 para que la negativa gráfica (caso 706) deje de ser diagnóstica |

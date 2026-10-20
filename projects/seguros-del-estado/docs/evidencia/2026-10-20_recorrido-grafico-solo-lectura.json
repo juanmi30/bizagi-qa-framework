@@ -1,0 +1,451 @@
+{
+  "654": {
+    "tipo": "masivo",
+    "evaluacion": {
+      "estado": "PASS",
+      "detalle": "Caso 654, recorrido (registro del servidor: 8 elementos; dibujo: 8 nodos marcados): ¿Masivo o correo? [exclusivegateway] → Solicitud finalizada por vencimiento [terminateend end] (actual) → Máximo tiempo de radicación [timerintermediate intermediatecatch] → (sin nombre) [eventbasedgateway] → (sin nombre) [parallelgateway] → Deshabilitar cancelación [noneintermediate intermediatethrow] → Inicio Radicación [nonestart start] → Estructurar información [aiworkertask]. Ruta positiva observada: coincide con lo esperado."
+    },
+    "nodos_recorridos": [
+      {
+        "id": "285cfff4-8a32-439c-a495-d3d6a93be7d8",
+        "nombre": "¿Masivo o correo?",
+        "tipos": [
+          "exclusivegateway"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "61201b16-cb72-419d-8474-abf7b8f05db7",
+        "nombre": "Solicitud finalizada por vencimiento",
+        "tipos": [
+          "terminateend",
+          "end"
+        ],
+        "recorrido": true,
+        "actual": true
+      },
+      {
+        "id": "69dc8a0b-0107-428b-9f90-5fbb264947d3",
+        "nombre": "Máximo tiempo de radicación",
+        "tipos": [
+          "timerintermediate",
+          "intermediatecatch"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "474f885a-0be6-4a6e-a504-e93579fdf842",
+        "nombre": "",
+        "tipos": [
+          "eventbasedgateway"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "4811dafd-3117-41b0-9b8f-31614d4e3c74",
+        "nombre": "",
+        "tipos": [
+          "parallelgateway"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "e76e018f-506d-4700-a554-f40af420cbf5",
+        "nombre": "Deshabilitar cancelación",
+        "tipos": [
+          "noneintermediate",
+          "intermediatethrow"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "d6d9ea30-ef07-4639-8f4f-0e19b5a567d5",
+        "nombre": "Inicio Radicación",
+        "tipos": [
+          "nonestart",
+          "start"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "5ae6031b-b630-49e0-9ca4-650e156e1a94",
+        "nombre": "Estructurar información",
+        "tipos": [
+          "aiworkertask"
+        ],
+        "recorrido": true,
+        "actual": false
+      }
+    ]
+  },
+  "656": {
+    "tipo": "individual",
+    "evaluacion": {
+      "estado": "PASS",
+      "detalle": "Caso 656, recorrido (registro del servidor: 9 elementos; dibujo: 9 nodos marcados): (sin nombre) [exclusivegateway] → ¿Masivo o correo? [exclusivegateway] → Consultar información de solicitud [isparallel subprocess subprocessmulti has-subprocess] → Solicitud finalizada por vencimiento [terminateend end] (actual) → Máximo tiempo de radicación [timerintermediate intermediatecatch] → (sin nombre) [eventbasedgateway] → (sin nombre) [parallelgateway] → Deshabilitar cancelación [noneintermediate intermediatethrow] → Inicio Radicación [nonestart start]. Evidencia completa (registro del servidor y dibujo coinciden): coincide con lo esperado."
+    },
+    "nodos_recorridos": [
+      {
+        "id": "b2fbb1b9-8559-4d14-946e-a79b87025b2c",
+        "nombre": "",
+        "tipos": [
+          "exclusivegateway"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "285cfff4-8a32-439c-a495-d3d6a93be7d8",
+        "nombre": "¿Masivo o correo?",
+        "tipos": [
+          "exclusivegateway"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "1f260ff9-c6ce-4a6e-ba82-eb4f0500cbd8",
+        "nombre": "Consultar información de solicitud",
+        "tipos": [
+          "isparallel",
+          "subprocess",
+          "subprocessmulti",
+          "has-subprocess"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "61201b16-cb72-419d-8474-abf7b8f05db7",
+        "nombre": "Solicitud finalizada por vencimiento",
+        "tipos": [
+          "terminateend",
+          "end"
+        ],
+        "recorrido": true,
+        "actual": true
+      },
+      {
+        "id": "69dc8a0b-0107-428b-9f90-5fbb264947d3",
+        "nombre": "Máximo tiempo de radicación",
+        "tipos": [
+          "timerintermediate",
+          "intermediatecatch"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "474f885a-0be6-4a6e-a504-e93579fdf842",
+        "nombre": "",
+        "tipos": [
+          "eventbasedgateway"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "4811dafd-3117-41b0-9b8f-31614d4e3c74",
+        "nombre": "",
+        "tipos": [
+          "parallelgateway"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "e76e018f-506d-4700-a554-f40af420cbf5",
+        "nombre": "Deshabilitar cancelación",
+        "tipos": [
+          "noneintermediate",
+          "intermediatethrow"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "d6d9ea30-ef07-4639-8f4f-0e19b5a567d5",
+        "nombre": "Inicio Radicación",
+        "tipos": [
+          "nonestart",
+          "start"
+        ],
+        "recorrido": true,
+        "actual": false
+      }
+    ]
+  },
+  "670": {
+    "tipo": "masivo",
+    "evaluacion": {
+      "estado": "PASS",
+      "detalle": "Caso 670, recorrido (registro del servidor: 8 elementos; dibujo: 8 nodos marcados): ¿Masivo o correo? [exclusivegateway] → Solicitud finalizada por vencimiento [terminateend end] (actual) → Máximo tiempo de radicación [timerintermediate intermediatecatch] → (sin nombre) [eventbasedgateway] → (sin nombre) [parallelgateway] → Deshabilitar cancelación [noneintermediate intermediatethrow] → Inicio Radicación [nonestart start] → Estructurar información [aiworkertask]. Ruta positiva observada: coincide con lo esperado."
+    },
+    "nodos_recorridos": [
+      {
+        "id": "285cfff4-8a32-439c-a495-d3d6a93be7d8",
+        "nombre": "¿Masivo o correo?",
+        "tipos": [
+          "exclusivegateway"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "61201b16-cb72-419d-8474-abf7b8f05db7",
+        "nombre": "Solicitud finalizada por vencimiento",
+        "tipos": [
+          "terminateend",
+          "end"
+        ],
+        "recorrido": true,
+        "actual": true
+      },
+      {
+        "id": "69dc8a0b-0107-428b-9f90-5fbb264947d3",
+        "nombre": "Máximo tiempo de radicación",
+        "tipos": [
+          "timerintermediate",
+          "intermediatecatch"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "474f885a-0be6-4a6e-a504-e93579fdf842",
+        "nombre": "",
+        "tipos": [
+          "eventbasedgateway"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "4811dafd-3117-41b0-9b8f-31614d4e3c74",
+        "nombre": "",
+        "tipos": [
+          "parallelgateway"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "e76e018f-506d-4700-a554-f40af420cbf5",
+        "nombre": "Deshabilitar cancelación",
+        "tipos": [
+          "noneintermediate",
+          "intermediatethrow"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "d6d9ea30-ef07-4639-8f4f-0e19b5a567d5",
+        "nombre": "Inicio Radicación",
+        "tipos": [
+          "nonestart",
+          "start"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "5ae6031b-b630-49e0-9ca4-650e156e1a94",
+        "nombre": "Estructurar información",
+        "tipos": [
+          "aiworkertask"
+        ],
+        "recorrido": true,
+        "actual": false
+      }
+    ]
+  },
+  "671": {
+    "tipo": "individual",
+    "evaluacion": {
+      "estado": "PASS",
+      "detalle": "Caso 671, recorrido (registro del servidor: 9 elementos; dibujo: 9 nodos marcados): (sin nombre) [exclusivegateway] → ¿Masivo o correo? [exclusivegateway] → Consultar información de solicitud [isparallel subprocess subprocessmulti has-subprocess] → Solicitud finalizada por vencimiento [terminateend end] (actual) → Máximo tiempo de radicación [timerintermediate intermediatecatch] → (sin nombre) [eventbasedgateway] → (sin nombre) [parallelgateway] → Deshabilitar cancelación [noneintermediate intermediatethrow] → Inicio Radicación [nonestart start]. Evidencia completa (registro del servidor y dibujo coinciden): coincide con lo esperado."
+    },
+    "nodos_recorridos": [
+      {
+        "id": "b2fbb1b9-8559-4d14-946e-a79b87025b2c",
+        "nombre": "",
+        "tipos": [
+          "exclusivegateway"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "285cfff4-8a32-439c-a495-d3d6a93be7d8",
+        "nombre": "¿Masivo o correo?",
+        "tipos": [
+          "exclusivegateway"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "1f260ff9-c6ce-4a6e-ba82-eb4f0500cbd8",
+        "nombre": "Consultar información de solicitud",
+        "tipos": [
+          "isparallel",
+          "subprocess",
+          "subprocessmulti",
+          "has-subprocess"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "61201b16-cb72-419d-8474-abf7b8f05db7",
+        "nombre": "Solicitud finalizada por vencimiento",
+        "tipos": [
+          "terminateend",
+          "end"
+        ],
+        "recorrido": true,
+        "actual": true
+      },
+      {
+        "id": "69dc8a0b-0107-428b-9f90-5fbb264947d3",
+        "nombre": "Máximo tiempo de radicación",
+        "tipos": [
+          "timerintermediate",
+          "intermediatecatch"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "474f885a-0be6-4a6e-a504-e93579fdf842",
+        "nombre": "",
+        "tipos": [
+          "eventbasedgateway"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "4811dafd-3117-41b0-9b8f-31614d4e3c74",
+        "nombre": "",
+        "tipos": [
+          "parallelgateway"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "e76e018f-506d-4700-a554-f40af420cbf5",
+        "nombre": "Deshabilitar cancelación",
+        "tipos": [
+          "noneintermediate",
+          "intermediatethrow"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "d6d9ea30-ef07-4639-8f4f-0e19b5a567d5",
+        "nombre": "Inicio Radicación",
+        "tipos": [
+          "nonestart",
+          "start"
+        ],
+        "recorrido": true,
+        "actual": false
+      }
+    ]
+  },
+  "673": {
+    "tipo": "masivo",
+    "evaluacion": {
+      "estado": "PASS",
+      "detalle": "Caso 673, recorrido (registro del servidor: 8 elementos; dibujo: 8 nodos marcados): ¿Masivo o correo? [exclusivegateway] → Solicitud finalizada por vencimiento [terminateend end] (actual) → Máximo tiempo de radicación [timerintermediate intermediatecatch] → (sin nombre) [eventbasedgateway] → (sin nombre) [parallelgateway] → Deshabilitar cancelación [noneintermediate intermediatethrow] → Inicio Radicación [nonestart start] → Estructurar información [aiworkertask]. Ruta positiva observada: coincide con lo esperado."
+    },
+    "nodos_recorridos": [
+      {
+        "id": "285cfff4-8a32-439c-a495-d3d6a93be7d8",
+        "nombre": "¿Masivo o correo?",
+        "tipos": [
+          "exclusivegateway"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "61201b16-cb72-419d-8474-abf7b8f05db7",
+        "nombre": "Solicitud finalizada por vencimiento",
+        "tipos": [
+          "terminateend",
+          "end"
+        ],
+        "recorrido": true,
+        "actual": true
+      },
+      {
+        "id": "69dc8a0b-0107-428b-9f90-5fbb264947d3",
+        "nombre": "Máximo tiempo de radicación",
+        "tipos": [
+          "timerintermediate",
+          "intermediatecatch"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "474f885a-0be6-4a6e-a504-e93579fdf842",
+        "nombre": "",
+        "tipos": [
+          "eventbasedgateway"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "4811dafd-3117-41b0-9b8f-31614d4e3c74",
+        "nombre": "",
+        "tipos": [
+          "parallelgateway"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "e76e018f-506d-4700-a554-f40af420cbf5",
+        "nombre": "Deshabilitar cancelación",
+        "tipos": [
+          "noneintermediate",
+          "intermediatethrow"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "d6d9ea30-ef07-4639-8f4f-0e19b5a567d5",
+        "nombre": "Inicio Radicación",
+        "tipos": [
+          "nonestart",
+          "start"
+        ],
+        "recorrido": true,
+        "actual": false
+      },
+      {
+        "id": "5ae6031b-b630-49e0-9ca4-650e156e1a94",
+        "nombre": "Estructurar información",
+        "tipos": [
+          "aiworkertask"
+        ],
+        "recorrido": true,
+        "actual": false
+      }
+    ]
+  }
+}

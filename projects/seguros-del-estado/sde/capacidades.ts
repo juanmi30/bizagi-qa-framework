@@ -350,9 +350,13 @@ export async function leerRecorridoGrafico(page: Page, numero: string, proceso?:
     // Solo cuenta si el registro es del MISMO caso que identificó el servidor (idCase de la consulta = currentCase.idCase).
     if (tl && actual?.idCase != null && new URL(tl.url()).searchParams.get('idCase') === String(actual.idCase)) {
       const transiciones = (await tl.json().catch(() => null)) as { guidTaskFrom?: string; guidTaskTo?: string }[] | null;
+      // Formato REAL (sonda de solo lectura del 2026-10-20, caso 671): cada transición llega en DOS registros, uno con solo
+      // guidTaskTo (guidTaskFrom = "") y otro con solo guidTaskFrom (guidTaskTo = ""). Un registro es válido si ambos campos
+      // son texto y al menos uno trae GUID; sin ningún GUID o con tipos distintos es malformado y no hay registro.
+      const guid = (v: unknown) => (typeof v === 'string' ? v.trim() : null);
       if (Array.isArray(transiciones) && transiciones.length > 0 && transiciones.every((t) =>
-        t && typeof t.guidTaskFrom === 'string' && t.guidTaskFrom.trim() && typeof t.guidTaskTo === 'string' && t.guidTaskTo.trim())) {
-        registro = [...new Set(transiciones.flatMap((t) => [t.guidTaskFrom!, t.guidTaskTo!]))];
+        t && guid(t.guidTaskFrom) !== null && guid(t.guidTaskTo) !== null && !!(guid(t.guidTaskFrom) || guid(t.guidTaskTo)))) {
+        registro = [...new Set(transiciones.flatMap((t) => [guid(t.guidTaskFrom)!, guid(t.guidTaskTo)!]).filter(Boolean))];
       }
     }
     if (registro?.length) {
@@ -701,7 +705,10 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
         return { ok, detalle: `campo "${val}" ${tipo === 'campo_visible' ? 'visible' : 'no visible'} (etiquetas de campo encontradas: ${n})` };
       }
       case 'texto_exacto': {
-        const n = await hayLineaExacta(amb, texto(val as string));
+        // Bizagi actualiza la ayuda por reglas tras elegir Ramo/modalidad (Cumplimiento, precreación del 2026-10-20): se espera,
+        // acotado, a que la línea aparezca; si no aparece, sigue siendo FAIL.
+        let n = 0;
+        for (const limite = Date.now() + 10_000; (n = await hayLineaExacta(amb, texto(val as string))) === 0 && Date.now() < limite;) await page.waitForTimeout(500);
         if (n > 0) return { ok: true, detalle: `línea de texto exacta “${val}” (${n})` };
         // Distingue "no está" de "está, pero dentro de una línea más larga" (p. ej. sin salto de línea): sigue siendo FAIL.
         const dentro = await lineasQueContienen(amb, texto(val as string));

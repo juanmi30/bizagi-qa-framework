@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { escribirZip, leerZip, type EntradaZip } from '../../../shared/utils/zip';
 import { atributoXml, elementosXml, escaparXml, hijosXml, primerElementoXml, textoParrafoDocx, textoXml, type ElementoXml } from '../../../shared/utils/xml';
@@ -58,7 +58,7 @@ export function consolidarCaso(raiz: string, dirProyecto: string, c: CasoConfig,
       if (k > 0 && !cubre.length) continue; // una continuación solo aporta lo que ejecutó
       const detalles = cubre.map((i) => pasos.get(i)).filter((p): p is NonNullable<typeof p> => !!p && p.estado !== 'NOT_RUN');
       const obtenido = detalles.map((p) => textoObservado(p.detalle)).filter(Boolean).join(' · ') || (cubre.length ? 'No ejecutado en esta corrida.' : 'Paso agregado del CP (objetivo): su estado resulta de los demás pasos.');
-      const capturas = detalles.map((p) => p.evidencia && r.unico ? resolve(raiz, 'test-results', 'seguros-del-estado', 'sde', 'capturas', `${f.includes('CONTINUACION_') ? 'CONTINUACION_' : ''}${c.cp}_${r.unico}`, `${p.evidencia}.png`) : '').filter((x) => x && existsSync(x));
+      const capturas = detalles.map((p) => p.evidencia && r.unico ? resolve(raiz, ...RUTA_CAPTURAS, `${f.includes('CONTINUACION_') ? 'CONTINUACION_' : ''}${c.cp}_${r.unico}`, `${p.evidencia}.png`) : '').filter((x) => x && existsSync(x));
       porPaso.set(m.n, { estado: m.estado, obtenido, fuente: f.replace(/^docs\/evidencia\//, ''), capturas });
     }
   });
@@ -266,4 +266,38 @@ export function renderizarSoporteHu(cfg: ConfigSoporteHu, casos: CasoSoporte[], 
   const salida: EntradaZip[] = entradas.map((e) => ({ nombre: e.nombre, datos: nuevas.has(e.nombre) ? Buffer.from(nuevas.get(e.nombre)!, 'utf8') : e.datos }));
   if (!partes.has('word/_rels/header1.xml.rels')) salida.push({ nombre: 'word/_rels/header1.xml.rels', datos: Buffer.from(headerRels, 'utf8') });
   return escribirZip([...salida, ...medias]);
+}
+
+/**
+ * Ubicaciones PERSISTENTES (relativas a la raíz del repo). Playwright solo vacía su outputDir
+ * (test-results/<p>/artifacts) y el reporte HTML (test-results/<p>/html-report): estas carpetas quedan fuera.
+ */
+export const RUTA_SOPORTES = ['test-results', 'seguros-del-estado', 'soportes'] as const;
+export const RUTA_CAPTURAS = ['test-results', 'seguros-del-estado', 'sde', 'capturas'] as const;
+export const RUTAS_LIMPIADAS_POR_PLAYWRIGHT = [['test-results', 'seguros-del-estado', 'artifacts'], ['test-results', 'seguros-del-estado', 'html-report']] as const;
+
+/**
+ * Genera el soporte de una HU desde resultados guardados. Solo LEE las fuentes (reportes, capturas, plantilla) y escribe en
+ * una carpeta NUEVA <soportes>/<HU>/<fecha-hora>/ (un DOCX + el plan JSON); nunca sobrescribe ni borra nada.
+ */
+export function generarSoporteHu(o: { raiz: string; dirProyecto: string; hu: string; ahora?: Date }): { docx: string; plan: string; casos: CasoSoporte[] } {
+    if (!/^HU\d+$/.test(o.hu)) throw new Error(`HU inválida: ${o.hu}`);
+  const cfg = JSON.parse(readFileSync(resolve(o.dirProyecto, 'certificacion', `${o.hu}.json`), 'utf8')) as ConfigSoporteHu;
+  const matriz = JSON.parse(readFileSync(resolve(o.dirProyecto, 'fuentes', 'matriz.json'), 'utf8')) as { casos: { id: string; titulo: string; pasos: { n: number; accion: string; esperado: string }[] }[] };
+  const casos = cfg.casos.map((c) => {
+    const m = matriz.casos.find((x) => x.id === c.cp);
+    if (!m) throw new Error(`${c.cp} no está en la matriz.`);
+    return consolidarCaso(o.raiz, o.dirProyecto, c, m);
+  });
+  const template = readFileSync(resolve(o.raiz, cfg.template));
+  const logoCliente = cfg.logoCliente ? readFileSync(resolve(o.dirProyecto, 'certificacion', cfg.logoCliente)) : undefined;
+  const base = resolve(o.raiz, ...RUTA_SOPORTES, cfg.hu);
+  let salida = resolve(base, (o.ahora ?? new Date()).toISOString().replace(/[:.]/g, '-'));
+  for (let k = 2; existsSync(salida); k++) salida = resolve(base, `${(o.ahora ?? new Date()).toISOString().replace(/[:.]/g, '-')}-${k}`);
+  mkdirSync(salida, { recursive: true });
+  const docx = resolve(salida, cfg.salida);
+  writeFileSync(docx, renderizarSoporteHu(cfg, casos, { template, ...(logoCliente ? { logoCliente } : {}) }));
+  const plan = resolve(salida, `${cfg.hu}-soporte-plan.json`);
+  writeFileSync(plan, JSON.stringify(casos, null, 2) + '\n', 'utf8');
+  return { docx, plan, casos };
 }

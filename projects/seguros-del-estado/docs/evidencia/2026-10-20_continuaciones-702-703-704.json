@@ -1,0 +1,38 @@
+{
+  "fecha": "2026-10-20",
+  "nota": "TRANSCRIPCIÓN de la salida de consola de tests/continuacion.real.spec.ts (sesión de Claude Code del 20/10). El reporte JSON de cada tramo usaba el mismo nombre por caso y se sobrescribió; solo se conservan como archivo los últimos tramos (CONTINUACION_HU06-CP0*_cont-70*.json). Corregido: el nombre ahora es único por corrida. Sin datos personales.",
+  "HU06-CP04_caso_703": {
+    "calibracion_previa": "GUARDAR_SIN_CAMBIOS (formulario detalle-polizas-cumplimiento, en_calibracion + SDE_AUTORIZO_CALIBRACION_POPUP=703): abre fila 1 (id 1557), «Guardar» cierra, 4 filas antes y después",
+    "tramo_P12_P22_primera": {
+      "P12": "PASS — pop-up de edición abierto, fila 1",
+      "P13": "PASS — «Forma Consulta» visible",
+      "P14": "PASS — «¿Requiere modificar RCE?» no visible (encontrados 0)",
+      "P15": "NOT_AUTOMATED — la matriz no define el criterio (FUNC-05)",
+      "P16_P17": "FAIL — «Número Póliza» acepta escribir «ABCDEFGHI» (se esperaba que no lo aceptara); no se probó si «Guardar» lo rechaza",
+      "P18": "PASS — con «12345678» (8 dígitos) «Guardar» no confirma; el pop-up permanece abierto",
+      "P19": "FAIL — tras el rechazo por longitud, la póliza válida 300654321 NO cerró el pop-up con «Guardar» (P-21a); al reabrir, la fila conserva 100245678",
+      "P20_P22": "NOT_RUN en ese tramo"
+    },
+    "verificacion_utilidad": "tramo P23: la actividad abre; Observaciones y pestañas PASS (el caso siguió utilizable)",
+    "tramo_P20_P22_primera": "P20 PASS, P21 PASS (fila 300789012 agregada; 5 filas), P22 FAIL de automatización: la grilla seguía mostrando 5 filas; al reabrir, 4 filas y la fila agregada ya no estaba (eliminación efectiva). Corregido con espera acotada",
+    "tramo_P20_P22_final": "P20, P21 y P22 PASS (archivo CONTINUACION_HU06-CP04_cont-703.json)"
+  },
+  "HU06-CP03_caso_702": {
+    "sonda_previa": "fila 1 (id 1553): «¿Requiere modificar RCE?» obligatoria; con «Sí» aparecen «Número Póliza RCE» y «Ramo RCE» obligatorios; la lista «Ramo RCE» ofrece 9 Ramos de todas las líneas; se volvió a «No» y «Guardar» cerró",
+    "ramo_rce_elegido": "RCE DERIVADA DE CUMPLIMIENTO (bEsRCE = true según el servidor; no por nombre)",
+    "tramo_P12_P18": "P12, P13 PASS; P14 FAIL (acepta «ABCDEFGHI»); P15 PASS (vacío no confirma); P16 PASS (pregunta visible); P17/P18 PASS (No; Ramo RCE y Número Póliza RCE no visibles; fila 300123456 guardada) — archivo CONTINUACION_HU06-CP03_cont-702.json (repetición con P17 reforzado)",
+    "tramo_P19_P23": {
+      "P19": "PASS — «Sí» habilita Ramo RCE y Número Póliza RCE como obligatorios",
+      "P20": "PASS — sin ellos no confirma",
+      "P21": "PASS — Ramo RCE y Número Póliza RCE 400123456 diligenciados",
+      "P22": "FAIL — «Número Póliza RCE» acepta escribir «ABCDEFGHI»",
+      "P23": "FAIL — «Guardar» cerró, pero el servidor (Render) guarda la fila 1553 con Número Póliza RCE 400123456 y ¿Requiere…? = true, y Ramo RCE VACÍO ([]). Reproducido de forma aislada (solo Ramo RCE + «Guardar»): sigue vacío"
+    }
+  },
+  "HU06-CP01_caso_704": {
+    "sonda_previa": "pop-up de Póliza Nueva: «Forma Consulta» (solo lectura), «Tipo de Documento Tomador» (lista obligatoria), «Número de Documento Tomador»; con NIT aparece «Digito de Verificacion del Tomador» (solo lectura, sin tildes) y el Número precargado por el Worker se VACÍA; «Guardar» sin número no cerró (el caso siguió utilizable)",
+    "tramo_P18_P23": "P18 PASS; P19 FAIL (Forma Consulta muestra «Identificación del tomador», matriz «Identificación de Tomador»; sí es automática y de solo lectura); P20 PASS; P21 PASS (DV visible y de solo lectura; Número obligatorio); P22 PASS; P23 PASS (900456789 guardado)",
+    "tramo_P24_P25": "P24 FAIL (misma nomenclatura de Forma Consulta en el formulario de adición); P25 PASS (900987654 agregado; 4 filas)",
+    "tramo_P26": "PASS — fila eliminada (4 → 3) — archivo CONTINUACION_HU06-CP01_cont-704.json"
+  }
+}

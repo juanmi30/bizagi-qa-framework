@@ -236,5 +236,40 @@
     "escenario": "HU06-CP01 [analista] 20261019-143141 CLEANUP_NOT_APPLICABLE",
     "modoCreacion": "portal",
     "estadoDepuracion": "Pendiente de depurar"
+  },
+  {
+    "numeroCaso": "702",
+    "fechaHora": "2026-10-20T17:39:41.967Z",
+    "escenario": "HU06-CP03 [intermediario] 20261020-123853 CLEANUP_NOT_APPLICABLE",
+    "modoCreacion": "portal",
+    "estadoDepuracion": "Pendiente de depurar"
+  },
+  {
+    "numeroCaso": "703",
+    "fechaHora": "2026-10-20T17:41:39.546Z",
+    "escenario": "HU06-CP04 [intermediario] 20261020-124051 CLEANUP_NOT_APPLICABLE",
+    "modoCreacion": "portal",
+    "estadoDepuracion": "Pendiente de depurar"
+  },
+  {
+    "numeroCaso": "704",
+    "fechaHora": "2026-10-20T19:23:05.411Z",
+    "escenario": "HU06-CP01 [analista] 20261020-142223 CLEANUP_NOT_APPLICABLE",
+    "modoCreacion": "portal",
+    "estadoDepuracion": "Pendiente de depurar"
+  },
+  {
+    "numeroCaso": "705",
+    "fechaHora": "2026-10-20T19:28:35.670Z",
+    "escenario": "HU06-CP02 [intermediario] 20261020-142817 CLEANUP_NOT_APPLICABLE",
+    "modoCreacion": "portal",
+    "estadoDepuracion": "Pendiente de depurar"
+  },
+  {
+    "numeroCaso": "706",
+    "fechaHora": "2026-10-20T20:10:05.268Z",
+    "escenario": "HU06-CP05 [analista] 20261020-150944 CLEANUP_NOT_APPLICABLE",
+    "modoCreacion": "portal",
+    "estadoDepuracion": "Pendiente de depurar"
   }
 ]

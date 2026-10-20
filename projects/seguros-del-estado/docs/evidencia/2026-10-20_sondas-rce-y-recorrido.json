@@ -1,0 +1,45 @@
+{
+  "fecha": "2026-10-20",
+  "nota": "Sondas de SOLO LECTURA en QA (protección P-15 instalada; formulario de inicio sin «Crear»; casos propios cerrados). Sin datos personales ni valores del .env. Las sondas temporales se borraron tras usarlas.",
+  "propiedad_poliza_rce_por_ramo": {
+    "fuente": "respuesta POST /Rest/Handlers/MultiAction que el portal recibe al elegir el Ramo: campo oculto M_CE_SolicitudExpedicion.kmGestionExpedicion.kmHistorialPoliza.kmRamoPoliza.bEsRCE; y presencia del campo «¿Requiere Modificar RCE?» tras elegir Individual",
+    "regla_v1_1": "la pregunta «¿Requiere Modificar RCE?» aparece si el Ramo NO tiene la propiedad «Póliza RCE»",
+    "linea": "Cumplimiento (actor analista; formulario de inicio)",
+    "resultados": [
+      { "ramo": "44 - CUMPLIMIENTO ENTIDAD ESTATAL", "bEsRCE": false, "pregunta_visible": true },
+      { "ramo": "46 - CUMPLIMIENTO ENTIDAD ESTATAL ONLINE", "bEsRCE": "sin valor", "pregunta_visible": true },
+      { "ramo": "45 - CUMPLIMIENTO PARTICULAR", "bEsRCE": "sin valor", "pregunta_visible": true },
+      { "ramo": "47 - CUMPLIMIENTO PARTICULAR ONLINE", "bEsRCE": "sin valor", "pregunta_visible": true },
+      { "ramo": "54 - RCE CONTRATOS RAPIE", "bEsRCE": true, "pregunta_visible": false },
+      { "ramo": "40 - RCE DERIVADA DE CUMPLIMIENTO", "bEsRCE": true, "pregunta_visible": false }
+    ],
+    "seleccion_propuesta": {
+      "CP03_sin_propiedad": "44 - CUMPLIMIENTO ENTIDAD ESTATAL (valor explícito false y pregunta visible)",
+      "CP04_con_propiedad": "40 - RCE DERIVADA DE CUMPLIMIENTO (valor explícito true y pregunta oculta); alternativa 54",
+      "movimiento": "Modificación (única opción observada para el Ramo 44)",
+      "pendiente_QA": "confirmar que bEsRCE es la propiedad «Póliza RCE» del requerimiento; 46/45/47 no traen valor (se comportan como sin propiedad)"
+    }
+  },
+  "precreacion_cp03_cp04": {
+    "modalidad": "solo lectura, actor intermediario, se detiene antes de documentos y «Crear» (no cuenta como ejecución del CP)",
+    "CP03": "P2–P7 PASS con el Ramo 44 (PRECREACION_HU06-CP03_pre-1792514021476.json)",
+    "CP04": "P2–P7 PASS con el Ramo 40 (PRECREACION_HU06-CP04_pre-1792514071170.json)",
+    "hallazgo_automatizacion": "la ayuda «Masivo: … de cumplimiento y/o RCE.» se actualiza por regla después de elegir Masiva; texto_exacto ahora espera de forma acotada (antes daba un FAIL falso por carrera)"
+  },
+  "formato_real_transitionlog": {
+    "caso": "671 (solo lectura)",
+    "observado": "16 registros; cada transición llega dos veces: uno con solo guidTaskTo (guidTaskFrom = \"\") y otro con solo guidTaskFrom (guidTaskTo = \"\")",
+    "efecto_antes": "la validación de registro malformado (corrección C del PR #7) exigía ambos GUID en cada registro: rechazaba todo registro real y la lectura quedaba sin registro y sin esperar el dibujo (0 nodos marcados)",
+    "correccion": "registro válido si ambos campos son texto y al menos uno trae GUID"
+  },
+  "recorrido_solo_lectura_con_lector_corregido": {
+    "codigo": "rama del PR #9 + corrección de formato (pendiente de integración)",
+    "654": "Masivo: ruta positiva por «Estructurar información»",
+    "670": "Masivo: ruta positiva",
+    "673": "Masivo: ruta positiva (CP01); el caso terminó en «Solicitud finalizada por vencimiento»",
+    "656": "Individual: negativa con evidencia completa (no recorre «Estructurar información» ni aiworkertask)",
+    "671": "Individual: negativa con evidencia completa",
+    "advertencia": "diagnóstico: la conclusión negativa de CP05 depende del PR #9 (Issue #8) y queda pendiente hasta su revisión e integración"
+  },
+  "estado_casos": "673, 670, 671, 656 y 654 cerrados por vencimiento: no se puede abrir «Estructurar información» en ninguno"
+}

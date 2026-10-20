@@ -1,0 +1,625 @@
+{
+  "cp": "HU06-CP03",
+  "escenario": "5-hu06-cp03.yaml",
+  "inicio": "2026-10-20T17:38:53.392Z",
+  "unico": "20261020-123853",
+  "cleanup": {
+    "politica": "CLEANUP_NOT_APPLICABLE",
+    "razon": "El caso queda en Estructurar información con la fila editada por la prueba (identificable por ${unico})."
+  },
+  "fin": "2026-10-20T17:40:31.943Z",
+  "estado": "BLOCKED",
+  "motivo": "Ejecutado contra QA (caso 702) sin fallos, pero 13 paso(s) de la matriz quedaron BLOCKED (causa: DATO): P1, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23.",
+  "numero_caso": "702",
+  "actividades_observadas": [
+    "Máximo tiempo de radicación",
+    "Estructurar información",
+    "Deshabilitar cancelación",
+    "Estructurar información"
+  ],
+  "pasos": [
+    {
+      "indice": 1,
+      "hacer": "iniciar_sesion",
+      "matriz": [
+        2
+      ],
+      "estado": "PASS",
+      "detalle": "Sesión real iniciada como \"intermediario\".",
+      "ms": 6874,
+      "evidencia": "HU06-CP03_p01_iniciar_sesion"
+    },
+    {
+      "indice": 2,
+      "hacer": "nuevo_caso",
+      "matriz": [
+        2,
+        3
+      ],
+      "estado": "PASS",
+      "detalle": "Formulario de inicio de \"«env:SDE_PROCESO_RADICACION»\" abierto (ruta: «env:SDE_PROCESO_CATEGORIA») | ✔ etiquetas exactas presentes (1)",
+      "ms": 4979,
+      "evidencia": "HU06-CP03_p02_nuevo_caso"
+    },
+    {
+      "indice": 3,
+      "hacer": "diligenciar",
+      "matriz": [
+        3
+      ],
+      "estado": "PASS",
+      "detalle": "Diligenciado y confirmado: Línea=Cumplimiento; Ramo=«env:SDE_CUMPL_RAMO_SIN_RCE»; Tipo de Solicitud=«env:SDE_RUTA_MOVIMIENTO»",
+      "ms": 31853,
+      "evidencia": "HU06-CP03_p03_diligenciar"
+    },
+    {
+      "indice": 4,
+      "hacer": "diligenciar",
+      "matriz": [
+        4
+      ],
+      "estado": "PASS",
+      "detalle": "Diligenciado y confirmado: Sucursal=«env:SDE_SUCURSAL»",
+      "ms": 74,
+      "evidencia": "HU06-CP03_p04_diligenciar"
+    },
+    {
+      "indice": 5,
+      "hacer": "diligenciar",
+      "matriz": [
+        5
+      ],
+      "estado": "PASS",
+      "detalle": "Diligenciado y confirmado: Tipo de Radicación=Masiva | ✔ \"Descripción de la Solicitud (Masiva/Múltiple)\" visible (1)",
+      "ms": 53,
+      "evidencia": "HU06-CP03_p05_diligenciar"
+    },
+    {
+      "indice": 6,
+      "hacer": "verificar",
+      "matriz": [
+        6
+      ],
+      "estado": "PASS",
+      "detalle": "✔ línea de texto exacta “Masivo: Solicitud asociada a más de una póliza de cumplimiento y/o RCE.” (1)",
+      "ms": 1862,
+      "evidencia": "HU06-CP03_p06_verificar"
+    },
+    {
+      "indice": 7,
+      "hacer": "diligenciar",
+      "matriz": [
+        7
+      ],
+      "estado": "PASS",
+      "detalle": "Diligenciado y confirmado: ¿Su solicitud requiere cambio de intermediario?=No; Descripción de la Solicitud (Masiva/Múltiple)=Ref. QA 20261020-123853. Se solicita realizar la modificación de las pólizas 100245678, 1109876543, 9023456781 y 12012345678. El cambio corresponde a la actualización de información registrada en cada una de las pólizas, de acuerdo con las condiciones definidas para la solicitud. Se requiere validar que la modificación sea aplicada correctamente a todas las pólizas relacionadas, manteniendo sin cambios la información que no haga parte del ajuste solicitado.",
+      "ms": 1953,
+      "evidencia": "HU06-CP03_p07_diligenciar"
+    },
+    {
+      "indice": 8,
+      "hacer": "adjuntar_en_grilla",
+      "matriz": [
+        7
+      ],
+      "estado": "PASS",
+      "detalle": "\"Documentos Anexos\": sin evidencia de documentos obligatorios (la grilla no está marcada como obligatoria y no trae filas precargadas); se continúa SIN adjuntar (si la parametrización exigiera un documento, Bizagi rechazará «Crear» sin crear el caso).",
+      "ms": 16,
+      "evidencia": "HU06-CP03_p08_adjuntar_en_grilla"
+    },
+    {
+      "indice": 9,
+      "hacer": "pulsar",
+      "matriz": [
+        8
+      ],
+      "estado": "PASS",
+      "detalle": "Botón \"Crear\" pulsado; Bizagi respondió CREATENEWCASE con CaseNumber 702 y la UI muestra \"Caso 702\"",
+      "ms": 2443,
+      "evidencia": "HU06-CP03_p09_pulsar"
+    },
+    {
+      "indice": 10,
+      "hacer": "iniciar_sesion",
+      "matriz": [
+        10
+      ],
+      "estado": "PASS",
+      "detalle": "Sesión real iniciada como \"analista\".",
+      "ms": 6336,
+      "evidencia": "HU06-CP03_p10_iniciar_sesion"
+    },
+    {
+      "indice": 11,
+      "hacer": "verificar_ruta",
+      "matriz": [
+        9
+      ],
+      "estado": "PASS",
+      "detalle": "Caso 702: Bizagi lista como actividad actual \"Estructurar información\" (work items del caso en el buscador); actividades observadas Máximo tiempo de radicación → Estructurar información → Deshabilitar cancelación; \"Consultar Alertas Intermediario\", \"Completar información de solicitud\" no observada(s) en las 1 consulta(s) realizadas (el buscador solo muestra actividades actuales; no demuestra que nunca se ejecutaran). Estado: Máximo tiempo de radicación | Estructurar información | Deshabilitar cancelación",
+      "ms": 2443,
+      "evidencia": "HU06-CP03_p11_verificar_ruta"
+    },
+    {
+      "indice": 12,
+      "hacer": "verificar_recorrido_grafico",
+      "matriz": [
+        9
+      ],
+      "estado": "PASS",
+      "detalle": "Caso 702, recorrido (registro del servidor: 7 elementos; dibujo: 7 nodos marcados): ¿Masivo o correo? [exclusivegateway] → Máximo tiempo de radicación [timerintermediate intermediatecatch] (actual) → (sin nombre) [eventbasedgateway] → (sin nombre) [parallelgateway] → Deshabilitar cancelación [noneintermediate intermediatethrow] (actual) → Inicio Radicación [nonestart start] → Estructurar información [aiworkertask] (actual). Ruta positiva observada: coincide con lo esperado.",
+      "ms": 5536,
+      "evidencia": "HU06-CP03_p12_verificar_recorrido_grafico"
+    },
+    {
+      "indice": 13,
+      "hacer": "asegurar_asignacion",
+      "matriz": [
+        10
+      ],
+      "estado": "PASS",
+      "detalle": "\"Estructurar información\" del caso 702 ya está asignada al usuario de pruebas: sin reasignación.",
+      "ms": 6591,
+      "evidencia": "HU06-CP03_p13_asegurar_asignacion"
+    },
+    {
+      "indice": 14,
+      "hacer": "abrir_caso",
+      "matriz": [
+        10
+      ],
+      "estado": "PASS",
+      "detalle": "Caso 702 abierto por \"analista\" en \"Estructurar información\" (work item entregado en el intento 2)",
+      "ms": 26462,
+      "evidencia": "HU06-CP03_p14_abrir_caso"
+    },
+    {
+      "indice": 15,
+      "hacer": "verificar",
+      "matriz": [
+        11
+      ],
+      "estado": "PASS",
+      "detalle": "✔ solo_lectura: Línea, Ramo, Tipo de Solicitud, Sucursal, Tipo Radicación | ✔ \"Línea\" = Cumplimiento (coincide)",
+      "ms": 129,
+      "evidencia": "HU06-CP03_p15_verificar"
+    },
+    {
+      "indice": 16,
+      "hacer": "tabla_abrir_fila",
+      "matriz": [
+        12
+      ],
+      "estado": "BLOCKED",
+      "detalle": "Datos faltantes para este paso: EST-FILA-CUMPL-SIN-RCE (SDE_CUMPL_RAMO_RCE)",
+      "causa": "DATO"
+    },
+    {
+      "indice": 17,
+      "hacer": "verificar",
+      "matriz": [
+        13
+      ],
+      "estado": "BLOCKED",
+      "detalle": "Datos faltantes para este paso: EST-FILA-CUMPL-SIN-RCE (SDE_CUMPL_RAMO_RCE)",
+      "causa": "DATO"
+    },
+    {
+      "indice": 18,
+      "hacer": "intentar_diligenciar",
+      "matriz": [
+        14
+      ],
+      "estado": "BLOCKED",
+      "detalle": "Datos faltantes para este paso: EST-FILA-CUMPL-SIN-RCE (SDE_CUMPL_RAMO_RCE)",
+      "causa": "DATO"
+    },
+    {
+      "indice": 19,
+      "hacer": "intentar_diligenciar",
+      "matriz": [
+        15
+      ],
+      "estado": "BLOCKED",
+      "detalle": "Datos faltantes para este paso: EST-FILA-CUMPL-SIN-RCE (SDE_CUMPL_RAMO_RCE)",
+      "causa": "DATO"
+    },
+    {
+      "indice": 20,
+      "hacer": "dialogo_confirmar",
+      "matriz": [
+        15
+      ],
+      "estado": "BLOCKED",
+      "detalle": "Datos faltantes para este paso: EST-FILA-CUMPL-SIN-RCE (SDE_CUMPL_RAMO_RCE)",
+      "causa": "DATO"
+    },
+    {
+      "indice": 21,
+      "hacer": "verificar",
+      "matriz": [
+        16
+      ],
+      "estado": "BLOCKED",
+      "detalle": "Datos faltantes para este paso: EST-FILA-CUMPL-SIN-RCE (SDE_CUMPL_RAMO_RCE)",
+      "causa": "DATO"
+    },
+    {
+      "indice": 22,
+      "hacer": "diligenciar",
+      "matriz": [
+        17,
+        18
+      ],
+      "estado": "BLOCKED",
+      "detalle": "Datos faltantes para este paso: EST-FILA-CUMPL-SIN-RCE (SDE_CUMPL_RAMO_RCE)",
+      "causa": "DATO"
+    },
+    {
+      "indice": 23,
+      "hacer": "dialogo_confirmar",
+      "matriz": [
+        18
+      ],
+      "estado": "BLOCKED",
+      "detalle": "Datos faltantes para este paso: EST-FILA-CUMPL-SIN-RCE (SDE_CUMPL_RAMO_RCE)",
+      "causa": "DATO"
+    },
+    {
+      "indice": 24,
+      "hacer": "tabla_abrir_fila",
+      "matriz": [
+        19
+      ],
+      "estado": "BLOCKED",
+      "detalle": "Datos faltantes para este paso: EST-FILA-CUMPL-SIN-RCE (SDE_CUMPL_RAMO_RCE)",
+      "causa": "DATO"
+    },
+    {
+      "indice": 25,
+      "hacer": "diligenciar",
+      "matriz": [
+        19
+      ],
+      "estado": "BLOCKED",
+      "detalle": "Datos faltantes para este paso: EST-FILA-CUMPL-SIN-RCE (SDE_CUMPL_RAMO_RCE)",
+      "causa": "DATO"
+    },
+    {
+      "indice": 26,
+      "hacer": "dialogo_confirmar",
+      "matriz": [
+        20
+      ],
+      "estado": "BLOCKED",
+      "detalle": "Datos faltantes para este paso: EST-FILA-CUMPL-SIN-RCE (SDE_CUMPL_RAMO_RCE)",
+      "causa": "DATO"
+    },
+    {
+      "indice": 27,
+      "hacer": "diligenciar",
+      "matriz": [
+        21
+      ],
+      "estado": "BLOCKED",
+      "detalle": "Datos faltantes para este paso: EST-FILA-CUMPL-SIN-RCE (SDE_CUMPL_RAMO_RCE)",
+      "causa": "DATO"
+    },
+    {
+      "indice": 28,
+      "hacer": "intentar_diligenciar",
+      "matriz": [
+        22
+      ],
+      "estado": "BLOCKED",
+      "detalle": "Datos faltantes para este paso: EST-FILA-CUMPL-SIN-RCE (SDE_CUMPL_RAMO_RCE)",
+      "causa": "DATO"
+    },
+    {
+      "indice": 29,
+      "hacer": "diligenciar",
+      "matriz": [
+        21
+      ],
+      "estado": "BLOCKED",
+      "detalle": "Datos faltantes para este paso: EST-FILA-CUMPL-SIN-RCE (SDE_CUMPL_RAMO_RCE)",
+      "causa": "DATO"
+    },
+    {
+      "indice": 30,
+      "hacer": "dialogo_confirmar",
+      "matriz": [
+        23
+      ],
+      "estado": "BLOCKED",
+      "detalle": "Datos faltantes para este paso: EST-FILA-CUMPL-SIN-RCE (SDE_CUMPL_RAMO_RCE)",
+      "causa": "DATO"
+    },
+    {
+      "indice": 31,
+      "hacer": "verificar",
+      "matriz": [
+        24
+      ],
+      "estado": "PASS",
+      "detalle": "✔ [EST-ETIQUETA-OBSERVACIONES · fuente: Matriz HU06-CP01 P27 / HU06-CP03 P24 (\"campo Observaciones\")] etiquetas exactas presentes (1)",
+      "ms": 8,
+      "evidencia": "HU06-CP03_p31_verificar"
+    },
+    {
+      "indice": 32,
+      "hacer": "verificar",
+      "matriz": [
+        24
+      ],
+      "estado": "PASS",
+      "detalle": "✔ editable: Observaciones",
+      "ms": 27,
+      "evidencia": "HU06-CP03_p32_verificar"
+    },
+    {
+      "indice": 33,
+      "hacer": "abrir_pestana",
+      "matriz": [
+        25
+      ],
+      "estado": "PASS",
+      "detalle": "Pestaña \"Documentos de la solicitud\" activa con su panel visible",
+      "ms": 37,
+      "evidencia": "HU06-CP03_p33_abrir_pestana"
+    },
+    {
+      "indice": 34,
+      "hacer": "abrir_pestana",
+      "matriz": [
+        25
+      ],
+      "estado": "PASS",
+      "detalle": "Pestaña \"Seguimiento/Trazabilidad\" activa con su panel visible; muestra \"Estructurar información\"",
+      "ms": 46,
+      "evidencia": "HU06-CP03_p34_abrir_pestana"
+    }
+  ],
+  "matriz": [
+    {
+      "n": 1,
+      "accion": "Objetivo:",
+      "esperado": "Validar la radicación Masiva de una solicitud de Cumplimiento cuyo Ramo no tenga la propiedad Póliza RCE, verificando que Estructurar Información presente la pregunta ¿Requiere modificar RCE? y aplique correctamente sus reglas de obligatoriedad.",
+      "estado": "BLOCKED",
+      "cubierto_por": []
+    },
+    {
+      "n": 2,
+      "accion": "Ingresar al ambiente Bizagi mediante la URL: «env:BIZAGI_BASE_URL»/",
+      "esperado": "El ambiente de pruebas se encuentra disponible y permite iniciar una nueva Radicación.",
+      "estado": "PASS",
+      "cubierto_por": [
+        1,
+        2
+      ]
+    },
+    {
+      "n": 3,
+      "accion": "Crear un nuevo caso seleccionando Línea = Cumplimiento (Fianzas) y un Ramo sin propiedad Póliza RCE. Seleccionar un Tipo de Solicitud/Movimiento válido.",
+      "esperado": "El formulario presenta la configuración correspondiente al Ramo seleccionado.",
+      "estado": "PASS",
+      "cubierto_por": [
+        2,
+        3
+      ]
+    },
+    {
+      "n": 4,
+      "accion": "Seleccionar una Sucursal válida.",
+      "esperado": "La Sucursal queda registrada y se habilita la continuación del formulario.",
+      "estado": "PASS",
+      "cubierto_por": [
+        4
+      ]
+    },
+    {
+      "n": 5,
+      "accion": "Seleccionar Tipo de Radicación = Masivo.",
+      "esperado": "Se habilitan los campos correspondientes a la modalidad Masivo.",
+      "estado": "PASS",
+      "cubierto_por": [
+        5
+      ]
+    },
+    {
+      "n": 6,
+      "accion": "Validar el texto de ayuda.",
+      "esperado": "Se presenta: “Masivo: Solicitud asociada a más de una póliza de cumplimiento y/o RCE.”",
+      "estado": "PASS",
+      "cubierto_por": [
+        6
+      ]
+    },
+    {
+      "n": 7,
+      "accion": "Diligenciar la descripción narrativa y los documentos requeridos.",
+      "esperado": "La información queda registrada y el formulario permite crear el caso.",
+      "estado": "PASS",
+      "cubierto_por": [
+        7,
+        8
+      ]
+    },
+    {
+      "n": 8,
+      "accion": "Crear la solicitud.",
+      "esperado": "Se crea correctamente una solicitud con Tipo de Radicación Masivo.",
+      "estado": "PASS",
+      "cubierto_por": [
+        9
+      ]
+    },
+    {
+      "n": 9,
+      "accion": "Validar la compuerta ¿Masivo?.",
+      "esperado": "La compuerta identifica Masivo y direcciona el caso hacia el Worker AI y posteriormente hacia Estructurar Información.",
+      "estado": "PASS",
+      "cubierto_por": [
+        11,
+        12
+      ]
+    },
+    {
+      "n": 10,
+      "accion": "Ingresar a Estructurar Información.",
+      "esperado": "El caso se encuentra disponible para el Analista Centro de Expedición.",
+      "estado": "PASS",
+      "cubierto_por": [
+        10,
+        13,
+        14
+      ]
+    },
+    {
+      "n": 11,
+      "accion": "Validar los datos maestros.",
+      "esperado": "Línea, Ramo, Tipo de Movimiento, Sucursal y Tipo de Radicación se muestran correctamente y permanecen en solo lectura.",
+      "estado": "PASS",
+      "cubierto_por": [
+        15
+      ]
+    },
+    {
+      "n": 12,
+      "accion": "Seleccionar un registro de la tabla para editarlo.",
+      "esperado": "Se presenta el formulario de edición correspondiente a la configuración de Cumplimiento.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        16
+      ]
+    },
+    {
+      "n": 13,
+      "accion": "Validar la Forma de Consulta para Cumplimiento – Movimiento «env:SDE_RUTA_MOVIMIENTO».",
+      "esperado": "La Forma de Consulta se establece como «env:SDE_RUTA_FORMA_CONSULTA» de acuerdo con las reglas documentadas.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        17
+      ]
+    },
+    {
+      "n": 14,
+      "accion": "Validar el campo «env:SDE_RUTA_FORMA_CONSULTA».",
+      "esperado": "Se muestra el campo «env:SDE_RUTA_FORMA_CONSULTA» y este acepta únicamente valores numéricos con longitud entre 9 y 12 caracteres.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        18
+      ]
+    },
+    {
+      "n": 15,
+      "accion": "Intentar confirmar el registro sin diligenciar «env:SDE_RUTA_FORMA_CONSULTA».",
+      "esperado": "El formulario impide confirmar el registro mientras el campo obligatorio permanezca vacío.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        19,
+        20
+      ]
+    },
+    {
+      "n": 16,
+      "accion": "Validar la pregunta ¿Requiere modificar RCE?.",
+      "esperado": "Al tratarse de un Ramo sin propiedad Póliza RCE, se muestra la pregunta ¿Requiere modificar RCE?.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        21
+      ]
+    },
+    {
+      "n": 17,
+      "accion": "Seleccionar ¿Requiere modificar RCE? = No.",
+      "esperado": "Los campos Ramo RCE y «env:SDE_RUTA_CRITERIO_CAMPO» RCE no se muestran como campos requeridos para el registro.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        22
+      ]
+    },
+    {
+      "n": 18,
+      "accion": "Confirmar el registro con la respuesta No.",
+      "esperado": "El registro se guarda correctamente sin exigir Ramo RCE ni «env:SDE_RUTA_CRITERIO_CAMPO» RCE.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        22,
+        23
+      ]
+    },
+    {
+      "n": 19,
+      "accion": "Editar nuevamente el registro y seleccionar ¿Requiere modificar RCE? = Sí.",
+      "esperado": "Se habilitan los campos Ramo RCE y «env:SDE_RUTA_CRITERIO_CAMPO» RCE como campos obligatorios.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        24,
+        25
+      ]
+    },
+    {
+      "n": 20,
+      "accion": "Intentar confirmar sin diligenciar Ramo RCE y «env:SDE_RUTA_CRITERIO_CAMPO» RCE.",
+      "esperado": "El sistema impide cerrar/confirmar el formulario mientras los campos obligatorios no estén diligenciados.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        26
+      ]
+    },
+    {
+      "n": 21,
+      "accion": "Diligenciar Ramo RCE y un «env:SDE_RUTA_CRITERIO_CAMPO» RCE válido.",
+      "esperado": "Los campos quedan diligenciados y el registro puede ser confirmado.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        27,
+        29
+      ]
+    },
+    {
+      "n": 22,
+      "accion": "Validar «env:SDE_RUTA_CRITERIO_CAMPO» RCE.",
+      "esperado": "El campo acepta únicamente valores numéricos con longitud entre 9 y 12 caracteres.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        28
+      ]
+    },
+    {
+      "n": 23,
+      "accion": "Confirmar el registro.",
+      "esperado": "El registro actualizado queda almacenado en la tabla Pólizas asociadas a la solicitud con la información de RCE.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        30
+      ]
+    },
+    {
+      "n": 24,
+      "accion": "Validar Observaciones.",
+      "esperado": "El analista puede ingresar texto libre en el campo Observaciones.",
+      "estado": "PASS",
+      "cubierto_por": [
+        31,
+        32
+      ]
+    },
+    {
+      "n": 25,
+      "accion": "Validar Documentos de la solicitud y Seguimiento.",
+      "esperado": "Los documentos asociados y la trazabilidad del caso se encuentran disponibles para consulta.",
+      "estado": "PASS",
+      "cubierto_por": [
+        33,
+        34
+      ]
+    }
+  ],
+  "bloqueos": [],
+  "causas": [
+    "DATO"
+  ],
+  "atribucion": "NO_APLICA"
+}

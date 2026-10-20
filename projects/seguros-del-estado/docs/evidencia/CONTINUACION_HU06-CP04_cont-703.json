@@ -1,0 +1,260 @@
+{
+  "cp": "HU06-CP04",
+  "escenario": "6-hu06-cp04.yaml",
+  "inicio": "2026-10-20T19:15:31.625Z",
+  "unico": "cont-703",
+  "cleanup": {
+    "politica": "CLEANUP_NOT_APPLICABLE",
+    "razon": "El caso queda en Estructurar información; la fila agregada por la prueba se elimina dentro del propio CP (P22)."
+  },
+  "fin": "2026-10-20T19:15:48.238Z",
+  "estado": "REAL_PASS_PARCIAL",
+  "motivo": "CONTINUACIÓN (P20–P22) sobre el caso existente 703; complementa el reporte de la vertical: Sesión y caso reales, sin fallos; 20 paso(s) de la matriz no verificados directamente: P1=NOT_AUTOMATED, P2=NOT_AUTOMATED, P3=NOT_AUTOMATED, P4=NOT_AUTOMATED, P5=NOT_AUTOMATED, P6=NOT_AUTOMATED, P7=NOT_AUTOMATED, P8=NOT_AUTOMATED, P9=NOT_AUTOMATED, P10=NOT_AUTOMATED, P11=NOT_AUTOMATED, P12=NOT_AUTOMATED, P13=NOT_AUTOMATED, P14=NOT_AUTOMATED, P15=NOT_AUTOMATED, P16=NOT_AUTOMATED, P17=NOT_AUTOMATED, P18=NOT_AUTOMATED, P19=NOT_AUTOMATED, P23=NOT_AUTOMATED",
+  "numero_caso": "703",
+  "actividades_observadas": [
+    "Estructurar información"
+  ],
+  "pasos": [
+    {
+      "indice": 1,
+      "hacer": "iniciar_sesion",
+      "matriz": [
+        20
+      ],
+      "estado": "PASS",
+      "detalle": "Sesión real iniciada como \"analista\".",
+      "ms": 6181,
+      "evidencia": "HU06-CP04_p01_iniciar_sesion"
+    },
+    {
+      "indice": 2,
+      "hacer": "abrir_caso",
+      "matriz": [
+        20
+      ],
+      "estado": "PASS",
+      "detalle": "Caso 703 abierto por \"analista\" en \"Estructurar información\"",
+      "ms": 4965,
+      "evidencia": "HU06-CP04_p02_abrir_caso"
+    },
+    {
+      "indice": 3,
+      "hacer": "tabla_agregar",
+      "matriz": [
+        20
+      ],
+      "estado": "PASS",
+      "detalle": "Pop-up de adición abierto en \"Detalle Polizas Asociadas\" (4 fila(s) antes) | ✔ \"¿Requiere modificar RCE?\" no visible (encontrados 0)",
+      "ms": 2306,
+      "evidencia": "HU06-CP04_p03_tabla_agregar"
+    },
+    {
+      "indice": 4,
+      "hacer": "diligenciar",
+      "matriz": [
+        21
+      ],
+      "estado": "PASS",
+      "detalle": "Diligenciado y confirmado: Número Póliza=300789012",
+      "ms": 52,
+      "evidencia": "HU06-CP04_p04_diligenciar"
+    },
+    {
+      "indice": 5,
+      "hacer": "dialogo_confirmar",
+      "matriz": [
+        21
+      ],
+      "estado": "PASS",
+      "detalle": "Pop-up confirmado; \"Detalle Polizas Asociadas\" con 5 fila(s); fila verificada: Número Póliza=300789012",
+      "ms": 1781,
+      "evidencia": "HU06-CP04_p05_dialogo_confirmar"
+    },
+    {
+      "indice": 6,
+      "hacer": "tabla_eliminar_fila",
+      "matriz": [
+        22
+      ],
+      "estado": "PASS",
+      "detalle": "Fila 5 eliminada de \"Detalle Polizas Asociadas\" (5 → 4)",
+      "ms": 1118,
+      "evidencia": "HU06-CP04_p06_tabla_eliminar_fila"
+    }
+  ],
+  "matriz": [
+    {
+      "n": 1,
+      "accion": "Objetivo:",
+      "esperado": "Validar la radicación Masiva de una solicitud de Cumplimiento cuyo Ramo tenga la propiedad Póliza RCE, verificando que la actividad Estructurar Información aplique correctamente la condición de los campos asociados a RCE.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 2,
+      "accion": "Ingresar al ambiente Bizagi mediante la URL: «env:BIZAGI_BASE_URL»/",
+      "esperado": "El ambiente de pruebas se encuentra disponible.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 3,
+      "accion": "Crear un nuevo caso seleccionando Línea = Cumplimiento (Fianzas) y un Ramo con propiedad Póliza RCE.",
+      "esperado": "El formulario presenta la configuración correspondiente al Ramo seleccionado.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 4,
+      "accion": "Seleccionar una Sucursal válida.",
+      "esperado": "La Sucursal queda registrada correctamente.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 5,
+      "accion": "Seleccionar Tipo de Radicación = Masivo.",
+      "esperado": "Se habilitan los campos correspondientes a la modalidad Masivo.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 6,
+      "accion": "Validar el texto de ayuda.",
+      "esperado": "Se muestra “Masivo: Solicitud asociada a más de una póliza de cumplimiento y/o RCE.”, con ortografía y capitalización correctas.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 7,
+      "accion": "Diligenciar la narrativa y documentos requeridos.",
+      "esperado": "La información queda registrada y permite crear el caso.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 8,
+      "accion": "Crear la solicitud.",
+      "esperado": "Se crea correctamente el caso de radicación Masiva.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 9,
+      "accion": "Validar la compuerta ¿Masivo?.",
+      "esperado": "El caso toma la transición Masivo y continúa hacia el Worker AI.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 10,
+      "accion": "Ingresar a Estructurar Información.",
+      "esperado": "El caso se encuentra disponible para el Analista Centro de Expedición.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 11,
+      "accion": "Validar el encabezado y la información de radicación.",
+      "esperado": "Los datos maestros, Tipo de Radicación y Sucursal se visualizan correctamente y permanecen en solo lectura.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 12,
+      "accion": "Seleccionar un registro de la tabla para editarlo.",
+      "esperado": "Se presenta el formulario de edición con las reglas correspondientes al Ramo y Movimiento seleccionados.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 13,
+      "accion": "Validar la Forma de Consulta.",
+      "esperado": "La Forma de Consulta se presenta de acuerdo con la regla correspondiente a Línea Cumplimiento y Tipo de Movimiento.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 14,
+      "accion": "Validar la información relacionada con RCE.",
+      "esperado": "Al corresponder a un Ramo con propiedad Póliza RCE, no se presenta la pregunta ¿Requiere modificar RCE? como condición para habilitar los campos RCE.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 15,
+      "accion": "Validar los campos Ramo RCE y «env:SDE_RUTA_CRITERIO_CAMPO» RCE.",
+      "esperado": "Los campos se comportan de acuerdo con la condición de propiedad Póliza RCE definida para el Ramo y no se habilita una pregunta de modificación RCE que no corresponda a la configuración.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 16,
+      "accion": "Validar «env:SDE_RUTA_CRITERIO_CAMPO», cuando la Forma de Consulta corresponda a «env:SDE_RUTA_FORMA_CONSULTA».",
+      "esperado": "El campo acepta únicamente valores numéricos con longitud entre 9 y 12 caracteres.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 17,
+      "accion": "Ingresar un valor no numérico en «env:SDE_RUTA_CRITERIO_CAMPO».",
+      "esperado": "El sistema impide registrar el valor no numérico en el campo.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 18,
+      "accion": "Ingresar un «env:SDE_RUTA_CRITERIO_CAMPO» con longitud inferior o superior al rango permitido.",
+      "esperado": "El sistema impide confirmar el registro mientras el valor no cumpla la longitud de 9 a 12 caracteres.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 19,
+      "accion": "Confirmar un registro válido.",
+      "esperado": "El registro queda almacenado correctamente en la tabla Pólizas asociadas a la solicitud.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 20,
+      "accion": "Agregar un nuevo registro.",
+      "esperado": "El formulario de adición presenta las mismas reglas de visibilidad, obligatoriedad y validación correspondientes al caso.",
+      "estado": "PASS",
+      "cubierto_por": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "n": 21,
+      "accion": "Diligenciar un registro válido y confirmarlo.",
+      "esperado": "El nuevo registro queda incorporado a la colección de pólizas asociadas.",
+      "estado": "PASS",
+      "cubierto_por": [
+        4,
+        5
+      ]
+    },
+    {
+      "n": 22,
+      "accion": "Validar la opción de eliminar un registro.",
+      "esperado": "El registro seleccionado puede ser eliminado de la tabla.",
+      "estado": "PASS",
+      "cubierto_por": [
+        6
+      ]
+    },
+    {
+      "n": 23,
+      "accion": "Validar Observaciones, Documentos y Seguimiento.",
+      "esperado": "Las secciones se encuentran disponibles y presentan la información correspondiente al caso.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    }
+  ],
+  "bloqueos": [],
+  "causas": [],
+  "atribucion": "NO_APLICA"
+}

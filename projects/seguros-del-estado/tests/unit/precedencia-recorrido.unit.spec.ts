@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { evaluarRecorrido, type LecturaRecorrido, type NodoGrafico } from '../../sde/capacidades';
+import { evaluarRecorrido, leerRecorridoGrafico, type LecturaRecorrido, type NodoGrafico } from '../../sde/capacidades';
 import { NoConcluyenteError } from '../../sde/ui';
+
+test.use({ baseURL: 'http://portal.sintetico.local', trace: 'off' });
 
 /**
  * Auditoría del PR #9: precedencia de la clasificación. Una ambigüedad que NO afecta al nodo prohibido no puede ocultar
@@ -59,4 +61,37 @@ test.describe('PR #9: precedencia de la clasificación del recorrido @unit', () 
     expect(() => evaluarRecorrido(lectura(['inicio', 'consulta', 'worker'], nodos, { encabezado: '701' }), negativa)).toThrow(NoConcluyenteError);
     expect(() => evaluarRecorrido(lectura(['inicio', 'consulta', 'worker'], nodos, { idCasoConsulta: '101' }), negativa)).toThrow(NoConcluyenteError);
   });
+});
+
+// Formato REAL de TransitionLog (sonda de solo lectura del 2026-10-20, caso 671): cada transición llega en dos registros,
+// uno con solo guidTaskTo y otro con solo guidTaskFrom (el otro campo como texto vacío). GUID y portal sintéticos.
+test.describe('Lector: formato real de TransitionLog @unit', () => {
+  const pares = (a: string, b: string) => [{ guidTaskFrom: '', guidTaskTo: b, tskNameFrom: 'A', tskNameTo: 'B' }, { guidTaskFrom: a, guidTaskTo: '', tskNameFrom: 'A', tskNameTo: 'B' }];
+  const casos: [string, unknown[], number | null][] = [
+    ['pares reales con un lado vacío: registro reconstruido', [...pares('inicio', 'consulta')], 2],
+    ['registro sin ningún GUID: malformado, sin registro', [{ guidTaskFrom: '', guidTaskTo: '' }], null],
+    ['campo con tipo distinto de texto: malformado, sin registro', [{ guidTaskFrom: 'inicio', guidTaskTo: null }], null],
+  ];
+  for (const [titulo, transiciones, esperado] of casos) {
+    test(titulo, async ({ page, context }) => {
+      const html = `<!doctype html><html><body><div id="menuListInbox">Bandeja</div><div id="inbox">Bandeja</div><input id="menuQuery">
+        <table><tbody><tr><td class="I_RadNumber">700</td><td><button class="ui-bizagi-wp-app-inbox-cases-ico-view" id="abrir">Ver</button></td></tr></tbody></table>
+        <div class="ui-dialog" hidden id="dlg"><span class="ui-dialog-title">Consulta Gráfica</span>
+        <table><tr><th scope="row">Caso:</th><td>700</td></tr></table><button id="ruta">Ruta</button>
+        <div id="inicio" class="processviewer-hotspot start">Inicio</div><div id="consulta" class="processviewer-hotspot subprocess">Consultar</div>
+        <div id="worker" class="processviewer-hotspot aiworkertask">Estructurar información</div></div>
+        <script>document.getElementById('abrir').onclick = async () => { await fetch('/Rest/Cases/WorkitemsGuid?idCase=100&idWorkFlow=10'); document.getElementById('dlg').hidden = false; };
+        document.getElementById('ruta').onclick = async () => { await fetch('/Rest/Cases/TransitionLog?idCase=100&idWorkFlow=10');
+          ['inicio', 'consulta'].forEach((id) => document.getElementById(id).classList.add('processviewer-highlighted')); };</script></body></html>`;
+      await context.route('**/*', (r) => {
+        const u = r.request().url();
+        if (u.includes('WorkitemsGuid')) return r.fulfill({ json: { currentCase: { idCase: 100, radicationNumber: '700' } } });
+        if (u.includes('TransitionLog')) return r.fulfill({ json: transiciones });
+        return r.fulfill({ contentType: 'text/html; charset=utf-8', body: html });
+      });
+      const l = await leerRecorridoGrafico(page, '700');
+      expect(l.registro?.length ?? null).toBe(esperado);
+      expect(evaluarRecorrido(l, negativa).estado).toBe(esperado ? 'PASS' : 'NOT_AUTOMATED');
+    });
+  }
 });

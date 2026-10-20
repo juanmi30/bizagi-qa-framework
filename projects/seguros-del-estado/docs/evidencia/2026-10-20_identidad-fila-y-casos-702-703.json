@@ -1,0 +1,16 @@
+{
+  "fecha": "2026-10-20",
+  "nota": "Inspección funcional controlada de SOLO LECTURA sobre el caso propio abierto 702 (HU06-CP03): abre «Estructurar información» como analista y lee la grilla dos veces con recarga intermedia. No abre pop-ups ni pulsa acciones de la grilla. Escrituras observadas: ninguna (solo POST /Rest/Handlers/Render, lectura del formulario, y /Rest/Users/UserPicturesGuid). Sonda temporal borrada.",
+  "identidad_de_fila_detalle_polizas": {
+    "columna_id": "1553, 1554, 1555, 1556 en ambas lecturas (estable tras recargar)",
+    "data_business_key": "igual a la columna id en cada fila, en ambas lecturas",
+    "respuesta_render": "data.rows[i][0] = id de la fila (p. ej. [1553, …, \"100245678\", …]); el servidor la entrega al renderizar",
+    "data_key": "CAMBIA en cada render (7263 → 9119, 4750 → 5274, …): no es identidad",
+    "conclusion": "la clave de negocio de la fila (columna id = data-business-key = rows[i][0] de Render) es candidata a identidad estable para CP02 P18; falta comprobarla en una grilla de Autos ANTES y DESPUÉS de editar con «Guardar» (posible cambio de clave al persistir) y con filas reordenadas"
+  },
+  "extraccion_worker_caso_702": "Número Póliza de las 4 filas = 100245678, 1109876543, 9023456781, 12012345678 (las 4 pólizas de la narrativa de CP03). Observación: el escenario de CP03 no tiene una aserción «comparar» en P11",
+  "casos_creados_hoy": {
+    "702": "HU06-CP03, Ramo 44 + Modificación, abierto en Estructurar información",
+    "703": "HU06-CP04, Ramo 40 + Modificación, abierto en Estructurar información; «Estructurar información» se reasignó desde otro analista y se confirmó el MISMO work item"
+  }
+}

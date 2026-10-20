@@ -6,7 +6,7 @@
 > (sesión real) de `test-results/seguros-del-estado/sde/`; un intento BLOCKED en preflight se muestra aparte y no tapa
 > la evidencia. Sin reporte ejecutado: estado del manifest. Ningún estado verde sin reporte.
 
-> **Fuentes de ejecución:** historial local `test-results/`: 75 reporte(s) · evidencia versionada `docs/evidencia/`: 25 reporte(s). Si un reporte está en ambas, prevalece la copia local.
+> **Fuentes de ejecución:** historial local `test-results/`: 77 reporte(s) · evidencia versionada `docs/evidencia/`: 29 reporte(s). Si un reporte está en ambas, prevalece la copia local.
 
 ## Cobertura (tres indicadores independientes)
 
@@ -14,7 +14,7 @@
 |---|---|---|
 | Implementada | 13/17 (completa: 2) | Escenario declarativo válido. Completa = TODOS los pasos verificados solo por UI (ninguno mixto, con integración pendiente o no automatizado) |
 | Ejecutada | 5/17 | Reporte con sesión real contra QA (no cuenta un BLOCKED de preflight) |
-| Aprobada | 1/17 | Último reporte ejecutado = REAL_PASS. No cuenta REAL_PASS_PARCIAL (1), FAIL (1) ni BLOCKED (10) |
+| Aprobada | 0/17 | Último reporte ejecutado = REAL_PASS. No cuenta REAL_PASS_PARCIAL (2), FAIL (1) ni BLOCKED (10) |
 
 Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuestra la integración con SISE.
 
@@ -22,8 +22,8 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 
 | CP | Familia | Fase | Escenario | Actores (credenciales) | Datos | Implementación (pasos solo UI / mixtos UI+pendiente / integración / no autom. / sin cubrir) | Ejecución (evidencia) | Estado funcional | Aprobado |
 |---|---|---|---|---|---|---|---|---|---|
-| HU06-CP01 | F-MASIVO-ESTRUCTURAR | 1 | 3-hu06-cp01.yaml | analista: READY | CFG-PROCESO: READY<br>INI-GENERALES-MASIVO: READY<br>DOC-SOPORTE: READY<br>DOCS-OBLIGATORIOS: READY | PARCIAL (26/2/0/0/0 de 28) | HU06-CP01_20261019-143141.json (caso 673) | **FAIL** | no |
-| HU06-CP02 | F-MASIVO-ESTRUCTURAR | 2 | 4-hu06-cp02.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-AUTOS-MASIVO: READY<br>EST-FILA-AUTOS-PLACA: READY | COMPLETA (21/0/0/0/0 de 21) | HU06-CP02_20261019-102802.json (caso 670) | **REAL_PASS** | SÍ |
+| HU06-CP01 | F-MASIVO-ESTRUCTURAR | 1 | 3-hu06-cp01.yaml | analista: READY | CFG-PROCESO: READY<br>INI-GENERALES-MASIVO: READY<br>DOC-SOPORTE: READY<br>DOCS-OBLIGATORIOS: READY | PARCIAL (26/2/0/0/0 de 28) | HU06-CP01_20261020-142223.json (caso 704) | **FAIL** | no |
+| HU06-CP02 | F-MASIVO-ESTRUCTURAR | 2 | 4-hu06-cp02.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-AUTOS-MASIVO: READY<br>EST-FILA-AUTOS-PLACA: READY | COMPLETA (21/0/0/0/0 de 21) | HU06-CP02_20261020-142817.json (caso 705) | **REAL_PASS_PARCIAL** | no |
 | HU06-CP03 | F-MASIVO-ESTRUCTURAR | 2 | 5-hu06-cp03.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-CUMPL-MASIVO-SIN-RCE: READY<br>DOC-SOPORTE: READY | COMPLETA (24/0/0/0/0 de 24) | HU06-CP03_20261020-123853.json (caso 702) | **BLOCKED** | no |
 | HU06-CP04 | F-MASIVO-ESTRUCTURAR | 2 | 6-hu06-cp04.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-CUMPL-MASIVO-CON-RCE: READY<br>DOC-SOPORTE: READY | PARCIAL (21/0/0/1/0 de 22) | HU06-CP04_20261020-124051.json (caso 703) | **BLOCKED** | no |
 | HU06-CP05 | F-INDIVIDUAL-RUTA | 1 | 1-hu06-cp05.yaml | analista: READY | CFG-PROCESO: READY<br>INI-INDIVIDUAL-RUTA: READY | PARCIAL (5/3/0/0/0 de 8) | HU06-CP05_20261019-103023.json (caso 671) | **REAL_PASS_PARCIAL** | no |
@@ -69,17 +69,17 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 | 16 | Validar la sección Información a Consultar. | Se muestra la narrativa original registrada por el intermediario y el campo permanece no editable. | #22 verificar (UI: aserciones) | PASS |
 | 17 | Validar la tabla Pólizas asociadas a la solicitud. | La tabla se encuentra disponible y contiene la información estructurada por el Worker AI, incluyendo las columnas definidas para la actividad. | #23 tabla_verificar (UI: tabla)<br>#24 tabla_verificar (UI: tabla) | PASS |
 | 18 | Validar la posibilidad de seleccionar un registro de la tabla para editarlo. | Se habilita el formulario de edición correspondiente al registro seleccionado. | #25 tabla_abrir_fila (UI: editar fila) | BLOCKED |
-| 19 | Validar el formulario de edición para Línea Generales – Movimiento Póliza Nueva. | La Forma de Consulta se encuentra asignada automáticamente como Identificación de Tomador y no permite modificación. | #26 verificar (UI: aserciones) | NOT_RUN |
-| 20 | Validar los campos disponibles en el formulario de edición. | Se presentan como obligatorios Tipo de Documento Tomador y Número de Documento Tomador. | #27 verificar (UI: aserciones) | NOT_RUN |
-| 21 | Seleccionar Tipo de Documento Tomador = NIT. | Se muestra el campo Dígito de Verificación como campo no editable y asociado al tipo de identificación seleccionado. | #28 diligenciar (UI: diligenciar + post-condición) | NOT_RUN |
-| 22 | Intentar cerrar/confirmar el formulario sin diligenciar los campos obligatorios. | El sistema mantiene abierto el formulario y evita confirmar el registro mientras los campos obligatorios no se encuentren diligenciados. | #29 dialogo_confirmar (UI: confirmar pop-up) | NOT_RUN |
-| 23 | Diligenciar los campos obligatorios y confirmar la edición. | El registro queda actualizado en la tabla Pólizas asociadas a la solicitud con la información diligenciada. | #30 diligenciar (UI: diligenciar + post-condición)<br>#31 dialogo_confirmar (UI: confirmar pop-up) | NOT_RUN |
-| 24 | Validar la opción para agregar un nuevo registro. | Se presenta el formulario de adición con las reglas correspondientes a Línea Generales y al Tipo de Movimiento seleccionado. | #32 tabla_agregar (UI: agregar fila) | NOT_RUN |
-| 25 | Agregar un registro válido y confirmar. | El nuevo registro queda incorporado en la colección Pólizas asociadas a la solicitud. | #33 diligenciar (UI: diligenciar + post-condición)<br>#34 dialogo_confirmar (UI: confirmar pop-up) | NOT_RUN |
-| 26 | Seleccionar un registro y ejecutar la opción de eliminación. | El registro seleccionado es eliminado de la colección de pólizas asociadas. | #35 tabla_eliminar_fila (UI: eliminar fila) | NOT_RUN |
-| 27 | Validar el campo Observaciones. | El analista dispone de un campo editable para registrar observaciones relacionadas con la estructuración del caso. | #36 verificar (UI: aserciones) | NOT_RUN |
-| 28 | Validar las pestañas Documentos de la solicitud y Seguimiento. | La pestaña de documentos permite consultar los soportes asociados y la pestaña Seguimiento presenta la trazabilidad del caso. | #37 verificar (UI: aserciones)<br>#38 no_automatizado (NOT_AUTOMATED) | NOT_RUN |
-| 29 | Intentar modificar Línea, Ramo, Tipo de Solicitud, Sucursal o Tipo de Radicación desde Estructurar Información. | Los datos maestros permanecen en solo lectura y no pueden ser modificados por el analista. | #39 verificar (UI: aserciones) | NOT_RUN |
+| 19 | Validar el formulario de edición para Línea Generales – Movimiento Póliza Nueva. | La Forma de Consulta se encuentra asignada automáticamente como Identificación de Tomador y no permite modificación. | #26 verificar (UI: aserciones) | BLOCKED |
+| 20 | Validar los campos disponibles en el formulario de edición. | Se presentan como obligatorios Tipo de Documento Tomador y Número de Documento Tomador. | #27 verificar (UI: aserciones) | BLOCKED |
+| 21 | Seleccionar Tipo de Documento Tomador = NIT. | Se muestra el campo Dígito de Verificación como campo no editable y asociado al tipo de identificación seleccionado. | #28 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
+| 22 | Intentar cerrar/confirmar el formulario sin diligenciar los campos obligatorios. | El sistema mantiene abierto el formulario y evita confirmar el registro mientras los campos obligatorios no se encuentren diligenciados. | #29 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
+| 23 | Diligenciar los campos obligatorios y confirmar la edición. | El registro queda actualizado en la tabla Pólizas asociadas a la solicitud con la información diligenciada. | #30 diligenciar (UI: diligenciar + post-condición)<br>#31 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
+| 24 | Validar la opción para agregar un nuevo registro. | Se presenta el formulario de adición con las reglas correspondientes a Línea Generales y al Tipo de Movimiento seleccionado. | #32 tabla_agregar (UI: agregar fila) | BLOCKED |
+| 25 | Agregar un registro válido y confirmar. | El nuevo registro queda incorporado en la colección Pólizas asociadas a la solicitud. | #33 diligenciar (UI: diligenciar + post-condición)<br>#34 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
+| 26 | Seleccionar un registro y ejecutar la opción de eliminación. | El registro seleccionado es eliminado de la colección de pólizas asociadas. | #35 tabla_eliminar_fila (UI: eliminar fila) | BLOCKED |
+| 27 | Validar el campo Observaciones. | El analista dispone de un campo editable para registrar observaciones relacionadas con la estructuración del caso. | #36 verificar (UI: aserciones) | PASS |
+| 28 | Validar las pestañas Documentos de la solicitud y Seguimiento. | La pestaña de documentos permite consultar los soportes asociados y la pestaña Seguimiento presenta la trazabilidad del caso. | #37 verificar (UI: aserciones)<br>#38 no_automatizado (NOT_AUTOMATED) | NOT_AUTOMATED |
+| 29 | Intentar modificar Línea, Ramo, Tipo de Solicitud, Sucursal o Tipo de Radicación desde Estructurar Información. | Los datos maestros permanecen en solo lectura y no pueden ser modificados por el analista. | #39 verificar (UI: aserciones) | PASS |
 
 ## HU06-CP02 — SDE - CEL - HU06 - Validar radicación Masiva para línea Autos y estructuración por Placa
 
@@ -88,7 +88,7 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Escenario:** `escenarios/4-hu06-cp02.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-01 (FUNCTIONAL_AMBIGUITY), BUG-03 (FUNCTIONAL_DEFECT), BUG-04 (FUNCTIONAL_DEFECT), DATA-06 (TEST_DATA_GAP), UI-03 (UI_CAPABILITY_GAP), UI-05 (UI_CAPABILITY_GAP), INT-02 (INTEGRATION_VISIBILITY_GAP), FUNC-10 (FUNCTIONAL_AMBIGUITY), UI-10 (UI_CAPABILITY_GAP)
 - **Máximo alcanzable hoy:** REAL_PASS
-- **Estado:** REAL_PASS — Todos los pasos de la matriz verificados en QA.
+- **Estado:** REAL_PASS_PARCIAL — Sesión y caso reales y todos los pasos de la matriz verificados, pero hubo 1 incidente(s) separado(s) que impiden darlo por aprobado: PRODUCTO_POR_CONFIRMAR: P-21a: tras restaurar un valor válido, «Guardar» no cerró el pop-up; queda abierto y el caso puede quedar inutilizable (BUG-03).
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
 |---|---|---|---|---|

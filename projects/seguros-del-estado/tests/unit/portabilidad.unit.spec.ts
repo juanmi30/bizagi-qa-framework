@@ -38,8 +38,9 @@ test.describe('Portabilidad del repositorio @unit', () => {
     expect(md).toContain('**NO disponible en este equipo**');
     // HU06-CP01, CP02 y CP05 (históricos) + HU06-CP03 (caso 702) y HU06-CP04 (caso 703), ejecuciones reales del 2026-10-20.
     expect(md).toMatch(/\| Ejecutada \| 5\/17 /);
-    // 2026-10-19: HU06-CP02 REAL_PASS en el caso 670 (resultado técnico de la automatización, sujeto a revisión de QA).
-    expect(md).toMatch(/\| Aprobada \| 1\/17 /);
+    // 2026-10-20: el último reporte de HU06-CP02 (caso 705) es REAL_PASS_PARCIAL (22/22 PASS + incidente separado P-21a), así que
+    // ya no cuenta como aprobado el REAL_PASS histórico del caso 670.
+    expect(md).toMatch(/\| Aprobada \| 0\/17 /);
   });
 
   test('si un reporte está en ambas fuentes prevalece la copia local', ({}, testInfo) => {

@@ -42,3 +42,20 @@ Detalle, casos afectados y riesgos en el reporte ejecutivo.
 - **Inspección de solo lectura sobre el caso 702:** identidad de fila (D-66). Sin escrituras.
 - **PR #9:** 67/67 focalizadas en `eaa60b2`. Queda pendiente la decisión sobre el criterio «marcado en el dibujo y ausente del registro» (ver el reporte).
 - **Histórico:** 36 casos. Las sondas temporales se borraron.
+
+## Cierre de la sesión de ejecución (noche del 20/10)
+
+- **702/703:** abiertos hasta el 21/10 a las 04:39/04:41. Pop-up de Cumplimiento calibrado sobre ellos y continuaciones P12–P23 / P12–P22.
+  - **CP03:** 25/25 ejecutados, 21 PASS, FAIL en P14, P22 y P23.
+  - **CP04:** 23/23 ejecutados, 18 PASS, FAIL en P16–P17 y P19; P15 NOT_AUTOMATED.
+- **CP01, caso 704** (nuevo, autorizado): vertical P2–P17, P27 y P29 con la barrera por bloque. Pop-up de Póliza Nueva calibrado con etiquetas reales y P18–P26 en continuaciones. 29/29 ejecutados, 24 PASS, FAIL en P1, P19 y P24.
+- **CP02, caso 705** (nuevo, autorizado): 22/22 PASS. P18 se verificó por la clave de fila (D-66) en otra pestaña. Incidente P-21a separado → REAL_PASS_PARCIAL.
+- **Hallazgos para QA:**
+  - Ramo RCE no se almacena (702, reproducido 2 veces);
+  - P-21a en Cumplimiento (703) y en Autos (705);
+  - campos numéricos aceptan letras al escribir;
+  - nomenclatura «Identificación del tomador».
+- **Problema de evidencia:** los reportes de continuación se sobrescribieron (mismo nombre). Se corrigió y los tramos perdidos se transcribieron en `2026-10-20_continuaciones-702-703-704.json`.
+- **PR #9 `feb678e`:** decisión del 20/10 (marcado solo en el dibujo → inconcluso); 343/343. **PR #10:** merge del #9 (`6ac5351`) + sesión; 357/357.
+- **Métricas:** ejecutada 5/17, aprobada 0/17. El último reporte de CP02 es REAL_PASS_PARCIAL por P-21a.
+- **Histórico:** 38 casos. Sin casos adicionales ni recreaciones.

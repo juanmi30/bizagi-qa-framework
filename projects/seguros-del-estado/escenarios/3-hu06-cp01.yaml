@@ -196,17 +196,21 @@ pasos:
   - matriz: [20]
     hacer: verificar
     requiere: [EST-FILA-GENERALES-PN]
+    # Etiquetas REALES del pop-up (caso 704, 2026-10-20), iguales a las de la matriz. Bizagi solo marca un obligatorio mientras está
+    # VACÍO: el Número (precargado por el Worker) se comprueba al quedar vacío tras elegir NIT (P21) y P22 lo confirma.
     verificar:
-      - obligatorio: [Tipo documento del Tomador, Número de Documento Tomador]
+      - obligatorio: [Tipo de Documento Tomador]
 
   - matriz: [21]
     hacer: diligenciar
     requiere: [EST-FILA-GENERALES-PN]
     campos:
-      - { campo: Tipo documento del Tomador, valor: "${dato:EST-FILA-GENERALES-PN.tipo_documento}", tipo: lista }
+      - { campo: Tipo de Documento Tomador, valor: "${dato:EST-FILA-GENERALES-PN.tipo_documento}", tipo: lista }
+    # Rótulo real «Digito de Verificacion del Tomador» (sin tildes: observación de presentación, no se convierte en PASS de ortografía).
     verificar:
-      - visible: Dígito de Verificación
-      - solo_lectura: [Dígito de Verificación]
+      - visible: Digito de Verificacion del Tomador
+      - solo_lectura: [Digito de Verificacion del Tomador]
+      - obligatorio: [Número de Documento Tomador]
 
   - matriz: [22]
     hacer: dialogo_confirmar
@@ -238,7 +242,7 @@ pasos:
     hacer: diligenciar
     requiere: [EST-FILA-GENERALES-PN]
     campos:
-      - { campo: Tipo documento del Tomador, valor: "${dato:EST-FILA-GENERALES-PN.tipo_documento}", tipo: lista }
+      - { campo: Tipo de Documento Tomador, valor: "${dato:EST-FILA-GENERALES-PN.tipo_documento}", tipo: lista }
       - { campo: Número de Documento Tomador, valor: "${dato:EST-FILA-GENERALES-PN.numero_documento_nueva_fila}", tipo: texto }
 
   - matriz: [25]

@@ -10,7 +10,7 @@ formularios:
   detalle-polizas-pn-generales:
     tabla: Detalle Polizas Asociadas
     descripcion: Edición/adición de fila en Estructurar información — Masiva Generales, Póliza Nueva (Forma Consulta Identificación de Tomador)
-    estado: sin_calibrar
+    estado: en_calibracion
     mapeo_controles: null
     evidencia: >-
       Caso 430 (2026-10-13): las etiquetas de la grilla NO coinciden con el pop-up ("Tipo documento del Tomador" no existe como
@@ -48,8 +48,19 @@ formularios:
   detalle-polizas-cumplimiento:
     tabla: Detalle Polizas Asociadas
     descripcion: Edición/adición de fila — Masiva Cumplimiento (Número Póliza, ¿Requiere modificar RCE?, Ramo RCE, Número Póliza RCE)
-    estado: sin_calibrar
-    mapeo_controles: null
-    evidencia: null
+    # Sigue en_calibracion (exige SDE_AUTORIZO_CALIBRACION_POPUP=<caso>): tras un rechazo por formato/longitud, «Guardar» puede no
+    # cerrar (P-21a, caso 703), así que el cierre no es incondicionalmente seguro.
+    estado: en_calibracion
+    mapeo_controles:
+      Forma Consulta: solo lectura («Número de póliza»)
+      Número Póliza: texto (acepta letras al escribir; 8 dígitos → «Guardar» no confirma)
+      ¿Requiere modificar RCE?: radio Sí/No, obligatorio; SOLO con Ramo sin la propiedad Póliza RCE (702); ausente con la propiedad (703)
+      Ramo RCE: lista (con «Sí»; ofrece Ramos de todas las líneas), obligatorio
+      Número Póliza RCE: texto (con «Sí»), obligatorio
+    evidencia: >-
+      Casos propios 702 (Ramo 44) y 703 (Ramo 40), 2026-10-20: abrir fila 1 y «Guardar» sin cambios cierra (703); edición con «No» y
+      con «Sí» + Ramo RCE + Número Póliza RCE cierra (702); adición y eliminación de fila funcionan (703). Tras rechazar 8 dígitos, una
+      póliza válida no cierra (P-21a, 703). Ramo RCE no queda almacenado en el servidor (702, reproducido 2 veces). La identidad de
+      fila (columna id) es estable. Ambos casos siguieron utilizables.
     cierre_seguro_verificado: false
-    brecha: UI-10
+    brecha: "UI-10 (cierre tras rechazo por formato, P-21a)"

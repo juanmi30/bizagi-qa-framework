@@ -118,6 +118,10 @@ pasos:
     campos:
       - { campo: Número Póliza, valor: "${dato:EST-FILA-CUMPL-SIN-RCE.poliza}", tipo: texto }
       - { campo: ¿Requiere modificar RCE?, valor: "No", tipo: radio }
+    # P17 (matriz): con «No», Ramo RCE y Número de Póliza RCE no se muestran como requeridos (2026-10-20, caso 702).
+    verificar:
+      - no_visible: Ramo RCE
+      - no_visible: Número Póliza RCE
 
   - matriz: [18]
     hacer: dialogo_confirmar

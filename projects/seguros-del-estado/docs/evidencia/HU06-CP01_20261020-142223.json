@@ -1,0 +1,731 @@
+{
+  "cp": "HU06-CP01",
+  "escenario": "3-hu06-cp01.yaml",
+  "inicio": "2026-10-20T19:22:23.552Z",
+  "unico": "20261020-142223",
+  "cleanup": {
+    "politica": "CLEANUP_NOT_APPLICABLE",
+    "razon": "El caso queda en Estructurar información (identificable por ${unico} en la narrativa); la matriz no pide completarlo ni desistirlo."
+  },
+  "fin": "2026-10-20T19:23:25.722Z",
+  "estado": "FAIL",
+  "motivo": "Al menos un paso de la matriz falló (causa: PRODUCTO_POR_CONFIRMAR) — comportamiento observado distinto al esperado: posible defecto, POR CONFIRMAR funcionalmente.",
+  "numero_caso": "704",
+  "actividades_observadas": [
+    "Máximo tiempo de radicación",
+    "Estructurar información",
+    "Deshabilitar cancelación",
+    "Estructurar información"
+  ],
+  "pasos": [
+    {
+      "indice": 1,
+      "hacer": "iniciar_sesion",
+      "matriz": [
+        2
+      ],
+      "estado": "PASS",
+      "detalle": "Sesión real iniciada como \"analista\".",
+      "ms": 6175,
+      "evidencia": "HU06-CP01_p01_iniciar_sesion"
+    },
+    {
+      "indice": 2,
+      "hacer": "nuevo_caso",
+      "matriz": [
+        2,
+        3
+      ],
+      "estado": "PASS",
+      "detalle": "Formulario de inicio de \"«env:SDE_PROCESO_RADICACION»\" abierto (ruta: «env:SDE_PROCESO_CATEGORIA»)",
+      "ms": 4602,
+      "evidencia": "HU06-CP01_p02_nuevo_caso"
+    },
+    {
+      "indice": 3,
+      "hacer": "diligenciar",
+      "matriz": [
+        3
+      ],
+      "estado": "PASS",
+      "detalle": "Diligenciado y confirmado: Línea=Generales; Ramo=«env:SDE_GEN_RAMO»; Tipo de Solicitud=Póliza Nueva",
+      "ms": 4535,
+      "evidencia": "HU06-CP01_p03_diligenciar"
+    },
+    {
+      "indice": 4,
+      "hacer": "verificar",
+      "matriz": [
+        4,
+        5
+      ],
+      "estado": "PASS",
+      "detalle": "✔ etiquetas exactas presentes (4) | ✔ obligatorio: Sucursal",
+      "ms": 43,
+      "evidencia": "HU06-CP01_p04_verificar"
+    },
+    {
+      "indice": 5,
+      "hacer": "verificar",
+      "matriz": [
+        4
+      ],
+      "estado": "NOT_AUTOMATED",
+      "detalle": "✔ [INI-ORTOGRAFIA · fuente: Matriz HU06-CP05 P6 / HU03 P6 (\"correcta ortografía y capitalización\") + reglas_ortograficas (RAE-ASALE, DLE)] ortografía (norma RAE/DLE) en \"inicio-radicacion\" (identificada por Línea, Tipo de Radicación) sobre 11 textos visibles: sin hallazgos | ✔ [INI-ETIQUETAS-INFORMACION-INICIAL · fuente: Matriz HU06-CP01 P4 (\"Los campos Línea, Ramo, Tipo de Solicitud/Movimiento y Sucursal se presentan con las etiquetas, ortografía y capitalización definidas\")] etiquetas exactas presentes (3) | … INI-ETIQUETA-TIPO-SOLICITUD PENDIENTE DE DEFINICIÓN (Daniel (escenarios funcionales) con Iván): La matriz lo nombra \"Tipo de Solicitud/Movimiento\", \"Tipo de Solicitud\" y \"Tipo de Movimiento\" (FUNC-01); el portal muestra \"Tipo de Solicitud\" en el inicio y \"Movimiento\" en Estructurar (OBS-07). Definir el texto aprobado. | … INI-ORDEN-CAMPOS PENDIENTE DE DEFINICIÓN (Daniel / Karen (fuente FRM del requerimiento)): Ninguna fuente aprobada define el orden: la matriz enumera campos sin exigir orden y el requerimiento de formulario (Requirement 228991 FRM - Inicio / 231442) no está en el repositorio. El inventario observado se entrega como propuesta en docs/evidencia/ para su aprobación. | … INI-OBLIGATORIEDAD PENDIENTE DE DEFINICIÓN (Daniel / Karen (fuente FRM del requerimiento)): La matriz pide \"validar obligatoriedad\" (HU03 P6, HU06-CP01 P4) sin listar qué campos lo son, salvo el criterio de consulta. El inventario observado (marca de obligatorio con el campo vacío) se entrega como propuesta. | … INI-CAPITALIZACION PENDIENTE DE DEFINICIÓN (Karen / Daniel (glosario de nomenclatura)): La norma no fija la capitalización de una etiqueta y la propia matriz no es uniforme. Requiere un glosario de nomenclatura aprobado. | … INI-SI-AFIRMATIVO PENDIENTE DE DEFINICIÓN (Karen / Daniel): La forma \"Si\" solo es errata si la opción es la respuesta afirmativa; puede ser texto por defecto de la plataforma Bizagi. Requiere confirmar el contexto y la fuente funcional antes de tratarla como defecto (observación de Work, PR #2).",
+      "causa": "NO_AUTOMATIZADO",
+      "ms": 47,
+      "evidencia": "HU06-CP01_p05_verificar"
+    },
+    {
+      "indice": 6,
+      "hacer": "diligenciar",
+      "matriz": [
+        5
+      ],
+      "estado": "PASS",
+      "detalle": "Diligenciado y confirmado: Sucursal=«env:SDE_SUCURSAL»",
+      "ms": 2241,
+      "evidencia": "HU06-CP01_p06_diligenciar"
+    },
+    {
+      "indice": 7,
+      "hacer": "diligenciar",
+      "matriz": [
+        6
+      ],
+      "estado": "PASS",
+      "detalle": "Diligenciado y confirmado: Tipo de Radicación=Masiva | ✔ \"Descripción de la Solicitud (Masiva/Múltiple)\" visible (1) | ✔ \"Documentos Anexos\" visible (1)",
+      "ms": 59,
+      "evidencia": "HU06-CP01_p07_diligenciar"
+    },
+    {
+      "indice": 8,
+      "hacer": "verificar",
+      "matriz": [
+        6
+      ],
+      "estado": "PASS",
+      "detalle": "✔ [INI-MASIVO-ELEMENTOS · fuente: Matriz HU06-CP01 P6 / HU06-CP02 P5] etiquetas exactas presentes (2) | ✔ [INI-ORTOGRAFIA · fuente: Matriz HU06-CP05 P6 / HU03 P6 (\"correcta ortografía y capitalización\") + reglas_ortograficas (RAE-ASALE, DLE)] ortografía (norma RAE/DLE) en \"inicio-radicacion\" (identificada por Línea, Tipo de Radicación) sobre 15 textos visibles: sin hallazgos",
+      "ms": 1900,
+      "evidencia": "HU06-CP01_p08_verificar"
+    },
+    {
+      "indice": 9,
+      "hacer": "verificar",
+      "matriz": [
+        7
+      ],
+      "estado": "PASS",
+      "detalle": "✔ línea de texto exacta “Masivo: Solicitud asociada a más de una póliza.” (1)",
+      "ms": 15,
+      "evidencia": "HU06-CP01_p09_verificar"
+    },
+    {
+      "indice": 10,
+      "hacer": "verificar",
+      "matriz": [
+        8
+      ],
+      "estado": "PASS",
+      "detalle": "✔ editable: Descripción de la Solicitud (Masiva/Múltiple)",
+      "ms": 23,
+      "evidencia": "HU06-CP01_p10_verificar"
+    },
+    {
+      "indice": 11,
+      "hacer": "diligenciar",
+      "matriz": [
+        9
+      ],
+      "estado": "PASS",
+      "detalle": "Diligenciado y confirmado: Descripción de la Solicitud (Masiva/Múltiple)=Ref. QA 20261020-142223. Se solicita la expedición de pólizas nuevas para los tomadores identificados con NIT 900123456, 800765432 y 901234567. Cada póliza debe emitirse con las condiciones definidas para la solicitud y la información de cada tomador debe validarse antes de la expedición.",
+      "ms": 54,
+      "evidencia": "HU06-CP01_p11_diligenciar"
+    },
+    {
+      "indice": 12,
+      "hacer": "adjuntar_en_grilla",
+      "matriz": [
+        9
+      ],
+      "estado": "PASS",
+      "detalle": "\"Documentos Anexos\": sin evidencia de documentos obligatorios (la grilla no está marcada como obligatoria y no trae filas precargadas); se continúa SIN adjuntar (si la parametrización exigiera un documento, Bizagi rechazará «Crear» sin crear el caso).",
+      "ms": 16,
+      "evidencia": "HU06-CP01_p12_adjuntar_en_grilla"
+    },
+    {
+      "indice": 13,
+      "hacer": "verificar",
+      "matriz": [
+        9
+      ],
+      "estado": "PASS",
+      "detalle": "✔ \"Línea\" = Generales (coincide) | ✔ \"Tipo de Solicitud\" = Póliza Nueva (coincide)",
+      "ms": 34,
+      "evidencia": "HU06-CP01_p13_verificar"
+    },
+    {
+      "indice": 14,
+      "hacer": "pulsar",
+      "matriz": [
+        10
+      ],
+      "estado": "PASS",
+      "detalle": "Botón \"Crear\" pulsado; Bizagi respondió CREATENEWCASE con CaseNumber 704 y la UI muestra \"Caso 704\"",
+      "ms": 23621,
+      "evidencia": "HU06-CP01_p14_pulsar"
+    },
+    {
+      "indice": 15,
+      "hacer": "verificar_ruta",
+      "matriz": [
+        11,
+        12
+      ],
+      "estado": "PASS",
+      "detalle": "Caso 704: Bizagi lista como actividad actual \"Estructurar información\" (work items del caso en el buscador); actividades observadas Máximo tiempo de radicación → Estructurar información → Deshabilitar cancelación; \"Consultar Alertas Intermediario\", \"Completar información de solicitud\" no observada(s) en las 1 consulta(s) realizadas (el buscador solo muestra actividades actuales; no demuestra que nunca se ejecutaran). Estado: Máximo tiempo de radicación | Estructurar información | Deshabilitar cancelación",
+      "ms": 3557,
+      "evidencia": "HU06-CP01_p15_verificar_ruta"
+    },
+    {
+      "indice": 16,
+      "hacer": "verificar_recorrido_grafico",
+      "matriz": [
+        12
+      ],
+      "estado": "PASS",
+      "detalle": "Caso 704, recorrido (registro del servidor: 7 elementos; dibujo: 7 nodos marcados): ¿Masivo o correo? [exclusivegateway] → Máximo tiempo de radicación [timerintermediate intermediatecatch] (actual) → (sin nombre) [eventbasedgateway] → (sin nombre) [parallelgateway] → Deshabilitar cancelación [noneintermediate intermediatethrow] (actual) → Inicio Radicación [nonestart start] → Estructurar información [aiworkertask] (actual). Ruta positiva observada: coincide con lo esperado.",
+      "ms": 5532,
+      "evidencia": "HU06-CP01_p16_verificar_recorrido_grafico"
+    },
+    {
+      "indice": 17,
+      "hacer": "asegurar_asignacion",
+      "matriz": [
+        13
+      ],
+      "estado": "PASS",
+      "detalle": "\"Estructurar información\" del caso 704 ya está asignada al usuario de pruebas: sin reasignación.",
+      "ms": 5245,
+      "evidencia": "HU06-CP01_p17_asegurar_asignacion"
+    },
+    {
+      "indice": 18,
+      "hacer": "abrir_caso",
+      "matriz": [
+        13
+      ],
+      "estado": "PASS",
+      "detalle": "Caso 704 abierto por \"analista\" en \"Estructurar información\"",
+      "ms": 3173,
+      "evidencia": "HU06-CP01_p18_abrir_caso"
+    },
+    {
+      "indice": 19,
+      "hacer": "verificar",
+      "matriz": [
+        1
+      ],
+      "estado": "FAIL",
+      "detalle": "✘ [EST-ORTOGRAFIA · fuente: Matriz HU06-CP01 P1 (presentación de Estructurar información) + reglas_ortograficas (RAE-ASALE, DLE)] ortografía (norma RAE/DLE) en \"estructurar-informacion\" (identificada por Número de Caso, Creador del Caso) sobre 29 textos visibles: 1 hallazgo(s): \"Detalle Polizas Asociadas\" → ORT-TERMINO-POLIZA (\"Polizas\"; correcto: Póliza / Pólizas) [ya registrado: OBS-04] | … EST-NOMENCLATURA-ENCABEZADO PENDIENTE DE DEFINICIÓN (Daniel con Iván): La matriz describe los campos (\"Tipo de Movimiento\", \"Tipo de Radicación\") y el portal muestra \"Tipo de Solicitud\" (desde el 2026-10-14, caso 571; antes \"Movimiento\") y \"Tipo Radicación\" (OBS-07). No es evidente si la matriz fija el texto de la etiqueta o solo el dato (FUNC-01). | No bloqueante: el recorrido continúa (el CP queda FAIL).",
+      "causa": "PRODUCTO_POR_CONFIRMAR",
+      "ms": 34,
+      "evidencia": "HU06-CP01_p19_verificar"
+    },
+    {
+      "indice": 20,
+      "hacer": "verificar",
+      "matriz": [
+        14
+      ],
+      "estado": "PASS",
+      "detalle": "✔ solo_lectura: Número de Caso, Creador del Caso, Fecha de Creación, Línea, Ramo, Tipo de Solicitud | ✔ \"Línea\" = Generales (coincide)",
+      "ms": 147,
+      "evidencia": "HU06-CP01_p20_verificar"
+    },
+    {
+      "indice": 21,
+      "hacer": "verificar",
+      "matriz": [
+        15
+      ],
+      "estado": "PASS",
+      "detalle": "✔ solo_lectura: Tipo Radicación, Sucursal | ✔ \"Tipo Radicación\" = Masiva (coincide)",
+      "ms": 63,
+      "evidencia": "HU06-CP01_p21_verificar"
+    },
+    {
+      "indice": 22,
+      "hacer": "verificar",
+      "matriz": [
+        16
+      ],
+      "estado": "PASS",
+      "detalle": "✔ \"Información a Consultar\" visible (1) | ✔ solo_lectura: Descripción Solicitud Masiva",
+      "ms": 33,
+      "evidencia": "HU06-CP01_p22_verificar"
+    },
+    {
+      "indice": 23,
+      "hacer": "tabla_verificar",
+      "matriz": [
+        17
+      ],
+      "estado": "PASS",
+      "detalle": "\"Detalle Polizas Asociadas\": 3 fila(s); columnas [id, Forma Consulta, Tipo documento del Tomador, Número de Documento Tomador, Placa, Número Póliza, ¿Requiere modificar RCE?, Ramo RCE, Número Póliza RCE]",
+      "ms": 10,
+      "evidencia": "HU06-CP01_p23_tabla_verificar"
+    },
+    {
+      "indice": 24,
+      "hacer": "tabla_verificar",
+      "matriz": [
+        17
+      ],
+      "estado": "PASS",
+      "detalle": "\"Detalle Polizas Asociadas\": 3 fila(s); columnas [id, Forma Consulta, Tipo documento del Tomador, Número de Documento Tomador, Placa, Número Póliza, ¿Requiere modificar RCE?, Ramo RCE, Número Póliza RCE] | 3 fila(s) verificadas · Número de Documento Tomador: 3 de 3 esperados extraídos",
+      "ms": 17,
+      "evidencia": "HU06-CP01_p24_tabla_verificar"
+    },
+    {
+      "indice": 25,
+      "hacer": "tabla_abrir_fila",
+      "matriz": [
+        18
+      ],
+      "estado": "BLOCKED",
+      "detalle": "BARRERA POP-UP \"detalle-polizas-pn-generales\": no se abre (BUG-03 destruye el caso si no se puede cerrar con Guardar). estado \"sin_calibrar\" (UI-10); sin mapeo de controles verificado; cierre seguro con Guardar no verificado. | Barrera antes de cualquier clic: los pasos que requieren EST-FILA-GENERALES-PN quedan BLOCKED y el recorrido sigue con los independientes.",
+      "causa": "AUTOMATIZACION",
+      "ms": 2,
+      "evidencia": "HU06-CP01_p25_tabla_abrir_fila"
+    },
+    {
+      "indice": 26,
+      "hacer": "verificar",
+      "matriz": [
+        19
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: depende del pop-up que la barrera UI-10 no abrió (sin calibración registrada); sin efectos en el caso.",
+      "causa": "AUTOMATIZACION"
+    },
+    {
+      "indice": 27,
+      "hacer": "verificar",
+      "matriz": [
+        20
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: depende del pop-up que la barrera UI-10 no abrió (sin calibración registrada); sin efectos en el caso.",
+      "causa": "AUTOMATIZACION"
+    },
+    {
+      "indice": 28,
+      "hacer": "diligenciar",
+      "matriz": [
+        21
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: depende del pop-up que la barrera UI-10 no abrió (sin calibración registrada); sin efectos en el caso.",
+      "causa": "AUTOMATIZACION"
+    },
+    {
+      "indice": 29,
+      "hacer": "dialogo_confirmar",
+      "matriz": [
+        22
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: depende del pop-up que la barrera UI-10 no abrió (sin calibración registrada); sin efectos en el caso.",
+      "causa": "AUTOMATIZACION"
+    },
+    {
+      "indice": 30,
+      "hacer": "diligenciar",
+      "matriz": [
+        23
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: depende del pop-up que la barrera UI-10 no abrió (sin calibración registrada); sin efectos en el caso.",
+      "causa": "AUTOMATIZACION"
+    },
+    {
+      "indice": 31,
+      "hacer": "dialogo_confirmar",
+      "matriz": [
+        23
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: depende del pop-up que la barrera UI-10 no abrió (sin calibración registrada); sin efectos en el caso.",
+      "causa": "AUTOMATIZACION"
+    },
+    {
+      "indice": 32,
+      "hacer": "tabla_agregar",
+      "matriz": [
+        24
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: depende del pop-up que la barrera UI-10 no abrió (sin calibración registrada); sin efectos en el caso.",
+      "causa": "AUTOMATIZACION"
+    },
+    {
+      "indice": 33,
+      "hacer": "diligenciar",
+      "matriz": [
+        25
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: depende del pop-up que la barrera UI-10 no abrió (sin calibración registrada); sin efectos en el caso.",
+      "causa": "AUTOMATIZACION"
+    },
+    {
+      "indice": 34,
+      "hacer": "dialogo_confirmar",
+      "matriz": [
+        25
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: depende del pop-up que la barrera UI-10 no abrió (sin calibración registrada); sin efectos en el caso.",
+      "causa": "AUTOMATIZACION"
+    },
+    {
+      "indice": 35,
+      "hacer": "tabla_eliminar_fila",
+      "matriz": [
+        26
+      ],
+      "estado": "BLOCKED",
+      "detalle": "No ejecutado: depende del pop-up que la barrera UI-10 no abrió (sin calibración registrada); sin efectos en el caso.",
+      "causa": "AUTOMATIZACION"
+    },
+    {
+      "indice": 36,
+      "hacer": "verificar",
+      "matriz": [
+        27
+      ],
+      "estado": "PASS",
+      "detalle": "✔ editable: Observaciones",
+      "ms": 27,
+      "evidencia": "HU06-CP01_p36_verificar"
+    },
+    {
+      "indice": 37,
+      "hacer": "verificar",
+      "matriz": [
+        28
+      ],
+      "estado": "PASS",
+      "detalle": "✔ \"Documentos de la solicitud\" visible (1) | ✔ \"Seguimiento/Trazabilidad\" visible (1)",
+      "ms": 17,
+      "evidencia": "HU06-CP01_p37_verificar"
+    },
+    {
+      "indice": 38,
+      "hacer": "no_automatizado",
+      "matriz": [
+        28
+      ],
+      "estado": "NOT_AUTOMATED",
+      "detalle": "Contenido de las pestañas Documentos de la solicitud y Seguimiento/Trazabilidad (navegación por pestañas pendiente de capability UI-04).",
+      "causa": "NO_AUTOMATIZADO",
+      "ms": 0,
+      "evidencia": "HU06-CP01_p38_no_automatizado"
+    },
+    {
+      "indice": 39,
+      "hacer": "verificar",
+      "matriz": [
+        29
+      ],
+      "estado": "PASS",
+      "detalle": "✔ solo_lectura: Línea, Ramo, Tipo de Solicitud, Sucursal, Tipo Radicación",
+      "ms": 95,
+      "evidencia": "HU06-CP01_p39_verificar"
+    }
+  ],
+  "matriz": [
+    {
+      "n": 1,
+      "accion": "Objetivo:",
+      "esperado": "Validar la radicación Masiva para la línea Generales, verificando las reglas del formulario inicial, la ruta de la compuerta ¿Masivo? y el comportamiento de la actividad Estructurar Información, incluyendo la visualización, edición y obligatoriedad de los campos de la tabla de pólizas asociadas.",
+      "estado": "FAIL",
+      "cubierto_por": [
+        19
+      ]
+    },
+    {
+      "n": 2,
+      "accion": "Ingresar al ambiente Bizagi mediante la URL: «env:BIZAGI_BASE_URL»/",
+      "esperado": "El ambiente de pruebas de Bizagi se encuentra disponible y permite iniciar la gestión de una nueva Radicación.",
+      "estado": "PASS",
+      "cubierto_por": [
+        1,
+        2
+      ]
+    },
+    {
+      "n": 3,
+      "accion": "Crear un nuevo caso de Radicación y seleccionar Línea = Generales, junto con un Ramo y Tipo de Solicitud válidos para la prueba.",
+      "esperado": "El formulario presenta la información correspondiente a la Línea, Ramo y Tipo de Solicitud seleccionados.",
+      "estado": "PASS",
+      "cubierto_por": [
+        2,
+        3
+      ]
+    },
+    {
+      "n": 4,
+      "accion": "Validar la sección de información inicial antes de seleccionar el tipo de radicación.",
+      "esperado": "Los campos Línea, Ramo, Tipo de Solicitud/Movimiento y Sucursal se presentan con las etiquetas, ortografía y capitalización definidas.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": [
+        4,
+        5
+      ]
+    },
+    {
+      "n": 5,
+      "accion": "Seleccionar una Sucursal válida.",
+      "esperado": "La Sucursal queda registrada y se mantiene disponible como dato requerido para continuar con la radicación.",
+      "estado": "PASS",
+      "cubierto_por": [
+        4,
+        6
+      ]
+    },
+    {
+      "n": 6,
+      "accion": "Seleccionar Tipo de Radicación = Masivo.",
+      "esperado": "Se habilitan los elementos correspondientes a la modalidad Masivo, incluyendo Descripción de la Solicitud (Masiva/Múltiple) y Documentos Anexos.",
+      "estado": "PASS",
+      "cubierto_por": [
+        7,
+        8
+      ]
+    },
+    {
+      "n": 7,
+      "accion": "Validar el texto de ayuda presentado para Masivo.",
+      "esperado": "Para Generales se muestra: “Masivo: Solicitud asociada a más de una póliza.”, conservando ortografía, tildes y capitalización.",
+      "estado": "PASS",
+      "cubierto_por": [
+        9
+      ]
+    },
+    {
+      "n": 8,
+      "accion": "Validar la descripción de la solicitud.",
+      "esperado": "El campo Descripción de la Solicitud (Masiva/Múltiple) se encuentra disponible para ingresar la narrativa de la solicitud y permite registrar la información requerida.",
+      "estado": "PASS",
+      "cubierto_por": [
+        10
+      ]
+    },
+    {
+      "n": 9,
+      "accion": "Ingresar una narrativa que permita identificar más de una póliza y adjuntar los documentos obligatorios parametrizados.",
+      "esperado": "La narrativa y los documentos quedan registrados en el formulario sin errores de presentación, ortografía o capitalización.",
+      "estado": "PASS",
+      "cubierto_por": [
+        11,
+        12,
+        13
+      ]
+    },
+    {
+      "n": 10,
+      "accion": "Crear la solicitud.",
+      "esperado": "Se crea una única solicitud de radicación masiva y la información registrada queda asociada al caso.",
+      "estado": "PASS",
+      "cubierto_por": [
+        14
+      ]
+    },
+    {
+      "n": 11,
+      "accion": "Validar la compuerta ¿Masivo?.",
+      "esperado": "La compuerta evalúa el Tipo de Radicación Masivo y dirige el caso por la ruta correspondiente a la modalidad masiva.",
+      "estado": "PASS",
+      "cubierto_por": [
+        15
+      ]
+    },
+    {
+      "n": 12,
+      "accion": "Validar el procesamiento posterior a la compuerta.",
+      "esperado": "El caso continúa hacia el procesamiento automático del Worker AI y posteriormente hacia la actividad Estructurar Información.",
+      "estado": "PASS",
+      "cubierto_por": [
+        15,
+        16
+      ]
+    },
+    {
+      "n": 13,
+      "accion": "Ingresar a la actividad Estructurar Información.",
+      "esperado": "La actividad se encuentra asignada al Analista Centro de Expedición y presenta la información del caso masivo.",
+      "estado": "PASS",
+      "cubierto_por": [
+        17,
+        18
+      ]
+    },
+    {
+      "n": 14,
+      "accion": "Validar la sección Encabezado.",
+      "esperado": "Se muestran en solo lectura Número de Caso, Creador del Caso, Fecha de Creación, Línea, Ramo y Tipo de Movimiento.",
+      "estado": "PASS",
+      "cubierto_por": [
+        20
+      ]
+    },
+    {
+      "n": 15,
+      "accion": "Validar la sección Tipo de Consulta.",
+      "esperado": "Se muestran en solo lectura el Tipo de Radicación = Masivo y la Sucursal asociada al caso.",
+      "estado": "PASS",
+      "cubierto_por": [
+        21
+      ]
+    },
+    {
+      "n": 16,
+      "accion": "Validar la sección Información a Consultar.",
+      "esperado": "Se muestra la narrativa original registrada por el intermediario y el campo permanece no editable.",
+      "estado": "PASS",
+      "cubierto_por": [
+        22
+      ]
+    },
+    {
+      "n": 17,
+      "accion": "Validar la tabla Pólizas asociadas a la solicitud.",
+      "esperado": "La tabla se encuentra disponible y contiene la información estructurada por el Worker AI, incluyendo las columnas definidas para la actividad.",
+      "estado": "PASS",
+      "cubierto_por": [
+        23,
+        24
+      ]
+    },
+    {
+      "n": 18,
+      "accion": "Validar la posibilidad de seleccionar un registro de la tabla para editarlo.",
+      "esperado": "Se habilita el formulario de edición correspondiente al registro seleccionado.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        25
+      ]
+    },
+    {
+      "n": 19,
+      "accion": "Validar el formulario de edición para Línea Generales – Movimiento Póliza Nueva.",
+      "esperado": "La Forma de Consulta se encuentra asignada automáticamente como Identificación de Tomador y no permite modificación.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        26
+      ]
+    },
+    {
+      "n": 20,
+      "accion": "Validar los campos disponibles en el formulario de edición.",
+      "esperado": "Se presentan como obligatorios Tipo de Documento Tomador y Número de Documento Tomador.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        27
+      ]
+    },
+    {
+      "n": 21,
+      "accion": "Seleccionar Tipo de Documento Tomador = NIT.",
+      "esperado": "Se muestra el campo Dígito de Verificación como campo no editable y asociado al tipo de identificación seleccionado.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        28
+      ]
+    },
+    {
+      "n": 22,
+      "accion": "Intentar cerrar/confirmar el formulario sin diligenciar los campos obligatorios.",
+      "esperado": "El sistema mantiene abierto el formulario y evita confirmar el registro mientras los campos obligatorios no se encuentren diligenciados.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        29
+      ]
+    },
+    {
+      "n": 23,
+      "accion": "Diligenciar los campos obligatorios y confirmar la edición.",
+      "esperado": "El registro queda actualizado en la tabla Pólizas asociadas a la solicitud con la información diligenciada.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        30,
+        31
+      ]
+    },
+    {
+      "n": 24,
+      "accion": "Validar la opción para agregar un nuevo registro.",
+      "esperado": "Se presenta el formulario de adición con las reglas correspondientes a Línea Generales y al Tipo de Movimiento seleccionado.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        32
+      ]
+    },
+    {
+      "n": 25,
+      "accion": "Agregar un registro válido y confirmar.",
+      "esperado": "El nuevo registro queda incorporado en la colección Pólizas asociadas a la solicitud.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        33,
+        34
+      ]
+    },
+    {
+      "n": 26,
+      "accion": "Seleccionar un registro y ejecutar la opción de eliminación.",
+      "esperado": "El registro seleccionado es eliminado de la colección de pólizas asociadas.",
+      "estado": "BLOCKED",
+      "cubierto_por": [
+        35
+      ]
+    },
+    {
+      "n": 27,
+      "accion": "Validar el campo Observaciones.",
+      "esperado": "El analista dispone de un campo editable para registrar observaciones relacionadas con la estructuración del caso.",
+      "estado": "PASS",
+      "cubierto_por": [
+        36
+      ]
+    },
+    {
+      "n": 28,
+      "accion": "Validar las pestañas Documentos de la solicitud y Seguimiento.",
+      "esperado": "La pestaña de documentos permite consultar los soportes asociados y la pestaña Seguimiento presenta la trazabilidad del caso.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": [
+        37,
+        38
+      ]
+    },
+    {
+      "n": 29,
+      "accion": "Intentar modificar Línea, Ramo, Tipo de Solicitud, Sucursal o Tipo de Radicación desde Estructurar Información.",
+      "esperado": "Los datos maestros permanecen en solo lectura y no pueden ser modificados por el analista.",
+      "estado": "PASS",
+      "cubierto_por": [
+        39
+      ]
+    }
+  ],
+  "bloqueos": [],
+  "causas": [
+    "NO_AUTOMATIZADO",
+    "PRODUCTO_POR_CONFIRMAR",
+    "AUTOMATIZACION"
+  ],
+  "atribucion": "PRODUCTO_POR_CONFIRMAR"
+}

@@ -31,7 +31,8 @@ export interface UiEntorno {
   contextos: BrowserContext[];
   actual?: string;
   dialogo?: Locator;                                   // pop-up abierto (edición/adición de filas)
-  tabla?: { tabla: string; fila: number | null; filasAntes: number; contenidoFila?: string[] };
+  /** clave: identidad de negocio de la fila editada (columna «id» = data-business-key, única en la grilla; D-66). */
+  tabla?: { tabla: string; fila: number | null; filasAntes: number; contenidoFila?: string[]; clave?: string };
   registrarCaso: (numero: string, actor: string) => Promise<void> | void;
   /**
    * true: SOLO LECTURA (P-15, sde/soloLectura.ts). Las capacidades de escritura se rechazan antes de ejecutarse, la guardia DOM
@@ -207,8 +208,36 @@ export function evaluarNoRegistra(o: ObservacionNoRegistra): { estado: 'PASS' | 
  * esta lectura no es verificable. No se abre otra pestaña para leer una fila por posición.
  * Se conserva la firma para los consumidores; fila solo describe la selección original, nunca es identidad.
  */
-export async function leerCeldaPersistida(_page: Page, _numero: string, _proceso: string | undefined, _actividad: string, _tabla: string, _fila: number, _columna: string): Promise<string | null> {
-  return null;
+export async function leerCeldaPersistida(page: Page, numero: string, proceso: string | undefined, actividad: string, tabla: string, clave: string | undefined, columna: string): Promise<string | null> {
+  // D-66 (2026-10-20, caso 702): la columna «id» = data-business-key = rows[i][0] de Render es estable al recargar. Sin clave
+  // acreditada al abrir la fila, no hay lectura. Se busca EXACTAMENTE una fila con esa clave (nunca por posición).
+  if (!clave) return null;
+  const otra = await page.context().newPage();
+  try {
+    const e = await buscarCaso(otra, numero, proceso);
+    const conActividad = e.filas.filter((f) => f.actividades.includes(normaliza(actividad)));
+    if (conActividad.length !== 1) return null;
+    await (await unicoVisible(conActividad[0].fila.locator(SdeObjects.actividadesEnFila).filter({ hasText: regexExacto(normaliza(actividad)) }), `la actividad "${actividad}"`)).click();
+    await unicoVisible(otra.locator(SdeObjects.areaBotones), `el formulario de "${actividad}"`, 60_000);
+    await esperarCarga(otra);
+    return await celdaPorClave(otra, tabla, clave, columna);
+  } catch {
+    return null;
+  } finally {
+    await otra.close().catch(() => undefined);
+  }
+}
+
+/** Celda de la ÚNICA fila con esa clave de negocio (data-business-key y columna «id» coinciden); null si falta, se repite o no cuadra. */
+export async function celdaPorClave(ambito: Ambito, tabla: string, clave: string, columna: string): Promise<string | null> {
+  const { cont, columnas } = await contenedorTabla(ambito, tabla);
+  const filas = cont.locator(`tr[data-business-key="${clave.replace(/"/g, '')}"]`).filter({ visible: true });
+  if ((await filas.count()) !== 1) return null;
+  const celdas = (await filas.first().locator('td').allInnerTexts()).map(normaliza);
+  const iId = columnas.indexOf('id');
+  const idx = columnas.indexOf(normaliza(columna));
+  if (iId < 0 || idx < 0 || celdas[iId] !== clave) return null;
+  return celdas[idx] ?? '';
 }
 
 /**
@@ -1120,11 +1149,16 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       if (i < 1 || i > n) throw new Error(`"${p.tabla}" tiene ${n} fila(s); no existe la fila ${p.fila}.`);
       const fila = filas.nth(i - 1);
       const contenidoFila = (await fila.locator('td').allInnerTexts()).map(normaliza);
+      // Identidad de la fila ANTES de editar (D-66): columna «id» = data-business-key y única en la grilla; si no, sin clave.
+      const negocio = normaliza((await fila.getAttribute('data-business-key')) ?? '');
+      const { columnas } = await contenedorTabla(page, p.tabla as string);
+      const clave = negocio && contenidoFila[columnas.indexOf('id')] === negocio
+        && (await cont.locator(`tr[data-business-key="${negocio.replace(/"/g, '')}"]`).count()) === 1 ? negocio : undefined;
       await fila.click();
       await (await accionDeFila(fila, cont, 'Editar', p.tabla as string)).click();
       ui.dialogo = await unicoVisible(page.locator(SdeObjects.dialogo), 'el pop-up de edición');
       ctx.dialogoAbierto = true;
-      ui.tabla = { tabla: p.tabla as string, fila: i, filasAntes: n, contenidoFila };
+      ui.tabla = { tabla: p.tabla as string, fila: i, filasAntes: n, contenidoFila, clave };
       return { detalle: `Pop-up de edición abierto para la fila ${i} de "${p.tabla}"` };
     },
 
@@ -1150,14 +1184,14 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       await esperarCarga(page);
       if (p.espera === 'no_registra') {
         // «Impide registrar» (HU06-CP02 P18): QA mostró dos comportamientos: el pop-up queda abierto (casos 653 y 669) o se cierra
-        // (668 y 670). Ninguno prueba por sí solo que el valor no se registró (F2 de Work). La lectura independiente queda
-        // bloqueada hasta calibrar una identidad estable (B); una fila por posición, aun en otra pestaña, no sirve como evidencia.
+        // (668 y 670). Ninguno prueba por sí solo que el valor no se registró (F2 de Work). La lectura independiente usa la clave de
+        // negocio de la fila tomada ANTES de editar (D-66); sin clave acreditada queda inconclusa (B). Nunca por posición.
         const campo = ctx.resolver(p.campo as string);
         const rechazado = ctx.resolver(p.valor_rechazado as string);
         const t = ui.tabla;
         if (t?.fila == null) throw new Error('no_registra solo aplica a la edición de una fila existente.');
         if (!ctx.numeroCaso || !ctx.actividades.length) throw new Error('no_registra requiere el caso y la actividad abiertos.');
-        const leer = () => leerCeldaPersistida(page, ctx.numeroCaso!, ctx.resolver('${config:SDE_PROCESO_RADICACION}'), ctx.actividades[ctx.actividades.length - 1], t.tabla, t.fila!, campo);
+        const leer = () => leerCeldaPersistida(page, ctx.numeroCaso!, ctx.resolver('${config:SDE_PROCESO_RADICACION}'), ctx.actividades[ctx.actividades.length - 1], t.tabla, t.clave, campo);
         const popupAbierto = await dialogo.isVisible();
         const persistido = await leer();
         let recuperacion: ObservacionNoRegistra['recuperacion'] = 'no_requerida';
@@ -1242,7 +1276,9 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       const confirmacion = page.locator(SdeObjects.dialogo).filter({ visible: true });
       if ((await confirmacion.count()) === 1) await confirmarDialogo(confirmacion);
       await esperarCarga(page);
-      const despues = await filas.count();
+      // La grilla no refleja de inmediato lo guardado (P-21c; caso 703, 2026-10-20: la fila sí se eliminó en el servidor).
+      let despues = await filas.count();
+      for (const limite = Date.now() + 15_000; despues !== n - 1 && Date.now() < limite; despues = await filas.count()) await page.waitForTimeout(1_000);
       if (despues !== n - 1) throw new Error(`"${p.tabla}": ${n} → ${despues} filas; se esperaba ${n - 1}.`);
       const restantes = await Promise.all(Array.from({ length: despues }, (_, k) => textos(k)));
       const ocurrencias = (l: string[]) => l.filter((x) => x === contenido).length;

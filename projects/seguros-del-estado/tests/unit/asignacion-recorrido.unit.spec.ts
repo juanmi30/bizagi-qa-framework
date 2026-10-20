@@ -14,8 +14,8 @@ const MODELO = (masivo: boolean): NodoGrafico[] => [
   N('g-consultar', 'Consultar información de solicitud', ['subprocess'], !masivo, !masivo),
   N('g-completar', 'Completar información de solicitud', ['nonetask'], false),
 ];
-/** Registro de transiciones del servidor (TransitionLog) de la ruta: GUIDs de origen y destino; incluye elementos sin hotspot. */
-const REGISTRO = (masivo: boolean) => ['g-inicio', 'g-compuerta', masivo ? 'g-estructurar' : 'g-consultar', 'g-flujo-sin-hotspot'];
+/** Fixture de ruta completa: todos los GUID ejecutados tienen representación. El desconocido se prueba en Issue #8. */
+const REGISTRO = (masivo: boolean) => ['g-inicio', 'g-compuerta', masivo ? 'g-estructurar' : 'g-consultar'];
 const L = (numero: string, nodos: NodoGrafico[], registro: string[] | null, o: Partial<LecturaRecorrido> = {}): LecturaRecorrido =>
   ({ numero, encabezado: numero, identidadServidor: numero, idCasoServidor: '100', idCasoConsulta: '100', idFlujoCaso: '10', idFlujoRegistro: '10', nodos, registro, ...o });
 const MASIVO = { recorrido: ['Estructurar información'], recorrido_tipo: ['aiworkertask'] };

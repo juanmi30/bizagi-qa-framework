@@ -4,7 +4,7 @@ import { cargarRegistro } from '../sde/datos';
 import { cargarEscenario, DIR_ESCENARIOS, type EscenarioSde, type PasoSde } from '../sde/escenario';
 import { crearContexto, ejecutarEscenario } from '../sde/ejecutor';
 import { crearCapacidadesUi, VIEWPORT_SDE, type UiEntorno } from '../sde/capacidades';
-import { guardarReporte } from '../sde/registro';
+import { guardarCaptura, guardarReporte } from '../sde/registro';
 import { exclusividadEjecucionReal } from '../sde/verticales';
 
 /**
@@ -42,7 +42,14 @@ test('continuación de un CP sobre un caso propio existente @continuacion', asyn
   const ctx = crearContexto(registro, process.env, `cont-${caso}-P${desde}-${hasta}-${Date.now()}`); // único por corrida: no sobrescribe tramos anteriores
   ctx.numeroCaso = caso;
   const r = await ejecutarEscenario(esc, { capacidades, verificar, soloLectura: false,
-    evidencia: async (n) => { const f = await page.screenshot({ fullPage: true }).catch(() => null); if (f) await testInfo.attach(n, { body: f, contentType: 'image/png' }); return n; },
+    evidencia: async (n) => {
+      const actual = ui.actual ? ui.paginas.get(ui.actual) : page;
+      const f = await actual?.screenshot({ fullPage: true }).catch(() => null);
+      if (!f) return undefined;
+      await testInfo.attach(n, { body: f, contentType: 'image/png' });
+      guardarCaptura(`CONTINUACION_${cp}`, ctx.unico, n, f); // sobrevive a corridas posteriores
+      return n;
+    },
   }, ctx);
   r.motivo = `CONTINUACIÓN (P${desde}–P${hasta}) sobre el caso existente ${caso}; complementa el reporte de la vertical: ${r.motivo}`;
   guardarReporte(r, 'CONTINUACION_');

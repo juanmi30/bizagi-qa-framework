@@ -1,0 +1,116 @@
+{
+  "$comentario": "Soporte de certificación cliente de HU06 (UN documento por HU). Fuentes: matriz oficial (fuentes/matriz.json) y reportes de ejecución sanitizados (docs/evidencia). Los pasos 'transcritos' provienen de la salida de consola de continuaciones cuyo reporte JSON se sobrescribió (ver docs/evidencia/2026-10-20_continuaciones-702-703-704.json). Sin PII ni valores del .env.",
+  "hu": "HU06",
+  "salida": "20261021_SDE_CEL_HU06_Soporte_Certificacion_Cliente.docx",
+  "template": "projects/colsubsidio/templates/soporte-certificacion-cliente-referencia.docx",
+  "logoCliente": null,
+  "cliente": "Seguros del Estado",
+  "proyecto": "SDE - CEL - HU06",
+  "nombrePruebas": "SDE – CEL – Radicación (HU06: compuerta ¿Masivo?, Worker AI y Estructurar información)",
+  "iteracion": "Ciclo 1 (por confirmar por QA)",
+  "fechaInicio": "13/10/2026 (por confirmar por QA)",
+  "fechaFinalizacion": "20/10/2026 (por confirmar por QA)",
+  "seccion": "Radicación – HU06",
+  "encabezado": "SDE - CEL - HU06",
+  "casos": [
+    {
+      "cp": "HU06-CP01",
+      "numeroCaso": "704",
+      "configuracion": "Línea Generales · Tipo de Solicitud Póliza Nueva · Radicación Masiva · narrativa ficticia con 3 NIT · actor analista",
+      "fuentes": ["docs/evidencia/HU06-CP01_20261020-142223.json", "docs/evidencia/CONTINUACION_HU06-CP01_cont-704.json"],
+      "transcritos": {
+        "fuente": "docs/evidencia/2026-10-20_continuaciones-702-703-704.json (HU06-CP01_caso_704)",
+        "pasos": {
+          "18": { "estado": "PASS", "resultado": "Se abrió el pop-up de edición de la fila 1 de «Detalle Polizas Asociadas»." },
+          "19": { "estado": "FAIL", "resultado": "«Forma Consulta» se asigna automáticamente y es de solo lectura, pero muestra «Identificación del tomador» (la matriz dice «Identificación de Tomador»)." },
+          "20": { "estado": "PASS", "resultado": "«Tipo de Documento Tomador» se presenta como obligatorio." },
+          "21": { "estado": "PASS", "resultado": "Con Tipo de Documento = NIT se muestra «Digito de Verificacion del Tomador» de solo lectura; «Número de Documento Tomador» queda obligatorio (el valor precargado por el Worker se vacía)." },
+          "22": { "estado": "PASS", "resultado": "Sin el Número de Documento Tomador, «Guardar» no confirma: el pop-up permanece abierto." },
+          "23": { "estado": "PASS", "resultado": "Con el Número de Documento Tomador 900456789, «Guardar» cierra y la fila queda actualizada." },
+          "24": { "estado": "FAIL", "resultado": "El formulario de adición se presenta, pero «Forma Consulta» muestra «Identificación del tomador» (la matriz dice «Identificación de Tomador»)." },
+          "25": { "estado": "PASS", "resultado": "Se agregó un registro con NIT 900987654; la tabla quedó con 4 filas." }
+        }
+      },
+      "observaciones": [
+        "P1 (presentación de Estructurar información): «Detalle Polizas Asociadas» sin tilde (OBS-04).",
+        "P19 y P24: diferencia de nomenclatura «Identificación del tomador» frente a «Identificación de Tomador».",
+        "P21: el rótulo «Digito de Verificacion del Tomador» va sin tildes; al elegir NIT se vacía el número precargado.",
+        "P4: parte de la presentación depende de expectativas aprobadas por QA (P-11).",
+        "P28: la navegación de las pestañas está automatizada; la revisión de su contenido es manual.",
+        "P9: la grilla «Documentos Anexos» no estaba marcada como obligatoria y Bizagi aceptó «Crear» sin documentos (P-02, por confirmar)."
+      ]
+    },
+    {
+      "cp": "HU06-CP02",
+      "numeroCaso": "705",
+      "configuracion": "Línea Autos · Ramo 48 - AUTOMÓVILES LIVIANOS INDIVIDUAL · Tipo de Solicitud Modificación · Radicación Masiva · narrativa ficticia con 3 pólizas y 3 placas · radica intermediario, estructura analista",
+      "fuentes": ["docs/evidencia/HU06-CP02_20261020-142817.json"],
+      "observaciones": [
+        "Los 22 pasos de la matriz tienen PASS reportado por la ejecución automatizada.",
+        "Incidente P-21a (separado del resultado de P18): tras rechazar la placa de 7 caracteres y restaurar un valor válido, «Guardar» no cerró el pop-up. Estado global de la automatización: REAL_PASS_PARCIAL; no se presenta como certificado.",
+        "P18: la placa inválida no quedó registrada, comprobado en el servidor leyendo la fila por su identificador (columna id)."
+      ]
+    },
+    {
+      "cp": "HU06-CP03",
+      "numeroCaso": "702",
+      "configuracion": "Línea Cumplimiento · Ramo 44 - CUMPLIMIENTO ENTIDAD ESTATAL (sin propiedad Póliza RCE: bEsRCE = false) · Tipo de Solicitud Modificación · Radicación Masiva · Ramo RCE elegido: RCE DERIVADA DE CUMPLIMIENTO (bEsRCE = true)",
+      "fuentes": ["docs/evidencia/HU06-CP03_20261020-123853.json", "docs/evidencia/CONTINUACION_HU06-CP03_cont-702.json"],
+      "transcritos": {
+        "fuente": "docs/evidencia/2026-10-20_continuaciones-702-703-704.json (HU06-CP03_caso_702)",
+        "pasos": {
+          "19": { "estado": "PASS", "resultado": "Con «¿Requiere modificar RCE?» = Sí se habilitan Ramo RCE y Número Póliza RCE como obligatorios." },
+          "20": { "estado": "PASS", "resultado": "Sin Ramo RCE y Número Póliza RCE, «Guardar» no confirma: el pop-up permanece abierto." },
+          "21": { "estado": "PASS", "resultado": "Ramo RCE «RCE DERIVADA DE CUMPLIMIENTO» y Número Póliza RCE 400123456 diligenciados; el registro puede confirmarse." },
+          "22": { "estado": "FAIL", "resultado": "El campo «Número Póliza RCE» acepta escribir «ABCDEFGHI» (se esperaba que solo aceptara valores numéricos)." },
+          "23": { "estado": "FAIL", "resultado": "«Guardar» cierra, pero el servidor almacena la fila con Número Póliza RCE 400123456 y «¿Requiere modificar RCE?» = Sí, y Ramo RCE VACÍO. Reproducido de forma aislada (solo Ramo RCE + «Guardar»)." }
+        }
+      },
+      "observaciones": [
+        "Defecto reproducido: Ramo RCE no conserva su valor al guardar (P23; caso 702, fila 1553, dos reproducciones).",
+        "P14 y P22: los campos numéricos aceptan escribir letras; no se probó si «Guardar» las rechaza.",
+        "La lista «Ramo RCE» ofrece Ramos de todas las líneas (incluidas las de Autos).",
+        "La propiedad Póliza RCE del Ramo se tomó del campo del sistema bEsRCE (por confirmar por QA)."
+      ]
+    },
+    {
+      "cp": "HU06-CP04",
+      "numeroCaso": "703",
+      "configuracion": "Línea Cumplimiento · Ramo 40 - RCE DERIVADA DE CUMPLIMIENTO (con propiedad Póliza RCE: bEsRCE = true) · Tipo de Solicitud Modificación · Radicación Masiva",
+      "fuentes": ["docs/evidencia/HU06-CP04_20261020-124051.json", "docs/evidencia/CONTINUACION_HU06-CP04_cont-703.json"],
+      "transcritos": {
+        "fuente": "docs/evidencia/2026-10-20_continuaciones-702-703-704.json (HU06-CP04_caso_703)",
+        "pasos": {
+          "12": { "estado": "PASS", "resultado": "Se abrió el pop-up de edición de la fila 1 (formulario de Cumplimiento)." },
+          "13": { "estado": "PASS", "resultado": "«Forma Consulta» visible." },
+          "14": { "estado": "PASS", "resultado": "«¿Requiere modificar RCE?» no visible (Ramo con la propiedad Póliza RCE)." },
+          "15": { "estado": "NOT_AUTOMATED", "resultado": "La matriz no define el comportamiento esperado de Ramo RCE y Número de Póliza RCE para un Ramo con la propiedad (FUNC-05): expectativa pendiente de definición." },
+          "16": { "estado": "FAIL", "resultado": "«Número Póliza» acepta escribir «ABCDEFGHI» (se esperaba que solo aceptara valores numéricos)." },
+          "17": { "estado": "FAIL", "resultado": "«Número Póliza» acepta escribir «ABCDEFGHI»; no se probó si «Guardar» rechaza el valor no numérico." },
+          "18": { "estado": "PASS", "resultado": "Con «12345678» (8 dígitos), «Guardar» no confirma: el pop-up permanece abierto." },
+          "19": { "estado": "FAIL", "resultado": "Tras el rechazo por longitud, la póliza válida 300654321 no se confirmó: «Guardar» no cerró el pop-up (P-21a). Al reabrir, la fila conserva 100245678." }
+        }
+      },
+      "observaciones": [
+        "P19: P-21a — tras un rechazo por longitud, un valor válido no se confirma con «Guardar».",
+        "P16–P17: el campo numérico acepta escribir letras; no se probó si «Guardar» las rechaza.",
+        "P15: expectativa funcional pendiente de definición (FUNC-05).",
+        "P22: la eliminación se confirmó en el servidor (la grilla tarda en refrescarse)."
+      ]
+    },
+    {
+      "cp": "HU06-CP05",
+      "numeroCaso": "706",
+      "configuracion": "Línea Autos · Ramo 48 - AUTOMÓVILES LIVIANOS INDIVIDUAL · Tipo de Solicitud Modificación · Radicación Individual · Forma de Consulta Unitaria = Número de póliza (dato de QA)",
+      "fuentes": ["docs/evidencia/HU06-CP05_20261020-150944.json"],
+      "validacionPosterior": {
+        "pasos": [8, 9],
+        "texto": "Validación posterior a la ejecución (no modifica el resultado automático): Juan Miguel confirmó que el recorrido «¿Masivo o correo? → Consultar información de solicitud → Consultar SISE», sin pasar por Worker AI ni Estructurar Información, es el camino regular esperado. La evidencia del caso 706 corresponde: el registro de transiciones del servidor y el diagrama coinciden en 8 elementos de la instancia 706 (código integrado en main add73ab)."
+      },
+      "observaciones": [
+        "P8 y P9: el resultado automático fue NOT_AUTOMATED porque la expectativa del camino regular estaba pendiente de definición (P-18); se registra aparte la validación posterior del usuario.",
+        "P6: etiquetas presentes y ortografía sin hallazgos; las expectativas de presentación aprobadas siguen pendientes (P-11)."
+      ]
+    }
+  ]
+}

@@ -33,6 +33,19 @@ export async function registrarCasoCreado(
 }
 
 /** `prefijo` (p. ej. "VARIANTE_") separa reportes que NO son evidencia del CP: las métricas solo leen "<CP>_*.json". */
+/**
+ * Captura de un paso, conservada FUERA de la carpeta de artefactos de Playwright (que se vacía en cada corrida; así se
+ * perdieron las capturas de los casos 702–706 el 2026-10-20). Una carpeta por corrida: nunca se sobrescribe otra.
+ * Ruta: test-results/seguros-del-estado/sde/capturas/<CP>_<unico>/<nombre>.png. Local: no viaja con Git.
+ */
+export function guardarCaptura(cp: string, unico: string, nombre: string, png: Buffer): string {
+  const dir = resolve(DIR_SALIDA, 'capturas', `${cp}_${unico}`);
+  mkdirSync(dir, { recursive: true });
+  const ruta = resolve(dir, `${nombre.replace(/[^\w.-]/g, '_')}.png`);
+  writeFileSync(ruta, png);
+  return ruta;
+}
+
 export function guardarReporte(r: ReporteCp, prefijo = ''): string {
   mkdirSync(DIR_SALIDA, { recursive: true });
   const ruta = resolve(DIR_SALIDA, `${prefijo}${r.cp}_${r.unico}.json`);

@@ -7,7 +7,7 @@ import { cargarRegistro } from './datos';
 import { cargarEscenario, EscenarioError } from './escenario';
 import { crearContexto, ejecutarEscenario, preflight, reporteBloqueado } from './ejecutor';
 import { crearCapacidadesUi, type UiEntorno } from './capacidades';
-import { guardarReporte, registrarCasoCreado, resumenTexto, RUTA_BLOQUEO_EJECUCION_REAL } from './registro';
+import { guardarCaptura, guardarReporte, registrarCasoCreado, resumenTexto, RUTA_BLOQUEO_EJECUCION_REAL } from './registro';
 import type { ReporteCp } from './modelo';
 
 /**
@@ -191,7 +191,10 @@ export function registrarVerticales(rutas: string[], o: OpcionesVerticales = { t
             evidencia: async (nombreEv) => {
               const p = ui.actual ? ui.paginas.get(ui.actual) : page;
               const foto = await p?.screenshot({ fullPage: true }).catch(() => null);
-              if (foto) await testInfo.attach(nombreEv, { body: foto, contentType: 'image/png' });
+              if (foto) {
+                await testInfo.attach(nombreEv, { body: foto, contentType: 'image/png' });
+                guardarCaptura(`${o.prefijoReporte}${s.id}`, ctx.unico, nombreEv, foto); // sobrevive a corridas posteriores
+              }
               return foto ? nombreEv : undefined;
             },
           }, ctx);

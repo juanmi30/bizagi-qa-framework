@@ -35,8 +35,14 @@ test.describe('PR #9: precedencia de la clasificación del recorrido @unit', () 
     expect(evaluarRecorrido(lectura(['inicio', 'consulta'], [...base(), worker(false)]), negativa).estado).toBe('PASS');
     expect(evaluarRecorrido(lectura(['inicio', 'consulta'], [...base(), nodo('consulta', 'Consultar'), worker(false)]), negativa).estado).toBe('NOT_AUTOMATED');
   });
-  test('worker con GUID único marcado en el dibujo aunque falte en el registro → FAIL (criterio C del PR #7, se conserva)', () => {
-    expect(evaluarRecorrido(lectura(['inicio', 'consulta'], [...base(), worker()]), negativa).estado).toBe('FAIL');
+  test('worker marcado en el dibujo pero ausente del registro → inconcluso (decisión del 20/10: evidencia contradictoria)', () => {
+    expect(evaluarRecorrido(lectura(['inicio', 'consulta'], [...base(), worker()]), negativa).estado).toBe('NOT_AUTOMATED');
+  });
+  test('worker demostrado por el registro aunque el dibujo aún no lo marque → FAIL', () => {
+    expect(evaluarRecorrido(lectura(['inicio', 'consulta', 'worker'], [...base(), worker(false)]), negativa).estado).toBe('FAIL');
+  });
+  test('sin registro del servidor, un worker solo marcado en el dibujo → inconcluso', () => {
+    expect(evaluarRecorrido(lectura([], [...base(), worker()], { registro: null }), negativa).estado).toBe('NOT_AUTOMATED');
   });
   test('sin actividades prohibidas y correspondencia incompleta → inconcluso', () => {
     expect(evaluarRecorrido(lectura(['inicio', 'consulta', 'no-representado'], [...base(), worker(false)]), negativa).estado).toBe('NOT_AUTOMATED');

@@ -29,6 +29,7 @@ function deps(sobre: Partial<Record<string, Capacidad>> = {}, verificarOk = true
     nuevo_caso: ok, diligenciar: ok, verificar: ok, abrir_caso: ok,
     pulsar: async (p, ctx) => { llamadas.push(p.hacer); if (p.capturar_numero_caso) ctx.numeroCaso = '4321'; },
     verificar_ruta: async (p) => { llamadas.push(p.hacer); return { estado: 'UI_PASS', detalle: 'ruta' }; },
+    verificar_recorrido_grafico: async (p) => { llamadas.push(p.hacer); return { detalle: 'recorrido gráfico' }; },
     ...sobre,
   };
   return { llamadas, capacidades, verificar: async (v) => ({ ok: verificarOk, detalle: JSON.stringify(v) }), evidencia: async () => undefined };
@@ -53,7 +54,8 @@ test.describe('Ejecutor SDE @unit', () => {
     expect(porPaso).toEqual({ 1: 'NOT_AUTOMATED', 2: 'PASS', 3: 'PASS', 4: 'PASS', 5: 'PASS', 6: 'NOT_AUTOMATED', 7: 'PASS', 8: 'NOT_AUTOMATED', 9: 'NOT_AUTOMATED' });
     // P-18: aunque la capacidad de ruta responda UI_PASS, la expectativa pendiente deja P8 sin aprobar. P9 la comparte
     // (verificar_ruta cubre [8, 9]) y el motor la agrega como NOT_AUTOMATED; la integración sigue registrada en su paso.
-    expect(r.pasos.find((p) => p.hacer === 'integracion')?.estado).toBe('INTEGRATION_NOT_VERIFIED');
+    // D-53 (2026-10-19): P9 «no se envía al Worker ni a Estructurar» se verifica con el recorrido gráfico.
+    expect(r.pasos.find((p) => p.hacer === 'verificar_recorrido_grafico')?.estado).toBe('PASS');
     expect(r.motivo).toContain('P8=NOT_AUTOMATED');
     expect(r.motivo).toContain('P9=NOT_AUTOMATED');
   });
@@ -95,11 +97,11 @@ test.describe('Ejecutor SDE @unit', () => {
   test('un paso con "requiere" y datos faltantes queda BLOCKED sin ejecutarse, el resto continúa y el CP no es verde', async () => {
     const conRequiere: EscenarioSde = {
       ...esc,
-      pasos: esc.pasos.map((p) => (p.hacer === 'integracion' ? { ...p, requiere: ['TOMADOR-EXISTENTE'] } : p)),
+      pasos: esc.pasos.map((p) => (p.hacer === 'verificar_recorrido_grafico' ? { ...p, requiere: ['TOMADOR-EXISTENTE'] } : p)),
     };
     const d = deps();
     const r = await ejecutarEscenario(conRequiere, d, crearContexto(reg, ENV, 'u'));
-    const bloqueado = r.pasos.find((p) => p.hacer === 'integracion')!;
+    const bloqueado = r.pasos.find((p) => p.hacer === 'verificar_recorrido_grafico')!;
     expect(bloqueado.estado).toBe('BLOCKED');
     expect(bloqueado.detalle).toContain('SDE_TOMADOR_EXISTENTE_NUM');
     expect(d.llamadas).toContain('verificar_ruta'); // los demás pasos sí corrieron

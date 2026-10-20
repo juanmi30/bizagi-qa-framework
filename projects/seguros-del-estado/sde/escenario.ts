@@ -76,17 +76,21 @@ export const CAPACIDADES: Record<string, { req: string[]; opt: string[] }> = {
   adjuntar: { req: ['campo', 'archivo'], opt: ['tipo_documental'] },
   // Grilla de documentos Bizagi (edición en línea): Adicionar → Tipo Documental → Guardar fila → subir archivo.
   // secuencia: matriz (por defecto: tipo → guardar → archivo) | guardar_primero (secuencia observada en el producto, exige
-  // "refrescar_con" { campo, valor_temporal, valor }: la grilla no se actualiza sola tras guardar la fila).
+  // "refrescar_con" { campo, valor_temporal, valor }: la grilla no se actualiza sola tras guardar la fila) |
+  // segun_obligatoriedad (P-02, 2026-10-19): adjunta SOLO si hay evidencia positiva de documentos obligatorios; tipo_documental
+  // admite varios tipos separados por "|"; si los tipos aparecen recién tras guardar la fila, se guarda y se reactiva la fila.
   adjuntar_en_grilla: { req: ['grilla', 'archivo'], opt: ['tipo_documental', 'secuencia', 'refrescar_con'] },
   verificar: { req: [], opt: [] },
   pulsar: { req: ['boton'], opt: ['capturar_numero_caso', 'esperar_hasta', 'maximo_minutos'] },
   verificar_ruta: { req: ['actor', 'llega_a'], opt: ['no_llega_a', 'maximo_minutos'] },
   abrir_caso: { req: ['actor', 'actividad'], opt: ['maximo_minutos'] },
+  asegurar_asignacion: { req: ['actor', 'actividad'], opt: ['maximo_minutos'] },
+  verificar_recorrido_grafico: { req: ['actor'], opt: ['recorrido', 'no_recorrido', 'recorrido_tipo', 'no_recorrido_tipo'] },
   tabla_verificar: { req: ['tabla'], opt: ['columnas', 'minimo_filas', 'comparar'] },
   // "formulario": id del pop-up en data/popups-calibrados.yaml; la barrera H3 decide en ejecución si puede abrirse.
   tabla_abrir_fila: { req: ['tabla', 'fila', 'formulario'], opt: [] },          // abre el pop-up de edición de la fila N (1..n)
   tabla_agregar: { req: ['tabla', 'formulario'], opt: [] },                     // abre el pop-up de adición
-  dialogo_confirmar: { req: ['espera'], opt: ['fila_resultante'] }, // espera: cierra | permanece_abierto
+  dialogo_confirmar: { req: ['espera'], opt: ['fila_resultante', 'campo', 'valor_rechazado', 'restaurar'] }, // espera: cierra | permanece_abierto | no_registra
   dialogo_cancelar: { req: [], opt: [] },                         // cierra el pop-up SIN guardar y verifica que no cambió la tabla
   tabla_eliminar_fila: { req: ['tabla'], opt: ['fila', 'fila_con'] },   // fila N | fila_con { columna: valor } (única)
   // UI-06: selecciona UNA fila (por número o por valores exactos) y exige que quede exactamente una seleccionada.
@@ -287,11 +291,13 @@ export function cargarEscenario(ruta: string, registro: Registro): EscenarioSde 
     if (p.actor != null && !actores.includes(p.actor as string)) problemas.push(`${donde}: actor "${p.actor}" no está en "actores" del escenario`);
     if (p.campos != null) validarCampos(p.campos, donde, problemas);
     validarVerificaciones(p.verificar, donde, problemas);
-    if (p.hacer === 'dialogo_confirmar' && !['cierra', 'permanece_abierto'].includes(p.espera as string))
+    if (p.hacer === 'dialogo_confirmar' && p.espera === 'no_registra' && !(esTexto(p.campo) && esTexto(p.valor_rechazado) && esTexto(p.restaurar)))
+      problemas.push(`${donde}: "no_registra" exige campo, valor_rechazado y restaurar`);
+    if (p.hacer === 'dialogo_confirmar' && !['cierra', 'permanece_abierto', 'no_registra'].includes(p.espera as string))
       problemas.push(`${donde}: "espera" debe ser "cierra" o "permanece_abierto"`);
     if (p.fila != null && p.fila !== 'ultima' && !(Number.isInteger(p.fila) && (p.fila as number) >= 1))
       problemas.push(`${donde}: "fila" debe ser un entero >= 1 o "ultima"`);
-    if (p.comparar != null && (typeof p.comparar !== 'object' || Array.isArray(p.comparar) || !Object.values(p.comparar as object).every((v) => Array.isArray(v) && v.length > 0 && v.every(esTexto))))
+    if ('comparar' in p && (!p.comparar || typeof p.comparar !== 'object' || Array.isArray(p.comparar) || Object.keys(p.comparar).length === 0 || !Object.entries(p.comparar).every(([c, v]) => esTexto(c) && Array.isArray(v) && v.length > 0 && v.every(esTexto))))
       problemas.push(`${donde}: "comparar" debe ser un mapa { columna: [valores introducidos] }`);
     for (const k of ['fila_resultante', 'fila_con']) {
       if (p[k] != null && (typeof p[k] !== 'object' || Array.isArray(p[k]) || Object.keys(p[k] as object).length === 0))
@@ -302,7 +308,7 @@ export function cargarEscenario(ruta: string, registro: Registro): EscenarioSde 
     if (['tabla_abrir_fila', 'tabla_agregar'].includes(p.hacer as string) && esTexto(p.formulario) && !cargarPopups()[p.formulario as string])
       problemas.push(`${donde}: el formulario "${p.formulario}" no existe en data/popups-calibrados.yaml`);
     if (p.hacer === 'adjuntar_en_grilla') {
-      if (p.secuencia != null && !['matriz', 'guardar_primero'].includes(p.secuencia as string)) problemas.push(`${donde}: "secuencia" debe ser "matriz" o "guardar_primero"`);
+      if (p.secuencia != null && !['matriz', 'guardar_primero', 'segun_obligatoriedad'].includes(p.secuencia as string)) problemas.push(`${donde}: "secuencia" debe ser "matriz", "guardar_primero" o "segun_obligatoriedad"`);
       const r = p.refrescar_con as Record<string, unknown> | undefined;
       const refrescoValido = !!r && esTexto(r.campo) && esTexto(r.valor_temporal) && esTexto(r.valor) && Object.keys(r).length === 3;
       if (p.secuencia === 'guardar_primero' && !refrescoValido) problemas.push(`${donde}: "guardar_primero" exige "refrescar_con" { campo, valor_temporal, valor }`);

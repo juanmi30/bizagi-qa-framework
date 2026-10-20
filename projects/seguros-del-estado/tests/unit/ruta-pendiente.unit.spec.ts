@@ -23,6 +23,7 @@ const caps: Record<string, Capacidad> = {
   pulsar: async (_p, c) => { c.numeroCaso = '630'; return {}; },
   // La capacidad "llega" a una actividad observada (como el caso 630): observación técnica, no veredicto funcional.
   verificar_ruta: async () => ({ estado: 'PASS', detalle: 'Caso 630: Bizagi lista como actividad actual "Consultar información de solicitud"' }),
+  verificar_recorrido_grafico: async () => ({ detalle: 'recorrido gráfico sin Estructurar' }),
 };
 
 /** Copia escenarios/ (con _bloques) a un directorio temporal para validar variantes sin tocar el repositorio. */

@@ -1,0 +1,261 @@
+{
+  "fecha": "2026-10-19",
+  "nota": "Calibración de las confirmaciones de QA (Daniel, 19/10) sobre casos PROPIOS. Sin datos personales: solo número de caso, nombres de nodos del modelo y resultados.",
+  "recorrido_grafico": {
+    "654": {
+      "tipo": "masivo",
+      "evaluacion": {
+        "estado": "PASS",
+        "detalle": "Caso 654, recorrido marcado por el portal: ¿Masivo o correo? [exclusivegateway] → Solicitud finalizada por vencimiento [terminateend end] (actual) → Máximo tiempo de radicación [timerintermediate intermediatecatch] → (sin nombre) [eventbasedgateway] → (sin nombre) [parallelgateway] → Deshabilitar cancelación [noneintermediate intermediatethrow] → Inicio Radicación [nonestart start] → Estructurar información [aiworkertask]. Coincide con lo esperado."
+      },
+      "nodos_recorridos": [
+        {
+          "nombre": "¿Masivo o correo?",
+          "tipos": [
+            "exclusivegateway"
+          ],
+          "recorrido": true,
+          "actual": false
+        },
+        {
+          "nombre": "Solicitud finalizada por vencimiento",
+          "tipos": [
+            "terminateend",
+            "end"
+          ],
+          "recorrido": true,
+          "actual": true
+        },
+        {
+          "nombre": "Máximo tiempo de radicación",
+          "tipos": [
+            "timerintermediate",
+            "intermediatecatch"
+          ],
+          "recorrido": true,
+          "actual": false
+        },
+        {
+          "nombre": "",
+          "tipos": [
+            "eventbasedgateway"
+          ],
+          "recorrido": true,
+          "actual": false
+        },
+        {
+          "nombre": "",
+          "tipos": [
+            "parallelgateway"
+          ],
+          "recorrido": true,
+          "actual": false
+        },
+        {
+          "nombre": "Deshabilitar cancelación",
+          "tipos": [
+            "noneintermediate",
+            "intermediatethrow"
+          ],
+          "recorrido": true,
+          "actual": false
+        },
+        {
+          "nombre": "Inicio Radicación",
+          "tipos": [
+            "nonestart",
+            "start"
+          ],
+          "recorrido": true,
+          "actual": false
+        },
+        {
+          "nombre": "Estructurar información",
+          "tipos": [
+            "aiworkertask"
+          ],
+          "recorrido": true,
+          "actual": false
+        }
+      ]
+    },
+    "656": {
+      "tipo": "individual",
+      "evaluacion": {
+        "estado": "PASS",
+        "detalle": "Caso 656, recorrido marcado por el portal: (sin nombre) [exclusivegateway] → ¿Masivo o correo? [exclusivegateway] → Consultar información de solicitud [isparallel subprocess subprocessmulti has-subprocess] → Solicitud finalizada por vencimiento [terminateend end] (actual) → Máximo tiempo de radicación [timerintermediate intermediatecatch] → (sin nombre) [eventbasedgateway] → (sin nombre) [parallelgateway] → Deshabilitar cancelación [noneintermediate intermediatethrow] → Inicio Radicación [nonestart start]. Coincide con lo esperado."
+      },
+      "nodos_recorridos": [
+        {
+          "nombre": "",
+          "tipos": [
+            "exclusivegateway"
+          ],
+          "recorrido": true,
+          "actual": false
+        },
+        {
+          "nombre": "¿Masivo o correo?",
+          "tipos": [
+            "exclusivegateway"
+          ],
+          "recorrido": true,
+          "actual": false
+        },
+        {
+          "nombre": "Consultar información de solicitud",
+          "tipos": [
+            "isparallel",
+            "subprocess",
+            "subprocessmulti",
+            "has-subprocess"
+          ],
+          "recorrido": true,
+          "actual": false
+        },
+        {
+          "nombre": "Solicitud finalizada por vencimiento",
+          "tipos": [
+            "terminateend",
+            "end"
+          ],
+          "recorrido": true,
+          "actual": true
+        },
+        {
+          "nombre": "Máximo tiempo de radicación",
+          "tipos": [
+            "timerintermediate",
+            "intermediatecatch"
+          ],
+          "recorrido": true,
+          "actual": false
+        },
+        {
+          "nombre": "",
+          "tipos": [
+            "eventbasedgateway"
+          ],
+          "recorrido": true,
+          "actual": false
+        },
+        {
+          "nombre": "",
+          "tipos": [
+            "parallelgateway"
+          ],
+          "recorrido": true,
+          "actual": false
+        },
+        {
+          "nombre": "Deshabilitar cancelación",
+          "tipos": [
+            "noneintermediate",
+            "intermediatethrow"
+          ],
+          "recorrido": true,
+          "actual": false
+        },
+        {
+          "nombre": "Inicio Radicación",
+          "tipos": [
+            "nonestart",
+            "start"
+          ],
+          "recorrido": true,
+          "actual": false
+        }
+      ]
+    },
+    "668": {
+      "tipo": "masivo",
+      "evaluacion": {
+        "estado": "PASS",
+        "detalle": "Caso 668, recorrido marcado por el portal: ¿Masivo o correo? [exclusivegateway] → Máximo tiempo de radicación [timerintermediate intermediatecatch] (actual) → (sin nombre) [eventbasedgateway] → (sin nombre) [parallelgateway] → Deshabilitar cancelación [noneintermediate intermediatethrow] (actual) → Inicio Radicación [nonestart start] → Estructurar información [aiworkertask] (actual). Coincide con lo esperado."
+      },
+      "nodos_recorridos": [
+        {
+          "nombre": "¿Masivo o correo?",
+          "tipos": [
+            "exclusivegateway"
+          ],
+          "recorrido": true,
+          "actual": false
+        },
+        {
+          "nombre": "Máximo tiempo de radicación",
+          "tipos": [
+            "timerintermediate",
+            "intermediatecatch"
+          ],
+          "recorrido": true,
+          "actual": true
+        },
+        {
+          "nombre": "",
+          "tipos": [
+            "eventbasedgateway"
+          ],
+          "recorrido": true,
+          "actual": false
+        },
+        {
+          "nombre": "",
+          "tipos": [
+            "parallelgateway"
+          ],
+          "recorrido": true,
+          "actual": false
+        },
+        {
+          "nombre": "Deshabilitar cancelación",
+          "tipos": [
+            "noneintermediate",
+            "intermediatethrow"
+          ],
+          "recorrido": true,
+          "actual": true
+        },
+        {
+          "nombre": "Inicio Radicación",
+          "tipos": [
+            "nonestart",
+            "start"
+          ],
+          "recorrido": true,
+          "actual": false
+        },
+        {
+          "nombre": "Estructurar información",
+          "tipos": [
+            "aiworkertask"
+          ],
+          "recorrido": true,
+          "actual": true
+        }
+      ]
+    }
+  },
+  "asignacion": {
+    "mecanismo": "Admin → Administración de procesos → Casos → Administrar Casos: casilla del work item de la actividad, Reasignar, búsqueda por Nombre Usuario, botón Reasignar de la fila del usuario. La asignación vigente se lee de la respuesta SearchCases del propio portal.",
+    "calibracion_668_mecanismo": {
+      "reasignada": true,
+      "nota": "Mecanismo recorrido hacia el MISMO usuario de pruebas (sin efecto funcional)",
+      "escrituras": [
+        "POST /Rest/Cases/Reassign 200"
+      ],
+      "consulta_posterior": "asignada al usuario de pruebas",
+      "apertura": "el analista abrió Estructurar información"
+    },
+    "verificacion_668_ruta_A": {
+      "reasignada": false,
+      "detalle": "ya asignada al usuario de pruebas: sin reasignación",
+      "escrituras_reasignacion": 0,
+      "apertura": "el analista abrió Estructurar información"
+    },
+    "corridas_cp": {
+      "669": "ya asignada: sin reasignación",
+      "670": "ya asignada: sin reasignación"
+    }
+  }
+}

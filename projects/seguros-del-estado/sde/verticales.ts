@@ -8,6 +8,7 @@ import { cargarEscenario, EscenarioError } from './escenario';
 import { crearContexto, ejecutarEscenario, preflight, reporteBloqueado } from './ejecutor';
 import { crearCapacidadesUi, type UiEntorno } from './capacidades';
 import { guardarCaptura, guardarReporte, registrarCasoCreado, resumenTexto, RUTA_BLOQUEO_EJECUCION_REAL } from './registro';
+import { registrarFin, registrarInicio, registrarInterrupcion } from './ejecuciones';
 import type { ReporteCp } from './modelo';
 
 /**
@@ -147,10 +148,15 @@ export function registrarVerticales(rutas: string[], o: OpcionesVerticales = { t
     test(`${o.titulo} ${s.id} — ${s.titulo} ${tags}`, async ({ page, browser }, testInfo) => {
       const unico = generarUnico();
       const ctx = crearContexto(registro, process.env, unico);
+      // Archivo de ejecuciones (sde/ejecuciones): solo para los CP, no para variantes. BIZAGI_CORRIDA = corrida de suite.
+      const archivar = !o.prefijoReporte;
+      if (archivar) registrarInicio({ cp: s.id, unico, corrida: process.env.BIZAGI_CORRIDA ?? null });
       const bloqueados = async (bloqueos: string[]) => {
         // BLOCKED sin tocar la UI; el reporte deja constancia de QUÉ falta (nombres, no valores) y de la causa.
         const reporte = reporteBloqueado(s, ctx, bloqueos);
-        await testInfo.attach(`${s.id}-reporte.json`, { path: guardarReporte(reporte, o.prefijoReporte), contentType: 'application/json' });
+        const ruta = guardarReporte(reporte, o.prefijoReporte);
+        if (archivar) registrarFin({ reporte, rutaReporte: ruta }); // finalizada pero NO seleccionable: no hubo ejecución real
+        await testInfo.attach(`${s.id}-reporte.json`, { path: ruta, contentType: 'application/json' });
         aplicarResultado(reporte, testInfo);
       };
       const faltantes = [...activacionE2e(process.env), ...preflight(s, registro, process.env)];
@@ -185,6 +191,7 @@ export function registrarVerticales(rutas: string[], o: OpcionesVerticales = { t
 
       async function ejecutarVertical(): Promise<void> {
         const { capacidades, verificar } = crearCapacidadesUi(ui);
+        let finalizada = false;
         try {
           const reporte = await ejecutarEscenario(s, {
             capacidades, verificar,
@@ -200,12 +207,16 @@ export function registrarVerticales(rutas: string[], o: OpcionesVerticales = { t
           }, ctx);
           if (o.prefijoMotivo) reporte.motivo = `${o.prefijoMotivo}${reporte.motivo}`;
           const ruta = guardarReporte(reporte, o.prefijoReporte);
+          if (archivar) registrarFin({ reporte, rutaReporte: ruta });
+          finalizada = true;
           await testInfo.attach(`${s.id}-reporte.json`, { path: ruta, contentType: 'application/json' });
           testInfo.annotations.push({ type: reporte.estado, description: reporte.motivo });
           if (reporte.numero_caso) testInfo.annotations.push({ type: 'caso', description: reporte.numero_caso });
           console.log(resumenTexto(reporte));
           aplicarResultado(reporte, testInfo);
         } finally {
+          // Sin reporte guardado: la ejecución queda INTERRUMPIDA (nunca reemplaza a una completa al generar el soporte).
+          if (archivar && !finalizada) registrarInterrupcion({ cp: s.id, unico, numeroCaso: ctx.numeroCaso, motivo: 'excepción antes de guardar el reporte (ver la salida de Playwright)' });
           for (const c of ui.contextos) await c.close().catch(() => undefined);
         }
       }

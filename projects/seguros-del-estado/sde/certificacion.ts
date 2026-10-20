@@ -1,8 +1,9 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { isAbsolute, relative, resolve, sep } from 'node:path';
 import { escribirZip, leerZip, type EntradaZip } from '../../../shared/utils/zip';
 import { atributoXml, elementosXml, escaparXml, hijosXml, primerElementoXml, textoParrafoDocx, textoXml, type ElementoXml } from '../../../shared/utils/xml';
 import { dimensionesPng, disponerEvidencias, geometriaCeldaLogo, type GeometriaPagina } from '../../colsubsidio/data/afi/soporte/docx';
+import { seleccionarUltimas } from './ejecuciones';
 
 /**
  * Soporte de certificación cliente: UN documento Word por HISTORIA DE USUARIO con todos sus CP (formato de la plantilla
@@ -26,7 +27,14 @@ export interface ConfigSoporteHu {
 export interface PasoSoporte {
   n: number; accion: string; esperado: string; estado: string; obtenido: string; fuente: string; capturas: string[]; validacionPosterior?: string;
 }
-export interface CasoSoporte { cp: string; titulo: string; numeroCaso: string; configuracion: string; pasos: PasoSoporte[]; observaciones: string[]; resumen: Record<string, number> }
+/** De dónde salió el resultado del CP (trazabilidad en el Word y en el plan). */
+export interface OrigenCaso {
+  tipo: 'archivada' | 'declarada' | 'sin-ejecucion'; numeroCaso: string | null; fecha: string | null; corrida: string | null; unico: string | null; fuentes: string[];
+}
+export interface CasoSoporte {
+  cp: string; titulo: string; numeroCaso: string; configuracion: string; pasos: PasoSoporte[]; observaciones: string[]; resumen: Record<string, number>;
+  origen?: OrigenCaso; advertencias?: string[];
+}
 
 interface ReporteJson { unico?: string; numero_caso?: string; pasos: { indice: number; estado: string; detalle: string; evidencia?: string }[]; matriz: { n: number; estado: string; cubierto_por?: number[] }[] }
 
@@ -59,7 +67,8 @@ export function consolidarCaso(raiz: string, dirProyecto: string, c: CasoConfig,
       const detalles = cubre.map((i) => pasos.get(i)).filter((p): p is NonNullable<typeof p> => !!p && p.estado !== 'NOT_RUN');
       const obtenido = detalles.map((p) => textoObservado(p.detalle)).filter(Boolean).join(' · ') || (cubre.length ? 'No ejecutado en esta corrida.' : 'Paso agregado del CP (objetivo): su estado resulta de los demás pasos.');
       const capturas = detalles.map((p) => p.evidencia && r.unico ? resolve(raiz, ...RUTA_CAPTURAS, `${f.includes('CONTINUACION_') ? 'CONTINUACION_' : ''}${c.cp}_${r.unico}`, `${p.evidencia}.png`) : '').filter((x) => x && existsSync(x));
-      porPaso.set(m.n, { estado: m.estado, obtenido, fuente: f.replace(/^docs\/evidencia\//, ''), capturas });
+      const etiqueta = isAbsolute(f) ? relative(raiz, f).split(sep).join('/') : f.replace(/^docs\/evidencia\//, '');
+      porPaso.set(m.n, { estado: m.estado, obtenido, fuente: etiqueta, capturas });
     }
   });
   for (const [n, t] of Object.entries(c.transcritos?.pasos ?? {})) {
@@ -73,6 +82,13 @@ export function consolidarCaso(raiz: string, dirProyecto: string, c: CasoConfig,
   const resumen: Record<string, number> = {};
   for (const p of pasos) resumen[p.estado] = (resumen[p.estado] ?? 0) + 1;
   return { cp: c.cp, titulo: matriz.titulo, numeroCaso: c.numeroCaso, configuracion: c.configuracion, pasos, observaciones: c.observaciones ?? [], resumen };
+}
+
+const fechaLegible = (iso: string | null) => (iso ? `${iso.replace('T', ' ').slice(0, 16)} UTC` : 'sin fecha');
+export function textoOrigen(o: OrigenCaso): string {
+  if (o.tipo === 'sin-ejecucion') return 'Sin ejecución seleccionable para este CP: sus pasos quedan como NO EJECUTADO (no se inventan resultados).';
+  if (o.tipo === 'archivada') return `Caso Bizagi ${o.numeroCaso} · inicio ${fechaLegible(o.fecha)} · corrida de suite ${o.corrida ?? 'sin identificador'} · seleccionada automáticamente (última ejecución finalizada del CP) · reporte ${o.fuentes.join(', ')}`;
+  return `Caso Bizagi ${o.numeroCaso} · última evidencia del ${fechaLegible(o.fecha)} · certificación declarada (reportes sanitizados: ${o.fuentes.join(', ')})`;
 }
 
 const ESTADOS: Record<string, string> = {
@@ -183,6 +199,8 @@ export function renderizarSoporteHu(cfg: ConfigSoporteHu, casos: CasoSoporte[], 
     cuerpo += titulo('Ttulo2', `${c.cp.replace(/^HU\d+-/, '')} - ${c.titulo}`, k > 0)
       + titulo('Ttulo3', `Número del caso: ${c.numeroCaso}`)
       + etiquetaValor('Configuración utilizada', c.configuracion)
+      + (c.origen ? etiquetaValor('Ejecución utilizada', textoOrigen(c.origen)) : '')
+      + (c.advertencias ?? []).map((a) => etiquetaValor('Advertencia de selección', a)).join('')
       + etiquetaValor('Resultado de la ejecución automatizada', `${pass} PASS de ${c.pasos.length} pasos de la matriz (${resumen}). No constituye aprobación funcional: la aprobación corresponde a QA.`)
       + parrafo();
     for (const p of c.pasos) {
@@ -276,28 +294,65 @@ export const RUTA_SOPORTES = ['test-results', 'seguros-del-estado', 'soportes'] 
 export const RUTA_CAPTURAS = ['test-results', 'seguros-del-estado', 'sde', 'capturas'] as const;
 export const RUTAS_LIMPIADAS_POR_PLAYWRIGHT = [['test-results', 'seguros-del-estado', 'artifacts'], ['test-results', 'seguros-del-estado', 'html-report']] as const;
 
+/** Lo elegido para cada CP: para la consola, el plan JSON y la simulación de limpieza (referencias). */
+export interface SeleccionSoporte { cp: string; origen: OrigenCaso['tipo']; numeroCaso: string | null; unico: string | null; corrida: string | null; fecha: string | null; advertencias: string[] }
+
 /**
  * Genera el soporte de una HU desde resultados guardados. Solo LEE las fuentes (reportes, capturas, plantilla) y escribe en
  * una carpeta NUEVA <soportes>/<HU>/<fecha-hora>/ (un DOCX + el plan JSON); nunca sobrescribe ni borra nada.
+ * Selección por CP: la ejecución ARCHIVADA más reciente y seleccionable (sde/ejecuciones) si es posterior a la certificación
+ * declarada en certificacion/<HU>.json; si no, la declarada. Con `corrida`, solo las ejecuciones de esa corrida de suite.
  */
-export function generarSoporteHu(o: { raiz: string; dirProyecto: string; hu: string; ahora?: Date }): { docx: string; plan: string; casos: CasoSoporte[] } {
-    if (!/^HU\d+$/.test(o.hu)) throw new Error(`HU inválida: ${o.hu}`);
+export function generarSoporteHu(o: { raiz: string; dirProyecto: string; hu: string; ahora?: Date; corrida?: string }): { docx: string; plan: string; casos: CasoSoporte[]; seleccion: SeleccionSoporte[] } {
+  if (!/^HU\d+$/.test(o.hu)) throw new Error(`HU inválida: ${o.hu}`);
   const cfg = JSON.parse(readFileSync(resolve(o.dirProyecto, 'certificacion', `${o.hu}.json`), 'utf8')) as ConfigSoporteHu;
   const matriz = JSON.parse(readFileSync(resolve(o.dirProyecto, 'fuentes', 'matriz.json'), 'utf8')) as { casos: { id: string; titulo: string; pasos: { n: number; accion: string; esperado: string }[] }[] };
+  const leer = (f: string) => {
+    const r = resolve(o.dirProyecto, f);
+    if (!existsSync(r)) throw new Error(`No existe la fuente ${f}.`);
+    return JSON.parse(readFileSync(r, 'utf8')) as ReporteJson & { inicio?: string; fin?: string };
+  };
+  const declarada = new Map(cfg.casos.map((c) => {
+    const fechas = c.fuentes.map((f) => { const r = leer(f); return Date.parse(r.fin || r.inicio || ''); }).filter(Number.isFinite);
+    return [c.cp, { fecha: fechas.length ? Math.max(...fechas) : null, unico: c.fuentes.length ? leer(c.fuentes[0]).unico ?? null : null }];
+  }));
+  const posteriorA = Object.fromEntries([...declarada].filter(([, d]) => d.fecha != null).map(([cp, d]) => [cp, d.fecha!]));
+  const elegidas = new Map(seleccionarUltimas({ raiz: o.raiz, cps: cfg.casos.map((c) => c.cp), ...(o.corrida ? { corrida: o.corrida } : { posteriorA }) }).map((s) => [s.cp, s]));
+  const seleccion: SeleccionSoporte[] = [];
   const casos = cfg.casos.map((c) => {
     const m = matriz.casos.find((x) => x.id === c.cp);
     if (!m) throw new Error(`${c.cp} no está en la matriz.`);
-    return consolidarCaso(o.raiz, o.dirProyecto, c, m);
+    const sel = elegidas.get(c.cp)!;
+    const e = sel.elegida;
+    let caso: CasoSoporte;
+    if (e) { // ejecución archivada: sus datos, sin observaciones/transcripciones/validaciones del caso declarado (son de otro caso)
+      caso = consolidarCaso(o.raiz, o.dirProyecto, { cp: c.cp, numeroCaso: e.numero_caso!, configuracion: c.configuracion, fuentes: [resolve(o.raiz, e.reporte!)] }, m);
+      caso.origen = { tipo: 'archivada', numeroCaso: e.numero_caso, fecha: e.inicio, corrida: e.corrida_suite, unico: e.unico, fuentes: [e.reporte!] };
+    } else if (o.corrida || !c.fuentes.length) {
+      caso = consolidarCaso(o.raiz, o.dirProyecto, { cp: c.cp, numeroCaso: '—', configuracion: c.configuracion, fuentes: [] }, m);
+      caso.origen = { tipo: 'sin-ejecucion', numeroCaso: null, fecha: null, corrida: o.corrida ?? null, unico: null, fuentes: [] };
+      if (!o.corrida) sel.advertencias.push(`${c.cp} no tiene ejecución utilizable: la sección queda sin resultados.`);
+    } else {
+      const d = declarada.get(c.cp)!;
+      caso = consolidarCaso(o.raiz, o.dirProyecto, c, m);
+      caso.origen = { tipo: 'declarada', numeroCaso: c.numeroCaso, fecha: d.fecha != null ? new Date(d.fecha).toISOString() : null, corrida: null, unico: d.unico,
+        fuentes: c.fuentes.map((f) => f.replace(/^docs\/evidencia\//, '')) };
+    }
+    caso.advertencias = sel.advertencias;
+    const or = caso.origen!;
+    seleccion.push({ cp: c.cp, origen: or.tipo, numeroCaso: or.numeroCaso, unico: or.unico, corrida: or.corrida, fecha: or.fecha, advertencias: sel.advertencias });
+    return caso;
   });
   const template = readFileSync(resolve(o.raiz, cfg.template));
   const logoCliente = cfg.logoCliente ? readFileSync(resolve(o.dirProyecto, 'certificacion', cfg.logoCliente)) : undefined;
   const base = resolve(o.raiz, ...RUTA_SOPORTES, cfg.hu);
-  let salida = resolve(base, (o.ahora ?? new Date()).toISOString().replace(/[:.]/g, '-'));
-  for (let k = 2; existsSync(salida); k++) salida = resolve(base, `${(o.ahora ?? new Date()).toISOString().replace(/[:.]/g, '-')}-${k}`);
+  const marca = (o.ahora ?? new Date()).toISOString().replace(/[:.]/g, '-');
+  let salida = resolve(base, marca);
+  for (let k = 2; existsSync(salida); k++) salida = resolve(base, `${marca}-${k}`);
   mkdirSync(salida, { recursive: true });
   const docx = resolve(salida, cfg.salida);
   writeFileSync(docx, renderizarSoporteHu(cfg, casos, { template, ...(logoCliente ? { logoCliente } : {}) }));
   const plan = resolve(salida, `${cfg.hu}-soporte-plan.json`);
-  writeFileSync(plan, JSON.stringify(casos, null, 2) + '\n', 'utf8');
-  return { docx, plan, casos };
+  writeFileSync(plan, JSON.stringify({ hu: cfg.hu, corrida: o.corrida ?? null, seleccion, casos }, null, 2) + '\n', 'utf8');
+  return { docx, plan, casos, seleccion };
 }

@@ -67,3 +67,9 @@ Detalle, casos afectados y riesgos en el reporte ejecutivo.
 - **Resultado:** 9/9 ejecutados. **PASS:** P2–P5 y P7. **NOT_AUTOMATED:** P1 (agregado), P6 (P-11) y P8–P9 (P-18) → REAL_PASS_PARCIAL.
 - **Ruta:** «¿Masivo o correo?» → «Consultar información de solicitud» → «Consultar SISE». La Consulta Gráfica da negativa completa (8/8: no recorre «Estructurar información» ni `aiworkertask`); es diagnóstico porque usa los PR sin integrar.
 - **Totales:** histórico 39 casos; métricas: ejecutada 5/17, aprobada 0/17. No se crearon más casos.
+
+## Preparación de la integración y del reporte (sin QA)
+
+- **Cadena:** `main` 77f5739 → PR #9 `feb678e` (343/343) → PR #10 `df787bf` (357/357). Revisión focalizada sin hallazgos bloqueantes.
+- **Recomendación:** fusionar el #9, cambiar la base del #10 a `main`, correr `@unit` y fusionar el #10. No se fusionó nada.
+- **Reporte del 21/10:** 5/5 CP con recorrido, 90/108 PASS, 0/5 aprobados por QA, correspondencia de P8/P9 de CP05 y tabla de decisiones para QA. Sin casos ni ejecuciones E2E nuevas.

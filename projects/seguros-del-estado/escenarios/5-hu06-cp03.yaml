@@ -15,7 +15,7 @@ id: HU06-CP03
 titulo: Masivo Cumplimiento sin propiedad RCE — pregunta ¿Requiere modificar RCE? y obligatoriedad de los campos RCE
 etiquetas: [hu06, fase2, masivo, cumplimiento, cp03]
 actores: [intermediario, analista]
-datasets: [CFG-PROCESO, INI-CUMPL-MASIVO-SIN-RCE]
+datasets: [CFG-PROCESO, INI-CUMPL-MASIVO-SIN-RCE, DOC-SOPORTE]
 cleanup:
   politica: CLEANUP_NOT_APPLICABLE
   razon: El caso queda en Estructurar información con la fila editada por la prueba (identificable por ${unico}).
@@ -52,6 +52,14 @@ pasos:
     campos:
       - { campo: ¿Su solicitud requiere cambio de intermediario?, valor: "No", tipo: radio }
       - { campo: Descripción de la Solicitud (Masiva/Múltiple), valor: "${dato:INI-CUMPL-MASIVO-SIN-RCE.narrativa} ${dato:INI-CUMPL-MASIVO-SIN-RCE.narrativa_polizas}", tipo: area }
+
+  # P7 «documentos requeridos» (P-02/D-59): adjunta SOLO con evidencia positiva de obligatoriedad (marca de la grilla);
+  # sin ella continúa sin adjuntar y, si la parametrización exigiera un documento, Bizagi rechazará «Crear» sin crear el caso.
+  - matriz: [7]
+    hacer: adjuntar_en_grilla
+    grilla: Documentos Anexos
+    secuencia: segun_obligatoriedad
+    archivo: "${dato:DOC-SOPORTE.archivo}"
 
   - incluir: masivo-hasta-estructurar
     con: { p_crear: [8], p_compuerta: [9], p_worker: [9], p_estructurar: [10] }

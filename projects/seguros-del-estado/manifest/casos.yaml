@@ -28,9 +28,9 @@ casos:
                brechas: [BUG-01, BUG-05, BUG-06, BUG-03, BUG-04, UI-10, DATA-03, UI-03, UI-04, INT-02, FUNC-04, FUNC-06, FUNC-10] }
   HU06-CP02: { familia: F-MASIVO-ESTRUCTURAR, fase: 2, prioridad: P2, actores: [intermediario, analista], datasets: [CFG-PROCESO, INI-AUTOS-MASIVO, EST-FILA-AUTOS-PLACA], escenario: 4-hu06-cp02.yaml, estado: BLOCKED,
                brechas: [ENV-03, BUG-01, BUG-03, BUG-04, DATA-06, UI-03, UI-05, INT-02, FUNC-10, UI-10] }
-  HU06-CP03: { familia: F-MASIVO-ESTRUCTURAR, fase: 2, prioridad: P2, actores: [intermediario, analista], datasets: [CFG-PROCESO, INI-CUMPL-MASIVO-SIN-RCE], escenario: 5-hu06-cp03.yaml, estado: BLOCKED,
+  HU06-CP03: { familia: F-MASIVO-ESTRUCTURAR, fase: 2, prioridad: P2, actores: [intermediario, analista], datasets: [CFG-PROCESO, INI-CUMPL-MASIVO-SIN-RCE, DOC-SOPORTE], escenario: 5-hu06-cp03.yaml, estado: BLOCKED,
                brechas: [ENV-03, BUG-03, BUG-04, DATA-07, UI-03, UI-05, INT-02, FUNC-02, OBS-11, FUNC-10, UI-10] }
-  HU06-CP04: { familia: F-MASIVO-ESTRUCTURAR, fase: 2, prioridad: P2, actores: [intermediario, analista], datasets: [CFG-PROCESO, INI-CUMPL-MASIVO-CON-RCE], escenario: 6-hu06-cp04.yaml, estado: BLOCKED,
+  HU06-CP04: { familia: F-MASIVO-ESTRUCTURAR, fase: 2, prioridad: P2, actores: [intermediario, analista], datasets: [CFG-PROCESO, INI-CUMPL-MASIVO-CON-RCE, DOC-SOPORTE], escenario: 6-hu06-cp04.yaml, estado: BLOCKED,
                brechas: [ENV-03, BUG-03, BUG-04, DATA-07, UI-03, UI-05, INT-02, FUNC-02, FUNC-05, OBS-11, FUNC-10, UI-10] }
   HU06-CP05: { familia: F-INDIVIDUAL-RUTA, fase: 1, prioridad: P1, actores: [analista], datasets: [CFG-PROCESO, INI-INDIVIDUAL-RUTA], escenario: 1-hu06-cp05.yaml, estado: EJECUTABLE,
                brechas: [ENV-03, BUG-02, INT-01, FUNC-10] }

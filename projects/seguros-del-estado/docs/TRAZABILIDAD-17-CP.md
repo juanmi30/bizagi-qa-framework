@@ -6,14 +6,14 @@
 > (sesión real) de `test-results/seguros-del-estado/sde/`; un intento BLOCKED en preflight se muestra aparte y no tapa
 > la evidencia. Sin reporte ejecutado: estado del manifest. Ningún estado verde sin reporte.
 
-> **Fuentes de ejecución:** historial local `test-results/`: 73 reporte(s) · evidencia versionada `docs/evidencia/`: 25 reporte(s). Si un reporte está en ambas, prevalece la copia local.
+> **Fuentes de ejecución:** historial local `test-results/`: 75 reporte(s) · evidencia versionada `docs/evidencia/`: 25 reporte(s). Si un reporte está en ambas, prevalece la copia local.
 
 ## Cobertura (tres indicadores independientes)
 
 | Indicador | CP | Definición |
 |---|---|---|
 | Implementada | 13/17 (completa: 2) | Escenario declarativo válido. Completa = TODOS los pasos verificados solo por UI (ninguno mixto, con integración pendiente o no automatizado) |
-| Ejecutada | 3/17 | Reporte con sesión real contra QA (no cuenta un BLOCKED de preflight) |
+| Ejecutada | 5/17 | Reporte con sesión real contra QA (no cuenta un BLOCKED de preflight) |
 | Aprobada | 1/17 | Último reporte ejecutado = REAL_PASS. No cuenta REAL_PASS_PARCIAL (1), FAIL (1) ni BLOCKED (10) |
 
 Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuestra la integración con SISE.
@@ -24,8 +24,8 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 |---|---|---|---|---|---|---|---|---|---|
 | HU06-CP01 | F-MASIVO-ESTRUCTURAR | 1 | 3-hu06-cp01.yaml | analista: READY | CFG-PROCESO: READY<br>INI-GENERALES-MASIVO: READY<br>DOC-SOPORTE: READY<br>DOCS-OBLIGATORIOS: READY | PARCIAL (26/2/0/0/0 de 28) | HU06-CP01_20261019-143141.json (caso 673) | **FAIL** | no |
 | HU06-CP02 | F-MASIVO-ESTRUCTURAR | 2 | 4-hu06-cp02.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-AUTOS-MASIVO: READY<br>EST-FILA-AUTOS-PLACA: READY | COMPLETA (21/0/0/0/0 de 21) | HU06-CP02_20261019-102802.json (caso 670) | **REAL_PASS** | SÍ |
-| HU06-CP03 | F-MASIVO-ESTRUCTURAR | 2 | 5-hu06-cp03.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-CUMPL-MASIVO-SIN-RCE: MISSING | COMPLETA (24/0/0/0/0 de 24) | NO EJECUTADO<br>último intento: BLOCKED (HU06-CP03_20261013-095835.json) | **BLOCKED** | no |
-| HU06-CP04 | F-MASIVO-ESTRUCTURAR | 2 | 6-hu06-cp04.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-CUMPL-MASIVO-CON-RCE: MISSING | PARCIAL (21/0/0/1/0 de 22) | NO EJECUTADO<br>último intento: BLOCKED (HU06-CP04_20261013-095835.json) | **BLOCKED** | no |
+| HU06-CP03 | F-MASIVO-ESTRUCTURAR | 2 | 5-hu06-cp03.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-CUMPL-MASIVO-SIN-RCE: READY<br>DOC-SOPORTE: READY | COMPLETA (24/0/0/0/0 de 24) | HU06-CP03_20261020-123853.json (caso 702) | **BLOCKED** | no |
+| HU06-CP04 | F-MASIVO-ESTRUCTURAR | 2 | 6-hu06-cp04.yaml | intermediario: READY<br>analista: READY | CFG-PROCESO: READY<br>INI-CUMPL-MASIVO-CON-RCE: READY<br>DOC-SOPORTE: READY | PARCIAL (21/0/0/1/0 de 22) | HU06-CP04_20261020-124051.json (caso 703) | **BLOCKED** | no |
 | HU06-CP05 | F-INDIVIDUAL-RUTA | 1 | 1-hu06-cp05.yaml | analista: READY | CFG-PROCESO: READY<br>INI-INDIVIDUAL-RUTA: READY | PARCIAL (5/3/0/0/0 de 8) | HU06-CP05_20261019-103023.json (caso 671) | **REAL_PASS_PARCIAL** | no |
 | HU03-CP01 | F-INDIVIDUAL-CONSULTA | 2 | 7-hu03-cp01.yaml | intermediario: READY | CFG-PROCESO: READY<br>PLACA-MULTIPOLIZA: MISSING | PARCIAL (13/5/3/0/0 de 21) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP01_20261013-095835.json) | **BLOCKED** | no |
 | HU03-CP02 | F-INDIVIDUAL-CONSULTA | 1 | 2-hu03-cp02.yaml | intermediario: READY | CFG-PROCESO: READY<br>POL-AUTOS-VIGENTE: MISSING | PARCIAL (13/5/2/0/0 de 20) | NO EJECUTADO<br>último intento: BLOCKED (HU03-CP02_20261013-155239.json) | **BLOCKED** | no |
@@ -122,35 +122,35 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Escenario:** `escenarios/5-hu06-cp03.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-03 (FUNCTIONAL_DEFECT), BUG-04 (FUNCTIONAL_DEFECT), DATA-07 (TEST_DATA_GAP), UI-03 (UI_CAPABILITY_GAP), UI-05 (UI_CAPABILITY_GAP), INT-02 (INTEGRATION_VISIBILITY_GAP), FUNC-02 (FUNCTIONAL_AMBIGUITY), OBS-11 (FUNCTIONAL_AMBIGUITY), FUNC-10 (FUNCTIONAL_AMBIGUITY), UI-10 (UI_CAPABILITY_GAP)
 - **Máximo alcanzable hoy:** REAL_PASS
-- **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA INI-CUMPL-MASIVO-SIN-RCE: faltan SDE_CUMPL_RAMO_SIN_RCE, SDE_CUMPL_POLIZA_SIN_RCE, SDE_CUMPL_RAMO_RCE, SDE_CUMPL_POLIZA_RCE
+- **Estado:** BLOCKED — Ejecutado contra QA (caso 702) sin fallos, pero 13 paso(s) de la matriz quedaron BLOCKED (causa: DATO): P1, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23.
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
 |---|---|---|---|---|
 | 1 | Objetivo: | Validar la radicación Masiva de una solicitud de Cumplimiento cuyo Ramo no tenga la propiedad Póliza RCE, verificando que Estructurar Información presente la pregunta ¿Requiere modificar RCE? y aplique correctamente sus reglas de obligatoriedad. | Agregado del CP | BLOCKED |
-| 2 | Ingresar al ambiente Bizagi mediante la URL: https://test-aiprocesos-sde.bizagi.com/ | El ambiente de pruebas se encuentra disponible y permite iniciar una nueva Radicación. | #1 iniciar_sesion (UI: login real)<br>#2 nuevo_caso (UI: abrir formulario) | BLOCKED |
-| 3 | Crear un nuevo caso seleccionando Línea = Cumplimiento (Fianzas) y un Ramo sin propiedad Póliza RCE. Seleccionar un Tipo de Solicitud/Movimiento válido. | El formulario presenta la configuración correspondiente al Ramo seleccionado. | #2 nuevo_caso (UI: abrir formulario)<br>#3 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 4 | Seleccionar una Sucursal válida. | La Sucursal queda registrada y se habilita la continuación del formulario. | #4 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 5 | Seleccionar Tipo de Radicación = Masivo. | Se habilitan los campos correspondientes a la modalidad Masivo. | #5 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 6 | Validar el texto de ayuda. | Se presenta: “Masivo: Solicitud asociada a más de una póliza de cumplimiento y/o RCE.” | #6 verificar (UI: aserciones) | BLOCKED |
-| 7 | Diligenciar la descripción narrativa y los documentos requeridos. | La información queda registrada y el formulario permite crear el caso. | #7 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 8 | Crear la solicitud. | Se crea correctamente una solicitud con Tipo de Radicación Masivo. | #8 pulsar (UI: botón) | BLOCKED |
-| 9 | Validar la compuerta ¿Masivo?. | La compuerta identifica Masivo y direcciona el caso hacia el Worker AI y posteriormente hacia Estructurar Información. | #10 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#11 verificar_recorrido_grafico (verificar_recorrido_grafico) | BLOCKED |
-| 10 | Ingresar a Estructurar Información. | El caso se encuentra disponible para el Analista Centro de Expedición. | #9 iniciar_sesion (UI: login real)<br>#12 asegurar_asignacion (asegurar_asignacion)<br>#13 abrir_caso (UI: abrir caso por número) | BLOCKED |
-| 11 | Validar los datos maestros. | Línea, Ramo, Tipo de Movimiento, Sucursal y Tipo de Radicación se muestran correctamente y permanecen en solo lectura. | #14 verificar (UI: aserciones) | BLOCKED |
-| 12 | Seleccionar un registro de la tabla para editarlo. | Se presenta el formulario de edición correspondiente a la configuración de Cumplimiento. | #15 tabla_abrir_fila (UI: editar fila) | BLOCKED |
-| 13 | Validar la Forma de Consulta para Cumplimiento – Movimiento Modificación. | La Forma de Consulta se establece como Número de póliza de acuerdo con las reglas documentadas. | #16 verificar (UI: aserciones) | BLOCKED |
-| 14 | Validar el campo Número de póliza. | Se muestra el campo Número de póliza y este acepta únicamente valores numéricos con longitud entre 9 y 12 caracteres. | #17 intentar_diligenciar (UI: prueba negativa de campo) | BLOCKED |
-| 15 | Intentar confirmar el registro sin diligenciar Número de póliza. | El formulario impide confirmar el registro mientras el campo obligatorio permanezca vacío. | #18 intentar_diligenciar (UI: prueba negativa de campo)<br>#19 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
-| 16 | Validar la pregunta ¿Requiere modificar RCE?. | Al tratarse de un Ramo sin propiedad Póliza RCE, se muestra la pregunta ¿Requiere modificar RCE?. | #20 verificar (UI: aserciones) | BLOCKED |
-| 17 | Seleccionar ¿Requiere modificar RCE? = No. | Los campos Ramo RCE y Número de Póliza RCE no se muestran como campos requeridos para el registro. | #21 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 18 | Confirmar el registro con la respuesta No. | El registro se guarda correctamente sin exigir Ramo RCE ni Número de Póliza RCE. | #21 diligenciar (UI: diligenciar + post-condición)<br>#22 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
-| 19 | Editar nuevamente el registro y seleccionar ¿Requiere modificar RCE? = Sí. | Se habilitan los campos Ramo RCE y Número de Póliza RCE como campos obligatorios. | #23 tabla_abrir_fila (UI: editar fila)<br>#24 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 20 | Intentar confirmar sin diligenciar Ramo RCE y Número de Póliza RCE. | El sistema impide cerrar/confirmar el formulario mientras los campos obligatorios no estén diligenciados. | #25 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
-| 21 | Diligenciar Ramo RCE y un Número de Póliza RCE válido. | Los campos quedan diligenciados y el registro puede ser confirmado. | #26 diligenciar (UI: diligenciar + post-condición)<br>#28 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 22 | Validar Número de Póliza RCE. | El campo acepta únicamente valores numéricos con longitud entre 9 y 12 caracteres. | #27 intentar_diligenciar (UI: prueba negativa de campo) | BLOCKED |
-| 23 | Confirmar el registro. | El registro actualizado queda almacenado en la tabla Pólizas asociadas a la solicitud con la información de RCE. | #29 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
-| 24 | Validar Observaciones. | El analista puede ingresar texto libre en el campo Observaciones. | #30 verificar (UI: aserciones)<br>#31 verificar (UI: aserciones) | BLOCKED |
-| 25 | Validar Documentos de la solicitud y Seguimiento. | Los documentos asociados y la trazabilidad del caso se encuentran disponibles para consulta. | #32 abrir_pestana (UI: pestaña + contenido)<br>#33 abrir_pestana (UI: pestaña + contenido) | BLOCKED |
+| 2 | Ingresar al ambiente Bizagi mediante la URL: https://test-aiprocesos-sde.bizagi.com/ | El ambiente de pruebas se encuentra disponible y permite iniciar una nueva Radicación. | #1 iniciar_sesion (UI: login real)<br>#2 nuevo_caso (UI: abrir formulario) | PASS |
+| 3 | Crear un nuevo caso seleccionando Línea = Cumplimiento (Fianzas) y un Ramo sin propiedad Póliza RCE. Seleccionar un Tipo de Solicitud/Movimiento válido. | El formulario presenta la configuración correspondiente al Ramo seleccionado. | #2 nuevo_caso (UI: abrir formulario)<br>#3 diligenciar (UI: diligenciar + post-condición) | PASS |
+| 4 | Seleccionar una Sucursal válida. | La Sucursal queda registrada y se habilita la continuación del formulario. | #4 diligenciar (UI: diligenciar + post-condición) | PASS |
+| 5 | Seleccionar Tipo de Radicación = Masivo. | Se habilitan los campos correspondientes a la modalidad Masivo. | #5 diligenciar (UI: diligenciar + post-condición) | PASS |
+| 6 | Validar el texto de ayuda. | Se presenta: “Masivo: Solicitud asociada a más de una póliza de cumplimiento y/o RCE.” | #6 verificar (UI: aserciones) | PASS |
+| 7 | Diligenciar la descripción narrativa y los documentos requeridos. | La información queda registrada y el formulario permite crear el caso. | #7 diligenciar (UI: diligenciar + post-condición)<br>#8 adjuntar_en_grilla (UI: documento en grilla) | PASS |
+| 8 | Crear la solicitud. | Se crea correctamente una solicitud con Tipo de Radicación Masivo. | #9 pulsar (UI: botón) | PASS |
+| 9 | Validar la compuerta ¿Masivo?. | La compuerta identifica Masivo y direcciona el caso hacia el Worker AI y posteriormente hacia Estructurar Información. | #11 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#12 verificar_recorrido_grafico (verificar_recorrido_grafico) | PASS |
+| 10 | Ingresar a Estructurar Información. | El caso se encuentra disponible para el Analista Centro de Expedición. | #10 iniciar_sesion (UI: login real)<br>#13 asegurar_asignacion (asegurar_asignacion)<br>#14 abrir_caso (UI: abrir caso por número) | PASS |
+| 11 | Validar los datos maestros. | Línea, Ramo, Tipo de Movimiento, Sucursal y Tipo de Radicación se muestran correctamente y permanecen en solo lectura. | #15 verificar (UI: aserciones) | PASS |
+| 12 | Seleccionar un registro de la tabla para editarlo. | Se presenta el formulario de edición correspondiente a la configuración de Cumplimiento. | #16 tabla_abrir_fila (UI: editar fila) | BLOCKED |
+| 13 | Validar la Forma de Consulta para Cumplimiento – Movimiento Modificación. | La Forma de Consulta se establece como Número de póliza de acuerdo con las reglas documentadas. | #17 verificar (UI: aserciones) | BLOCKED |
+| 14 | Validar el campo Número de póliza. | Se muestra el campo Número de póliza y este acepta únicamente valores numéricos con longitud entre 9 y 12 caracteres. | #18 intentar_diligenciar (UI: prueba negativa de campo) | BLOCKED |
+| 15 | Intentar confirmar el registro sin diligenciar Número de póliza. | El formulario impide confirmar el registro mientras el campo obligatorio permanezca vacío. | #19 intentar_diligenciar (UI: prueba negativa de campo)<br>#20 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
+| 16 | Validar la pregunta ¿Requiere modificar RCE?. | Al tratarse de un Ramo sin propiedad Póliza RCE, se muestra la pregunta ¿Requiere modificar RCE?. | #21 verificar (UI: aserciones) | BLOCKED |
+| 17 | Seleccionar ¿Requiere modificar RCE? = No. | Los campos Ramo RCE y Número de Póliza RCE no se muestran como campos requeridos para el registro. | #22 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
+| 18 | Confirmar el registro con la respuesta No. | El registro se guarda correctamente sin exigir Ramo RCE ni Número de Póliza RCE. | #22 diligenciar (UI: diligenciar + post-condición)<br>#23 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
+| 19 | Editar nuevamente el registro y seleccionar ¿Requiere modificar RCE? = Sí. | Se habilitan los campos Ramo RCE y Número de Póliza RCE como campos obligatorios. | #24 tabla_abrir_fila (UI: editar fila)<br>#25 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
+| 20 | Intentar confirmar sin diligenciar Ramo RCE y Número de Póliza RCE. | El sistema impide cerrar/confirmar el formulario mientras los campos obligatorios no estén diligenciados. | #26 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
+| 21 | Diligenciar Ramo RCE y un Número de Póliza RCE válido. | Los campos quedan diligenciados y el registro puede ser confirmado. | #27 diligenciar (UI: diligenciar + post-condición)<br>#29 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
+| 22 | Validar Número de Póliza RCE. | El campo acepta únicamente valores numéricos con longitud entre 9 y 12 caracteres. | #28 intentar_diligenciar (UI: prueba negativa de campo) | BLOCKED |
+| 23 | Confirmar el registro. | El registro actualizado queda almacenado en la tabla Pólizas asociadas a la solicitud con la información de RCE. | #30 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
+| 24 | Validar Observaciones. | El analista puede ingresar texto libre en el campo Observaciones. | #31 verificar (UI: aserciones)<br>#32 verificar (UI: aserciones) | PASS |
+| 25 | Validar Documentos de la solicitud y Seguimiento. | Los documentos asociados y la trazabilidad del caso se encuentran disponibles para consulta. | #33 abrir_pestana (UI: pestaña + contenido)<br>#34 abrir_pestana (UI: pestaña + contenido) | PASS |
 
 ## HU06-CP04 — SDE - CEL - HU06 - Validar radicación Masiva de Cumplimiento con propiedad Póliza RCE
 
@@ -159,33 +159,33 @@ Una prueba unitaria aprobada no es un CP aprobado; un dato sintético no demuest
 - **Escenario:** `escenarios/6-hu06-cp04.yaml`
 - **Brechas:** ENV-03 (ENVIRONMENT_GAP), BUG-03 (FUNCTIONAL_DEFECT), BUG-04 (FUNCTIONAL_DEFECT), DATA-07 (TEST_DATA_GAP), UI-03 (UI_CAPABILITY_GAP), UI-05 (UI_CAPABILITY_GAP), INT-02 (INTEGRATION_VISIBILITY_GAP), FUNC-02 (FUNCTIONAL_AMBIGUITY), FUNC-05 (FUNCTIONAL_AMBIGUITY), OBS-11 (FUNCTIONAL_AMBIGUITY), FUNC-10 (FUNCTIONAL_AMBIGUITY), UI-10 (UI_CAPABILITY_GAP)
 - **Máximo alcanzable hoy:** REAL_PASS_PARCIAL — pendientes para REAL_PASS: P15 (no automatizado)
-- **Estado:** BLOCKED (no ejecutado) — Prerrequisitos faltantes (ver bloqueos). TEST_DATA INI-CUMPL-MASIVO-CON-RCE: faltan SDE_CUMPL_RAMO_CON_RCE, SDE_CUMPL_MOVIMIENTO, SDE_CUMPL_POLIZA_CON_RCE, SDE_CUMPL_POLIZA_CON_RCE_2
+- **Estado:** BLOCKED — Ejecutado contra QA (caso 703) sin fallos, pero 12 paso(s) de la matriz quedaron BLOCKED (causa: AUTOMATIZACION): P1, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22.
 
 | Paso | Acción (Excel) | Resultado esperado (Excel) | Cobertura | Estado |
 |---|---|---|---|---|
 | 1 | Objetivo: | Validar la radicación Masiva de una solicitud de Cumplimiento cuyo Ramo tenga la propiedad Póliza RCE, verificando que la actividad Estructurar Información aplique correctamente la condición de los campos asociados a RCE. | Agregado del CP | BLOCKED |
-| 2 | Ingresar al ambiente Bizagi mediante la URL: https://test-aiprocesos-sde.bizagi.com/ | El ambiente de pruebas se encuentra disponible. | #1 iniciar_sesion (UI: login real)<br>#2 nuevo_caso (UI: abrir formulario) | BLOCKED |
-| 3 | Crear un nuevo caso seleccionando Línea = Cumplimiento (Fianzas) y un Ramo con propiedad Póliza RCE. | El formulario presenta la configuración correspondiente al Ramo seleccionado. | #2 nuevo_caso (UI: abrir formulario)<br>#3 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 4 | Seleccionar una Sucursal válida. | La Sucursal queda registrada correctamente. | #4 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 5 | Seleccionar Tipo de Radicación = Masivo. | Se habilitan los campos correspondientes a la modalidad Masivo. | #5 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 6 | Validar el texto de ayuda. | Se muestra “Masivo: Solicitud asociada a más de una póliza de cumplimiento y/o RCE.”, con ortografía y capitalización correctas. | #6 verificar (UI: aserciones) | BLOCKED |
-| 7 | Diligenciar la narrativa y documentos requeridos. | La información queda registrada y permite crear el caso. | #7 diligenciar (UI: diligenciar + post-condición) | BLOCKED |
-| 8 | Crear la solicitud. | Se crea correctamente el caso de radicación Masiva. | #8 pulsar (UI: botón) | BLOCKED |
-| 9 | Validar la compuerta ¿Masivo?. | El caso toma la transición Masivo y continúa hacia el Worker AI. | #10 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#11 verificar_recorrido_grafico (verificar_recorrido_grafico) | BLOCKED |
-| 10 | Ingresar a Estructurar Información. | El caso se encuentra disponible para el Analista Centro de Expedición. | #9 iniciar_sesion (UI: login real)<br>#12 asegurar_asignacion (asegurar_asignacion)<br>#13 abrir_caso (UI: abrir caso por número) | BLOCKED |
-| 11 | Validar el encabezado y la información de radicación. | Los datos maestros, Tipo de Radicación y Sucursal se visualizan correctamente y permanecen en solo lectura. | #14 verificar (UI: aserciones) | BLOCKED |
-| 12 | Seleccionar un registro de la tabla para editarlo. | Se presenta el formulario de edición con las reglas correspondientes al Ramo y Movimiento seleccionados. | #15 tabla_abrir_fila (UI: editar fila) | BLOCKED |
-| 13 | Validar la Forma de Consulta. | La Forma de Consulta se presenta de acuerdo con la regla correspondiente a Línea Cumplimiento y Tipo de Movimiento. | #16 verificar (UI: aserciones) | BLOCKED |
-| 14 | Validar la información relacionada con RCE. | Al corresponder a un Ramo con propiedad Póliza RCE, no se presenta la pregunta ¿Requiere modificar RCE? como condición para habilitar los campos RCE. | #17 verificar (UI: aserciones) | BLOCKED |
-| 15 | Validar los campos Ramo RCE y Número de Póliza RCE. | Los campos se comportan de acuerdo con la condición de propiedad Póliza RCE definida para el Ramo y no se habilita una pregunta de modificación RCE que no corresponda a la configuración. | #18 no_automatizado (NOT_AUTOMATED) | BLOCKED |
-| 16 | Validar Número de Póliza, cuando la Forma de Consulta corresponda a Número de póliza. | El campo acepta únicamente valores numéricos con longitud entre 9 y 12 caracteres. | #19 intentar_diligenciar (UI: prueba negativa de campo) | BLOCKED |
-| 17 | Ingresar un valor no numérico en Número de Póliza. | El sistema impide registrar el valor no numérico en el campo. | #19 intentar_diligenciar (UI: prueba negativa de campo) | BLOCKED |
-| 18 | Ingresar un Número de Póliza con longitud inferior o superior al rango permitido. | El sistema impide confirmar el registro mientras el valor no cumpla la longitud de 9 a 12 caracteres. | #20 intentar_diligenciar (UI: prueba negativa de campo)<br>#21 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
-| 19 | Confirmar un registro válido. | El registro queda almacenado correctamente en la tabla Pólizas asociadas a la solicitud. | #22 diligenciar (UI: diligenciar + post-condición)<br>#23 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
-| 20 | Agregar un nuevo registro. | El formulario de adición presenta las mismas reglas de visibilidad, obligatoriedad y validación correspondientes al caso. | #24 tabla_agregar (UI: agregar fila) | BLOCKED |
-| 21 | Diligenciar un registro válido y confirmarlo. | El nuevo registro queda incorporado a la colección de pólizas asociadas. | #25 diligenciar (UI: diligenciar + post-condición)<br>#26 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
-| 22 | Validar la opción de eliminar un registro. | El registro seleccionado puede ser eliminado de la tabla. | #27 tabla_eliminar_fila (UI: eliminar fila) | BLOCKED |
-| 23 | Validar Observaciones, Documentos y Seguimiento. | Las secciones se encuentran disponibles y presentan la información correspondiente al caso. | #28 verificar (UI: aserciones)<br>#29 verificar (UI: aserciones)<br>#30 abrir_pestana (UI: pestaña + contenido)<br>#31 abrir_pestana (UI: pestaña + contenido) | BLOCKED |
+| 2 | Ingresar al ambiente Bizagi mediante la URL: https://test-aiprocesos-sde.bizagi.com/ | El ambiente de pruebas se encuentra disponible. | #1 iniciar_sesion (UI: login real)<br>#2 nuevo_caso (UI: abrir formulario) | PASS |
+| 3 | Crear un nuevo caso seleccionando Línea = Cumplimiento (Fianzas) y un Ramo con propiedad Póliza RCE. | El formulario presenta la configuración correspondiente al Ramo seleccionado. | #2 nuevo_caso (UI: abrir formulario)<br>#3 diligenciar (UI: diligenciar + post-condición) | PASS |
+| 4 | Seleccionar una Sucursal válida. | La Sucursal queda registrada correctamente. | #4 diligenciar (UI: diligenciar + post-condición) | PASS |
+| 5 | Seleccionar Tipo de Radicación = Masivo. | Se habilitan los campos correspondientes a la modalidad Masivo. | #5 diligenciar (UI: diligenciar + post-condición) | PASS |
+| 6 | Validar el texto de ayuda. | Se muestra “Masivo: Solicitud asociada a más de una póliza de cumplimiento y/o RCE.”, con ortografía y capitalización correctas. | #6 verificar (UI: aserciones) | PASS |
+| 7 | Diligenciar la narrativa y documentos requeridos. | La información queda registrada y permite crear el caso. | #7 diligenciar (UI: diligenciar + post-condición)<br>#8 adjuntar_en_grilla (UI: documento en grilla) | PASS |
+| 8 | Crear la solicitud. | Se crea correctamente el caso de radicación Masiva. | #9 pulsar (UI: botón) | PASS |
+| 9 | Validar la compuerta ¿Masivo?. | El caso toma la transición Masivo y continúa hacia el Worker AI. | #11 verificar_ruta (Actividad actual según Bizagi (buscador))<br>#12 verificar_recorrido_grafico (verificar_recorrido_grafico) | PASS |
+| 10 | Ingresar a Estructurar Información. | El caso se encuentra disponible para el Analista Centro de Expedición. | #10 iniciar_sesion (UI: login real)<br>#13 asegurar_asignacion (asegurar_asignacion)<br>#14 abrir_caso (UI: abrir caso por número) | PASS |
+| 11 | Validar el encabezado y la información de radicación. | Los datos maestros, Tipo de Radicación y Sucursal se visualizan correctamente y permanecen en solo lectura. | #15 verificar (UI: aserciones) | PASS |
+| 12 | Seleccionar un registro de la tabla para editarlo. | Se presenta el formulario de edición con las reglas correspondientes al Ramo y Movimiento seleccionados. | #16 tabla_abrir_fila (UI: editar fila) | BLOCKED |
+| 13 | Validar la Forma de Consulta. | La Forma de Consulta se presenta de acuerdo con la regla correspondiente a Línea Cumplimiento y Tipo de Movimiento. | #17 verificar (UI: aserciones) | BLOCKED |
+| 14 | Validar la información relacionada con RCE. | Al corresponder a un Ramo con propiedad Póliza RCE, no se presenta la pregunta ¿Requiere modificar RCE? como condición para habilitar los campos RCE. | #18 verificar (UI: aserciones) | BLOCKED |
+| 15 | Validar los campos Ramo RCE y Número de Póliza RCE. | Los campos se comportan de acuerdo con la condición de propiedad Póliza RCE definida para el Ramo y no se habilita una pregunta de modificación RCE que no corresponda a la configuración. | #19 no_automatizado (NOT_AUTOMATED) | BLOCKED |
+| 16 | Validar Número de Póliza, cuando la Forma de Consulta corresponda a Número de póliza. | El campo acepta únicamente valores numéricos con longitud entre 9 y 12 caracteres. | #20 intentar_diligenciar (UI: prueba negativa de campo) | BLOCKED |
+| 17 | Ingresar un valor no numérico en Número de Póliza. | El sistema impide registrar el valor no numérico en el campo. | #20 intentar_diligenciar (UI: prueba negativa de campo) | BLOCKED |
+| 18 | Ingresar un Número de Póliza con longitud inferior o superior al rango permitido. | El sistema impide confirmar el registro mientras el valor no cumpla la longitud de 9 a 12 caracteres. | #21 intentar_diligenciar (UI: prueba negativa de campo)<br>#22 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
+| 19 | Confirmar un registro válido. | El registro queda almacenado correctamente en la tabla Pólizas asociadas a la solicitud. | #23 diligenciar (UI: diligenciar + post-condición)<br>#24 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
+| 20 | Agregar un nuevo registro. | El formulario de adición presenta las mismas reglas de visibilidad, obligatoriedad y validación correspondientes al caso. | #25 tabla_agregar (UI: agregar fila) | BLOCKED |
+| 21 | Diligenciar un registro válido y confirmarlo. | El nuevo registro queda incorporado a la colección de pólizas asociadas. | #26 diligenciar (UI: diligenciar + post-condición)<br>#27 dialogo_confirmar (UI: confirmar pop-up) | BLOCKED |
+| 22 | Validar la opción de eliminar un registro. | El registro seleccionado puede ser eliminado de la tabla. | #28 tabla_eliminar_fila (UI: eliminar fila) | BLOCKED |
+| 23 | Validar Observaciones, Documentos y Seguimiento. | Las secciones se encuentran disponibles y presentan la información correspondiente al caso. | #29 verificar (UI: aserciones)<br>#30 verificar (UI: aserciones)<br>#31 abrir_pestana (UI: pestaña + contenido)<br>#32 abrir_pestana (UI: pestaña + contenido) | PASS |
 
 ## HU06-CP05 — SDE - CEL - HU06 - Validar radicación Individual y ruta de la compuerta ¿Masivo?
 

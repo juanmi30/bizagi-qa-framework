@@ -13,7 +13,7 @@ id: HU06-CP04
 titulo: Masivo Cumplimiento con propiedad RCE — sin pregunta RCE, formato de Número Póliza, agregar y eliminar fila propia
 etiquetas: [hu06, fase2, masivo, cumplimiento, rce, cp04]
 actores: [intermediario, analista]
-datasets: [CFG-PROCESO, INI-CUMPL-MASIVO-CON-RCE]
+datasets: [CFG-PROCESO, INI-CUMPL-MASIVO-CON-RCE, DOC-SOPORTE]
 cleanup:
   politica: CLEANUP_NOT_APPLICABLE
   razon: El caso queda en Estructurar información; la fila agregada por la prueba se elimina dentro del propio CP (P22).
@@ -50,6 +50,14 @@ pasos:
     campos:
       - { campo: ¿Su solicitud requiere cambio de intermediario?, valor: "No", tipo: radio }
       - { campo: Descripción de la Solicitud (Masiva/Múltiple), valor: "${dato:INI-CUMPL-MASIVO-CON-RCE.narrativa} ${dato:INI-CUMPL-MASIVO-CON-RCE.narrativa_polizas}", tipo: area }
+
+  # P7 «documentos requeridos» (P-02/D-59): adjunta SOLO con evidencia positiva de obligatoriedad (marca de la grilla);
+  # sin ella continúa sin adjuntar y, si la parametrización exigiera un documento, Bizagi rechazará «Crear» sin crear el caso.
+  - matriz: [7]
+    hacer: adjuntar_en_grilla
+    grilla: Documentos Anexos
+    secuencia: segun_obligatoriedad
+    archivo: "${dato:DOC-SOPORTE.archivo}"
 
   - incluir: masivo-hasta-estructurar
     con: { p_crear: [8], p_compuerta: [9], p_worker: [9], p_estructurar: [10] }

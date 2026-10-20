@@ -260,12 +260,21 @@ export async function ejecutarEscenario(esc: EscenarioSde, deps: Dependencias, c
   // BUG-03: si algo falla con el pop-up de una fila ABIERTO, detenerse dejaría el caso inutilizable. El fallo se registra,
   // pero la ejecución sigue hasta el paso que lo cierra con "Guardar"; recién entonces se detiene. El CP sigue siendo FAIL.
   let detenerAlCerrar = false;
+  // Barrera UI-10/BUG-03: el pop-up NO se abrió (ningún clic). Los pasos de su bloque (mismos datasets de "requiere") quedan
+  // BLOCKED sin ejecutarse y el recorrido sigue con los pasos independientes: la UI no cambió (20/10, Cumplimiento y CP01 P27–P29).
+  let bloquePopup: Set<string> | null = null;
   for (let i = 0; i < esc.pasos.length; i++) {
     const paso = esc.pasos[i];
     const r: ResultadoPaso = { indice: i + 1, hacer: paso.hacer, matriz: paso.matriz, estado: 'NOT_RUN', detalle: '' };
     resultados.push(r);
     if (detenido) { r.detalle = 'No ejecutado: un paso previo falló.'; continue; }
     if (detenerAlCerrar && !ctx.dialogoAbierto) { detenido = true; r.detalle = 'No ejecutado: un paso previo falló (se detuvo tras cerrar el pop-up).'; continue; }
+    if (bloquePopup && (paso.requiere ?? []).some((d) => bloquePopup!.has(d))) {
+      r.estado = 'BLOCKED';
+      r.causa = 'AUTOMATIZACION';
+      r.detalle = 'No ejecutado: depende del pop-up que la barrera UI-10 no abrió (sin calibración registrada); sin efectos en el caso.';
+      continue;
+    }
     // Datos que solo este paso necesita: si faltan, se bloquea el paso (sin efectos) y se sigue con los demás.
     const faltan = (paso.requiere ?? []).map((ds) => estadoDataset(ctx.registro, ds, ctx.env)).filter((e) => e.estado === 'MISSING');
     if (faltan.length) {
@@ -356,6 +365,11 @@ export async function ejecutarEscenario(esc: EscenarioSde, deps: Dependencias, c
     // Un incidente técnico (R2) siempre detiene: el estado de la UI ya no es confiable aunque el paso sea no bloqueante.
     const sigue = !incidente && paso.hacer === 'verificar' && paso.no_bloqueante === true && r.estado === 'FAIL' && r.causa === 'PRODUCTO_POR_CONFIRMAR';
     if (sigue) r.detalle += ' | No bloqueante: el recorrido continúa (el CP queda FAIL).';
+    if (r.estado === 'BLOCKED' && /^BARRERA POP-UP/.test(r.detalle) && (paso.requiere ?? []).length && !ctx.dialogoAbierto) {
+      bloquePopup = new Set(paso.requiere);
+      r.detalle += ` | Barrera antes de cualquier clic: los pasos que requieren ${[...bloquePopup].join(', ')} quedan BLOCKED y el recorrido sigue con los independientes.`;
+      continue;
+    }
     // Un FAIL (o un dato o ambiente que faltaba a mitad de un paso) detiene: el estado de la UI ya no es confiable.
     if (!sigue && (r.estado === 'FAIL' || r.estado === 'BLOCKED' || r.incidente)) {
       // Si lo que falló fue el intento de cerrar el pop-up con "Guardar", ya no hay nada más que hacer: se detiene

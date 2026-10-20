@@ -268,7 +268,18 @@ export function evaluarRecorrido(caso: LecturaRecorrido, e: RecorridoEsperado): 
   if (faltaModelo.length) throw new Error(`[calibrar recorrido] el diagrama no contiene ${faltaModelo.map((x) => `"${x}"`).join(', ')} (nombres del modelo: ${[...new Set(caso.nodos.map((n) => n.nombre).filter(Boolean))].join(', ')}).`);
   const sinMarcar = registro ? caso.nodos.filter((n) => enRegistro(n) && !n.recorrido) : [];
   const ajenos = registro ? caso.nodos.filter((n) => n.recorrido && n.id && !registro.has(n.id)) : [];
-  const evidenciaCompleta = !!registro && registro.size > 0 && sinMarcar.length === 0 && ajenos.length === 0;
+  // Issue #8: recorrer solo los nodos presentes pierde los GUID del registro que el dibujo aún NO representa.
+  // La evidencia conservada acredita id de hotspot = guidTaskFrom/guidTaskTo; no acredita excepciones técnicas.
+  const porId = new Map<string, NodoGrafico[]>();
+  for (const n of caso.nodos) {
+    if (n.id) porId.set(n.id, [...(porId.get(n.id) ?? []), n]);
+  }
+  const noRepresentados = registro ? [...registro].filter((id) => !porId.has(id)) : [];
+  const relevantes = new Set([...(registro ?? []), ...caso.nodos.filter((n) => n.recorrido && n.id).map((n) => n.id!)]);
+  const duplicados = [...relevantes].filter((id) => (porId.get(id)?.length ?? 0) > 1);
+  const sinIdentidad = caso.nodos.filter((n) => n.recorrido && !n.id?.trim());
+  const evidenciaCompleta = identidadCompleta && !!registro && registro.size > 0 && sinMarcar.length === 0 && ajenos.length === 0 &&
+    noRepresentados.length === 0 && duplicados.length === 0 && sinIdentidad.length === 0;
   const base = `Caso ${caso.numero}, recorrido (${registro ? `registro del servidor: ${registro.size} elementos; ` : 'SIN registro del servidor; '}dibujo: ${caso.nodos.filter((n) => n.recorrido).length} nodos marcados): ${nombres(recorridos) || '—'}`;
   // Contradicción funcional: lo prohibido recorrido (en cualquier fuente) es FAIL; lo exigido ausente solo con evidencia completa.
   const prohibidos = [
@@ -279,7 +290,21 @@ export function evaluarRecorrido(caso: LecturaRecorrido, e: RecorridoEsperado): 
     ...(e.recorrido ?? []).filter((x) => !pasa(x)).map((x) => `"${x}" está en el modelo pero NO fue recorrido`),
     ...(e.recorrido_tipo ?? []).filter((t) => !recorridos.some((n) => n.tipos.includes(t))).map((t) => `ningún nodo de tipo ${t} fue recorrido`),
   ];
-  if (prohibidos.length || (faltantes.length && evidenciaCompleta)) return { estado: 'FAIL', detalle: `${base}. ${[...prohibidos, ...(evidenciaCompleta ? faltantes : [])].join('; ')}.` };
+  // Precedencia (auditoría del PR #9): un nodo prohibido con GUID ÚNICO cuya ejecución DEMUESTRA el registro de transiciones de
+  // la instancia es FAIL aunque OTRA parte del recorrido sea ambigua. Decisión de Juan Miguel (20/10): si solo el dibujo lo marca
+  // y el registro no demuestra su ejecución, la evidencia es contradictoria → inconcluso (el dibujo se genera desde ese registro).
+  // Si la ambigüedad toca al propio nodo prohibido (GUID duplicado o sin GUID), inconcluso. Un nodo solo del modelo nunca es FAIL.
+  const esProhibido = (n: NodoGrafico) => (e.no_recorrido ?? []).some((x) => normaliza(x) === normaliza(n.nombre)) ||
+    (e.no_recorrido_tipo ?? []).some((t) => n.tipos.includes(t));
+  const demostrados = caso.nodos.filter((n) => esProhibido(n) && !!n.id?.trim() && porId.get(n.id!)?.length === 1 &&
+    !!registro?.has(n.id!));
+  if (demostrados.length) return { estado: 'FAIL', detalle: `${base}. Actividad prohibida recorrida con identidad inequívoca: ${nombres(demostrados)}; ${prohibidos.join('; ')}.` };
+  // Un GUID ambiguo no permite inferir qué actividad recorrió el registro.
+  if (duplicados.length || sinIdentidad.length) return { estado: 'NOT_AUTOMATED', detalle: `${base}. Correspondencia ambigua: ${duplicados.length} GUID duplicado(s) relevantes y ${sinIdentidad.length} nodo(s) marcado(s) sin GUID; revisión humana.` };
+  if (prohibidos.length) return { estado: 'NOT_AUTOMATED', detalle: `${base}. Indicio de actividad prohibida sin ejecución inequívoca (${prohibidos.join('; ')}); revisión humana.` };
+  if (faltantes.length && evidenciaCompleta) return { estado: 'FAIL', detalle: `${base}. ${faltantes.join('; ')}.` };
+  if (noRepresentados.length) return { estado: 'NOT_AUTOMATED', detalle: `${base}. Registro no reconciliado: ${noRepresentados.length} GUID ejecutado(s) sin representación en el dibujo; no se acredita la ruta completa ni su ausencia; revisión humana.` };
+  if (ajenos.length) return { estado: 'NOT_AUTOMATED', detalle: `${base}. Las fuentes no coinciden: el dibujo marca ${nombres(ajenos)} y el registro no; revisión humana.` };
   const negativas = (e.no_recorrido?.length ?? 0) + (e.no_recorrido_tipo?.length ?? 0) > 0;
   if (!faltantes.length && !negativas) {
     if (recorridos.length === 0) return { estado: 'NOT_AUTOMATED', detalle: `${base}. Sin nodos recorridos: evidencia insuficiente, queda para revisión humana.` };
@@ -288,8 +313,8 @@ export function evaluarRecorrido(caso: LecturaRecorrido, e: RecorridoEsperado): 
   if (!registro || registro.size === 0) {
     return { estado: 'NOT_AUTOMATED', detalle: `${base}. Finalización INCIERTA (sin registro de transiciones del servidor): ${negativas ? 'una aserción negativa no se da por probada' : faltantes.join('; ')}; revisión humana con la evidencia visual.` };
   }
-  if (ajenos.length) return { estado: 'NOT_AUTOMATED', detalle: `${base}. Las fuentes no coinciden: el dibujo marca ${nombres(ajenos)} y el registro no; revisión humana.` };
   if (sinMarcar.length) return { estado: 'NOT_AUTOMATED', detalle: `${base}. El dibujo NO terminó (faltan por marcar ${nombres(sinMarcar)}): ${faltantes.length ? faltantes.join('; ') : 'la negativa no se da por probada'}; revisión humana.` };
+  if (!identidadCompleta) return { estado: 'NOT_AUTOMATED', detalle: `${base}. Identidad incompleta: no se acredita la completitud de la instancia; revisión humana.` };
   return { estado: 'PASS', detalle: `${base}. Evidencia completa (registro del servidor y dibujo coinciden): coincide con lo esperado.` };
 }
 
@@ -332,10 +357,21 @@ export async function leerRecorridoGrafico(page: Page, numero: string, proceso?:
       }
     }
     if (registro?.length) {
-      // Señal de fin: todos los hotspots del registro marcados. El límite solo acota la espera; no alcanzarlo NO es «completo».
-      await page.waitForFunction(({ sel, ids }) => [...document.querySelectorAll(sel)]
-        .filter((el) => ids.includes(el.id)).every((el) => el.classList.contains('processviewer-highlighted')),
-      { sel: SdeObjects.nodoGrafico, ids: registro }, { timeout: 60_000, polling: 250 }).catch(() => undefined);
+      // Cada GUID ejecutado debe identificar UN hotspot marcado dentro de ESTE diálogo, no en toda la página.
+      // Se itera el registro completo: filtrar primero el DOM permitía éxito vacuo ante GUID ausentes (Issue #8).
+      const raiz = await dialogo.elementHandle();
+      try {
+        await page.waitForFunction(({ raiz, sel, ids }) => {
+          if (!raiz?.isConnected) return false;
+          const nodos = [...raiz.querySelectorAll(sel)];
+          return ids.every((id) => {
+            const correspondientes = nodos.filter((el) => el.id === id);
+            return correspondientes.length === 1 && correspondientes[0].classList.contains('processviewer-highlighted');
+          });
+        }, { raiz, sel: SdeObjects.nodoGrafico, ids: registro }, { timeout: 60_000, polling: 250 }).catch(() => undefined);
+      } finally {
+        await raiz?.dispose();
+      }
     }
   }
   // Encabezado «Caso:» (encabezado de fila) seguido de su valor (caso 654, 2026-10-19).

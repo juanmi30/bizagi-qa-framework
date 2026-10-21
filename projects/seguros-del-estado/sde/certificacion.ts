@@ -32,17 +32,32 @@ export interface ConfigSoporteHu {
 }
 export interface PasoSoporte {
   n: number; accion: string; esperado: string; estado: string; obtenido: string; fuente: string; capturas: string[]; validacionPosterior?: string;
+  /** Causas registradas por la ejecución para el estado del paso (PRODUCTO_POR_CONFIRMAR, AUTOMATIZACION, DATO, ...). */
+  causas?: string[];
+  /** Incidentes registrados aparte del resultado del paso (p. ej. P-21a): no cambian su estado. */
+  incidentes?: string[];
+  /** Acciones del escenario que sustentan el paso (p. ej. verificar_recorrido_grafico). */
+  acciones?: string[];
 }
 /** De dónde salió el resultado del CP (trazabilidad en el Word y en el plan). */
 export interface OrigenCaso {
   tipo: 'archivada' | 'declarada' | 'sin-ejecucion'; numeroCaso: string | null; fecha: string | null; corrida: string | null; unico: string | null; fuentes: string[];
 }
 export interface CasoSoporte {
+  /** `observaciones`: notas registradas (configuración del soporte) que corresponden a ESTE caso; nunca de otro caso. */
   cp: string; titulo: string; numeroCaso: string; configuracion: string; pasos: PasoSoporte[]; observaciones: string[]; resumen: Record<string, number>;
   origen?: OrigenCaso; advertencias?: string[];
+  /** Hallazgos derivados automáticamente de los pasos de ESTE caso (separados de las notas registradas). */
+  observacionesAutomaticas?: string[];
+  /** Referencia a notas de otros casos del mismo CP, que no se copian. */
+  antecedentes?: string[];
 }
 
-interface ReporteJson { unico?: string; numero_caso?: string; pasos: { indice: number; hacer?: string; estado: string; detalle: string; evidencia?: string }[]; matriz: { n: number; estado: string; cubierto_por?: number[] }[] }
+interface ReporteJson {
+  unico?: string; numero_caso?: string; estado?: string; motivo?: string;
+  pasos: { indice: number; hacer?: string; estado: string; detalle: string; evidencia?: string; causa?: string; incidente?: { causa: string; detalle: string } }[];
+  matriz: { n: number; estado: string; cubierto_por?: number[] }[];
+}
 /** Pasos con los que una continuación accede al caso (tests/continuacion.real.spec.ts): no son pasos de la matriz. */
 const ACCESO_CONTINUACION = new Set(['iniciar_sesion', 'abrir_caso']);
 
@@ -63,7 +78,7 @@ export function textoObservado(detalle: string): string {
  * declaran su origen. Nunca se inventa un estado: si ninguna fuente cubre el paso, queda como lo dejó la primera.
  */
 export function consolidarCaso(raiz: string, dirProyecto: string, c: CasoConfig, matriz: { titulo: string; pasos: { n: number; accion: string; esperado: string }[] }): CasoSoporte {
-  const porPaso = new Map<number, { estado: string; obtenido: string; fuente: string; capturas: string[] }>();
+  const porPaso = new Map<number, { estado: string; obtenido: string; fuente: string; capturas: string[]; causas?: string[]; incidentes?: string[]; acciones?: string[] }>();
   c.fuentes.forEach((f, k) => {
     const ruta = resolve(dirProyecto, f);
     if (!existsSync(ruta)) throw new Error(`No existe la fuente ${f} de ${c.cp}.`);
@@ -83,7 +98,10 @@ export function consolidarCaso(raiz: string, dirProyecto: string, c: CasoConfig,
       const obtenido = detalles.map((p) => textoObservado(p.detalle)).filter(Boolean).join(' · ') || (cubre.length ? 'No ejecutado en esta corrida.' : 'Paso agregado del CP (objetivo): su estado resulta de los demás pasos.');
       const capturas = detalles.map((p) => p.evidencia && r.unico ? resolve(raiz, ...RUTA_CAPTURAS, `${f.includes('CONTINUACION_') ? 'CONTINUACION_' : ''}${c.cp}_${r.unico}`, `${p.evidencia}.png`) : '').filter((x) => x && existsSync(x));
       const etiqueta = isAbsolute(f) ? relative(raiz, f).split(sep).join('/') : f.replace(/^docs\/evidencia\//, '');
-      porPaso.set(m.n, { estado, obtenido, fuente: etiqueta, capturas });
+      const causas = [...new Set(detalles.filter((p) => p.estado === estado && p.causa).map((p) => p.causa!))];
+      const incidentes = detalles.filter((p) => p.incidente).map((p) => `${p.incidente!.causa}: ${textoObservado(p.incidente!.detalle)}`);
+      const acciones = [...new Set(detalles.map((p) => p.hacer ?? '').filter(Boolean))];
+      porPaso.set(m.n, { estado, obtenido, fuente: etiqueta, capturas, ...(causas.length ? { causas } : {}), ...(incidentes.length ? { incidentes } : {}), ...(acciones.length ? { acciones } : {}) });
     }
   });
   for (const [n, t] of Object.entries(c.transcritos?.pasos ?? {})) {
@@ -112,12 +130,58 @@ export function textoOrigen(o: OrigenCaso): string {
 
 const ESTADOS: Record<string, string> = {
   PASS: 'PASS — resultado observado igual al esperado',
-  FAIL: 'FAIL — resultado observado distinto del esperado (por confirmar con QA)',
+  FAIL: 'FAIL — el paso no cumplió lo esperado; ver la causa (por confirmar con QA)',
   BLOCKED: 'BLOCKED — no ejecutado por un bloqueo',
   NOT_AUTOMATED: 'NOT_AUTOMATED — pendiente de definición o revisión manual',
   NOT_RUN: 'NO EJECUTADO',
   UI_PASS: 'PASS (verificado en la interfaz)',
 };
+
+/** Causa registrada por la ejecución (modelo.ts CausaPaso), en lenguaje del analista. Distingue producto de automatización y datos. */
+export const CAUSAS: Record<string, string> = {
+  PRODUCTO_POR_CONFIRMAR: 'comportamiento observado distinto del esperado: posible defecto del producto, por confirmar con QA',
+  AUTOMATIZACION: 'la automatización no pudo operar o verificar el control (selector, etiqueta o calibración); no es un defecto del producto',
+  AMBIENTE: 'problema del ambiente (red, permisos o servicio); no es un defecto del producto',
+  CONFIGURACION: 'configuración local incompleta; no es un defecto del producto',
+  CONCURRENCIA: 'otra ejecución real estaba en curso; no se ejecutó',
+  DATO: 'dato de prueba faltante o incorrecto; no es un defecto del producto',
+  INTEGRACION_NO_VERIFICADA: 'integración sin traza accesible: no verificada',
+  NO_AUTOMATIZADO: 'sin criterio objetivo automatizable: requiere revisión humana',
+  POLITICA_SOLO_LECTURA: 'la política de solo lectura impidió la acción',
+  ASIGNACION: 'la actividad no estaba disponible para el analista de pruebas',
+  NO_CLASIFICADO: 'excepción sin clasificar: requiere revisión humana; no se atribuye al producto',
+};
+const textoCausas = (c: string[]) => c.map((x) => CAUSAS[x] ?? x).join('; ');
+const recortar = (t: string, n: number) => (t.length > n ? `${t.slice(0, n - 1).trimEnd()}…` : t);
+const listaPasos = (ps: PasoSoporte[]) => ps.map((p) => `P${p.n}`).join(', ');
+
+/**
+ * Hallazgos derivados automáticamente de los pasos de UN caso (cada línea cita el caso): FAIL con su causa, incidentes
+ * separados, BLOCKED, NOT_AUTOMATED (revisión humana), pasos sustentados con la ruta/Consulta Gráfica y pasos sin captura.
+ * No interpreta ni confirma defectos: resume lo que la ejecución registró.
+ */
+export function observacionesAutomaticas(c: CasoSoporte, estadoReportado?: { estado?: string; motivo?: string }): string[] {
+  const caso = `caso ${c.numeroCaso}`;
+  const o: string[] = [];
+  if (estadoReportado?.estado) o.push(`Estado global reportado por la automatización (${caso}): ${estadoReportado.estado}${estadoReportado.motivo ? ` — ${recortar(textoObservado(estadoReportado.motivo), 420).replace(/[.\s]+$/, '')}` : ''}. No constituye aprobación funcional.`);
+  for (const p of c.pasos.filter((x) => x.estado === 'FAIL')) {
+    o.push(p.causas?.length
+      ? `P${p.n} (${caso}): FAIL — ${textoCausas(p.causas)}. Observado: ${recortar(p.obtenido, 260)}`
+      : `P${p.n} (${caso}): FAIL — objetivo agregado del CP: refleja el resultado de los demás pasos.`);
+  }
+  for (const p of c.pasos.filter((x) => x.incidentes?.length)) {
+    for (const i of p.incidentes!) o.push(`P${p.n} (${caso}): incidente registrado aparte; el paso conserva su estado ${p.estado}. ${recortar(i, 300)}`);
+  }
+  const bloqueados = c.pasos.filter((x) => x.estado === 'BLOCKED');
+  if (bloqueados.length) o.push(`No ejecutados por bloqueo (${caso}): ${bloqueados.map((p) => `P${p.n}${p.causas?.length ? ` (${p.causas.join(', ')})` : ''}`).join(', ')}.`);
+  const manuales = c.pasos.filter((x) => x.estado === 'NOT_AUTOMATED');
+  if (manuales.length) o.push(`Requieren revisión humana, NOT_AUTOMATED (${caso}): ${listaPasos(manuales)}.`);
+  const grafica = c.pasos.filter((x) => x.estado === 'PASS' && x.acciones?.some((a) => /recorrido_grafico|verificar_ruta/.test(a)));
+  if (grafica.length) o.push(`Sustentados con la ruta del caso y la Consulta Gráfica (${caso}): ${listaPasos(grafica)}.`);
+  const sinCaptura = c.pasos.filter((x) => !x.capturas.length);
+  if (sinCaptura.length) o.push(`Sin captura en este soporte (${caso}): ${listaPasos(sinCaptura)}.`);
+  return o;
+}
 
 // ---------- WordprocessingML ----------
 const EMU_POR_TWIP = 635;
@@ -228,6 +292,8 @@ export function renderizarSoporteHu(cfg: ConfigSoporteHu, casos: CasoSoporte[], 
         + etiquetaValor('Resultado esperado', p.esperado, juntos)
         + etiquetaValor('Resultado obtenido', p.obtenido, juntos)
         + etiquetaValor('Estado', ESTADOS[p.estado] ?? p.estado, juntos)
+        + (p.estado !== 'PASS' && p.causas?.length ? etiquetaValor('Causa', textoCausas(p.causas), juntos) : '')
+        + (p.incidentes ?? []).map((i) => etiquetaValor('Incidente registrado aparte (no cambia el estado del paso)', i, juntos)).join('')
         + (p.validacionPosterior ? etiquetaValor('Validación posterior', p.validacionPosterior, juntos) : '');
       const captura = p.capturas.at(-1);
       if (captura) {
@@ -243,8 +309,13 @@ export function renderizarSoporteHu(cfg: ConfigSoporteHu, casos: CasoSoporte[], 
       }
       cuerpo += parrafo();
     }
+    const auto = c.observacionesAutomaticas ?? [];
     cuerpo += parrafo(runs('Observaciones del analista', true))
+      + (auto.length ? parrafo(runs(`Hallazgos de la ejecución (generados automáticamente del reporte del caso ${c.numeroCaso}; no son aprobación ni confirmación de defecto):`, false, '<w:i/><w:iCs/>'))
+        + auto.map((o) => parrafo(runs(`• ${o}`))).join('') : '')
+      + (c.observaciones.length ? parrafo(runs(`Notas registradas para el caso ${c.numeroCaso}:`, false, '<w:i/><w:iCs/>')) : '')
       + c.observaciones.map((o) => parrafo(runs(`• ${o}`))).join('')
+      + (c.antecedentes ?? []).map((a) => parrafo(runs(a, false, '<w:color w:val="808080"/>'))).join('')
       + parrafo(runs('[Espacio para observaciones del analista QA]', false, '<w:color w:val="808080"/>'))
       + parrafo(runs('Aprobación funcional QA: ', true) + runs('pendiente (no se registra aprobación ni firma en este soporte generado).'));
   });
@@ -354,6 +425,10 @@ export function generarSoporteHu(o: { raiz: string; dirProyecto: string; hu: str
       caso = consolidarCaso(o.raiz, o.dirProyecto, { cp: c.cp, numeroCaso: e.numero_caso!, configuracion: notas?.configuracion ?? c.configuracion,
         fuentes: reportes.map((r) => resolve(o.raiz, r)), observaciones: notas?.observaciones ?? [] }, m);
       caso.origen = { tipo: 'archivada', numeroCaso: e.numero_caso, fecha: e.inicio, corrida: e.corrida_suite, unico: e.unico, fuentes: reportes };
+      const base = JSON.parse(readFileSync(resolve(o.raiz, e.reporte!), 'utf8')) as ReporteJson;
+      caso.observacionesAutomaticas = observacionesAutomaticas(caso, { estado: base.estado, motivo: base.motivo });
+      const otros = Object.keys(c.porCaso ?? {}).filter((k) => k !== e.numero_caso);
+      if (otros.length) caso.antecedentes = [`Hay notas registradas para otros casos de este CP (${otros.join(', ')}); no se aplican al caso ${e.numero_caso}. Están en certificacion/${cfg.hu}.json y en los soportes de esos casos.`];
     } else if (o.corrida || !c.fuentes.length) {
       caso = consolidarCaso(o.raiz, o.dirProyecto, { cp: c.cp, numeroCaso: '—', configuracion: c.configuracion, fuentes: [] }, m);
       caso.origen = { tipo: 'sin-ejecucion', numeroCaso: null, fecha: null, corrida: o.corrida ?? null, unico: null, fuentes: [] };
@@ -361,6 +436,7 @@ export function generarSoporteHu(o: { raiz: string; dirProyecto: string; hu: str
     } else {
       const d = declarada.get(c.cp)!;
       caso = consolidarCaso(o.raiz, o.dirProyecto, c, m);
+      caso.observacionesAutomaticas = observacionesAutomaticas(caso);
       caso.origen = { tipo: 'declarada', numeroCaso: c.numeroCaso, fecha: d.fecha != null ? new Date(d.fecha).toISOString() : null, corrida: null, unico: d.unico,
         fuentes: c.fuentes.map((f) => f.replace(/^docs\/evidencia\//, '')) };
     }

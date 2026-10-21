@@ -1,5 +1,7 @@
 # HU06 completa y soporte consolidado
 
+> **Forma recomendada (21/10/2026):** `npm run sde:hu06:simular` → `npm run sde:hu06` (ejecuta y genera el Word) y `npm run sde:hu06:word` (solo el Word, sin Bizagi). El orquestador `projects/seguros-del-estado/tools/hu.mjs` aplica este mismo procedimiento sin variables manuales; ver `GUIA-DEMO-HU06-2026-10-21.md`. Lo que sigue es el procedimiento manual equivalente. **No** pasar opciones con `npm run ... -- --opción` desde PowerShell: el `--` se pierde.
+
 Ejecutar desde la raíz del repositorio. Requiere las cuentas QA y los datos autorizados en `.env` local. Para CP03, `SDE_CUMPL_RAMO_RCE_POPUP` contiene la descripción exacta de una opción observada en el pop-up; es independiente de `SDE_CUMPL_RAMO_RCE` del formulario inicial de HU03. No intercambiar los formatos ni inventar una opción.
 
 ## 1. Ejecutar los cinco CP

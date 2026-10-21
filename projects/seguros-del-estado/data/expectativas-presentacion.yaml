@@ -199,16 +199,15 @@ expectativas:
     responsable: Daniel / Iván (glosario) y QA (desbloqueo de SISE)
 
   # ---------------------------------------------------------------- Ruta del caso (P-18; mismo mecanismo declarativo)
-  # No es presentación: es la llegada de verificar_ruta. Las actividades OBSERVADAS en QA se conservan como evidencia de la
-  # interfaz, no como expectativa aprobada. El validador exige que todo verificar_ruta cuyo "llega_a" incluya alguna de
-  # ellas declare esta expectativa: así el paso queda NOT_AUTOMATED y nunca verde por coincidir con un nombre observado.
+  # Confirmación funcional registrada por Juan Miguel el 20/10 (certificacion/HU06.json, validacionPosterior de CP05).
+  # Es un criterio para ejecuciones futuras: no cambia ni recertifica los resultados automáticos históricos.
   RUTA-CONSULTA-UNITARIA:
     descripcion: Actividades del camino regular de consulta unitaria tras radicar Individual (HU06-CP05 P8–P9).
-    estado: pendiente_definicion
-    pendiente: >-
-      La matriz dice "continúa por el camino regular hacia el flujo de consulta unitaria" sin nombrar actividades. En QA
-      (2026-10-15, casos 628 y 630) se observó el subproceso «Consultar información de solicitud» con la actividad
-      «Consultar SISE»; falta confirmar que ese es el camino regular y su relación con «Consultar Alertas Intermediario» y
-      «Completar información de solicitud» (P-18).
-    responsable: Daniel / Karen (P-18)
-    actividades_observadas: [Consultar información de solicitud, Consultar SISE]
+    estado: aprobada
+    fuente: >-
+      Confirmación funcional de Juan Miguel del 20/10/2026, certificacion/HU06.json, HU06-CP05.validacionPosterior:
+      ¿Masivo o correo? → Consultar información de solicitud → Consultar SISE es el camino regular esperado, sin Worker AI
+      ni Estructurar información. Matriz HU06-CP05 P8–P9. La evidencia del caso 706 no se traslada a otro caso: la ejecución
+      exige llegada actual a Consultar SISE y registro gráfico completo de SU instancia (escenarios/1-hu06-cp05.yaml).
+    verificar:
+      - actividad: Consultar SISE

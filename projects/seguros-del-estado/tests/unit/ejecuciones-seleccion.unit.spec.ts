@@ -78,8 +78,30 @@ const docxDe = (r: { docx: string }) => new Map(leerZip(readFileSync(r.docx)).ma
 const seccion = (casos: { cp: string }[], cp: string) => JSON.stringify(casos.find((c) => c.cp === cp));
 
 test.describe('Ejecución por HU, conservación y selección de la última ejecución por CP @unit', () => {
+  test('regresión 21/10: FAIL finalizado antes de crear caso no sustituye la última ejecución con caso y se advierte', ({}, info) => {
+    const { raiz, proyecto } = repo(info.outputPath());
+    for (const [i, cp] of CPS.entries()) {
+      corrida(raiz, { cp, unico: 'anterior', inicio: '2026-10-21T09:00:00Z', caso: `90${i}`, corrida: 'corrida-anterior' });
+      corrida(raiz, { cp, unico: 'fallo-sin-caso', inicio: '2026-10-21T10:00:00Z', caso: null, corrida: 'corrida-interrumpida', estados: ['PASS', 'FAIL'] });
+    }
+    const fuentesAntes = huellas(resolve(raiz, 'test-results/seguros-del-estado/sde'));
+    const soporte = generarSoporteHu({ raiz, dirProyecto: proyecto, hu: 'HU99', ahora: new Date('2026-10-21T11:00:00Z') });
+    expect(soporte.seleccion.map(s => s.numeroCaso)).toEqual(['900', '901', '902']);
+    for (const s of soporte.seleccion) {
+      expect(s.unico).toBe('anterior');
+      expect(s.corrida).toBe('corrida-anterior');
+      expect(s.advertencias.join()).toMatch(/fallo-sin-caso.*sin número de caso Bizagi/);
+    }
+    expect(docxDe(soporte).get('word/document.xml')!.toString()).toContain('Advertencia de selección');
+    expect(huellas(resolve(raiz, 'test-results/seguros-del-estado/sde'))).toEqual(fuentesAntes);
+    // Un FAIL posterior CON caso (como CP02) sí se selecciona: nunca se oculta para fabricar un soporte verde.
+    corrida(raiz, { cp: CPS[1], unico: 'fallo-con-caso', inicio: '2026-10-21T12:00:00Z', caso: '903', corrida: 'corrida-reciente', estados: ['PASS', 'FAIL'] });
+    const nueva = seleccionarUltimas({ raiz, cps: CPS });
+    expect(nueva[1].elegida).toMatchObject({ unico: 'fallo-con-caso', numero_caso: '903', estado_cp: 'FAIL' });
+  });
   test('(1) la suite HU06 reconoce exactamente sus 5 CP, en orden, sin variantes y en un worker; el runner asigna un identificador de corrida', ({}, info) => {
-    const listar = (...args: string[]) => spawnSync(process.execPath, ['tools/run.mjs', 'seguros-del-estado', ...args, '--list'], { cwd: RAIZ, encoding: 'utf8', timeout: 120_000 }).stdout;
+    // El listado anidado no debe regenerar HTML/JUnit ni reemplazar evidencia local de QA.
+    const listar = (...args: string[]) => spawnSync(process.execPath, ['tools/run.mjs', 'seguros-del-estado', ...args, '--list', '--reporter=list'], { cwd: RAIZ, encoding: 'utf8', timeout: 120_000 }).stdout;
     const suite = listar('--grep', '@hu06', '--grep-invert', '@variante');
     expect([...suite.matchAll(/\[SDE\] (HU06-CP\d\d) /g)].map((m) => m[1])).toEqual(['HU06-CP05', 'HU06-CP01', 'HU06-CP02', 'HU06-CP03', 'HU06-CP04']);
     expect(suite).toContain('Total: 5 tests');

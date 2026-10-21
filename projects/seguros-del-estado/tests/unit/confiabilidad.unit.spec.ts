@@ -152,7 +152,7 @@ test.describe('H6 — exclusión entre procesos (histórico y ejecuciones reales
 test.describe('Runner — un filtro con espacios no selecciona pruebas reales (incidente 2026-10-13) @unit', () => {
   test('--grep con espacios llega entero a Playwright (solo --list: no ejecuta nada)', () => {
     const raiz = resolve(__dirname, '..', '..', '..', '..');
-    const r = spawnSync(process.execPath, ['tools/run.mjs', 'seguros-del-estado', '--list', '--grep', 'sin los documentos portables'], { cwd: raiz, encoding: 'utf8', timeout: 120_000 });
+    const r = spawnSync(process.execPath, ['tools/run.mjs', 'seguros-del-estado', '--list', '--reporter=list', '--grep', 'sin los documentos portables'], { cwd: raiz, encoding: 'utf8', timeout: 120_000 });
     const salida = `${r.stdout}\n${r.stderr}`;
     // Con el runner anterior: grep "sin" + filtros de archivo "los", "documentos", "portables" → también listaba pruebas reales.
     expect(salida).toMatch(/Total: 1 test in 1 file/);
@@ -320,8 +320,8 @@ test.describe('H7 — pendientes reales para REAL_PASS @unit', () => {
     expect(man.casos.find((c) => c.id === 'HU06-CP01')!.brechas).toEqual(expect.arrayContaining(['UI-04', 'INT-02']));
   });
 
-  test('HU06-CP05: P6, P8 (ruta pendiente de definición, P-18) y P9 pendientes; ningún CP con pendientes promete REAL_PASS', () => {
-    expect(pendientesParaRealPass(casoMatriz('HU06-CP05'), esc('HU06-CP05')).map((p) => p.n)).toEqual([6, 8, 9]);
+  test('HU06-CP05: la ruta confirmada es verificable pero P6 sigue pendiente; no promete REAL_PASS', () => {
+    expect(pendientesParaRealPass(casoMatriz('HU06-CP05'), esc('HU06-CP05')).map((p) => p.n)).toEqual([6]);
     for (const c of man.casos) {
       const e = esc(c.id);
       const max = maximoAlcanzable(casoMatriz(c.id), e);

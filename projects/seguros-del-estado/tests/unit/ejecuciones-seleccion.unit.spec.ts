@@ -9,6 +9,7 @@ import { generarSoporteHu } from '../../sde/certificacion';
 import * as ejecuciones from '../../sde/ejecuciones';
 import { registrarFin, registrarInicio, registrarInterrupcion, RUTA_EJECUCIONES, seleccionarUltimas, simularLimpieza } from '../../sde/ejecuciones';
 import type { ReporteCp } from '../../sde/modelo';
+import { fragmentosUsuarios } from '../../sde/privacidad';
 
 /**
  * Flujo HU completa → conservación → selección de la última ejecución por CP → UN Word por HU (complemento del 21/10).
@@ -196,6 +197,23 @@ test.describe('Ejecución por HU, conservación y selección de la última ejecu
     expect(xml).toContain('continuaciones del mismo caso');
     expect((xml.match(/>Paso 2</g) ?? []).length).toBe(CPS.length);                           // sin pasos duplicados: uno por CP
     expect(sha(registroBase)).toBe(antes);                                                     // el resultado original se conserva
+  });
+
+  test('notas por caso: solo se aplican a la ejecución de ESE caso y no cambian ningún estado; fragmentos de usuarios QA para la copia DEMO', ({}, info) => {
+    const { raiz, proyecto } = repo(info.outputPath());
+    const ruta = resolve(proyecto, 'certificacion/HU99.json');
+    const cfg = JSON.parse(readFileSync(ruta, 'utf8'));
+    cfg.casos[0].porCaso = { 900: { configuracion: 'conf del caso 900', observaciones: ['error de dato de la automatización en P2'] } };
+    cfg.casos[1].porCaso = { 999: { observaciones: ['nota de otro caso'] } };
+    writeFileSync(ruta, JSON.stringify(cfg));
+    corrida(raiz, { cp: 'HU99-CP01', unico: 'a1', inicio: '2026-10-21T10:00:00.000Z', caso: '900', corrida: 'corrida-A', estados: ['PASS', 'FAIL'] });
+    corrida(raiz, { cp: 'HU99-CP02', unico: 'a2', inicio: '2026-10-21T10:10:00.000Z', caso: '901', corrida: 'corrida-A' });
+    const g = generarSoporteHu({ raiz, dirProyecto: proyecto, hu: 'HU99', ahora: new Date('2026-10-21T11:00:00Z') });
+    expect(g.casos[0]).toMatchObject({ configuracion: 'conf del caso 900', observaciones: ['error de dato de la automatización en P2'] });
+    expect(g.casos[0].pasos.map((p) => p.estado)).toEqual(['PASS', 'FAIL']);                 // el FAIL registrado no cambia
+    expect(g.casos[1]).toMatchObject({ configuracion: 'conf', observaciones: [] });             // la nota del caso 999 no se aplica al 901
+    expect(fragmentosUsuarios({ USUARIO_a: 'DOMINIO\\Nombre.Apellido', USUARIO_b: 'NIT900111222', CLAVE_a: 'secreta' }, ['USUARIO_a', 'CLAVE_a', 'USUARIO_b']).sort())
+      .toEqual(['apellido', 'nit900111222', 'nombre', 'nombre.apellido']);                       // sin dominio ni claves
   });
 
   test('(9)(12) listado y simulación de limpieza: protege lo necesario, calcula el espacio y no borra ni modifica nada', ({}, info) => {

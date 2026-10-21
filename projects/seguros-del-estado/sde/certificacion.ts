@@ -20,6 +20,11 @@ export interface CasoConfig {
   transcritos?: { fuente: string; pasos: Record<string, PasoTranscrito> };
   observaciones?: string[];
   validacionPosterior?: { pasos: number[]; texto: string };
+  /**
+   * Notas del analista para una ejecución archivada concreta, por NÚMERO DE CASO: solo se aplican si el soporte usa ese caso.
+   * Explican el resultado (p. ej. un error de dato de la automatización); nunca cambian los estados registrados.
+   */
+  porCaso?: Record<string, { configuracion?: string; observaciones?: string[] }>;
 }
 export interface ConfigSoporteHu {
   hu: string; salida: string; template: string; logoCliente: string | null; cliente: string; proyecto: string; nombrePruebas: string;
@@ -345,7 +350,9 @@ export function generarSoporteHu(o: { raiz: string; dirProyecto: string; hu: str
     if (e) { // ejecución archivada: sus datos, sin observaciones/transcripciones/validaciones del caso declarado (son de otro caso)
       // + sus continuaciones del mismo caso, en orden: cada una reemplaza solo los pasos que realmente ejecutó.
       const reportes = [e, ...sel.continuaciones].map((x) => x.reporte!);
-      caso = consolidarCaso(o.raiz, o.dirProyecto, { cp: c.cp, numeroCaso: e.numero_caso!, configuracion: c.configuracion, fuentes: reportes.map((r) => resolve(o.raiz, r)) }, m);
+      const notas = c.porCaso?.[e.numero_caso!];
+      caso = consolidarCaso(o.raiz, o.dirProyecto, { cp: c.cp, numeroCaso: e.numero_caso!, configuracion: notas?.configuracion ?? c.configuracion,
+        fuentes: reportes.map((r) => resolve(o.raiz, r)), observaciones: notas?.observaciones ?? [] }, m);
       caso.origen = { tipo: 'archivada', numeroCaso: e.numero_caso, fecha: e.inicio, corrida: e.corrida_suite, unico: e.unico, fuentes: reportes };
     } else if (o.corrida || !c.fuentes.length) {
       caso = consolidarCaso(o.raiz, o.dirProyecto, { cp: c.cp, numeroCaso: '—', configuracion: c.configuracion, fuentes: [] }, m);

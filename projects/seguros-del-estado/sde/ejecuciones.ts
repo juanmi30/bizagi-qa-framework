@@ -29,6 +29,8 @@ export interface EjecucionCp {
   /** Rutas relativas a la raíz del repo, con «/». */
   reporte: string | null; capturas: string; evidencias_adicionales: string[];
   motivo_interrupcion?: string;
+  /** Continuación (tests/continuacion.real.spec.ts) sobre este número de caso: complementa a su ejecución base, nunca la sustituye. */
+  continuacion_de?: string;
 }
 
 const rel = (raiz: string, ruta: string) => relative(raiz, ruta).split(sep).join('/');
@@ -36,15 +38,16 @@ const rutaEjecucion = (raiz: string, cp: string, unico: string) => resolve(raiz,
 export const huDe = (cp: string) => { const m = /^(HU\d+)-CP\d+$/.exec(cp); if (!m) throw new Error(`CP inválido: ${cp}`); return m[1]; };
 
 /** Al empezar una corrida: EN_CURSO. Si ya existe un registro con ese CP y único, falla (nunca se sobrescribe otra corrida). */
-export function registrarInicio(o: { raiz?: string; cp: string; unico: string; corrida?: string | null; inicio?: Date }): string {
+export function registrarInicio(o: { raiz?: string; cp: string; unico: string; corrida?: string | null; inicio?: Date; continuacionDe?: string }): string {
   const raiz = o.raiz ?? RAIZ_REPO;
   const ruta = rutaEjecucion(raiz, o.cp, o.unico);
   mkdirSync(resolve(ruta, '..'), { recursive: true });
   const e: EjecucionCp = {
     formato: 1, hu: huDe(o.cp), cp: o.cp, unico: o.unico, corrida_suite: o.corrida?.trim() || null,
-    inicio: (o.inicio ?? new Date()).toISOString(), fin: null, estado_ejecucion: 'EN_CURSO', numero_caso: null, estado_cp: null,
+    inicio: (o.inicio ?? new Date()).toISOString(), fin: null, estado_ejecucion: 'EN_CURSO', numero_caso: o.continuacionDe ?? null, estado_cp: null,
     resumen_pasos: {}, bloqueada_antes_de_ejecutar: false, reporte: null,
-    capturas: rel(raiz, resolve(raiz, ...RUTA_SDE, 'capturas', `${o.cp}_${o.unico}`)), evidencias_adicionales: [],
+    capturas: rel(raiz, resolve(raiz, ...RUTA_SDE, 'capturas', `${o.continuacionDe ? 'CONTINUACION_' : ''}${o.cp}_${o.unico}`)), evidencias_adicionales: [],
+    ...(o.continuacionDe ? { continuacion_de: o.continuacionDe } : {}),
   };
   writeFileSync(ruta, JSON.stringify(e, null, 2) + '\n', { encoding: 'utf8', flag: 'wx' });
   return ruta;
@@ -105,7 +108,7 @@ export function motivoNoSeleccionable(raiz: string, e: EjecucionCp): string | nu
   return null;
 }
 
-export interface SeleccionCp { cp: string; elegida: EjecucionCp | null; advertencias: string[] }
+export interface SeleccionCp { cp: string; elegida: EjecucionCp | null; continuaciones: EjecucionCp[]; advertencias: string[] }
 /**
  * Última ejecución seleccionable de cada CP, por la fecha de INICIO registrada en sus metadatos (no por nombre ni fecha
  * de modificación). Con `corrida`, solo las de esa corrida de suite (reproducir una certificación histórica). Las más
@@ -117,7 +120,8 @@ export function seleccionarUltimas(o: { raiz?: string; cps: string[]; corrida?: 
   return o.cps.map((cp) => {
     const advertencias: string[] = [];
     for (const l of todas) if (!l.ejecucion && l.archivo.startsWith(`${cp}_`)) advertencias.push(`Registro ilegible ${l.archivo}: ${l.error}.`);
-    const propias = todas.map((l) => l.ejecucion).filter((e): e is EjecucionCp => !!e && e.cp === cp && (!o.corrida || e.corrida_suite === o.corrida))
+    const delCp = todas.map((l) => l.ejecucion).filter((e): e is EjecucionCp => !!e && e.cp === cp);
+    const propias = delCp.filter((e) => !e.continuacion_de && (!o.corrida || e.corrida_suite === o.corrida))
       .sort((a, b) => Date.parse(b.inicio) - Date.parse(a.inicio) || b.unico.localeCompare(a.unico));
     let elegida: EjecucionCp | null = null;
     for (const e of propias) {
@@ -132,7 +136,19 @@ export function seleccionarUltimas(o: { raiz?: string; cps: string[]; corrida?: 
     const limite = o.posteriorA?.[cp];
     if (elegida && limite != null && Date.parse(elegida.inicio) <= limite) elegida = null; // la certificación declarada es más reciente
     if (!elegida && o.corrida) advertencias.push(`La corrida de suite ${o.corrida} no tiene una ejecución seleccionable de ${cp}.`);
-    return { cp, elegida, advertencias };
+    // Continuaciones del MISMO caso, posteriores a la ejecución elegida, en orden: solo las finalizadas aportan pasos.
+    const continuaciones: EjecucionCp[] = [];
+    if (elegida) {
+      const base = elegida;
+      const candidatas = delCp.filter((e) => e.continuacion_de === base.numero_caso && Date.parse(e.inicio) > Date.parse(base.inicio))
+        .sort((a, b) => Date.parse(a.inicio) - Date.parse(b.inicio));
+      for (const c of candidatas) {
+        const motivo = motivoNoSeleccionable(raiz, c);
+        if (motivo) advertencias.push(`Continuación ${c.unico} del caso ${c.continuacion_de} NO incorporada: ${motivo}.`);
+        else continuaciones.push(c);
+      }
+    }
+    return { cp, elegida, continuaciones, advertencias };
   });
 }
 
@@ -153,7 +169,8 @@ export interface FilaHistorico { cp: string; unico: string; estado_ejecucion: st
 export function simularLimpieza(o: { raiz?: string; hoy?: Date; retencionDias: number; referenciadas?: Set<string> }): { filas: FilaHistorico[]; recuperable: number; reportesSinMetadatos: number } {
   const raiz = o.raiz ?? RAIZ_REPO;
   const leidas = listarEjecuciones(raiz).map((l) => l.ejecucion).filter((e): e is EjecucionCp => !!e);
-  const ultimas = new Set(seleccionarUltimas({ raiz, cps: [...new Set(leidas.map((e) => e.cp))] }).map((s) => s.elegida && `${s.cp}_${s.elegida.unico}`).filter(Boolean));
+  const ultimas = new Set(seleccionarUltimas({ raiz, cps: [...new Set(leidas.map((e) => e.cp))] })
+    .flatMap((s) => (s.elegida ? [s.elegida, ...s.continuaciones] : [])).map((e) => `${e.cp}_${e.unico}`));
   const referenciadas = new Set([...(o.referenciadas ?? []), ...referenciasDeSoportes(raiz)]);
   const hoy = (o.hoy ?? new Date()).getTime();
   const filas = leidas.map((e) => {
@@ -184,8 +201,8 @@ export function referenciasDeSoportes(raiz = RAIZ_REPO): string[] {
       if (statSync(r).isDirectory()) visitar(r);
       else if (h.endsWith('-soporte-plan.json')) {
         try {
-          const plan = JSON.parse(readFileSync(r, 'utf8')) as { seleccion?: { cp: string; unico?: string | null }[] };
-          for (const s of plan.seleccion ?? []) if (s.unico) refs.push(`${s.cp}_${s.unico}`);
+          const plan = JSON.parse(readFileSync(r, 'utf8')) as { seleccion?: { cp: string; unico?: string | null; continuaciones?: string[] }[] };
+          for (const s of plan.seleccion ?? []) for (const u of [s.unico, ...(s.continuaciones ?? [])]) if (u) refs.push(`${s.cp}_${u}`);
         } catch { /* plan antiguo o ilegible: no aporta referencias */ }
       }
     }

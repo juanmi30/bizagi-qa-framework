@@ -45,10 +45,11 @@ function repo(dir: string) {
 
 /** Simula una corrida de un CP tal como la registra verticales.ts: inicio → reporte original → fin (o interrupción). */
 function corrida(raiz: string, o: { cp: string; unico: string; inicio: string; caso: string | null; corrida: string; estados?: [string, string];
-  fin?: 'finalizada' | 'interrumpida' | 'en-curso'; bloqueos?: string[]; captura?: Buffer }) {
-  registrarInicio({ raiz, cp: o.cp, unico: o.unico, corrida: o.corrida, inicio: new Date(o.inicio) });
+  fin?: 'finalizada' | 'interrumpida' | 'en-curso'; bloqueos?: string[]; captura?: Buffer; continuacionDe?: string }) {
+  const pre = o.continuacionDe ? 'CONTINUACION_' : '';
+  registrarInicio({ raiz, cp: o.cp, unico: o.unico, corrida: o.corrida, inicio: new Date(o.inicio), ...(o.continuacionDe ? { continuacionDe: o.continuacionDe } : {}) });
   if (o.captura) {
-    const d = resolve(raiz, 'test-results/seguros-del-estado/sde/capturas', `${o.cp}_${o.unico}`);
+    const d = resolve(raiz, 'test-results/seguros-del-estado/sde/capturas', `${pre}${o.cp}_${o.unico}`);
     mkdirSync(d, { recursive: true });
     writeFileSync(resolve(d, `${o.cp}_p01.png`), o.captura);
   }
@@ -59,7 +60,9 @@ function corrida(raiz: string, o: { cp: string; unico: string; inicio: string; c
     actividades_observadas: [], bloqueos: o.bloqueos ?? [], cleanup: { politica: 'x', razon: 'y' },
     pasos: [{ indice: 1, hacer: 'h', matriz: [1], estado: e1, detalle: `paso 1 caso ${o.caso}`, ...(o.captura ? { evidencia: `${o.cp}_p01` } : {}) }, { indice: 2, hacer: 'h', matriz: [2], estado: e2, detalle: `paso 2 caso ${o.caso}` }],
     matriz: [{ n: 1, accion: 'a', esperado: 'e', estado: e1, cubierto_por: [1] }, { n: 2, accion: 'b', esperado: 'f', estado: e2, cubierto_por: [2] }] } as unknown as ReporteCp;
-  const ruta = resolve(raiz, 'test-results/seguros-del-estado/sde', `${o.cp}_${o.unico}.json`);
+  // Una continuación solo ejecuta el paso 2 de la matriz (el 1 no lo cubre): así lo reporta continuacion.real.spec.ts.
+  if (o.continuacionDe) { reporte.pasos = [{ ...reporte.pasos[0], matriz: [2], estado: e2 as ReporteCp['pasos'][0]['estado'], detalle: `continuación paso 2 caso ${o.caso}` }]; reporte.matriz[0].cubierto_por = []; reporte.matriz[1].cubierto_por = [1]; }
+  const ruta = resolve(raiz, 'test-results/seguros-del-estado/sde', `${pre}${o.cp}_${o.unico}.json`);
   writeFileSync(ruta, JSON.stringify(reporte));
   registrarFin({ raiz, reporte, rutaReporte: ruta });
 }
@@ -167,6 +170,32 @@ test.describe('Ejecución por HU, conservación y selección de la última ejecu
       expect(readdirSync(resolve(g.docx, '..')).filter((f) => f.endsWith('.docx'))).toEqual(['HU99.docx']);
       expect(g.casos.map((c) => c.cp)).toEqual(CPS);
     }
+  });
+
+  test('continuaciones del MISMO caso: se suman a la ejecución base sin sustituirla ni duplicar pasos; capturas de la continuación; las de otro caso o incompletas no entran', ({}, info) => {
+    const { raiz, proyecto } = repo(info.outputPath());
+    corrida(raiz, { cp: 'HU99-CP01', unico: 'base', inicio: '2026-10-21T10:00:00.000Z', caso: '900', corrida: 'corrida-A', estados: ['PASS', 'BLOCKED'], captura: pngSintetico(200) });
+    const registroBase = resolve(raiz, ...RUTA_EJECUCIONES, 'HU99-CP01_base.json');
+    const antes = sha(registroBase);
+    corrida(raiz, { cp: 'HU99-CP01', unico: 'cont-900-a', inicio: '2026-10-21T11:00:00.000Z', caso: '900', corrida: 'corrida-A', continuacionDe: '900', estados: ['PASS', 'FAIL'], captura: pngSintetico(50) });
+    corrida(raiz, { cp: 'HU99-CP01', unico: 'cont-777', inicio: '2026-10-21T11:30:00.000Z', caso: '777', corrida: 'corrida-A', continuacionDe: '777' }); // otro caso
+    corrida(raiz, { cp: 'HU99-CP01', unico: 'cont-900-b', inicio: '2026-10-21T12:00:00.000Z', caso: '900', corrida: 'corrida-A', continuacionDe: '900', fin: 'interrumpida' });
+    const sel = seleccionarUltimas({ raiz, cps: ['HU99-CP01'] })[0];
+    expect(sel.elegida?.unico).toBe('base');                                                  // una continuación nunca es la ejecución elegida
+    expect(sel.continuaciones.map((c) => c.unico)).toEqual(['cont-900-a']);
+    expect(sel.advertencias.join()).toMatch(/cont-900-b.*NO incorporada.*interrumpida/);
+    const g = generarSoporteHu({ raiz, dirProyecto: proyecto, hu: 'HU99', ahora: new Date('2026-10-21T13:00:00Z') });
+    const c = g.casos[0];
+    expect(c.pasos.map((p) => [p.n, p.estado])).toEqual([[1, 'PASS'], [2, 'FAIL']]);              // P1 de la base, P2 de la continuación (FAIL se conserva)
+    expect(c.pasos[0].fuente).toBe('test-results/seguros-del-estado/sde/HU99-CP01_base.json');
+    expect(c.pasos[1].fuente).toBe('test-results/seguros-del-estado/sde/CONTINUACION_HU99-CP01_cont-900-a.json');
+    expect(c.pasos[1].obtenido).toBe('continuación paso 2 caso 900');
+    expect(c.pasos[1].capturas[0]).toContain('CONTINUACION_HU99-CP01_cont-900-a');
+    expect(g.seleccion[0]).toMatchObject({ numeroCaso: '900', unico: 'base', continuaciones: ['cont-900-a'] });
+    const xml = docxDe(g).get('word/document.xml')!.toString('utf8');
+    expect(xml).toContain('continuaciones del mismo caso');
+    expect((xml.match(/>Paso 2</g) ?? []).length).toBe(CPS.length);                           // sin pasos duplicados: uno por CP
+    expect(sha(registroBase)).toBe(antes);                                                     // el resultado original se conserva
   });
 
   test('(9)(12) listado y simulación de limpieza: protege lo necesario, calcula el espacio y no borra ni modifica nada', ({}, info) => {

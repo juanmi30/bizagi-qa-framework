@@ -4,6 +4,7 @@ import { escribirZip, leerZip, type EntradaZip } from '../../../shared/utils/zip
 import { atributoXml, elementosXml, escaparXml, hijosXml, primerElementoXml, textoParrafoDocx, textoXml, type ElementoXml } from '../../../shared/utils/xml';
 import { dimensionesPng, disponerEvidencias, geometriaCeldaLogo, type GeometriaPagina } from '../../colsubsidio/data/afi/soporte/docx';
 import { seleccionarUltimas } from './ejecuciones';
+import { peorEstado, type EstadoPaso } from './modelo';
 
 /**
  * Soporte de certificación cliente: UN documento Word por HISTORIA DE USUARIO con todos sus CP (formato de la plantilla
@@ -36,7 +37,9 @@ export interface CasoSoporte {
   origen?: OrigenCaso; advertencias?: string[];
 }
 
-interface ReporteJson { unico?: string; numero_caso?: string; pasos: { indice: number; estado: string; detalle: string; evidencia?: string }[]; matriz: { n: number; estado: string; cubierto_por?: number[] }[] }
+interface ReporteJson { unico?: string; numero_caso?: string; pasos: { indice: number; hacer?: string; estado: string; detalle: string; evidencia?: string }[]; matriz: { n: number; estado: string; cubierto_por?: number[] }[] }
+/** Pasos con los que una continuación accede al caso (tests/continuacion.real.spec.ts): no son pasos de la matriz. */
+const ACCESO_CONTINUACION = new Set(['iniciar_sesion', 'abrir_caso']);
 
 /** Texto observado legible: sin marcas internas ni nombres de variables (los valores de QA no van al documento). */
 const DESCRIPCION_DATO: Record<string, string> = {
@@ -62,13 +65,20 @@ export function consolidarCaso(raiz: string, dirProyecto: string, c: CasoConfig,
     const r = JSON.parse(readFileSync(ruta, 'utf8')) as ReporteJson;
     const pasos = new Map(r.pasos.map((p) => [p.indice, p]));
     for (const m of r.matriz) {
-      const cubre = m.cubierto_por ?? [];
-      if (k > 0 && !cubre.length) continue; // una continuación solo aporta lo que ejecutó
+      let cubre = m.cubierto_por ?? [];
+      let estado = m.estado;
+      if (k > 0) {
+        // Una continuación solo aporta los pasos de la matriz que EJECUTÓ: sin contar su acceso (iniciar sesión y abrir el caso,
+        // que se anotan en el primer paso del tramo) ni lo que quedó NOT_RUN. Si no ejecutó nada del paso, se conserva lo anterior.
+        cubre = cubre.filter((i) => { const p = pasos.get(i); return !!p && !ACCESO_CONTINUACION.has(p.hacer ?? '') && p.estado !== 'NOT_RUN'; });
+        if (!cubre.length) continue;
+        estado = peorEstado(cubre.map((i) => pasos.get(i)!.estado as EstadoPaso));
+      }
       const detalles = cubre.map((i) => pasos.get(i)).filter((p): p is NonNullable<typeof p> => !!p && p.estado !== 'NOT_RUN');
       const obtenido = detalles.map((p) => textoObservado(p.detalle)).filter(Boolean).join(' · ') || (cubre.length ? 'No ejecutado en esta corrida.' : 'Paso agregado del CP (objetivo): su estado resulta de los demás pasos.');
       const capturas = detalles.map((p) => p.evidencia && r.unico ? resolve(raiz, ...RUTA_CAPTURAS, `${f.includes('CONTINUACION_') ? 'CONTINUACION_' : ''}${c.cp}_${r.unico}`, `${p.evidencia}.png`) : '').filter((x) => x && existsSync(x));
       const etiqueta = isAbsolute(f) ? relative(raiz, f).split(sep).join('/') : f.replace(/^docs\/evidencia\//, '');
-      porPaso.set(m.n, { estado: m.estado, obtenido, fuente: etiqueta, capturas });
+      porPaso.set(m.n, { estado, obtenido, fuente: etiqueta, capturas });
     }
   });
   for (const [n, t] of Object.entries(c.transcritos?.pasos ?? {})) {
@@ -87,7 +97,11 @@ export function consolidarCaso(raiz: string, dirProyecto: string, c: CasoConfig,
 const fechaLegible = (iso: string | null) => (iso ? `${iso.replace('T', ' ').slice(0, 16)} UTC` : 'sin fecha');
 export function textoOrigen(o: OrigenCaso): string {
   if (o.tipo === 'sin-ejecucion') return 'Sin ejecución seleccionable para este CP: sus pasos quedan como NO EJECUTADO (no se inventan resultados).';
-  if (o.tipo === 'archivada') return `Caso Bizagi ${o.numeroCaso} · inicio ${fechaLegible(o.fecha)} · corrida de suite ${o.corrida ?? 'sin identificador'} · seleccionada automáticamente (última ejecución finalizada del CP) · reporte ${o.fuentes.join(', ')}`;
+  if (o.tipo === 'archivada') {
+    const [base, ...cont] = o.fuentes;
+    return `Caso Bizagi ${o.numeroCaso} · inicio ${fechaLegible(o.fecha)} · corrida de suite ${o.corrida ?? 'sin identificador'} · seleccionada automáticamente (última ejecución finalizada del CP) · reporte ${base}`
+      + (cont.length ? ` · continuaciones del mismo caso (solo reemplazan los pasos que ejecutaron): ${cont.join(', ')}` : '');
+  }
   return `Caso Bizagi ${o.numeroCaso} · última evidencia del ${fechaLegible(o.fecha)} · certificación declarada (reportes sanitizados: ${o.fuentes.join(', ')})`;
 }
 
@@ -295,7 +309,10 @@ export const RUTA_CAPTURAS = ['test-results', 'seguros-del-estado', 'sde', 'capt
 export const RUTAS_LIMPIADAS_POR_PLAYWRIGHT = [['test-results', 'seguros-del-estado', 'artifacts'], ['test-results', 'seguros-del-estado', 'html-report']] as const;
 
 /** Lo elegido para cada CP: para la consola, el plan JSON y la simulación de limpieza (referencias). */
-export interface SeleccionSoporte { cp: string; origen: OrigenCaso['tipo']; numeroCaso: string | null; unico: string | null; corrida: string | null; fecha: string | null; advertencias: string[] }
+export interface SeleccionSoporte {
+  cp: string; origen: OrigenCaso['tipo']; numeroCaso: string | null; unico: string | null; corrida: string | null; fecha: string | null;
+  continuaciones: string[]; advertencias: string[];
+}
 
 /**
  * Genera el soporte de una HU desde resultados guardados. Solo LEE las fuentes (reportes, capturas, plantilla) y escribe en
@@ -326,8 +343,10 @@ export function generarSoporteHu(o: { raiz: string; dirProyecto: string; hu: str
     const e = sel.elegida;
     let caso: CasoSoporte;
     if (e) { // ejecución archivada: sus datos, sin observaciones/transcripciones/validaciones del caso declarado (son de otro caso)
-      caso = consolidarCaso(o.raiz, o.dirProyecto, { cp: c.cp, numeroCaso: e.numero_caso!, configuracion: c.configuracion, fuentes: [resolve(o.raiz, e.reporte!)] }, m);
-      caso.origen = { tipo: 'archivada', numeroCaso: e.numero_caso, fecha: e.inicio, corrida: e.corrida_suite, unico: e.unico, fuentes: [e.reporte!] };
+      // + sus continuaciones del mismo caso, en orden: cada una reemplaza solo los pasos que realmente ejecutó.
+      const reportes = [e, ...sel.continuaciones].map((x) => x.reporte!);
+      caso = consolidarCaso(o.raiz, o.dirProyecto, { cp: c.cp, numeroCaso: e.numero_caso!, configuracion: c.configuracion, fuentes: reportes.map((r) => resolve(o.raiz, r)) }, m);
+      caso.origen = { tipo: 'archivada', numeroCaso: e.numero_caso, fecha: e.inicio, corrida: e.corrida_suite, unico: e.unico, fuentes: reportes };
     } else if (o.corrida || !c.fuentes.length) {
       caso = consolidarCaso(o.raiz, o.dirProyecto, { cp: c.cp, numeroCaso: '—', configuracion: c.configuracion, fuentes: [] }, m);
       caso.origen = { tipo: 'sin-ejecucion', numeroCaso: null, fecha: null, corrida: o.corrida ?? null, unico: null, fuentes: [] };
@@ -340,7 +359,8 @@ export function generarSoporteHu(o: { raiz: string; dirProyecto: string; hu: str
     }
     caso.advertencias = sel.advertencias;
     const or = caso.origen!;
-    seleccion.push({ cp: c.cp, origen: or.tipo, numeroCaso: or.numeroCaso, unico: or.unico, corrida: or.corrida, fecha: or.fecha, advertencias: sel.advertencias });
+    seleccion.push({ cp: c.cp, origen: or.tipo, numeroCaso: or.numeroCaso, unico: or.unico, corrida: or.corrida, fecha: or.fecha,
+      continuaciones: e ? sel.continuaciones.map((x) => x.unico) : [], advertencias: sel.advertencias });
     return caso;
   });
   const template = readFileSync(resolve(o.raiz, cfg.template));

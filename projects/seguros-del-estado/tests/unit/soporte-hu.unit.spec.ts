@@ -29,6 +29,20 @@ test.describe('Soporte de certificación por HU @unit', () => {
     expect(c.resumen).toEqual({ NOT_AUTOMATED: 1, PASS: 2, FAIL: 1 });
   });
 
+  test('una continuación que falla en su ACCESO (sesión/abrir caso) o deja pasos NOT_RUN no altera el resultado de la base', ({}, info) => {
+    const dir = info.outputPath('p');
+    mkdirSync(resolve(dir, 'ev'), { recursive: true });
+    writeFileSync(resolve(dir, 'ev/base.json'), JSON.stringify(reporte('u1', [[1, 'PASS', [1]], [2, 'BLOCKED', [2]], [3, 'BLOCKED', [3]], [4, 'NOT_AUTOMATED', []]],
+      [[1, 'PASS', 'base 1'], [2, 'BLOCKED', 'barrera'], [3, 'BLOCKED', 'barrera']])));
+    // Caso real del 2026-10-20 (caso 710): la sesión expiró al abrir el caso; P2 queda con el acceso FAIL y P3 NOT_RUN.
+    const cont = { unico: 'cont', pasos: [{ indice: 1, hacer: 'iniciar_sesion', estado: 'PASS', detalle: 'sesión' }, { indice: 2, hacer: 'abrir_caso', estado: 'FAIL', detalle: 'La sesión expiró' },
+      { indice: 3, hacer: 'tabla_abrir_fila', estado: 'NOT_RUN', detalle: 'No ejecutado' }, { indice: 4, hacer: 'verificar', estado: 'NOT_RUN', detalle: 'No ejecutado' }],
+      matriz: [{ n: 1, estado: 'NOT_AUTOMATED', cubierto_por: [] }, { n: 2, estado: 'FAIL', cubierto_por: [1, 2, 3] }, { n: 3, estado: 'NOT_RUN', cubierto_por: [4] }, { n: 4, estado: 'NOT_AUTOMATED', cubierto_por: [] }] };
+    writeFileSync(resolve(dir, 'ev/CONTINUACION_y.json'), JSON.stringify(cont));
+    const c = consolidarCaso(RAIZ, dir, { cp: 'HU99-CP01', numeroCaso: '1', configuracion: 'c', fuentes: ['ev/base.json', 'ev/CONTINUACION_y.json'] }, matriz);
+    expect(c.pasos.map((p) => [p.n, p.estado, p.fuente])).toEqual([[1, 'PASS', 'ev/base.json'], [2, 'BLOCKED', 'ev/base.json'], [3, 'BLOCKED', 'ev/base.json'], [4, 'NOT_AUTOMATED', 'ev/base.json']]);
+  });
+
   test('un solo Word con todos los CP sobre la plantilla corporativa, sin aprobaciones inventadas', () => {
     const cfg = { hu: 'HU99', salida: 'x.docx', template: '', logoCliente: null, cliente: 'Cliente', proyecto: 'Proyecto', nombrePruebas: 'N', iteracion: 'I',
       fechaInicio: 'A', fechaFinalizacion: 'B', seccion: 'Sección', encabezado: 'ENC', casos: [] } as ConfigSoporteHu;

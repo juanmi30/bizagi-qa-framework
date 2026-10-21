@@ -7,7 +7,7 @@ import { SdeObjects } from '../baseObjects/sde.objects';
 import { describir } from './datos';
 import type { CampoSde, PasoSde, Verificacion } from './escenario';
 import { EntornoError, type Capacidad, type ContextoEjecucion, type SalidaCapacidad, type Verificador } from './ejecutor';
-import { autorizarAperturaPopup, cargarPopups, type RegistroPopups } from './popups';
+import { autorizacionCasoCreado, autorizarAperturaPopup, cargarPopups, type RegistroPopups } from './popups';
 import { cargarPresentacion } from './presentacion';
 import {
   concederPrecreacion, exigirSoloLectura, OPERACIONES, precreacionVigente, ProteccionNoInstaladaError, protegerSoloLectura, registroDe, type RegistroSoloLectura,
@@ -766,6 +766,15 @@ async function adjuntarSegunObligatoriedad(page: Page, amb: Ambito, grilla: stri
 }
 
 export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string, Capacidad>; verificar: Verificador } {
+  const autorizarPopup = async (p: PasoSde, ctx: ContextoEjecucion) => {
+    const registro = ui.popupsCalibrados ?? cargarPopups();
+    let permiso = ctx.env.SDE_AUTORIZO_CALIBRACION_POPUP;
+    if (registro[p.formulario as string]?.estado === 'en_calibracion' && ctx.casoCreado && ctx.env.SDE_POPUPS_CASO_CREADO === '1') {
+      const numero = valorMostrado(await infoCampo(await campo(ambitoActual(ui), 'Número de Caso'), 'Número de Caso'));
+      permiso = autorizacionCasoCreado(ctx, numero);
+    }
+    autorizarAperturaPopup(p.formulario as string | undefined, p.tabla as string, ctx.numeroCaso, registro, permiso);
+  };
   const verificar: Verificador = async (v: Verificacion, ctx: ContextoEjecucion) => {
     const amb = ambitoActual(ui);
     const page = paginaActual(ui);
@@ -1057,6 +1066,7 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
           ctx.numeroCaso = n;
           await ui.registrarCaso(n, ui.actual ?? '');
         });
+        ctx.casoCreado = { numero, unico: ctx.unico, corrida: ctx.env.BIZAGI_CORRIDA ?? '' };
         notas.push(`Bizagi respondió CREATENEWCASE con CaseNumber ${numero} y la UI muestra "Caso ${numero}"`);
       } else {
         await pulsar(ambitoActual(ui), p.boton as string);
@@ -1114,6 +1124,10 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       salirDeFormularioInicio(page, ctx);
       const caso = await leerRecorridoGrafico(page, ctx.numeroCaso, ctx.resolver('${config:SDE_PROCESO_RADICACION}'));
       const r = evaluarRecorrido(caso, p as RecorridoEsperado);
+      if (ctx.casoCreado?.numero === ctx.numeroCaso && caso.identidadServidor === ctx.numeroCaso
+          && caso.idCasoServidor && caso.idCasoServidor === caso.idCasoConsulta && caso.idFlujoCaso && caso.idFlujoCaso === caso.idFlujoRegistro) {
+        ctx.casoCreado.instancia = caso.idCasoServidor;
+      }
       if (r.estado === 'FAIL') throw new Error(r.detalle);
       return r.estado === 'NOT_AUTOMATED' ? { estado: 'NOT_AUTOMATED', causa: 'NO_AUTOMATIZADO', detalle: r.detalle } : { detalle: r.detalle };
     },
@@ -1200,14 +1214,18 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       if (p.minimo_filas != null && n < (p.minimo_filas as number)) {
         throw new Error(`"${p.tabla}": ${n} fila(s), mínimo ${p.minimo_filas}${extraccion ? ` | ${extraccion.detalle}` : ''}`);
       }
-      if (extraccion?.estado === 'FAIL') throw new Error(`"${p.tabla}": extracción distinta de la narrativa (NO coincide): ${extraccion.detalle}${diagnostico}`);
+      if (extraccion?.estado === 'FAIL') {
+        const detalle = `"${p.tabla}": extracción distinta de la narrativa (NO coincide): ${extraccion.detalle}${diagnostico}`;
+        if (p.no_bloqueante) return { estado: 'FAIL', causa: 'PRODUCTO_POR_CONFIRMAR', detalle };
+        throw new Error(detalle);
+      }
       if (extraccion?.estado === 'NOT_AUTOMATED') return { estado: 'NOT_AUTOMATED', causa: 'NO_AUTOMATIZADO', detalle: `"${p.tabla}": ${n} fila(s) | ${extraccion.detalle}` };
       return { detalle:`"${p.tabla}": ${n} fila(s); columnas [${columnas.filter(Boolean).join(', ')}]${extraccion ? ` | ${extraccion.detalle}` : ''}${diagnostico}` };
     },
 
     tabla_abrir_fila: async (p, ctx) => {
       // H3: barrera ANTES de cualquier clic (BUG-03): sin formulario calibrado y cierre seguro verificado, no se abre.
-      autorizarAperturaPopup(p.formulario as string | undefined, p.tabla as string, ctx.numeroCaso, ui.popupsCalibrados ?? cargarPopups(), ctx.env.SDE_AUTORIZO_CALIBRACION_POPUP);
+      await autorizarPopup(p, ctx);
       const page = paginaActual(ui);
       const { cont, filas } = await contenedorTabla(page, p.tabla as string);
       const n = await filas.count();
@@ -1229,7 +1247,7 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
     },
 
     tabla_agregar: async (p, ctx) => {
-      autorizarAperturaPopup(p.formulario as string | undefined, p.tabla as string, ctx.numeroCaso, ui.popupsCalibrados ?? cargarPopups(), ctx.env.SDE_AUTORIZO_CALIBRACION_POPUP);
+      await autorizarPopup(p, ctx);
       const page = paginaActual(ui);
       const { cont, filas } = await contenedorTabla(page, p.tabla as string);
       const n = await filas.count();
@@ -1301,7 +1319,11 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
         if (!problema || Date.now() > limite) break;
         await page.waitForTimeout(1_500);
       }
-      if (problema) throw new Error(`"${t.tabla}": ${problema} (tras releer la grilla durante 15 s).`);
+      if (problema) {
+        const detalle = `"${t.tabla}": ${problema} (tras releer la grilla durante 15 s).`;
+        if (p.no_bloqueante) { ui.tabla = undefined; return { estado: 'FAIL', causa: 'PRODUCTO_POR_CONFIRMAR', detalle }; }
+        throw new Error(detalle);
+      }
       const resumen = Object.entries(esperadas).map(([c, v]) => `${c}=${describir(v, ctx.registro, ctx.unico, ctx.env)}`).join(', ');
       ui.tabla = undefined;
       return { detalle: `Pop-up confirmado; "${t.tabla}" con ${n} fila(s)${resumen ? `; fila verificada: ${resumen}` : ''}` };
@@ -1397,7 +1419,11 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       const notas = [`"${ref}": se tecleó ${tecleado}; el formulario muestra "${mostrado}"`];
       if (p.esperado_mostrado != null) {
         const esperado = normaliza(ctx.resolver(p.esperado_mostrado as string));
-        if (mostrado !== esperado) throw new Error(`${notas[0]}; se esperaba "${esperado}" (la restricción del campo no se aplicó).`);
+        if (mostrado !== esperado) {
+          const detalle = `${notas[0]}; se esperaba "${esperado}" (la restricción del campo no se aplicó).`;
+          if (p.no_bloqueante) return { estado: 'FAIL', causa: 'PRODUCTO_POR_CONFIRMAR', detalle };
+          throw new Error(detalle);
+        }
         notas.push('coincide con lo esperado');
       }
       if (p.mensaje != null) {

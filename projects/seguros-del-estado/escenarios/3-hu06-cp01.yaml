@@ -169,6 +169,7 @@ pasos:
 
   - matriz: [17]
     hacer: tabla_verificar
+    no_bloqueante: true
     tabla: Detalle Polizas Asociadas
     minimo_filas: 1
     comparar:
@@ -188,6 +189,7 @@ pasos:
 
   - matriz: [19]
     hacer: verificar
+    no_bloqueante: true
     requiere: [EST-FILA-GENERALES-PN]
     verificar:
       - valor: { campo: Forma Consulta, igual: Identificación de Tomador }
@@ -235,6 +237,12 @@ pasos:
     formulario: detalle-polizas-pn-generales
     requiere: [EST-FILA-GENERALES-PN]
     tabla: Detalle Polizas Asociadas
+
+  # La adición ya abrió el diálogo. Una diferencia de texto observada no impide completar y guardar la fila propia.
+  - matriz: [24]
+    hacer: verificar
+    no_bloqueante: true
+    requiere: [EST-FILA-GENERALES-PN]
     verificar:
       - valor: { campo: Forma Consulta, igual: Identificación de Tomador }
 

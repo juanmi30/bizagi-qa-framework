@@ -1,0 +1,9 @@
+{
+  "cp": 5,
+  "pasos": 108,
+  "capturas_fuente_unicas_en_word": 101,
+  "xml_y_relaciones_validos": true,
+  "casos_y_procedencia_verificados": true,
+  "validaciones_de_otro_caso": false,
+  "render_visual": "pendiente: LibreOffice no instalado"
+}

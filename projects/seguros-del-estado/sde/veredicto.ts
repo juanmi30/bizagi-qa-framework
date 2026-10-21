@@ -110,7 +110,7 @@ export default class VeredictoSde implements Reporter {
   async onEnd(result: FullResult): Promise<{ status?: FullResult['status'] } | undefined> {
     const v = calcularVeredicto([...this.resultados.values()], modoEjecucion());
     if (!v.aplica) return undefined;
-    const salida = this.opciones.salida ?? resolve(process.cwd(), 'test-results', process.env.PROJECT ?? 'seguros-del-estado', 'veredicto-e2e.json');
+    const salida = this.opciones.salida ?? process.env.SDE_VEREDICTO_SALIDA ?? resolve(process.cwd(), 'test-results', process.env.PROJECT ?? 'seguros-del-estado', 'veredicto-e2e.json');
     mkdirSync(dirname(salida), { recursive: true });
     writeFileSync(salida, JSON.stringify({ fecha: new Date().toISOString(), estado_playwright: result.status, ...v }, null, 2) + '\n', 'utf8');
     console.log(`\n[SDE] Veredicto E2E: ${v.motivo}\n`);

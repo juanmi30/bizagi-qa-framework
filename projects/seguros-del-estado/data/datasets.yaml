@@ -143,7 +143,7 @@ datasets:
       # FICTICIOS (2026-10-16, aclaración de Daniel): la edición de filas no consulta servicios externos. Distintos de la narrativa.
       - { nombre: poliza, fuente: generado, valor: "300123456" }
       # Ramo RCE: opción de una lista paramétrica de QA (no se inventa).
-      - { nombre: ramo_rce, fuente: qa, env: SDE_CUMPL_RAMO_RCE }
+      - { nombre: ramo_rce, fuente: qa, env: SDE_CUMPL_RAMO_RCE_POPUP }
       - { nombre: poliza_rce, fuente: generado, valor: "400123456" }
     usado_por: [HU06-CP03]
     limpieza: Las filas se editan DENTRO del caso creado por la prueba; nunca sobre casos ajenos.

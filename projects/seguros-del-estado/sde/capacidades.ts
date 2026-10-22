@@ -110,6 +110,17 @@ export interface EstadoCaso {
   filas: FilaCaso[];
 }
 
+/** Confirma la bandeja tras un login transitorio del SPA, sin reenviar credenciales ni acciones. */
+export async function confirmarSesionConsulta(page: Page, estado: 'sesion' | 'login', timeoutMs = 15_000): Promise<void> {
+  if (estado === 'sesion') return;
+  try {
+    await page.locator(SdeObjects.bandeja).filter({ visible: true }).waitFor({ state: 'visible', timeout: timeoutMs });
+  } catch (e) {
+    if ((e as Error).name !== 'TimeoutError') throw e;
+    throw new EntornoError('La sesión expiró: el portal permaneció en el login sin mostrar la bandeja autenticada.');
+  }
+}
+
 /**
  * Busca el caso con el buscador global y devuelve sus actividades ACTUALES tal como Bizagi las lista en las filas de
  * resultados (ul.gridListWorkItems, una por work item, con su idTask). No abre ni modifica el caso.
@@ -120,7 +131,7 @@ export interface EstadoCaso {
  */
 export async function buscarCaso(page: Page, numero: string, proceso?: string): Promise<EstadoCaso> {
   // Recarga real del portal en cada consulta: el buscador del SPA reutiliza resultados previos (observado en QA).
-  if ((await new LoginActions(page).navegarAlPortal({ timeout: 120_000, intervalo: 4_000 })) !== 'sesion') throw new Error('La sesión expiró: el portal volvió al login.');
+  await confirmarSesionConsulta(page, await new LoginActions(page).navegarAlPortal({ timeout: 120_000, intervalo: 4_000 }));
   await unicoVisible(page.locator(SdeObjects.bandeja), 'el menú de la bandeja', 30_000);
   await esperarCarga(page);
   const caja = await unicoVisible(page.locator(SdeObjects.buscadorCasos), 'el buscador global de casos (SdeObjects.buscadorCasos)');
@@ -432,7 +443,7 @@ export interface TareaAdmin { idWorkItem: string; taskName: string; assignee?: s
 
 /** Admin → Administración de procesos → Casos desde una carga limpia del portal. Devuelve el diálogo «Casos». */
 export async function abrirAdministracionCasos(page: Page): Promise<Locator> {
-  if ((await new LoginActions(page).navegarAlPortal({ timeout: 120_000, intervalo: 4_000 })) !== 'sesion') throw new Error('La sesión expiró: el portal volvió al login.');
+  await confirmarSesionConsulta(page, await new LoginActions(page).navegarAlPortal({ timeout: 120_000, intervalo: 4_000 }));
   const adminProcesos = page.getByText('Administración de procesos', { exact: false }).filter({ visible: true }).first();
   // El menú puede no desplegarse al primer clic mientras el portal termina de cargar (calibración del 2026-10-19).
   for (let i = 0; i < 4 && !(await adminProcesos.isVisible().catch(() => false)); i++) {

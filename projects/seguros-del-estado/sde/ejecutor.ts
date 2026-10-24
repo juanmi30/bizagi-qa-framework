@@ -16,6 +16,8 @@ export interface ContextoEjecucion {
   env: Entorno;
   unico: string;
   numeroCaso: string | null;
+  /** Solo la creación verificada de esta ejecución puede originar este permiso; la gráfica aporta la identidad servidor. */
+  casoCreado?: { numero: string; unico: string; corrida: string; instancia?: string };
   actividades: string[];
   sesiones: Set<string>;      // actores con sesión real iniciada
   /** Hay un pop-up de fila abierto (lo marcan las capabilities de tabla). Salir de él sin Guardar destruye el caso (BUG-03). */
@@ -363,7 +365,9 @@ export async function ejecutarEscenario(esc: EscenarioSde, deps: Dependencias, c
     // Paso de verificación NO BLOQUEANTE con una diferencia observada: solo miró la pantalla (no la cambió), así que el
     // estado de la UI sigue siendo confiable. Queda FAIL (y el CP también) y el recorrido continúa.
     // Un incidente técnico (R2) siempre detiene: el estado de la UI ya no es confiable aunque el paso sea no bloqueante.
-    const sigue = !incidente && paso.hacer === 'verificar' && paso.no_bloqueante === true && r.estado === 'FAIL' && r.causa === 'PRODUCTO_POR_CONFIRMAR';
+    const observacionSegura = ['verificar', 'tabla_verificar', 'intentar_diligenciar'].includes(paso.hacer)
+      || (paso.hacer === 'dialogo_confirmar' && paso.espera === 'cierra' && !ctx.dialogoAbierto);
+    const sigue = !incidente && observacionSegura && paso.no_bloqueante === true && r.estado === 'FAIL' && r.causa === 'PRODUCTO_POR_CONFIRMAR';
     if (sigue) r.detalle += ' | No bloqueante: el recorrido continúa (el CP queda FAIL).';
     if (r.estado === 'BLOCKED' && /^BARRERA POP-UP/.test(r.detalle) && (paso.requiere ?? []).length && !ctx.dialogoAbierto) {
       bloquePopup = new Set(paso.requiere);

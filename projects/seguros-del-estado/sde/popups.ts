@@ -1,6 +1,15 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import * as yaml from 'js-yaml';
+import type { ContextoEjecucion } from './ejecutor';
+
+/** Opt-in de calibración exclusivamente para el caso creado y la instancia verificada de esta misma corrida. */
+export function autorizacionCasoCreado(ctx: ContextoEjecucion, numeroFormulario: string): string | undefined {
+  const c = ctx.casoCreado;
+  return ctx.env.SDE_POPUPS_CASO_CREADO === '1' && ctx.env.SDE_E2E === '1' && !!c?.instancia
+    && !!c.corrida && c.corrida === ctx.env.BIZAGI_CORRIDA && c.unico === ctx.unico
+    && c.numero === ctx.numeroCaso && c.numero === numeroFormulario.trim() ? c.numero : undefined;
+}
 
 /**
  * Barrera de apertura de pop-ups de grilla (H3 / BUG-03 / UI-10). La consultan las capabilities ANTES de cualquier clic:

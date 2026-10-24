@@ -6,10 +6,9 @@
 # (Rest/Processes/All → categorías vacías). El único rol que puede iniciar "Gestión Solicitudes Centro Expedición"
 # es CE_Analista; por eso radica el analista. La aserción del CP (ruta de la compuerta) no depende del actor.
 #
-# Ruta esperada (paso 9): "continúa por el camino regular hacia el flujo de consulta unitaria" (Realizar consultas →
-# Consultar Alertas Intermediario → Completar información de solicitud, Requirement 231435/231440/231442) y nunca
-# "Estructurar información". Se acepta cualquier actividad de ese flujo como llegada (verificada con el estado real
-# del caso que Bizagi entrega a la UI: SummaryGuid.currentState).
+# Ruta regular confirmada por Juan Miguel el 20/10 (certificacion/HU06.json, validacionPosterior de CP05):
+# ¿Masivo o correo? → Consultar información de solicitud → Consultar SISE, sin Worker AI/Estructurar información.
+# Se exige llegada a Consultar SISE y evidencia gráfica completa de la instancia. No recertifica resultados históricos.
 #
 # Criterio de consulta: número SINTÉTICO de 9 dígitos, declarado como NO verificado en SISE. La aserción es la ruta;
 # con o sin resultado SISE el caso sigue el flujo unitario (ver HU03-CP11).
@@ -78,24 +77,21 @@ pasos:
     boton: Crear
     capturar_numero_caso: true
 
-  - matriz: [8, 9]
+  - matriz: [8]
     hacer: verificar_ruta
     actor: analista
-    # P-18 (corrección de Work, PR #4): «Consultar información de solicitud» y «Consultar SISE» solo se OBSERVARON en QA
-    # (casos 628 y 630); no son una ruta aprobada. Se conservan en llega_a para registrar la observación técnica (y para no
-    # esperar 8 min a una actividad que depende de SISE), pero la expectativa RUTA-CONSULTA-UNITARIA, pendiente de
-    # definición (Daniel/Karen), deja el paso NOT_AUTOMATED: nunca PASS. «Estructurar información» sigue prohibida.
-    llega_a: [Consultar información de solicitud, Consultar SISE, Consultar Alertas Intermediario, Completar información de solicitud]
+    # La llegada no prueba por sí sola la ausencia de Worker: P8 y P9 también dependen del registro gráfico completo siguiente.
+    llega_a: Consultar SISE
     no_llega_a: [Estructurar información]
     maximo_minutos: 8
     verificar:
       - expectativa: RUTA-CONSULTA-UNITARIA
 
-  # P9 (matriz): «no es enviado al Worker AI ni a Estructurar Información». En el modelo, «Estructurar información» es la tarea AI
-  # worker; la «Consulta Gráfica» (evidencia válida según QA, 2026-10-19) muestra si fue recorrida. Los nombres del camino regular
-  # siguen pendientes (P-18) y no se exigen aquí.
-  - matriz: [9]
+  # P8/P9: la ruta aprobada y la negativa se acreditan con el registro y el gráfico completos de ESTE caso.
+  # «Consultar SISE» es la actividad del subproceso: se comprueba arriba en el buscador; no se inventa un hotspot en el proceso padre.
+  - matriz: [8, 9]
     hacer: verificar_recorrido_grafico
     actor: analista
+    recorrido: ["¿Masivo o correo?", Consultar información de solicitud]
     no_recorrido: [Estructurar información]
     no_recorrido_tipo: [aiworkertask]

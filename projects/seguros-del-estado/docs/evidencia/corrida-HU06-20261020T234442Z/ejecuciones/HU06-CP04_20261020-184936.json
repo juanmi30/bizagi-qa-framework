@@ -1,0 +1,20 @@
+{
+  "formato": 1,
+  "hu": "HU06",
+  "cp": "HU06-CP04",
+  "unico": "20261020-184936",
+  "corrida_suite": "corrida-HU06-20261020T234442Z",
+  "inicio": "2026-10-20T23:49:36.909Z",
+  "fin": "2026-10-20T23:50:54.891Z",
+  "estado_ejecucion": "FINALIZADA",
+  "numero_caso": "713",
+  "estado_cp": "BLOCKED",
+  "resumen_pasos": {
+    "BLOCKED": 12,
+    "PASS": 11
+  },
+  "bloqueada_antes_de_ejecutar": false,
+  "reporte": "test-results/seguros-del-estado/sde/HU06-CP04_20261020-184936.json",
+  "capturas": "test-results/seguros-del-estado/sde/capturas/HU06-CP04_20261020-184936",
+  "evidencias_adicionales": []
+}

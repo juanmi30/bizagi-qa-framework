@@ -82,6 +82,7 @@ pasos:
 
   - matriz: [13]
     hacer: verificar
+    no_bloqueante: true
     requiere: [EST-FILA-CUMPL-SIN-RCE]
     verificar:
       # Valor de la opción tal como se ve en el formulario de inicio ("Número de póliza", FUNC-07).
@@ -89,6 +90,7 @@ pasos:
 
   - matriz: [14]
     hacer: intentar_diligenciar
+    no_bloqueante: true
     requiere: [EST-FILA-CUMPL-SIN-RCE]
     campo: Número Póliza
     valor: ABCDEFGHI
@@ -96,6 +98,7 @@ pasos:
 
   - matriz: [15]
     hacer: intentar_diligenciar
+    no_bloqueante: true
     requiere: [EST-FILA-CUMPL-SIN-RCE]
     campo: Número Póliza
     valor: ""
@@ -158,6 +161,7 @@ pasos:
 
   - matriz: [22]
     hacer: intentar_diligenciar
+    no_bloqueante: true
     requiere: [EST-FILA-CUMPL-SIN-RCE]
     campo: Número Póliza RCE
     valor: ABCDEFGHI
@@ -171,6 +175,7 @@ pasos:
 
   - matriz: [23]
     hacer: dialogo_confirmar
+    no_bloqueante: true
     requiere: [EST-FILA-CUMPL-SIN-RCE]
     espera: cierra
     fila_resultante:

@@ -1,0 +1,22 @@
+{
+  "formato": 1,
+  "hu": "HU06",
+  "cp": "HU06-CP03",
+  "unico": "cont-712-P19-23-1792540544841",
+  "corrida_suite": "corrida-2026-10-20T23-55-43-273Z",
+  "inicio": "2026-10-20T23:55:44.842Z",
+  "fin": "2026-10-20T23:57:17.495Z",
+  "estado_ejecucion": "FINALIZADA",
+  "numero_caso": "712",
+  "estado_cp": "FAIL",
+  "resumen_pasos": {
+    "FAIL": 4,
+    "NOT_AUTOMATED": 19,
+    "PASS": 2
+  },
+  "bloqueada_antes_de_ejecutar": false,
+  "reporte": "test-results/seguros-del-estado/sde/CONTINUACION_HU06-CP03_cont-712-P19-23-1792540544841.json",
+  "capturas": "test-results/seguros-del-estado/sde/capturas/CONTINUACION_HU06-CP03_cont-712-P19-23-1792540544841",
+  "evidencias_adicionales": [],
+  "continuacion_de": "712"
+}

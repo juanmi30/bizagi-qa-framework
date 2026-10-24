@@ -1,0 +1,98 @@
+{
+  "fase": "cierre-HU06-20261021T185643Z",
+  "base": "205bbbfb919c0b350c079056380e11f8cc36ef8c",
+  "seleccion": [
+    {
+      "cp": "HU06-CP01",
+      "caso": "782",
+      "estado": "FAIL",
+      "unico": "20261021-141707",
+      "corrida": "cierre-HU06-20261021T185643Z-cierre-cp01-cp04",
+      "pasos_matriz": 29,
+      "por_estado": {
+        "FAIL": 3,
+        "PASS": 24,
+        "NOT_AUTOMATED": 2
+      },
+      "capacidades_no_ejecutadas": 0,
+      "capturas": 40,
+      "reporte": "HU06-CP01_20261021-141707.json"
+    },
+    {
+      "cp": "HU06-CP02",
+      "caso": "776",
+      "estado": "REAL_PASS",
+      "unico": "20261021-140137",
+      "corrida": "cierre-HU06-20261021T185643Z",
+      "pasos_matriz": 22,
+      "por_estado": {
+        "PASS": 22
+      },
+      "capacidades_no_ejecutadas": 0,
+      "capturas": 34,
+      "reporte": "HU06-CP02_20261021-140137.json"
+    },
+    {
+      "cp": "HU06-CP03",
+      "caso": "780",
+      "estado": "FAIL",
+      "unico": "20261021-141035",
+      "corrida": "cierre-HU06-20261021T185643Z-focalizadas",
+      "pasos_matriz": 25,
+      "por_estado": {
+        "FAIL": 4,
+        "PASS": 21
+      },
+      "capacidades_no_ejecutadas": 0,
+      "capturas": 34,
+      "reporte": "HU06-CP03_20261021-141035.json"
+    },
+    {
+      "cp": "HU06-CP04",
+      "caso": "783",
+      "estado": "FAIL",
+      "unico": "20261021-141827",
+      "corrida": "cierre-HU06-20261021T185643Z-cierre-cp01-cp04",
+      "pasos_matriz": 23,
+      "por_estado": {
+        "FAIL": 4,
+        "PASS": 18,
+        "NOT_AUTOMATED": 1
+      },
+      "capacidades_no_ejecutadas": 0,
+      "capturas": 35,
+      "reporte": "HU06-CP04_20261021-141827.json"
+    },
+    {
+      "cp": "HU06-CP05",
+      "caso": "773",
+      "estado": "REAL_PASS_PARCIAL",
+      "unico": "20261021-135947",
+      "corrida": "cierre-HU06-20261021T185643Z",
+      "pasos_matriz": 9,
+      "por_estado": {
+        "NOT_AUTOMATED": 2,
+        "PASS": 7
+      },
+      "capacidades_no_ejecutadas": 0,
+      "capturas": 11,
+      "reporte": "HU06-CP05_20261021-135947.json"
+    }
+  ],
+  "nuevos_casos": [
+    "773",
+    "775",
+    "776",
+    "777",
+    "778",
+    "779",
+    "780",
+    "781",
+    "782",
+    "783"
+  ],
+  "capturas_seleccionadas": 154,
+  "nota": "Resultados automáticos. Sin aprobación QA inventada; sin continuaciones de estos casos.",
+  "capturas_totales_fase": 282,
+  "ejecuciones_fase": 10
+}

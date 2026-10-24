@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { existsSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { Browser, BrowserContext, Locator, Page, Response } from '@playwright/test';
 import { LoginActions } from '../../../shared/core/LoginActions';
@@ -7,7 +7,7 @@ import { SdeObjects } from '../baseObjects/sde.objects';
 import { describir } from './datos';
 import type { CampoSde, PasoSde, Verificacion } from './escenario';
 import { EntornoError, type Capacidad, type ContextoEjecucion, type SalidaCapacidad, type Verificador } from './ejecutor';
-import { autorizarAperturaPopup, cargarPopups, type RegistroPopups } from './popups';
+import { autorizacionCasoCreado, autorizarAperturaPopup, cargarPopups, type RegistroPopups } from './popups';
 import { cargarPresentacion } from './presentacion';
 import {
   concederPrecreacion, exigirSoloLectura, OPERACIONES, precreacionVigente, ProteccionNoInstaladaError, protegerSoloLectura, registroDe, type RegistroSoloLectura,
@@ -110,6 +110,17 @@ export interface EstadoCaso {
   filas: FilaCaso[];
 }
 
+/** Confirma la bandeja tras un login transitorio del SPA, sin reenviar credenciales ni acciones. */
+export async function confirmarSesionConsulta(page: Page, estado: 'sesion' | 'login', timeoutMs = 15_000): Promise<void> {
+  if (estado === 'sesion') return;
+  try {
+    await page.locator(SdeObjects.bandeja).filter({ visible: true }).waitFor({ state: 'visible', timeout: timeoutMs });
+  } catch (e) {
+    if ((e as Error).name !== 'TimeoutError') throw e;
+    throw new EntornoError('La sesión expiró: el portal permaneció en el login sin mostrar la bandeja autenticada.');
+  }
+}
+
 /**
  * Busca el caso con el buscador global y devuelve sus actividades ACTUALES tal como Bizagi las lista en las filas de
  * resultados (ul.gridListWorkItems, una por work item, con su idTask). No abre ni modifica el caso.
@@ -120,7 +131,7 @@ export interface EstadoCaso {
  */
 export async function buscarCaso(page: Page, numero: string, proceso?: string): Promise<EstadoCaso> {
   // Recarga real del portal en cada consulta: el buscador del SPA reutiliza resultados previos (observado en QA).
-  if ((await new LoginActions(page).navegarAlPortal({ timeout: 120_000, intervalo: 4_000 })) !== 'sesion') throw new Error('La sesión expiró: el portal volvió al login.');
+  await confirmarSesionConsulta(page, await new LoginActions(page).navegarAlPortal({ timeout: 120_000, intervalo: 4_000 }));
   await unicoVisible(page.locator(SdeObjects.bandeja), 'el menú de la bandeja', 30_000);
   await esperarCarga(page);
   const caja = await unicoVisible(page.locator(SdeObjects.buscadorCasos), 'el buscador global de casos (SdeObjects.buscadorCasos)');
@@ -432,7 +443,7 @@ export interface TareaAdmin { idWorkItem: string; taskName: string; assignee?: s
 
 /** Admin → Administración de procesos → Casos desde una carga limpia del portal. Devuelve el diálogo «Casos». */
 export async function abrirAdministracionCasos(page: Page): Promise<Locator> {
-  if ((await new LoginActions(page).navegarAlPortal({ timeout: 120_000, intervalo: 4_000 })) !== 'sesion') throw new Error('La sesión expiró: el portal volvió al login.');
+  await confirmarSesionConsulta(page, await new LoginActions(page).navegarAlPortal({ timeout: 120_000, intervalo: 4_000 }));
   const adminProcesos = page.getByText('Administración de procesos', { exact: false }).filter({ visible: true }).first();
   // El menú puede no desplegarse al primer clic mientras el portal termina de cargar (calibración del 2026-10-19).
   for (let i = 0; i < 4 && !(await adminProcesos.isVisible().catch(() => false)); i++) {
@@ -610,19 +621,56 @@ async function confirmarDialogo(dialogo: Locator): Promise<void> {
  * si la parametrización del formulario lo exige): la marca de obligatoriedad que Bizagi pone a la grilla. El tipo configurado en
  * DOCS-OBLIGATORIOS NO es evidencia (13/10 se infirió de un rechazo de «Crear» anterior al despliegue): solo se usa para ELEGIR el
  * tipo si la obligatoriedad se evidencia. Si la parametrización exige un documento sin marcarlo, lo prueba el rechazo de
- * CREATENEWCASE (sin caso creado). Filas precargadas (no observadas en QA) son calibración pendiente, nunca un PASS.
+ * CREATENEWCASE (sin caso creado). El 21/10 se observaron filas precargadas con tipo y control de carga: su presencia por sí
+ * sola NO demuestra obligatoriedad. Solo se admite esa estructura conocida; las formas desconocidas siguen bloqueadas.
  * Calibración del 2026-10-19 (formulario de inicio de Generales / Póliza Nueva / Masiva, sin «Crear»): grilla vacía, sin marca de
  * obligatoriedad y el combo sin tipos antes y después de guardar la fila; al repintar con otra Sucursal, Bizagi vacía la grilla.
  */
 export async function evidenciaDocumentosObligatorios(cont: Locator, filas: Locator): Promise<{ obligatorio: boolean; detalle: string }> {
   const precargadas = await filas.count();
-  if (precargadas > 0) throw new CalibracionError('documentos', `la grilla trae ${precargadas} fila(s) precargada(s): comportamiento no calibrado (¿documentos obligatorios por parametrización?).`);
+  if (precargadas > 0) {
+    const columnas = (await cont.locator('th, [role="columnheader"]').allInnerTexts()).map(normaliza);
+    if (!['Tipo Documental', 'Documento'].every(c => columnas.includes(c))) throw new CalibracionError('documentos', 'filas precargadas sin las columnas documentales conocidas.');
+    for (let i = 0; i < precargadas; i++) {
+      const fila = filas.nth(i);
+      const combo = fila.locator(SdeObjects.combo).filter({ visible: true });
+      if (await combo.count() !== 1 || await fila.locator(SdeObjects.cargaArchivoFila).count() !== 1) {
+        throw new CalibracionError('documentos', 'una fila precargada no tiene un único tipo documental y control de carga conocidos.');
+      }
+      const tipo = normaliza(await combo.inputValue());
+      if (!tipo || /^-+$/.test(tipo) || /^Por favor seleccione/i.test(tipo)) throw new CalibracionError('documentos', 'una fila precargada no identifica su tipo documental.');
+    }
+  }
   const marca = await cont.evaluate((el) => el.matches('.ui-bizagi-render-required, .control-required')
     || !!el.querySelector('.ui-bizagi-render-required, .control-required')
     || /\*\s*$/.test((el.querySelector('.bz-rn-grid-header-title, .ui-bizagi-label label')?.textContent ?? '').trim()));
   return marca
     ? { obligatorio: true, detalle: 'obligatoriedad evidenciada (la grilla está marcada como obligatoria)' }
-    : { obligatorio: false, detalle: 'sin evidencia de documentos obligatorios (la grilla no está marcada como obligatoria y no trae filas precargadas)' };
+    : { obligatorio: false, detalle: `sin evidencia de documentos obligatorios (la grilla no está marcada como obligatoria${precargadas ? `; ${precargadas} fila(s) parametrizada(s) con tipo y control de carga reconocidos` : ' y no trae filas precargadas'})` };
+}
+
+/** Carga el archivo en la fila identificada por el llamador y verifica tanto la recepción como su registro posterior. */
+async function cargarDocumentoEnFila(page: Page, grilla: string, ruta: string, tipo: string, localizar: () => Promise<Locator>): Promise<void> {
+  const nombre = ruta.split(/[\\/]/).pop()!;
+  let fila = await localizar();
+  const control = fila.locator(SdeObjects.cargaArchivoFila);
+  if (await control.count() !== 1) throw new CalibracionError('documentos', `"${grilla}": la fila no ofrece un único control de carga.`);
+  await control.click();
+  const dlg = await unicoVisible(page.locator(SdeObjects.dialogo).filter({ has: page.locator('.ui-dialog-title').filter({ hasText: regexExacto(SdeObjects.dialogoCargaTitulo) }) }), `el diálogo "${SdeObjects.dialogoCargaTitulo}"`, 30_000);
+  const entrada = dlg.locator('input[type="file"]');
+  if (await entrada.count() !== 1) throw new CalibracionError('documentos', 'el diálogo no ofrece un único control de archivo.');
+  await entrada.setInputFiles(ruta);
+  const recibido = await entrada.evaluate(el => { const f = (el as HTMLInputElement).files?.[0]; return f ? { nombre: f.name, bytes: f.size } : null; });
+  if (!recibido || recibido.nombre !== nombre || recibido.bytes === 0 || recibido.bytes !== statSync(ruta).size) {
+    throw new CalibracionError('documentos', 'el control de archivo no recibió el documento sintético completo.');
+  }
+  await (await unicoVisible(dlg.getByRole('button', { name: SdeObjects.botonSubir, exact: true }), `"${SdeObjects.botonSubir}" del diálogo de carga`)).click();
+  await dlg.waitFor({ state: 'hidden', timeout: 60_000 }).catch(() => { throw new Error(`El diálogo "${SdeObjects.dialogoCargaTitulo}" no se cerró tras "${SdeObjects.botonSubir}".`); });
+  await esperarCarga(page);
+  fila = await localizar();
+  const archivoVisible = await fila.getByText(nombre, { exact: true }).first().waitFor({ state: 'visible', timeout: 30_000 }).then(() => true).catch(() => false);
+  const tipoActual = normaliza(await fila.locator(SdeObjects.combo).first().inputValue().catch(async () => await fila.innerText()));
+  if (!archivoVisible || !tipoActual.includes(normaliza(tipo))) throw new Error(`"${grilla}": el documento "${tipo}" no quedó registrado (archivo visible: ${archivoVisible ? 'sí' : 'no'}; tipo en la fila: "${tipoActual || '—'}").`);
 }
 
 /** Opciones reales del combo «Tipo Documental» de una fila (sin el marcador «-----»). Cierra la lista sin Escape (Escape cierra el formulario de inicio). */
@@ -654,6 +702,37 @@ async function adjuntarSegunObligatoriedad(page: Page, amb: Ambito, grilla: stri
   if (!evidencia.obligatorio) return { detalle: `"${grilla}": ${evidencia.detalle}; se continúa SIN adjuntar (si la parametrización exigiera un documento, Bizagi rechazará «Crear» sin crear el caso).` };
   const nombre = ruta.split(/[\\/]/).pop()!;
   const hechos: string[] = [];
+  if (await inicial.filas.count() > 0) {
+    // No se agregan ni cambian tipos en filas que el formulario ya parametrizó. Se reencuentran por tipo EXACTO y único.
+    if (!tipos.length) return { estado: 'BLOCKED', causa: 'DATO', detalle: `"${grilla}": obligatoriedad evidenciada; falta indicar qué tipo documental precargado es requerido (no se elige una fila al azar).` };
+    const localizar = async (tipo: string): Promise<Locator | null> => {
+      const { filas } = await contenedorTabla(amb, grilla);
+      const coincidencias: Locator[] = [];
+      for (let i = 0; i < await filas.count(); i++) {
+        const fila = filas.nth(i);
+        const combo = fila.locator(SdeObjects.combo).filter({ visible: true });
+        if (await combo.count() === 1 && normaliza(await combo.inputValue()) === normaliza(tipo)) coincidencias.push(fila);
+      }
+      if (coincidencias.length > 1) throw new CalibracionError('documentos', 'el tipo documental precargado está duplicado; no se selecciona por posición.');
+      return coincidencias[0] ?? null;
+    };
+    // Validar todos los tipos antes de la primera carga: evita escribir parcialmente ante un dato ausente.
+    for (const tipo of tipos) if (!await localizar(tipo)) return { estado: 'BLOCKED', causa: 'DATO', detalle: `"${grilla}": el tipo obligatorio configurado no está entre las filas precargadas.` };
+    for (const tipo of tipos) {
+      const localizarUnica = async () => {
+        const fila = await localizar(tipo);
+        if (!fila) throw new CalibracionError('documentos', 'la fila documental cambió de identidad durante la carga.');
+        return fila;
+      };
+      const fila = await localizarUnica();
+      if (!await fila.getByText(nombre, { exact: true }).isVisible()) {
+        if (!await fila.getByText('No hay archivos', { exact: true }).isVisible()) throw new CalibracionError('documentos', 'la fila ya contiene un archivo distinto o un estado de carga desconocido; se conserva sin reemplazar.');
+        await cargarDocumentoEnFila(page, grilla, ruta, tipo, localizarUnica);
+      }
+      hechos.push(`"${tipo}" con "${nombre}" registrado en su fila precargada`);
+    }
+    return { detalle: `"${grilla}": ${evidencia.detalle}; ${hechos.join('; ')}.` };
+  }
   for (const tipo of tipos.length ? tipos : ['']) {
     const { cont, filas } = await contenedorTabla(amb, grilla);
     const antes = await filas.count();
@@ -691,27 +770,22 @@ async function adjuntarSegunObligatoriedad(page: Page, amb: Ambito, grilla: stri
     const guardar = cont.locator(SdeObjects.accionGrilla('save')).filter({ visible: true });
     if ((await guardar.count()) === 1) { await guardar.click(); await esperarCarga(page); }
     fila = (await contenedorTabla(amb, grilla)).filas.nth(antes);
-    const control = fila.locator(SdeObjects.cargaArchivoFila);
-    if ((await control.count()) !== 1) throw new Error(`"${grilla}": la fila del tipo "${tipo}" no ofrece carga de archivo (${await control.count()} controles).`);
-    await control.click();
-    const dlg = await unicoVisible(page.locator(SdeObjects.dialogo).filter({ has: page.locator('.ui-dialog-title').filter({ hasText: regexExacto(SdeObjects.dialogoCargaTitulo) }) }), `el diálogo "${SdeObjects.dialogoCargaTitulo}"`, 30_000);
-    await dlg.locator('input[type="file"]').setInputFiles(ruta);
-    await (await unicoVisible(dlg.getByRole('button', { name: SdeObjects.botonSubir, exact: true }), `"${SdeObjects.botonSubir}" del diálogo de carga`)).click();
-    await dlg.waitFor({ state: 'hidden', timeout: 60_000 }).catch(() => { throw new Error(`El diálogo "${SdeObjects.dialogoCargaTitulo}" no se cerró tras "${SdeObjects.botonSubir}".`); });
-    await esperarCarga(page);
-    // Registro efectivo: archivo visible en la fila y tipo documental conservado (relectura de la grilla).
-    fila = (await contenedorTabla(amb, grilla)).filas.nth(antes);
-    const archivoVisible = await fila.getByText(nombre, { exact: true }).first().waitFor({ state: 'visible', timeout: 30_000 }).then(() => true).catch(() => false);
-    const tipoActual = normaliza(await fila.locator(SdeObjects.combo).first().inputValue().catch(async () => (await fila.innerText()).toString()));
-    if (!archivoVisible || !tipoActual.includes(normaliza(tipo))) {
-      throw new Error(`"${grilla}": el documento "${tipo}" no quedó registrado (archivo visible: ${archivoVisible ? 'sí' : 'no'}; tipo en la fila: "${tipoActual || '—'}").`);
-    }
+    await cargarDocumentoEnFila(page, grilla, ruta, tipo, async () => (await contenedorTabla(amb, grilla)).filas.nth(antes));
     hechos.push(`"${tipo}" (tipos ofrecidos ${momento}) con "${nombre}" registrado`);
   }
   return { detalle: `"${grilla}": ${evidencia.detalle}; ${hechos.join('; ')}.` };
 }
 
 export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string, Capacidad>; verificar: Verificador } {
+  const autorizarPopup = async (p: PasoSde, ctx: ContextoEjecucion) => {
+    const registro = ui.popupsCalibrados ?? cargarPopups();
+    let permiso = ctx.env.SDE_AUTORIZO_CALIBRACION_POPUP;
+    if (registro[p.formulario as string]?.estado === 'en_calibracion' && ctx.casoCreado && ctx.env.SDE_POPUPS_CASO_CREADO === '1') {
+      const numero = valorMostrado(await infoCampo(await campo(ambitoActual(ui), 'Número de Caso'), 'Número de Caso'));
+      permiso = autorizacionCasoCreado(ctx, numero);
+    }
+    autorizarAperturaPopup(p.formulario as string | undefined, p.tabla as string, ctx.numeroCaso, registro, permiso);
+  };
   const verificar: Verificador = async (v: Verificacion, ctx: ContextoEjecucion) => {
     const amb = ambitoActual(ui);
     const page = paginaActual(ui);
@@ -1003,6 +1077,7 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
           ctx.numeroCaso = n;
           await ui.registrarCaso(n, ui.actual ?? '');
         });
+        ctx.casoCreado = { numero, unico: ctx.unico, corrida: ctx.env.BIZAGI_CORRIDA ?? '' };
         notas.push(`Bizagi respondió CREATENEWCASE con CaseNumber ${numero} y la UI muestra "Caso ${numero}"`);
       } else {
         await pulsar(ambitoActual(ui), p.boton as string);
@@ -1060,6 +1135,10 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       salirDeFormularioInicio(page, ctx);
       const caso = await leerRecorridoGrafico(page, ctx.numeroCaso, ctx.resolver('${config:SDE_PROCESO_RADICACION}'));
       const r = evaluarRecorrido(caso, p as RecorridoEsperado);
+      if (ctx.casoCreado?.numero === ctx.numeroCaso && caso.identidadServidor === ctx.numeroCaso
+          && caso.idCasoServidor && caso.idCasoServidor === caso.idCasoConsulta && caso.idFlujoCaso && caso.idFlujoCaso === caso.idFlujoRegistro) {
+        ctx.casoCreado.instancia = caso.idCasoServidor;
+      }
       if (r.estado === 'FAIL') throw new Error(r.detalle);
       return r.estado === 'NOT_AUTOMATED' ? { estado: 'NOT_AUTOMATED', causa: 'NO_AUTOMATIZADO', detalle: r.detalle } : { detalle: r.detalle };
     },
@@ -1125,24 +1204,39 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       // aparecer en su columna y ningún valor no vacío ajeno a la narrativa puede aparecer. No se exige un número exacto de filas.
       const esperados = Object.fromEntries(Object.entries((p.comparar as Record<string, string[]>) ?? {}).map(([c, v]) => [c, v.map((x) => ctx.resolver(x))]));
       const observados: Record<string, string[]> = {};
+      // Instantánea de la misma lectura: evita mezclar columnas tomadas antes/después de un repintado. El diagnóstico no
+      // publica valores de claves ni de celdas: solo cantidades, coherencia id/business-key y presencia de controles.
+      const lecturas = Object.keys(esperados).length ? await filas.evaluateAll((els, selectorControles) => els.map(el => ({
+        clave: el.getAttribute('data-business-key'),
+        textos: [...el.querySelectorAll('td')].map(c => (c as HTMLElement).innerText),
+        controles: [...el.querySelectorAll('td')].map(c => c.querySelectorAll(selectorControles).length),
+      })), SdeObjects.controles) : [];
+      if (Object.keys(esperados).length && lecturas.length !== n) throw new NoConcluyenteError('La grilla cambió de número de filas durante la lectura de extracción.');
       for (const col of Object.keys(esperados)) {
         const idx = columnas.indexOf(normaliza(col));
         if (idx < 0) throw new Error(`"${p.tabla}": columna "${col}" inexistente para comparar (vistas: ${columnas.filter(Boolean).join(', ')})`);
-        observados[col] = [];
-        for (let k = 0; k < n; k++) observados[col].push((await filas.nth(k).locator('td').allInnerTexts())[idx] ?? '');
+        observados[col] = lecturas.map(f => f.textos[idx] ?? '');
       }
+      const iId = columnas.indexOf('id');
+      const coherentes = lecturas.filter(f => f.clave && iId >= 0 && normaliza(f.textos[iId] ?? '') === f.clave);
+      const diagnostico = lecturas.length ? ` | Lectura DOM por texto; identidades de fila: ${coherentes.length}/${n} coherentes (claves únicas: ${new Set(coherentes.map(f => f.clave)).size}); ` +
+        Object.keys(esperados).map(c => `${c}: ${observados[c].filter(v => !normaliza(v)).length} celda(s) vacía(s), ${lecturas.filter(f => (f.controles[columnas.indexOf(normaliza(c))] ?? 0) > 0).length} con controles`).join('; ') : '';
       const extraccion = 'comparar' in p ? evaluarExtraccion(observados, esperados, n) : null;
       if (p.minimo_filas != null && n < (p.minimo_filas as number)) {
         throw new Error(`"${p.tabla}": ${n} fila(s), mínimo ${p.minimo_filas}${extraccion ? ` | ${extraccion.detalle}` : ''}`);
       }
-      if (extraccion?.estado === 'FAIL') throw new Error(`"${p.tabla}": extracción distinta de la narrativa (NO coincide): ${extraccion.detalle}`);
+      if (extraccion?.estado === 'FAIL') {
+        const detalle = `"${p.tabla}": extracción distinta de la narrativa (NO coincide): ${extraccion.detalle}${diagnostico}`;
+        if (p.no_bloqueante) return { estado: 'FAIL', causa: 'PRODUCTO_POR_CONFIRMAR', detalle };
+        throw new Error(detalle);
+      }
       if (extraccion?.estado === 'NOT_AUTOMATED') return { estado: 'NOT_AUTOMATED', causa: 'NO_AUTOMATIZADO', detalle: `"${p.tabla}": ${n} fila(s) | ${extraccion.detalle}` };
-      return { detalle:`"${p.tabla}": ${n} fila(s); columnas [${columnas.filter(Boolean).join(', ')}]${extraccion ? ` | ${extraccion.detalle}` : ''}` };
+      return { detalle:`"${p.tabla}": ${n} fila(s); columnas [${columnas.filter(Boolean).join(', ')}]${extraccion ? ` | ${extraccion.detalle}` : ''}${diagnostico}` };
     },
 
     tabla_abrir_fila: async (p, ctx) => {
       // H3: barrera ANTES de cualquier clic (BUG-03): sin formulario calibrado y cierre seguro verificado, no se abre.
-      autorizarAperturaPopup(p.formulario as string | undefined, p.tabla as string, ctx.numeroCaso, ui.popupsCalibrados ?? cargarPopups(), ctx.env.SDE_AUTORIZO_CALIBRACION_POPUP);
+      await autorizarPopup(p, ctx);
       const page = paginaActual(ui);
       const { cont, filas } = await contenedorTabla(page, p.tabla as string);
       const n = await filas.count();
@@ -1164,7 +1258,7 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
     },
 
     tabla_agregar: async (p, ctx) => {
-      autorizarAperturaPopup(p.formulario as string | undefined, p.tabla as string, ctx.numeroCaso, ui.popupsCalibrados ?? cargarPopups(), ctx.env.SDE_AUTORIZO_CALIBRACION_POPUP);
+      await autorizarPopup(p, ctx);
       const page = paginaActual(ui);
       const { cont, filas } = await contenedorTabla(page, p.tabla as string);
       const n = await filas.count();
@@ -1236,7 +1330,11 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
         if (!problema || Date.now() > limite) break;
         await page.waitForTimeout(1_500);
       }
-      if (problema) throw new Error(`"${t.tabla}": ${problema} (tras releer la grilla durante 15 s).`);
+      if (problema) {
+        const detalle = `"${t.tabla}": ${problema} (tras releer la grilla durante 15 s).`;
+        if (p.no_bloqueante) { ui.tabla = undefined; return { estado: 'FAIL', causa: 'PRODUCTO_POR_CONFIRMAR', detalle }; }
+        throw new Error(detalle);
+      }
       const resumen = Object.entries(esperadas).map(([c, v]) => `${c}=${describir(v, ctx.registro, ctx.unico, ctx.env)}`).join(', ');
       ui.tabla = undefined;
       return { detalle: `Pop-up confirmado; "${t.tabla}" con ${n} fila(s)${resumen ? `; fila verificada: ${resumen}` : ''}` };
@@ -1332,7 +1430,11 @@ export function crearCapacidadesUi(ui: UiEntorno): { capacidades: Record<string,
       const notas = [`"${ref}": se tecleó ${tecleado}; el formulario muestra "${mostrado}"`];
       if (p.esperado_mostrado != null) {
         const esperado = normaliza(ctx.resolver(p.esperado_mostrado as string));
-        if (mostrado !== esperado) throw new Error(`${notas[0]}; se esperaba "${esperado}" (la restricción del campo no se aplicó).`);
+        if (mostrado !== esperado) {
+          const detalle = `${notas[0]}; se esperaba "${esperado}" (la restricción del campo no se aplicó).`;
+          if (p.no_bloqueante) return { estado: 'FAIL', causa: 'PRODUCTO_POR_CONFIRMAR', detalle };
+          throw new Error(detalle);
+        }
         notas.push('coincide con lo esperado');
       }
       if (p.mensaje != null) {

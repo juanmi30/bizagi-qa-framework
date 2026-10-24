@@ -1,0 +1,303 @@
+{
+  "cp": "HU06-CP01",
+  "escenario": "3-hu06-cp01.yaml",
+  "inicio": "2026-10-20T23:54:31.870Z",
+  "unico": "cont-710-P24-26-1792540471869",
+  "cleanup": {
+    "politica": "CLEANUP_NOT_APPLICABLE",
+    "razon": "El caso queda en Estructurar información (identificable por ${unico} en la narrativa); la matriz no pide completarlo ni desistirlo."
+  },
+  "fin": "2026-10-20T23:54:47.630Z",
+  "estado": "FAIL",
+  "motivo": "CONTINUACIÓN (P24–P26) sobre el caso existente 710; complementa el reporte de la vertical: Al menos un paso de la matriz falló (causa: PRODUCTO_POR_CONFIRMAR) — comportamiento observado distinto al esperado: posible defecto, POR CONFIRMAR funcionalmente.",
+  "numero_caso": "710",
+  "actividades_observadas": [
+    "Estructurar información"
+  ],
+  "pasos": [
+    {
+      "indice": 1,
+      "hacer": "iniciar_sesion",
+      "matriz": [
+        24
+      ],
+      "estado": "PASS",
+      "detalle": "Sesión real iniciada como \"analista\".",
+      "ms": 6249,
+      "evidencia": "HU06-CP01_p01_iniciar_sesion"
+    },
+    {
+      "indice": 2,
+      "hacer": "abrir_caso",
+      "matriz": [
+        24
+      ],
+      "estado": "PASS",
+      "detalle": "Caso 710 abierto por \"analista\" en \"Estructurar información\"",
+      "ms": 4754,
+      "evidencia": "HU06-CP01_p02_abrir_caso"
+    },
+    {
+      "indice": 3,
+      "hacer": "tabla_agregar",
+      "matriz": [
+        24
+      ],
+      "estado": "FAIL",
+      "detalle": "Pop-up de adición abierto en \"Detalle Polizas Asociadas\" (3 fila(s) antes) | ✘ \"Forma Consulta\" = Identificación de Tomador (NO coincide: muestra \"Identificación del tomador\") | Pop-up abierto: se continúa SOLO hasta cerrarlo con \"Guardar\" (salir sin guardar destruye el caso, BUG-03).",
+      "causa": "PRODUCTO_POR_CONFIRMAR",
+      "ms": 447,
+      "evidencia": "HU06-CP01_p03_tabla_agregar"
+    },
+    {
+      "indice": 4,
+      "hacer": "diligenciar",
+      "matriz": [
+        25
+      ],
+      "estado": "PASS",
+      "detalle": "Diligenciado y confirmado: Tipo de Documento Tomador=NIT; Número de Documento Tomador=900987654",
+      "ms": 1979,
+      "evidencia": "HU06-CP01_p04_diligenciar"
+    },
+    {
+      "indice": 5,
+      "hacer": "dialogo_confirmar",
+      "matriz": [
+        25
+      ],
+      "estado": "PASS",
+      "detalle": "Pop-up confirmado; \"Detalle Polizas Asociadas\" con 4 fila(s); fila verificada: Número de Documento Tomador=900987654",
+      "ms": 2154,
+      "evidencia": "HU06-CP01_p05_dialogo_confirmar"
+    },
+    {
+      "indice": 6,
+      "hacer": "tabla_eliminar_fila",
+      "matriz": [
+        26
+      ],
+      "estado": "NOT_RUN",
+      "detalle": "No ejecutado: un paso previo falló (se detuvo tras cerrar el pop-up)."
+    }
+  ],
+  "matriz": [
+    {
+      "n": 1,
+      "accion": "Objetivo:",
+      "esperado": "Validar la radicación Masiva para la línea Generales, verificando las reglas del formulario inicial, la ruta de la compuerta ¿Masivo? y el comportamiento de la actividad Estructurar Información, incluyendo la visualización, edición y obligatoriedad de los campos de la tabla de pólizas asociadas.",
+      "estado": "FAIL",
+      "cubierto_por": []
+    },
+    {
+      "n": 2,
+      "accion": "Ingresar al ambiente Bizagi mediante la URL: https://test-aiprocesos-sde.bizagi.com/",
+      "esperado": "El ambiente de pruebas de Bizagi se encuentra disponible y permite iniciar la gestión de una nueva Radicación.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 3,
+      "accion": "Crear un nuevo caso de Radicación y seleccionar Línea = Generales, junto con un Ramo y Tipo de Solicitud válidos para la prueba.",
+      "esperado": "El formulario presenta la información correspondiente a la Línea, Ramo y Tipo de Solicitud seleccionados.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 4,
+      "accion": "Validar la sección de información inicial antes de seleccionar el tipo de radicación.",
+      "esperado": "Los campos Línea, Ramo, Tipo de Solicitud/Movimiento y Sucursal se presentan con las etiquetas, ortografía y capitalización definidas.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 5,
+      "accion": "Seleccionar una Sucursal válida.",
+      "esperado": "La Sucursal queda registrada y se mantiene disponible como dato requerido para continuar con la radicación.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 6,
+      "accion": "Seleccionar Tipo de Radicación = Masivo.",
+      "esperado": "Se habilitan los elementos correspondientes a la modalidad Masivo, incluyendo Descripción de la Solicitud (Masiva/Múltiple) y Documentos Anexos.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 7,
+      "accion": "Validar el texto de ayuda presentado para Masivo.",
+      "esperado": "Para Generales se muestra: “Masivo: Solicitud asociada a más de una póliza.”, conservando ortografía, tildes y capitalización.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 8,
+      "accion": "Validar la descripción de la solicitud.",
+      "esperado": "El campo Descripción de la Solicitud (Masiva/Múltiple) se encuentra disponible para ingresar la narrativa de la solicitud y permite registrar la información requerida.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 9,
+      "accion": "Ingresar una narrativa que permita identificar más de una póliza y adjuntar los documentos obligatorios parametrizados.",
+      "esperado": "La narrativa y los documentos quedan registrados en el formulario sin errores de presentación, ortografía o capitalización.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 10,
+      "accion": "Crear la solicitud.",
+      "esperado": "Se crea una única solicitud de radicación masiva y la información registrada queda asociada al caso.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 11,
+      "accion": "Validar la compuerta ¿Masivo?.",
+      "esperado": "La compuerta evalúa el Tipo de Radicación Masivo y dirige el caso por la ruta correspondiente a la modalidad masiva.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 12,
+      "accion": "Validar el procesamiento posterior a la compuerta.",
+      "esperado": "El caso continúa hacia el procesamiento automático del Worker AI y posteriormente hacia la actividad Estructurar Información.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 13,
+      "accion": "Ingresar a la actividad Estructurar Información.",
+      "esperado": "La actividad se encuentra asignada al Analista Centro de Expedición y presenta la información del caso masivo.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 14,
+      "accion": "Validar la sección Encabezado.",
+      "esperado": "Se muestran en solo lectura Número de Caso, Creador del Caso, Fecha de Creación, Línea, Ramo y Tipo de Movimiento.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 15,
+      "accion": "Validar la sección Tipo de Consulta.",
+      "esperado": "Se muestran en solo lectura el Tipo de Radicación = Masivo y la Sucursal asociada al caso.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 16,
+      "accion": "Validar la sección Información a Consultar.",
+      "esperado": "Se muestra la narrativa original registrada por el intermediario y el campo permanece no editable.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 17,
+      "accion": "Validar la tabla Pólizas asociadas a la solicitud.",
+      "esperado": "La tabla se encuentra disponible y contiene la información estructurada por el Worker AI, incluyendo las columnas definidas para la actividad.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 18,
+      "accion": "Validar la posibilidad de seleccionar un registro de la tabla para editarlo.",
+      "esperado": "Se habilita el formulario de edición correspondiente al registro seleccionado.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 19,
+      "accion": "Validar el formulario de edición para Línea Generales – Movimiento Póliza Nueva.",
+      "esperado": "La Forma de Consulta se encuentra asignada automáticamente como Identificación de Tomador y no permite modificación.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 20,
+      "accion": "Validar los campos disponibles en el formulario de edición.",
+      "esperado": "Se presentan como obligatorios Tipo de Documento Tomador y Número de Documento Tomador.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 21,
+      "accion": "Seleccionar Tipo de Documento Tomador = NIT.",
+      "esperado": "Se muestra el campo Dígito de Verificación como campo no editable y asociado al tipo de identificación seleccionado.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 22,
+      "accion": "Intentar cerrar/confirmar el formulario sin diligenciar los campos obligatorios.",
+      "esperado": "El sistema mantiene abierto el formulario y evita confirmar el registro mientras los campos obligatorios no se encuentren diligenciados.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 23,
+      "accion": "Diligenciar los campos obligatorios y confirmar la edición.",
+      "esperado": "El registro queda actualizado en la tabla Pólizas asociadas a la solicitud con la información diligenciada.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 24,
+      "accion": "Validar la opción para agregar un nuevo registro.",
+      "esperado": "Se presenta el formulario de adición con las reglas correspondientes a Línea Generales y al Tipo de Movimiento seleccionado.",
+      "estado": "FAIL",
+      "cubierto_por": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "n": 25,
+      "accion": "Agregar un registro válido y confirmar.",
+      "esperado": "El nuevo registro queda incorporado en la colección Pólizas asociadas a la solicitud.",
+      "estado": "PASS",
+      "cubierto_por": [
+        4,
+        5
+      ]
+    },
+    {
+      "n": 26,
+      "accion": "Seleccionar un registro y ejecutar la opción de eliminación.",
+      "esperado": "El registro seleccionado es eliminado de la colección de pólizas asociadas.",
+      "estado": "NOT_RUN",
+      "cubierto_por": [
+        6
+      ]
+    },
+    {
+      "n": 27,
+      "accion": "Validar el campo Observaciones.",
+      "esperado": "El analista dispone de un campo editable para registrar observaciones relacionadas con la estructuración del caso.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 28,
+      "accion": "Validar las pestañas Documentos de la solicitud y Seguimiento.",
+      "esperado": "La pestaña de documentos permite consultar los soportes asociados y la pestaña Seguimiento presenta la trazabilidad del caso.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    },
+    {
+      "n": 29,
+      "accion": "Intentar modificar Línea, Ramo, Tipo de Solicitud, Sucursal o Tipo de Radicación desde Estructurar Información.",
+      "esperado": "Los datos maestros permanecen en solo lectura y no pueden ser modificados por el analista.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": []
+    }
+  ],
+  "bloqueos": [],
+  "causas": [
+    "PRODUCTO_POR_CONFIRMAR"
+  ],
+  "atribucion": "PRODUCTO_POR_CONFIRMAR"
+}

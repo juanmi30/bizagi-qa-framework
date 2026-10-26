@@ -1,0 +1,804 @@
+{
+  "version": "sde-hu06-cp02/revision-1.1",
+  "estado": "PROPUESTA_PARA_REVISION_QA_NO_AUTORIZA_EJECUCION",
+  "nativoSha256": "9bf15a2dbbc24d0b10e96f9785d16aaabba2cabaa8eaadff00a0eb2b84e3f67a",
+  "precondiciones": [
+    {
+      "id": "QA-DATOS",
+      "descripcion": "Contar con cuentas QA habilitadas y opciones parametricas vigentes. No se certifica su disponibilidad en esta fase.",
+      "fuente": "escenario",
+      "datos": [
+        "CFG-PROCESO.proceso",
+        "CFG-PROCESO.categoria",
+        "INI-AUTOS-MASIVO.ramo",
+        "INI-AUTOS-MASIVO.movimiento",
+        "INI-AUTOS-MASIVO.sucursal"
+      ]
+    },
+    {
+      "id": "POPUP-SEGURO",
+      "descripcion": "Aplicar P-06, P-15 y UI-10 en el runner existente; el contrato no autoriza abrir pop-ups ni crear casos.",
+      "fuente": "popups",
+      "datos": []
+    }
+  ],
+  "planEjecucion": {
+    "unidad": "capacidad-nativa-unica",
+    "orden": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34
+    ],
+    "dependencias": [
+      {
+        "antes": 1,
+        "despues": 2,
+        "condicion": "Sesion del radicador iniciada antes de abrir el formulario"
+      },
+      {
+        "antes": 2,
+        "despues": 3,
+        "condicion": "Formulario de inicio identificado antes de seleccionar campos"
+      },
+      {
+        "antes": 3,
+        "despues": 4,
+        "condicion": "Combinacion de Linea y Ramo registrada"
+      },
+      {
+        "antes": 4,
+        "despues": 5,
+        "condicion": "Sucursal seleccionada antes de configurar radicacion"
+      },
+      {
+        "antes": 5,
+        "despues": 7,
+        "condicion": "Modalidad Masiva seleccionada antes de escribir narrativa"
+      },
+      {
+        "antes": 7,
+        "despues": 8,
+        "condicion": "Datos de narrativa diligenciados antes de Crear"
+      },
+      {
+        "antes": 8,
+        "despues": 10,
+        "condicion": "Caso propio creado antes de consultar su ruta"
+      },
+      {
+        "antes": 9,
+        "despues": 10,
+        "condicion": "Sesion del analista antes de consultar"
+      },
+      {
+        "antes": 12,
+        "despues": 13,
+        "condicion": "Asignacion comprobada antes de abrir la actividad"
+      },
+      {
+        "antes": 13,
+        "despues": 17,
+        "condicion": "Actividad de Estructurar abierta antes de editar fila"
+      },
+      {
+        "antes": 17,
+        "despues": 19,
+        "condicion": "Pop-up propio abierto antes de seleccionar Forma Consulta"
+      },
+      {
+        "antes": 19,
+        "despues": 20,
+        "condicion": "Forma Consulta Placa seleccionada antes de la negativa vacia"
+      },
+      {
+        "antes": 20,
+        "despues": 21,
+        "condicion": "Vacio registrado antes de comprobar obligatoriedad"
+      },
+      {
+        "antes": 22,
+        "despues": 23,
+        "condicion": "Placa valida introducida antes de confirmar y comprobar persistencia"
+      },
+      {
+        "antes": 23,
+        "despues": 24,
+        "condicion": "Edicion confirmada antes de abrir adicion"
+      },
+      {
+        "antes": 24,
+        "despues": 25,
+        "condicion": "Formulario de adicion abierto antes de diligenciar"
+      },
+      {
+        "antes": 25,
+        "despues": 26,
+        "condicion": "Registro valido diligenciado antes de confirmar"
+      },
+      {
+        "antes": 26,
+        "despues": 27,
+        "condicion": "Formulario cerrado antes de revisar secciones independientes"
+      },
+      {
+        "antes": 30,
+        "despues": 31,
+        "condicion": "Comprobaciones independientes terminadas antes del intento de riesgo P18"
+      },
+      {
+        "antes": 31,
+        "despues": 32,
+        "condicion": "Actividad reabierta antes de abrir el pop-up"
+      },
+      {
+        "antes": 32,
+        "despues": 33,
+        "condicion": "Pop-up identificado antes del intento de placa larga"
+      },
+      {
+        "antes": 33,
+        "despues": 34,
+        "condicion": "Intento de escritura registrado; no presume exito. Solo comprobacion y recuperacion permitidas por el runner"
+      }
+    ]
+  },
+  "pasos": [
+    {
+      "matriz": 1,
+      "dependeDe": [],
+      "modalidad": "hibrido",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [
+          "Contrastar la cobertura automatica con el resultado esperado y registrar la parte no demostrada antes de aprobar el diseno o el resultado."
+        ],
+        "cubiertoAutomaticamente": [
+          "Solo las comprobaciones expresas de las capacidades referenciadas; no inferir reglas adicionales por presencia de controles."
+        ],
+        "pendienteManual": [
+          "Revision humana de las partes no sustentadas por comprobaciones explicitas."
+        ],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          },
+          {
+            "tipo": "acta-cobertura-QA",
+            "comprobacion": "Relacionar cada parte del objetivo completo con sus comprobaciones y pendientes, fuente y decision del analista."
+          }
+        ],
+        "continuacion": {
+          "decide": "analista-QA",
+          "condicion": "Registrar decision y evidencia humana de la parte pendiente. No habilita reanudacion automatica en esta fase.",
+          "siNoSeCompleta": "cerrar-con-pendiente-sin-reanudar"
+        }
+      }
+    },
+    {
+      "matriz": 2,
+      "dependeDe": [],
+      "modalidad": "automatico",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [],
+        "cubiertoAutomaticamente": [
+          "Solo las comprobaciones expresas de las capacidades referenciadas; no inferir reglas adicionales por presencia de controles."
+        ],
+        "pendienteManual": [],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          }
+        ],
+        "continuacion": {
+          "decide": "robot-segun-runner",
+          "condicion": "Aplicar el orden y las barreras existentes del runner. Una referencia compartida no duplica la ejecucion.",
+          "siNoSeCompleta": "no-continuar"
+        }
+      }
+    },
+    {
+      "matriz": 3,
+      "dependeDe": [],
+      "modalidad": "automatico",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [],
+        "cubiertoAutomaticamente": [
+          "Solo las comprobaciones expresas de las capacidades referenciadas; no inferir reglas adicionales por presencia de controles."
+        ],
+        "pendienteManual": [],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          }
+        ],
+        "continuacion": {
+          "decide": "robot-segun-runner",
+          "condicion": "Aplicar el orden y las barreras existentes del runner. Una referencia compartida no duplica la ejecucion.",
+          "siNoSeCompleta": "no-continuar"
+        }
+      }
+    },
+    {
+      "matriz": 4,
+      "dependeDe": [],
+      "modalidad": "automatico",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [],
+        "cubiertoAutomaticamente": [
+          "Solo las comprobaciones expresas de las capacidades referenciadas; no inferir reglas adicionales por presencia de controles."
+        ],
+        "pendienteManual": [],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          }
+        ],
+        "continuacion": {
+          "decide": "robot-segun-runner",
+          "condicion": "Aplicar el orden y las barreras existentes del runner. Una referencia compartida no duplica la ejecucion.",
+          "siNoSeCompleta": "no-continuar"
+        }
+      }
+    },
+    {
+      "matriz": 5,
+      "dependeDe": [],
+      "modalidad": "automatico",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [],
+        "cubiertoAutomaticamente": [
+          "Solo las comprobaciones expresas de las capacidades referenciadas; no inferir reglas adicionales por presencia de controles."
+        ],
+        "pendienteManual": [],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          }
+        ],
+        "continuacion": {
+          "decide": "robot-segun-runner",
+          "condicion": "Aplicar el orden y las barreras existentes del runner. Una referencia compartida no duplica la ejecucion.",
+          "siNoSeCompleta": "no-continuar"
+        }
+      }
+    },
+    {
+      "matriz": 6,
+      "dependeDe": [],
+      "modalidad": "automatico",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [],
+        "cubiertoAutomaticamente": [
+          "Solo las comprobaciones expresas de las capacidades referenciadas; no inferir reglas adicionales por presencia de controles."
+        ],
+        "pendienteManual": [],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          }
+        ],
+        "continuacion": {
+          "decide": "robot-segun-runner",
+          "condicion": "Aplicar el orden y las barreras existentes del runner. Una referencia compartida no duplica la ejecucion.",
+          "siNoSeCompleta": "no-continuar"
+        }
+      }
+    },
+    {
+      "matriz": 7,
+      "dependeDe": [],
+      "modalidad": "automatico",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [],
+        "cubiertoAutomaticamente": [
+          "Solo las comprobaciones expresas de las capacidades referenciadas; no inferir reglas adicionales por presencia de controles."
+        ],
+        "pendienteManual": [],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          }
+        ],
+        "continuacion": {
+          "decide": "robot-segun-runner",
+          "condicion": "Aplicar el orden y las barreras existentes del runner. Una referencia compartida no duplica la ejecucion.",
+          "siNoSeCompleta": "no-continuar"
+        }
+      }
+    },
+    {
+      "matriz": 8,
+      "dependeDe": [],
+      "modalidad": "automatico",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [],
+        "cubiertoAutomaticamente": [
+          "Solo las comprobaciones expresas de las capacidades referenciadas; no inferir reglas adicionales por presencia de controles."
+        ],
+        "pendienteManual": [],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          }
+        ],
+        "continuacion": {
+          "decide": "robot-segun-runner",
+          "condicion": "Aplicar el orden y las barreras existentes del runner. Una referencia compartida no duplica la ejecucion.",
+          "siNoSeCompleta": "no-continuar"
+        }
+      }
+    },
+    {
+      "matriz": 9,
+      "dependeDe": [],
+      "modalidad": "automatico",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [],
+        "cubiertoAutomaticamente": [
+          "Solo las comprobaciones expresas de las capacidades referenciadas; no inferir reglas adicionales por presencia de controles."
+        ],
+        "pendienteManual": [],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          }
+        ],
+        "continuacion": {
+          "decide": "robot-segun-runner",
+          "condicion": "Aplicar el orden y las barreras existentes del runner. Una referencia compartida no duplica la ejecucion.",
+          "siNoSeCompleta": "no-continuar"
+        }
+      }
+    },
+    {
+      "matriz": 10,
+      "dependeDe": [],
+      "modalidad": "automatico",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [],
+        "cubiertoAutomaticamente": [
+          "Solo las comprobaciones expresas de las capacidades referenciadas; no inferir reglas adicionales por presencia de controles."
+        ],
+        "pendienteManual": [],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          }
+        ],
+        "continuacion": {
+          "decide": "robot-segun-runner",
+          "condicion": "Aplicar el orden y las barreras existentes del runner. Una referencia compartida no duplica la ejecucion.",
+          "siNoSeCompleta": "no-continuar"
+        }
+      }
+    },
+    {
+      "matriz": 11,
+      "dependeDe": [],
+      "modalidad": "automatico",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [],
+        "cubiertoAutomaticamente": [
+          "Solo las comprobaciones expresas de las capacidades referenciadas; no inferir reglas adicionales por presencia de controles."
+        ],
+        "pendienteManual": [],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          }
+        ],
+        "continuacion": {
+          "decide": "robot-segun-runner",
+          "condicion": "Aplicar el orden y las barreras existentes del runner. Una referencia compartida no duplica la ejecucion.",
+          "siNoSeCompleta": "no-continuar"
+        }
+      }
+    },
+    {
+      "matriz": 12,
+      "dependeDe": [],
+      "modalidad": "automatico",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [],
+        "cubiertoAutomaticamente": [
+          "Solo las comprobaciones expresas de las capacidades referenciadas; no inferir reglas adicionales por presencia de controles."
+        ],
+        "pendienteManual": [],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          }
+        ],
+        "continuacion": {
+          "decide": "robot-segun-runner",
+          "condicion": "Aplicar el orden y las barreras existentes del runner. Una referencia compartida no duplica la ejecucion.",
+          "siNoSeCompleta": "no-continuar"
+        }
+      }
+    },
+    {
+      "matriz": 13,
+      "dependeDe": [],
+      "modalidad": "automatico",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [],
+        "cubiertoAutomaticamente": [
+          "Solo las comprobaciones expresas de las capacidades referenciadas; no inferir reglas adicionales por presencia de controles."
+        ],
+        "pendienteManual": [],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          }
+        ],
+        "continuacion": {
+          "decide": "robot-segun-runner",
+          "condicion": "Aplicar el orden y las barreras existentes del runner. Una referencia compartida no duplica la ejecucion.",
+          "siNoSeCompleta": "no-continuar"
+        }
+      }
+    },
+    {
+      "matriz": 14,
+      "dependeDe": [],
+      "modalidad": "hibrido",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [
+          "Contrastar la cobertura automatica con el resultado esperado y registrar la parte no demostrada antes de aprobar el diseno o el resultado."
+        ],
+        "cubiertoAutomaticamente": [
+          "Presencia de Forma Consulta y ausencia de Numero de Documento Tomador."
+        ],
+        "pendienteManual": [
+          "Opciones completas y reglas de Forma Consulta segun configuracion: no se demuestran por mera presencia."
+        ],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          },
+          {
+            "tipo": "comparacion-catalogo-QA",
+            "comprobacion": "Registrar opciones observadas y comportamiento contrastados contra la fuente documental vigente, con captura y decision del analista."
+          }
+        ],
+        "continuacion": {
+          "decide": "analista-QA",
+          "condicion": "Registrar decision y evidencia humana de la parte pendiente. No habilita reanudacion automatica en esta fase.",
+          "siNoSeCompleta": "cerrar-con-pendiente-sin-reanudar"
+        }
+      }
+    },
+    {
+      "matriz": 15,
+      "dependeDe": [],
+      "modalidad": "automatico",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [],
+        "cubiertoAutomaticamente": [
+          "Solo las comprobaciones expresas de las capacidades referenciadas; no inferir reglas adicionales por presencia de controles."
+        ],
+        "pendienteManual": [],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          }
+        ],
+        "continuacion": {
+          "decide": "robot-segun-runner",
+          "condicion": "Aplicar el orden y las barreras existentes del runner. Una referencia compartida no duplica la ejecucion.",
+          "siNoSeCompleta": "no-continuar"
+        }
+      }
+    },
+    {
+      "matriz": 16,
+      "dependeDe": [],
+      "modalidad": "automatico",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [],
+        "cubiertoAutomaticamente": [
+          "Solo las comprobaciones expresas de las capacidades referenciadas; no inferir reglas adicionales por presencia de controles."
+        ],
+        "pendienteManual": [],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          }
+        ],
+        "continuacion": {
+          "decide": "robot-segun-runner",
+          "condicion": "Aplicar el orden y las barreras existentes del runner. Una referencia compartida no duplica la ejecucion.",
+          "siNoSeCompleta": "no-continuar"
+        }
+      }
+    },
+    {
+      "matriz": 17,
+      "dependeDe": [
+        "P15"
+      ],
+      "modalidad": "automatico",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [],
+        "cubiertoAutomaticamente": [
+          "Solo las comprobaciones expresas de las capacidades referenciadas; no inferir reglas adicionales por presencia de controles."
+        ],
+        "pendienteManual": [],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          }
+        ],
+        "continuacion": {
+          "decide": "robot-segun-runner",
+          "condicion": "Aplicar el orden y las barreras existentes del runner. Una referencia compartida no duplica la ejecucion.",
+          "siNoSeCompleta": "no-continuar"
+        }
+      }
+    },
+    {
+      "matriz": 18,
+      "dependeDe": [
+        "P22"
+      ],
+      "modalidad": "hibrido",
+      "responsabilidades": {
+        "robot": [
+          "Intentar introducir la placa larga, leer el valor resultante, intentar la comprobacion independiente y registrar por separado la recuperacion. No repetir escrituras ni forzar cierre."
+        ],
+        "analista": [
+          "Contrastar la cobertura automatica con el resultado esperado y registrar la parte no demostrada antes de aprobar el diseno o el resultado."
+        ],
+        "cubiertoAutomaticamente": [
+          "Solo lo efectivamente registrado por cada intento; la existencia de capacidades no acredita que la placa larga se haya introducido."
+        ],
+        "pendienteManual": [
+          "Introducir manualmente el valor largo y contrastar el valor visible.",
+          "Comprobar en lectura independiente si se registro; sin ella no concluir ni defecto ni validacion correcta.",
+          "Revisar por separado la dificultad posterior de localizacion, comprobacion o cierre."
+        ],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          },
+          {
+            "tipo": "captura-entrada-manual",
+            "comprobacion": "Registrar dato largo usado y valor visible resultante en el campo Placa, por QA en una fase autorizada."
+          },
+          {
+            "tipo": "lectura-independiente-QA",
+            "comprobacion": "Registrar identidad de la fila y valor persistido obtenido por lectura independiente; si no es posible, dejar criterio inconcluso."
+          },
+          {
+            "tipo": "incidente-recuperacion-QA",
+            "comprobacion": "Registrar separadamente accion de cierre, resultado observable y evidencia de recuperacion o dificultad, sin inferir aceptacion de longitud."
+          }
+        ],
+        "continuacion": {
+          "decide": "analista-QA",
+          "condicion": "P18 se ejecuta despues de P22. Si falla la introduccion o la recuperacion, terminar con criterio inconcluso; QA decide el siguiente intento por separado, sin reanudacion automatica.",
+          "siNoSeCompleta": "cerrar-con-pendiente-sin-reanudar"
+        }
+      }
+    },
+    {
+      "matriz": 19,
+      "dependeDe": [
+        "P15"
+      ],
+      "modalidad": "automatico",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [],
+        "cubiertoAutomaticamente": [
+          "Solo las comprobaciones expresas de las capacidades referenciadas; no inferir reglas adicionales por presencia de controles."
+        ],
+        "pendienteManual": [],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          }
+        ],
+        "continuacion": {
+          "decide": "robot-segun-runner",
+          "condicion": "Aplicar el orden y las barreras existentes del runner. Una referencia compartida no duplica la ejecucion.",
+          "siNoSeCompleta": "no-continuar"
+        }
+      }
+    },
+    {
+      "matriz": 20,
+      "dependeDe": [
+        "P19"
+      ],
+      "modalidad": "automatico",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [],
+        "cubiertoAutomaticamente": [
+          "Solo las comprobaciones expresas de las capacidades referenciadas; no inferir reglas adicionales por presencia de controles."
+        ],
+        "pendienteManual": [],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          }
+        ],
+        "continuacion": {
+          "decide": "robot-segun-runner",
+          "condicion": "Aplicar el orden y las barreras existentes del runner. Una referencia compartida no duplica la ejecucion.",
+          "siNoSeCompleta": "no-continuar"
+        }
+      }
+    },
+    {
+      "matriz": 21,
+      "dependeDe": [
+        "P20"
+      ],
+      "modalidad": "automatico",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [],
+        "cubiertoAutomaticamente": [
+          "Solo las comprobaciones expresas de las capacidades referenciadas; no inferir reglas adicionales por presencia de controles."
+        ],
+        "pendienteManual": [],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          }
+        ],
+        "continuacion": {
+          "decide": "robot-segun-runner",
+          "condicion": "Aplicar el orden y las barreras existentes del runner. Una referencia compartida no duplica la ejecucion.",
+          "siNoSeCompleta": "no-continuar"
+        }
+      }
+    },
+    {
+      "matriz": 22,
+      "dependeDe": [
+        "P21"
+      ],
+      "modalidad": "hibrido",
+      "responsabilidades": {
+        "robot": [
+          "Ejecutar una sola vez las capacidades nativas referenciadas, en el orden del plan; registrar resultado y evidencia sin modificar criterios."
+        ],
+        "analista": [
+          "Contrastar la cobertura automatica con el resultado esperado y registrar la parte no demostrada antes de aprobar el diseno o el resultado."
+        ],
+        "cubiertoAutomaticamente": [
+          "Visibilidad y editabilidad de Observaciones; navegacion y textos expresamente comprobados en las pestanas."
+        ],
+        "pendienteManual": [
+          "Contenido, mensajes y reglas no comprobados de Documentos y Seguimiento."
+        ],
+        "evidencias": [
+          {
+            "tipo": "captura-y-diagnostico",
+            "comprobacion": "Resultado original y captura de cada capacidad referenciada; una captura no sustituye las aserciones."
+          },
+          {
+            "tipo": "comparacion-secciones-QA",
+            "comprobacion": "Contrastar contenidos, mensajes y reglas pendientes con el esperado y la fuente; adjuntar evidencia por seccion y decision del analista."
+          }
+        ],
+        "continuacion": {
+          "decide": "analista-QA",
+          "condicion": "Registrar decision y evidencia humana de la parte pendiente. No habilita reanudacion automatica en esta fase.",
+          "siNoSeCompleta": "cerrar-con-pendiente-sin-reanudar"
+        }
+      }
+    }
+  ]
+}

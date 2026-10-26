@@ -5,6 +5,8 @@ import { atributoXml, elementosXml, escaparXml, hijosXml, primerElementoXml, tex
 import { dimensionesPng, disponerEvidencias, geometriaCeldaLogo, type GeometriaPagina } from '../../colsubsidio/data/afi/soporte/docx';
 import { seleccionarUltimas } from './ejecuciones';
 import { peorEstado, type EstadoPaso } from './modelo';
+import { redactarPaso } from './redaccionSoporte';
+import { excluirSecretosTecnicos } from './secretosSoporte';
 
 /**
  * Soporte de certificación cliente: UN documento Word por HISTORIA DE USUARIO con todos sus CP (formato de la plantilla
@@ -29,6 +31,7 @@ export interface CasoConfig {
 export interface ConfigSoporteHu {
   hu: string; salida: string; template: string; logoCliente: string | null; cliente: string; proyecto: string; nombrePruebas: string;
   iteracion: string; fechaInicio: string; fechaFinalizacion: string; seccion: string; encabezado: string; casos: CasoConfig[];
+  generadoEn?: string;
 }
 export interface PasoSoporte {
   n: number; accion: string; esperado: string; estado: string; obtenido: string; fuente: string; capturas: string[]; validacionPosterior?: string;
@@ -38,6 +41,8 @@ export interface PasoSoporte {
   incidentes?: string[];
   /** Acciones del escenario que sustentan el paso (p. ej. verificar_recorrido_grafico). */
   acciones?: string[];
+  continuidad?: 'continuo' | 'detenido' | 'sin_evidencia';
+  diagnosticosOriginales?: string[];
 }
 /** De dónde salió el resultado del CP (trazabilidad en el Word y en el plan). */
 export interface OrigenCaso {
@@ -78,7 +83,7 @@ export function textoObservado(detalle: string): string {
  * declaran su origen. Nunca se inventa un estado: si ninguna fuente cubre el paso, queda como lo dejó la primera.
  */
 export function consolidarCaso(raiz: string, dirProyecto: string, c: CasoConfig, matriz: { titulo: string; pasos: { n: number; accion: string; esperado: string }[] }): CasoSoporte {
-  const porPaso = new Map<number, { estado: string; obtenido: string; fuente: string; capturas: string[]; causas?: string[]; incidentes?: string[]; acciones?: string[] }>();
+  const porPaso = new Map<number, { estado: string; obtenido: string; fuente: string; capturas: string[]; causas?: string[]; incidentes?: string[]; acciones?: string[]; continuidad?: PasoSoporte['continuidad']; diagnosticosOriginales?: string[] }>();
   c.fuentes.forEach((f, k) => {
     const ruta = resolve(dirProyecto, f);
     if (!existsSync(ruta)) throw new Error(`No existe la fuente ${f} de ${c.cp}.`);
@@ -101,7 +106,9 @@ export function consolidarCaso(raiz: string, dirProyecto: string, c: CasoConfig,
       const causas = [...new Set(detalles.filter((p) => p.estado === estado && p.causa).map((p) => p.causa!))];
       const incidentes = detalles.filter((p) => p.incidente).map((p) => `${p.incidente!.causa}: ${textoObservado(p.incidente!.detalle)}`);
       const acciones = [...new Set(detalles.map((p) => p.hacer ?? '').filter(Boolean))];
-      porPaso.set(m.n, { estado, obtenido, fuente: etiqueta, capturas, ...(causas.length ? { causas } : {}), ...(incidentes.length ? { incidentes } : {}), ...(acciones.length ? { acciones } : {}) });
+      const posteriores = r.pasos.filter(p => p.indice > Math.max(...cubre));
+      const continuidad = !cubre.length ? 'sin_evidencia' : posteriores.some(p => ['PASS', 'UI_PASS', 'FAIL'].includes(p.estado)) ? 'continuo' : posteriores.some(p => ['NOT_RUN', 'BLOCKED'].includes(p.estado)) ? 'detenido' : 'sin_evidencia';
+      porPaso.set(m.n, { estado, obtenido, fuente: etiqueta, capturas, continuidad, diagnosticosOriginales: detalles.map(p => p.detalle), ...(causas.length ? { causas } : {}), ...(incidentes.length ? { incidentes } : {}), ...(acciones.length ? { acciones } : {}) });
     }
   });
   for (const [n, t] of Object.entries(c.transcritos?.pasos ?? {})) {
@@ -188,10 +195,11 @@ const EMU_POR_TWIP = 635;
 const REL_IMAGEN = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image';
 const NS_A = 'http://schemas.openxmlformats.org/drawingml/2006/main';
 const NS_PIC = 'http://schemas.openxmlformats.org/drawingml/2006/picture';
-const runs = (texto: string, negrita = false, extra = '') => texto.split(/\r?\n/).map((l, i) =>
+const runs = (texto: string, negrita = false, extra = '') => excluirSecretosTecnicos(texto).split(/\r?\n/).map((l, i) =>
   `<w:r>${negrita || extra ? `<w:rPr>${negrita ? '<w:b/><w:bCs/>' : ''}${extra}</w:rPr>` : ''}${i ? '<w:br/>' : ''}<w:t xml:space="preserve">${escaparXml(l)}</w:t></w:r>`).join('');
 const parrafo = (contenido = '', pPr = '') => `<w:p>${pPr}${contenido}</w:p>`;
 const juntos = '<w:pPr><w:keepNext/><w:keepLines/></w:pPr>';
+const legible = '<w:pPr><w:keepLines/><w:widowControl/><w:spacing w:after="100"/></w:pPr>';
 const etiquetaValor = (etiqueta: string, valor: string, pPr = '') => parrafo(runs(`${etiqueta}: `, true) + runs(valor), pPr);
 const pPrDe = (xml: string, p: ElementoXml) => { const e = hijosXml(xml, p.inicioContenido, p.finContenido).find((h) => h.nombre === 'w:pPr'); return e ? textoXml(xml, e) : ''; };
 const textoDe = (xml: string, e: ElementoXml) => elementosXml(xml, 'w:p', e.inicio, e.fin).map((p) => textoParrafoDocx(xml, p)).join('\n');
@@ -272,10 +280,11 @@ export function renderizarSoporteHu(cfg: ConfigSoporteHu, casos: CasoSoporte[], 
   const titulo = (estilo: string, texto: string, saltoAntes = false) => {
     const id = bookmark++, ancla = `_TocSde${id}`;
     indice.push({ estilo: estilo.replace('Ttulo', 'TDC'), ancla, texto });
-    return `<w:p><w:pPr><w:pStyle w:val="${estilo}"/>${saltoAntes ? '<w:pageBreakBefore/>' : ''}</w:pPr><w:bookmarkStart w:id="${id}" w:name="${ancla}"/>${runs(texto)}<w:bookmarkEnd w:id="${id}"/></w:p>`;
+    return `<w:p><w:pPr><w:pStyle w:val="${estilo}"/><w:keepNext/><w:keepLines/>${saltoAntes ? '<w:pageBreakBefore/>' : ''}</w:pPr><w:bookmarkStart w:id="${id}" w:name="${ancla}"/>${runs(texto)}<w:bookmarkEnd w:id="${id}"/></w:p>`;
   };
   let nImg = 0;
-  let cuerpo = titulo('Ttulo1', cfg.seccion);
+  let cuerpo = titulo('Ttulo1', cfg.seccion)
+    + (cfg.generadoEn ? etiquetaValor('Generación de este soporte', `${cfg.generadoEn}. Las fechas de ejecución proceden de los reportes seleccionados; esta generación offline no ejecuta Bizagi.`) : '');
   casos.forEach((c, k) => {
     const pass = c.resumen.PASS ?? 0;
     const resumen = Object.entries(c.resumen).map(([e, n]) => `${e} ${n}`).join(' · ');
@@ -284,26 +293,35 @@ export function renderizarSoporteHu(cfg: ConfigSoporteHu, casos: CasoSoporte[], 
       + etiquetaValor('Configuración utilizada', c.configuracion)
       + (c.origen ? etiquetaValor('Ejecución utilizada', textoOrigen(c.origen)) : '')
       + (c.advertencias ?? []).map((a) => etiquetaValor('Advertencia de selección', a)).join('')
-      + etiquetaValor('Resultado de la ejecución automatizada', `${pass} PASS de ${c.pasos.length} pasos de la matriz (${resumen}). No constituye aprobación funcional: la aprobación corresponde a QA.`)
+      + etiquetaValor('Resultado de la ejecución automatizada', `${pass} de ${c.pasos.length} pasos de la matriz cumplieron la comprobación automática. Los demás se explican a continuación. No constituye aprobación funcional: la aprobación corresponde a QA.`)
       + parrafo();
+    cuerpo += parrafo(runs('Hallazgos para revisión', true));
+    const revisar = c.pasos.filter(p => !['PASS', 'UI_PASS'].includes(p.estado) || p.incidentes?.length || (c.cp === 'HU06-CP02' && [14, 18, 22].includes(p.n)));
+    cuerpo += revisar.length ? revisar.map(p => {
+      const h = redactarPaso(p, c.cp);
+      return parrafo(runs(`Paso ${p.n}. ${h.revision || h.hallazgo}`), legible);
+    }).join('') : parrafo(runs('No se registraron diferencias en los pasos comprobados. QA conserva la aprobación del caso.'));
     for (const p of c.pasos) {
+      const h = redactarPaso(p, c.cp);
       cuerpo += parrafo(`<w:r><w:rPr><w:b/><w:bCs/></w:rPr><w:t xml:space="preserve">Paso ${p.n}</w:t></w:r>${runs(`. ${p.accion}`)}`, juntos)
         + parrafo(runs('Resultado del paso', true), juntos)
         + etiquetaValor('Resultado esperado', p.esperado, juntos)
-        + etiquetaValor('Resultado obtenido', p.obtenido, juntos)
-        + etiquetaValor('Estado', ESTADOS[p.estado] ?? p.estado, juntos)
-        + (p.estado !== 'PASS' && p.causas?.length ? etiquetaValor('Causa', textoCausas(p.causas), juntos) : '')
-        + (p.incidentes ?? []).map((i) => etiquetaValor('Incidente registrado aparte (no cambia el estado del paso)', i, juntos)).join('')
+        + etiquetaValor('Resultado obtenido', h.resultado, legible)
+        + etiquetaValor('Estado', h.estado, legible)
+        + (h.hallazgo ? etiquetaValor('¿Qué encontramos?', h.hallazgo, legible) : '')
+        + (h.alcance && h.alcance !== h.hallazgo ? etiquetaValor('Alcance de la comprobación', h.alcance, legible) : '')
+        + (h.incidente ? etiquetaValor('Incidente posterior separado', h.incidente, legible) : '')
+        + (h.hallazgo || h.revision || h.incidente ? etiquetaValor('¿Se pudo continuar?', h.continuidad, legible) + etiquetaValor('¿Qué necesita revisar QA?', h.revision, legible) : '')
         + (p.validacionPosterior ? etiquetaValor('Validación posterior', p.validacionPosterior, juntos) : '');
       const captura = p.capturas.at(-1);
       if (captura) {
         const datos = readFileSync(captura);
         const { ancho, alto } = dimensionesPng(datos);
-        const { cx, cy } = disponerEvidencias([{ ancho, alto }], geometria, 0).medidas[0];
+        const { cx, cy } = disponerEvidencias([{ ancho, alto }], { ...geometria, altoUtil: geometria.altoUtil * 0.58 }, 0).medidas[0];
         const rid = nuevoRel();
         const destino = nuevaMedia(`sde-evidencia-${String(++nImg).padStart(3, '0')}`, datos);
         rels = rels.replace('</Relationships>', `<Relationship Id="${rid}" Type="${REL_IMAGEN}" Target="${destino}"/></Relationships>`);
-        cuerpo += etiquetaValor('Evidencia', `captura de la ejecución (${p.fuente})`, juntos) + parrafo(dibujo(rid, docPr++, `Evidencia ${nImg}`, cx, cy, `${c.cp} paso ${p.n}`), '<w:pPr><w:jc w:val="center"/></w:pPr>');
+        cuerpo += parrafo(runs('Evidencia del paso', true), juntos) + parrafo(dibujo(rid, docPr++, `Evidencia ${nImg}`, cx, cy, `${c.cp} paso ${p.n}`), '<w:pPr><w:keepLines/><w:jc w:val="center"/></w:pPr>');
       } else {
         cuerpo += etiquetaValor('Evidencia', `${p.fuente}. Captura: PENDIENTE (no se conserva la captura de esta ejecución; el analista puede complementarla).`);
       }
@@ -311,13 +329,26 @@ export function renderizarSoporteHu(cfg: ConfigSoporteHu, casos: CasoSoporte[], 
     }
     const auto = c.observacionesAutomaticas ?? [];
     cuerpo += parrafo(runs('Observaciones del analista', true))
-      + (auto.length ? parrafo(runs(`Hallazgos de la ejecución (generados automáticamente del reporte del caso ${c.numeroCaso}; no son aprobación ni confirmación de defecto):`, false, '<w:i/><w:iCs/>'))
-        + auto.map((o) => parrafo(runs(`• ${o}`))).join('') : '')
+      + parrafo(runs('Revise los pasos con diferencias, información pendiente o incidentes. Las notas siguientes corresponden exclusivamente a este caso.'))
       + (c.observaciones.length ? parrafo(runs(`Notas registradas para el caso ${c.numeroCaso}:`, false, '<w:i/><w:iCs/>')) : '')
       + c.observaciones.map((o) => parrafo(runs(`• ${o}`))).join('')
       + (c.antecedentes ?? []).map((a) => parrafo(runs(a, false, '<w:color w:val="808080"/>'))).join('')
       + parrafo(runs('[Espacio para observaciones del analista QA]', false, '<w:color w:val="808080"/>'))
       + parrafo(runs('Aprobación funcional QA: ', true) + runs('pendiente (no se registra aprobación ni firma en este soporte generado).'));
+    cuerpo += titulo('Ttulo3', 'Detalle técnico y trazabilidad')
+      + etiquetaValor('Estados originales del caso', resumen)
+      + parrafo(runs('Esta sección conserva los códigos y diagnósticos de las fuentes. No cambia los resultados ni confirma defectos.'))
+      + (auto.length ? parrafo(runs(`Hallazgos de la ejecución (generados automáticamente del reporte del caso ${c.numeroCaso}; no son aprobación ni confirmación de defecto):`)) : '')
+      + auto.map(o => parrafo(runs(o))).join('');
+    for (const p of c.pasos) {
+      cuerpo += etiquetaValor(`Paso ${p.n} — Estado`, ESTADOS[p.estado] ?? p.estado)
+        + (p.causas?.length ? etiquetaValor(c.cp === 'HU06-CP02' && p.n === 18 ? 'Clasificaciones históricas' : 'Causa', textoCausas(p.causas)) : '')
+        + etiquetaValor('Resultado obtenido original', (p.diagnosticosOriginales?.length ? p.diagnosticosOriginales : [p.obtenido]).join('\n'))
+        + etiquetaValor('Códigos de causa', (p.causas ?? []).join(', ') || 'Sin causa registrada')
+        + etiquetaValor('Procedencia', p.fuente)
+        + etiquetaValor('Capturas asociadas', p.capturas.map(f => f.split(/[\\/]/).at(-1)).join(', ') || 'Sin captura conservada')
+        + (p.incidentes ?? []).map(i => etiquetaValor('Incidente registrado aparte (no cambia el estado del paso)', i)).join('');
+    }
   });
   cambios.push({ inicio: hijos[iSeccion].inicio, fin: hijos[iSect].inicio, por: cuerpo });
 
@@ -449,13 +480,23 @@ export function generarSoporteHu(o: { raiz: string; dirProyecto: string; hu: str
   const template = readFileSync(resolve(o.raiz, cfg.template));
   const logoCliente = cfg.logoCliente ? readFileSync(resolve(o.dirProyecto, 'certificacion', cfg.logoCliente)) : undefined;
   const base = resolve(o.raiz, ...RUTA_SOPORTES, cfg.hu);
-  const marca = (o.ahora ?? new Date()).toISOString().replace(/[:.]/g, '-');
+  const ahora = o.ahora ?? new Date();
+  const marca = ahora.toISOString().replace(/[:.]/g, '-');
   let salida = resolve(base, marca);
   for (let k = 2; existsSync(salida); k++) salida = resolve(base, `${marca}-${k}`);
   mkdirSync(salida, { recursive: true });
-  const docx = resolve(salida, cfg.salida);
-  writeFileSync(docx, renderizarSoporteHu(cfg, casos, { template, ...(logoCliente ? { logoCliente } : {}) }));
+  const fechas = casos.flatMap(c => c.origen?.fuentes.flatMap(f => {
+    const r = resolve(o.raiz, f);
+    if (!existsSync(r)) return [];
+    const j = JSON.parse(readFileSync(r, 'utf8'));
+    return [j.inicio, j.fin].filter((x: unknown): x is string => typeof x === 'string' && Number.isFinite(Date.parse(x)));
+  }) ?? []).sort();
+  const metadatos = { generadoEn: ahora.toISOString(), fechaInicio: fechas.length ? `${fechas[0].slice(0,10)} UTC (fuentes seleccionadas)` : cfg.fechaInicio,
+    fechaFinalizacion: fechas.length ? `${fechas.at(-1)!.slice(0,10)} UTC (fuentes seleccionadas)` : cfg.fechaFinalizacion };
+  const nombre = cfg.salida.replace(/^\d{8}_/, `${ahora.toISOString().slice(0,10).replace(/-/g, '')}_`);
+  const docx = resolve(salida, nombre);
+  writeFileSync(docx, renderizarSoporteHu({ ...cfg, ...metadatos }, casos, { template, ...(logoCliente ? { logoCliente } : {}) }));
   const plan = resolve(salida, `${cfg.hu}-soporte-plan.json`);
-  writeFileSync(plan, JSON.stringify({ hu: cfg.hu, corrida: o.corrida ?? null, seleccion, casos }, null, 2) + '\n', 'utf8');
+  writeFileSync(plan, JSON.stringify({ hu: cfg.hu, corrida: o.corrida ?? null, metadatos, seleccion, casos }, null, 2) + '\n', 'utf8');
   return { docx, plan, casos, seleccion };
 }

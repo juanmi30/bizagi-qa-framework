@@ -37,6 +37,8 @@ function repo(dir: string) {
   mkdirSync(resolve(raiz, 'projects/colsubsidio/templates'), { recursive: true });
   copyFileSync(resolve(RAIZ, 'projects/colsubsidio/templates/soporte-certificacion-cliente-referencia.docx'), resolve(raiz, 'projects/colsubsidio/templates/soporte-certificacion-cliente-referencia.docx'));
   copyFileSync(resolve(DIR, 'certificacion/HU06.json'), resolve(proyecto, 'certificacion/HU06.json'));
+  mkdirSync(resolve(proyecto, 'assets/branding'), { recursive: true });
+  copyFileSync(resolve(DIR, 'assets/branding/logo-seguros-del-estado.png'), resolve(proyecto, 'assets/branding/logo-seguros-del-estado.png'));
   copyFileSync(resolve(DIR, 'fuentes/matriz.json'), resolve(proyecto, 'fuentes/matriz.json'));
   // Fuentes de la certificación declarada (702–706), por si un CP no tuviera ejecución archivada.
   for (const f of readdirSync(resolve(DIR, 'docs/evidencia')).filter((x) => x.endsWith('.json'))) copyFileSync(resolve(DIR, 'docs/evidencia', f), resolve(proyecto, 'docs/evidencia', f));

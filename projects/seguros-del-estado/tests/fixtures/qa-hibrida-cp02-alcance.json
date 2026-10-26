@@ -1,0 +1,68 @@
+{
+  "cp": "HU06-CP02",
+  "fuente": "HU06-CP02_20261022-094926.json (caso 1065), extracto sin capturas ni datos personales",
+  "pasos": [
+    {
+      "n": 14,
+      "accion": "Validar las opciones disponibles para la Forma de Consulta de acuerdo con la configuración del caso.",
+      "esperado": "La Forma de Consulta y sus campos se presentan de acuerdo con la Línea, Tipo de Solicitud/Movimiento y reglas configuradas.",
+      "estado": "PASS",
+      "obtenido": "✔ \"Forma Consulta\" visible (1) · ✔ \"Número de Documento Tomador\" no visible (encontrados 0)",
+      "fuente": "test-results/seguros-del-estado/sde/HU06-CP02_20261022-094926.json",
+      "acciones": [
+        "verificar"
+      ],
+      "continuidad": "continuo",
+      "diagnosticosOriginales": [
+        "✔ \"Forma Consulta\" visible (1) | ✔ \"Número de Documento Tomador\" no visible (encontrados 0)"
+      ],
+      "capturas": []
+    },
+    {
+      "n": 18,
+      "accion": "Ingresar una Placa que supere los 6 caracteres.",
+      "esperado": "El sistema impide registrar un valor que supere la longitud máxima definida para el campo Placa.",
+      "estado": "FAIL",
+      "obtenido": "Caso 1065 abierto por \"analista\" en \"Estructurar información\" · Pop-up de edición abierto para la fila 1 de \"Detalle Polizas Asociadas\" · \"Placa\": el formulario muestra \"DEF456\" tras diligenciar \"MNP4567\". · Pop-up abierto: se continúa SOLO hasta cerrarlo con \"Guardar\" (salir sin guardar destruye el caso, BUG-03). · No se encontró visible: la etiqueta \"Placa\" · El pop-up NO se pudo cerrar con \"Guardar\": el caso probablemente quedó inutilizable (BUG-03). Registrarlo.",
+      "fuente": "test-results/seguros-del-estado/sde/HU06-CP02_20261022-094926.json",
+      "causas": [
+        "PRODUCTO_POR_CONFIRMAR",
+        "AUTOMATIZACION"
+      ],
+      "acciones": [
+        "abrir_caso",
+        "tabla_abrir_fila",
+        "diligenciar",
+        "dialogo_confirmar"
+      ],
+      "continuidad": "sin_evidencia",
+      "diagnosticosOriginales": [
+        "Caso 1065 abierto por \"analista\" en \"Estructurar información\"",
+        "Pop-up de edición abierto para la fila 1 de \"Detalle Polizas Asociadas\"",
+        "\"Placa\": el formulario muestra \"DEF456\" tras diligenciar \"MNP4567\". | Pop-up abierto: se continúa SOLO hasta cerrarlo con \"Guardar\" (salir sin guardar destruye el caso, BUG-03).",
+        "No se encontró visible: la etiqueta \"Placa\" | El pop-up NO se pudo cerrar con \"Guardar\": el caso probablemente quedó inutilizable (BUG-03). Registrarlo."
+      ],
+      "capturas": []
+    },
+    {
+      "n": 22,
+      "accion": "Validar Observaciones, Documentos y Seguimiento.",
+      "esperado": "Las tres secciones presentan la información correspondiente al caso y la trazabilidad registrada.",
+      "estado": "PASS",
+      "obtenido": "✔ [EST-ETIQUETA-OBSERVACIONES · fuente: Matriz HU06-CP01 P27 / HU06-CP03 P24 (\"campo Observaciones\")] etiquetas exactas presentes (1) · ✔ editable: Observaciones · Pestaña \"Documentos de la solicitud\" activa con su panel visible · Pestaña \"Seguimiento/Trazabilidad\" activa con su panel visible; muestra \"Estructurar información\"",
+      "fuente": "test-results/seguros-del-estado/sde/HU06-CP02_20261022-094926.json",
+      "acciones": [
+        "verificar",
+        "abrir_pestana"
+      ],
+      "continuidad": "continuo",
+      "diagnosticosOriginales": [
+        "✔ [EST-ETIQUETA-OBSERVACIONES · fuente: Matriz HU06-CP01 P27 / HU06-CP03 P24 (\"campo Observaciones\")] etiquetas exactas presentes (1)",
+        "✔ editable: Observaciones",
+        "Pestaña \"Documentos de la solicitud\" activa con su panel visible",
+        "Pestaña \"Seguimiento/Trazabilidad\" activa con su panel visible; muestra \"Estructurar información\""
+      ],
+      "capturas": []
+    }
+  ]
+}

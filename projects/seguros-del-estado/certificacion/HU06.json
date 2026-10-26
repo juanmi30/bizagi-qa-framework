@@ -3,7 +3,7 @@
   "hu": "HU06",
   "salida": "20261021_SDE_CEL_HU06_Soporte_Certificacion_Cliente.docx",
   "template": "projects/colsubsidio/templates/soporte-certificacion-cliente-referencia.docx",
-  "logoCliente": null,
+  "logoCliente": "../assets/branding/logo-seguros-del-estado.png",
   "cliente": "Seguros del Estado",
   "proyecto": "SDE - CEL - HU06",
   "nombrePruebas": "SDE – CEL – Radicación (HU06: compuerta ¿Masivo?, Worker AI y Estructurar información)",

@@ -1,0 +1,29 @@
+{
+  "casoCP03": "777",
+  "opcionesRce": 2,
+  "candidatasRce": 0,
+  "configuradoSinCodigo": false,
+  "bEsRCE": [],
+  "casoCP02": "772",
+  "filas": 3,
+  "placasDOM": 0,
+  "placasControles": 0,
+  "identidadesCoherentes": 3,
+  "gridsServidor": [
+    {
+      "filas": 3,
+      "placas": 0,
+      "polizas": 3
+    },
+    {
+      "filas": 4,
+      "placas": 0,
+      "polizas": 0
+    },
+    {
+      "filas": 2,
+      "placas": 0,
+      "polizas": 0
+    }
+  ]
+}

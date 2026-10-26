@@ -4,8 +4,9 @@ import { cargarRegistro } from '../sde/datos';
 import { cargarEscenario, DIR_ESCENARIOS, type EscenarioSde, type PasoSde } from '../sde/escenario';
 import { crearContexto, ejecutarEscenario } from '../sde/ejecutor';
 import { crearCapacidadesUi, VIEWPORT_SDE, type UiEntorno } from '../sde/capacidades';
-import { guardarReporte } from '../sde/registro';
+import { guardarCaptura, guardarReporte } from '../sde/registro';
 import { exclusividadEjecucionReal } from '../sde/verticales';
+import { registrarFin, registrarInicio, registrarInterrupcion } from '../sde/ejecuciones';
 
 /**
  * CONTINUACIÓN de un CP sobre un caso PROPIO ya creado por su vertical (2026-10-20): ejecuta los pasos oficiales del escenario
@@ -41,11 +42,26 @@ test('continuación de un CP sobre un caso propio existente @continuacion', asyn
   const { capacidades, verificar } = crearCapacidadesUi(ui);
   const ctx = crearContexto(registro, process.env, `cont-${caso}-P${desde}-${hasta}-${Date.now()}`); // único por corrida: no sobrescribe tramos anteriores
   ctx.numeroCaso = caso;
-  const r = await ejecutarEscenario(esc, { capacidades, verificar, soloLectura: false,
-    evidencia: async (n) => { const f = await page.screenshot({ fullPage: true }).catch(() => null); if (f) await testInfo.attach(n, { body: f, contentType: 'image/png' }); return n; },
-  }, ctx);
-  r.motivo = `CONTINUACIÓN (P${desde}–P${hasta}) sobre el caso existente ${caso}; complementa el reporte de la vertical: ${r.motivo}`;
-  guardarReporte(r, 'CONTINUACION_');
-  console.log(`CONT ${cp} caso=${caso} estado=${r.estado}`);
-  for (const p of r.pasos) console.log(`  #${p.indice} ${p.hacer} P${p.matriz.join(',')} [${p.estado}]${p.causa ? ` ${p.causa}` : ''} :: ${p.detalle.slice(0, 300)}`);
+  // Registro de ejecución vinculado al caso: el soporte la incorpora a la ejecución base de ese caso (solo los pasos que ejecute).
+  registrarInicio({ cp, unico: ctx.unico, corrida: process.env.BIZAGI_CORRIDA ?? null, continuacionDe: caso });
+  let finalizada = false;
+  try {
+    const r = await ejecutarEscenario(esc, { capacidades, verificar, soloLectura: false,
+      evidencia: async (n) => {
+        const actual = ui.actual ? ui.paginas.get(ui.actual) : page;
+        const f = await actual?.screenshot({ fullPage: true }).catch(() => null);
+        if (!f) return undefined;
+        await testInfo.attach(n, { body: f, contentType: 'image/png' });
+        guardarCaptura(`CONTINUACION_${cp}`, ctx.unico, n, f); // sobrevive a corridas posteriores
+        return n;
+      },
+    }, ctx);
+    r.motivo = `CONTINUACIÓN (P${desde}–P${hasta}) sobre el caso existente ${caso}; complementa el reporte de la vertical: ${r.motivo}`;
+    registrarFin({ reporte: r, rutaReporte: guardarReporte(r, 'CONTINUACION_') });
+    finalizada = true;
+    console.log(`CONT ${cp} caso=${caso} unico=${ctx.unico} estado=${r.estado}`);
+    for (const p of r.pasos) console.log(`  #${p.indice} ${p.hacer} P${p.matriz.join(',')} [${p.estado}]${p.causa ? ` ${p.causa}` : ''} :: ${p.detalle.slice(0, 300)}`);
+  } finally {
+    if (!finalizada) registrarInterrupcion({ cp, unico: ctx.unico, numeroCaso: caso, motivo: 'excepción antes de guardar el reporte de la continuación' });
+  }
 });

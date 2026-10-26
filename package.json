@@ -15,7 +15,10 @@
     "cleanup": "node tools/cleanup.mjs",
     "validar": "node tools/validar.mjs",
     "resumen": "node tools/resumen.mjs",
-    "afi": "node tools/afi.mjs"
+    "afi": "node tools/afi.mjs",
+    "sde:hu06": "node projects/seguros-del-estado/tools/hu.mjs HU06",
+    "sde:hu06:word": "node projects/seguros-del-estado/tools/hu.mjs HU06 --word",
+    "sde:hu06:simular": "node projects/seguros-del-estado/tools/hu.mjs HU06 --simular"
   },
   "devDependencies": {
     "@playwright/test": "^1.48.0",

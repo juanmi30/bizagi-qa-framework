@@ -1,0 +1,579 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bizagi-qa:diseno-hibrido:v1.1",
+  "title": "Diseno QA hibrido v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "qa-diseno-hibrido/v1.1"
+    },
+    "hu": {
+      "type": "string",
+      "minLength": 1
+    },
+    "caso": {
+      "type": "string",
+      "minLength": 1
+    },
+    "escenario": {
+      "type": "string",
+      "minLength": 1
+    },
+    "objetivo": {
+      "type": "string",
+      "minLength": 1
+    },
+    "nativo": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "motor": {
+          "type": "string",
+          "enum": [
+            "sde",
+            "afi"
+          ]
+        },
+        "referencia": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "motor",
+        "referencia",
+        "sha256"
+      ]
+    },
+    "fuentes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/fuente"
+      },
+      "minItems": 1
+    },
+    "actores": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/actor"
+      },
+      "minItems": 1
+    },
+    "precondiciones": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/precondicion"
+      }
+    },
+    "datos": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/dato"
+      }
+    },
+    "pasos": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/paso"
+      },
+      "minItems": 1
+    },
+    "faltantesDeclarados": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "descripcion": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pasos": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "id",
+          "descripcion",
+          "pasos"
+        ]
+      }
+    },
+    "perfilRevision": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "referencia": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "referencia",
+        "sha256"
+      ]
+    },
+    "planEjecucion": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "unidad": {
+          "const": "capacidad-nativa-unica"
+        },
+        "orden": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "dependencias": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "antes": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "despues": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "condicion": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "antes",
+              "despues",
+              "condicion"
+            ]
+          }
+        }
+      },
+      "required": [
+        "unidad",
+        "orden",
+        "dependencias"
+      ]
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "hu",
+    "caso",
+    "escenario",
+    "objetivo",
+    "nativo",
+    "fuentes",
+    "actores",
+    "precondiciones",
+    "datos",
+    "pasos",
+    "faltantesDeclarados",
+    "perfilRevision",
+    "planEjecucion"
+  ],
+  "$defs": {
+    "fuente": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "referencia": {
+          "type": "string",
+          "minLength": 1
+        },
+        "localizador": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "id",
+        "referencia",
+        "localizador",
+        "sha256"
+      ]
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rol": {
+          "type": "string",
+          "minLength": 1
+        },
+        "referenciaLogica": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fuente": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "rol",
+        "referenciaLogica",
+        "fuente"
+      ]
+    },
+    "precondicion": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "descripcion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fuente": {
+          "type": "string",
+          "minLength": 1
+        },
+        "datos": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "id",
+        "descripcion",
+        "fuente",
+        "datos"
+      ]
+    },
+    "dato": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "campo": {
+          "type": "string",
+          "minLength": 1
+        },
+        "uso": {
+          "type": "string",
+          "enum": [
+            "ASSERTION",
+            "SCENARIO",
+            "FILLER"
+          ]
+        },
+        "resolucion": {
+          "type": "string",
+          "enum": [
+            "CASE_LITERAL",
+            "TEST_DATA",
+            "GENERATED",
+            "SYSTEM"
+          ]
+        },
+        "sensibilidad": {
+          "type": "string",
+          "enum": [
+            "public",
+            "pii",
+            "secret"
+          ]
+        },
+        "naturaleza": {
+          "type": "string",
+          "enum": [
+            "publico",
+            "sintetico-permitido",
+            "qa-existente"
+          ]
+        },
+        "modo": {
+          "type": "string",
+          "enum": [
+            "literal",
+            "referencia",
+            "faltante"
+          ]
+        },
+        "valor": {
+          "type": "string"
+        },
+        "referencia": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fuente": {
+          "type": "string",
+          "minLength": 1
+        },
+        "autorizacionSintetico": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sistemaExterno": {
+          "type": "string",
+          "minLength": 1
+        },
+        "valoresValidos": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "valoresInvalidos": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "id",
+        "campo",
+        "uso",
+        "resolucion",
+        "sensibilidad",
+        "naturaleza",
+        "modo",
+        "fuente",
+        "valoresValidos",
+        "valoresInvalidos"
+      ]
+    },
+    "paso": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "matriz": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "actor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "accion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "campos": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "datos": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "dependeDe": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "esperado": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fuente": {
+          "type": "string",
+          "minLength": 1
+        },
+        "modalidad": {
+          "type": "string",
+          "enum": [
+            "automatico",
+            "manual",
+            "hibrido"
+          ]
+        },
+        "evidencia": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "tipo": {
+              "type": "string",
+              "enum": [
+                "captura",
+                "revision-documental",
+                "captura-y-revision"
+              ]
+            },
+            "descripcion": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "tipo",
+            "descripcion"
+          ]
+        },
+        "capacidadesNativas": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "responsabilidades": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "robot": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "analista": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "cubiertoAutomaticamente": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "pendienteManual": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "evidencias": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "tipo": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "comprobacion": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "tipo",
+                  "comprobacion"
+                ]
+              }
+            },
+            "continuacion": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "decide": {
+                  "enum": [
+                    "robot-segun-runner",
+                    "analista-QA"
+                  ]
+                },
+                "condicion": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "siNoSeCompleta": {
+                  "enum": [
+                    "no-continuar",
+                    "cerrar-con-pendiente-sin-reanudar"
+                  ]
+                }
+              },
+              "required": [
+                "decide",
+                "condicion",
+                "siNoSeCompleta"
+              ]
+            }
+          },
+          "required": [
+            "robot",
+            "analista",
+            "cubiertoAutomaticamente",
+            "pendienteManual",
+            "evidencias",
+            "continuacion"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "matriz",
+        "actor",
+        "accion",
+        "campos",
+        "datos",
+        "dependeDe",
+        "esperado",
+        "fuente",
+        "modalidad",
+        "evidencia",
+        "capacidadesNativas",
+        "responsabilidades"
+      ]
+    }
+  }
+}

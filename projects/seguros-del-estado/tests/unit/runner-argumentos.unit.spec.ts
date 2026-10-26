@@ -64,13 +64,13 @@ test.describe('P2 — el runner conserva literalmente los argumentos (Windows si
   });
 
   test('con el CLI real de Playwright (--list, no ejecuta): --grep, --workers, --trace y filtro de archivo funcionan', () => {
-    const r = spawnSync(process.execPath, ['tools/run.mjs', 'seguros-del-estado', '--list', '--grep', '@unit', '--workers=1', '--trace', 'off', 'tests/unit/nit.unit.spec.ts'],
+    const r = spawnSync(process.execPath, ['tools/run.mjs', 'seguros-del-estado', '--list', '--reporter=list', '--grep', '@unit', '--workers=1', '--trace', 'off', 'tests/unit/nit.unit.spec.ts'],
       { cwd: RAIZ, encoding: 'utf8', timeout: 120_000 });
     expect(r.status, r.stderr).toBe(0);
     expect(r.stdout).toMatch(/Total: \d+ tests? in 1 file/);
     expect(r.stdout).not.toMatch(/\.real\.spec|verticales|variantes/);
     // Un %VARIABLE% no se expande: como grep literal no coincide con ninguna prueba.
-    const literal = spawnSync(process.execPath, ['tools/run.mjs', 'seguros-del-estado', '--list', '--grep', '%PATH%'],
+    const literal = spawnSync(process.execPath, ['tools/run.mjs', 'seguros-del-estado', '--list', '--reporter=list', '--grep', '%PATH%'],
       { cwd: RAIZ, encoding: 'utf8', timeout: 120_000 });
     expect(`${literal.stdout}\n${literal.stderr}`).toMatch(/Total: 0 tests|No tests found/);
   });

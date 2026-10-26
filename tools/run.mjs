@@ -113,6 +113,9 @@ const result = spawnSync(process.execPath, [cli, 'test', ...passthrough], {
     ESCENARIO_FILTRO: escenario,
     FUENTE_ESCENARIO: fuente,
     COMO_GRABACION: como,
+    // Identificador de ESTA corrida (todas las pruebas lanzadas por este comando lo comparten): permite consultar después
+    // los resultados de una suite completa. Se respeta uno ya definido.
+    BIZAGI_CORRIDA: process.env.BIZAGI_CORRIDA || `corrida-${new Date().toISOString().replace(/[:.]/g, '-')}`,
   },
   shell: false,
 });

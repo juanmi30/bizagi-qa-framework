@@ -82,6 +82,7 @@ pasos:
 
   - matriz: [12]
     hacer: tabla_verificar
+    no_bloqueante: true
     tabla: Detalle Polizas Asociadas
     minimo_filas: 1
     comparar:

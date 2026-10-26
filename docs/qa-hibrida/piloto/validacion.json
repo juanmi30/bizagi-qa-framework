@@ -1,0 +1,19 @@
+{
+  "valido": true,
+  "errores": [],
+  "faltantes": [],
+  "hash": "3a01d6c0003c0a48c61f7f3bfbcc82f735b6903c9a1e106bf53fcfce0f8dfb08",
+  "requiereRevisionHumana": true,
+  "listoParaEjecutar": false,
+  "motivo": "Validacion documental y preflight sin navegador. Falta revision humana, disponibilidad real y autorizacion E2E fuera del contrato.",
+  "bloqueosNativos": [
+    "ENVIRONMENT: BIZAGI_BASE_URL no configurada",
+    "CREDENCIALES actor \"intermediario\": faltan USUARIO_intermediario, CLAVE_intermediario, DOMINIO_intermediario (o BIZAGI_LOGIN_DOMINIO)",
+    "CREDENCIALES actor \"analista\": faltan USUARIO_analista, CLAVE_analista, DOMINIO_analista (o BIZAGI_LOGIN_DOMINIO)",
+    "TEST_DATA CFG-PROCESO: faltan SDE_PROCESO_RADICACION",
+    "TEST_DATA INI-AUTOS-MASIVO: faltan SDE_AUTOS_RAMO, SDE_AUTOS_MOVIMIENTO, SDE_SUCURSAL"
+  ],
+  "estadoDocumental": "VALIDO_PARA_REVISION",
+  "aperturaBizagi": "NO_REALIZADA",
+  "contextoDatos": "Entorno vacio de demostracion. No describe el estado del .env real ni certifica el ambiente QA."
+}

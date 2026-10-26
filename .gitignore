@@ -52,6 +52,7 @@ playwright/.cache/
 *.webp
 !projects/colsubsidio/tests/fixtures/soporte-cp02/*.png
 !projects/colsubsidio/resources/hu14-12/logo-cliente-colsubsidio.png
+!projects/seguros-del-estado/assets/branding/logo-seguros-del-estado.png
 
 # ---- Documentos de cliente (se conservan LOCALMENTE). Solo los revisados y necesarios para pruebas ----
 # El PDF del formato CRD queda local: nombraba la cuenta QA y no se puede sanear de forma verificable (el DOCX sí se saneó).

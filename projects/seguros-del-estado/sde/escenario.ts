@@ -48,8 +48,8 @@ export interface PasoSde {
   /** Datasets que SOLO este paso necesita: si faltan, el paso queda BLOCKED y el escenario continúa. */
   requiere?: string[];
   /**
-   * Solo en pasos "verificar" (no cambian la pantalla): si una verificación no se cumple, el paso queda FAIL y el CP también,
-   * pero el recorrido CONTINÚA (un defecto de presentación no impide observar el resto del flujo de negocio).
+   * Observación funcional recuperable: conserva FAIL y continúa. Admite lectura de tabla, prueba de escritura negativa
+   * con recuperación prevista y confirmación ya cerrada; nunca permite continuar ante un incidente técnico o cierre fallido.
    */
   no_bloqueante?: boolean;
   [k: string]: unknown;
@@ -276,7 +276,7 @@ export function cargarEscenario(ruta: string, registro: Registro): EscenarioSde 
       problemas.push(`${donde}: "matriz" debe listar los números de paso del Excel que cubre`);
     else for (const n of m) if (pasosMatriz.size && !pasosMatriz.has(n)) problemas.push(`${donde}: el paso ${n} no existe en la matriz de ${d.id}`);
     for (const r of cap.req) if (p[r] == null) problemas.push(`${donde} (${p.hacer}): falta "${r}"`);
-    const permitidas = ['matriz', 'hacer', 'verificar', 'requiere', ...(p.hacer === 'verificar' ? ['no_bloqueante'] : []), ...cap.req, ...cap.opt];
+    const permitidas = ['matriz', 'hacer', 'verificar', 'requiere', ...(['verificar', 'tabla_verificar', 'intentar_diligenciar', 'dialogo_confirmar'].includes(String(p.hacer)) ? ['no_bloqueante'] : []), ...cap.req, ...cap.opt];
     if (p.no_bloqueante != null && typeof p.no_bloqueante !== 'boolean') problemas.push(`${donde}: "no_bloqueante" debe ser true o false`);
     if (p.requiere != null) {
       if (!Array.isArray(p.requiere) || !(p.requiere as unknown[]).every(esTexto)) problemas.push(`${donde}: "requiere" debe ser una lista de datasets`);

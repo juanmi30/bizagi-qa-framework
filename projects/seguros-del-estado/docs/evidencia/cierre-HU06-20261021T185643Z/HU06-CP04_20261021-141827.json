@@ -1,0 +1,644 @@
+{
+  "cp": "HU06-CP04",
+  "escenario": "6-hu06-cp04.yaml",
+  "inicio": "2026-10-21T19:18:27.369Z",
+  "unico": "20261021-141827",
+  "cleanup": {
+    "politica": "CLEANUP_NOT_APPLICABLE",
+    "razon": "El caso queda en Estructurar información; la fila agregada por la prueba se elimina dentro del propio CP (P22)."
+  },
+  "fin": "2026-10-21T19:20:28.536Z",
+  "estado": "FAIL",
+  "motivo": "Al menos un paso de la matriz falló (causa: PRODUCTO_POR_CONFIRMAR, NO_CLASIFICADO) — comportamiento observado distinto al esperado: posible defecto, POR CONFIRMAR funcionalmente.",
+  "numero_caso": "783",
+  "actividades_observadas": [
+    "Máximo tiempo de radicación",
+    "Estructurar información",
+    "Deshabilitar cancelación",
+    "Estructurar información",
+    "Estructurar información"
+  ],
+  "pasos": [
+    {
+      "indice": 1,
+      "hacer": "iniciar_sesion",
+      "matriz": [
+        2
+      ],
+      "estado": "PASS",
+      "detalle": "Sesión real iniciada como \"intermediario\".",
+      "ms": 6065,
+      "evidencia": "HU06-CP04_p01_iniciar_sesion"
+    },
+    {
+      "indice": 2,
+      "hacer": "nuevo_caso",
+      "matriz": [
+        2,
+        3
+      ],
+      "estado": "PASS",
+      "detalle": "Formulario de inicio de \"Gestión Solicitudes Centro Expedición\" abierto (ruta: App > Processes > Centro de Expedición) | ✔ etiquetas exactas presentes (1)",
+      "ms": 4463,
+      "evidencia": "HU06-CP04_p02_nuevo_caso"
+    },
+    {
+      "indice": 3,
+      "hacer": "diligenciar",
+      "matriz": [
+        3
+      ],
+      "estado": "PASS",
+      "detalle": "Diligenciado y confirmado: Línea=Cumplimiento; Ramo=40 - RCE DERIVADA DE CUMPLIMIENTO; Tipo de Solicitud=Modificación",
+      "ms": 31828,
+      "evidencia": "HU06-CP04_p03_diligenciar"
+    },
+    {
+      "indice": 4,
+      "hacer": "diligenciar",
+      "matriz": [
+        4
+      ],
+      "estado": "PASS",
+      "detalle": "Diligenciado y confirmado: Sucursal=11 - BOGOTA",
+      "ms": 72,
+      "evidencia": "HU06-CP04_p04_diligenciar"
+    },
+    {
+      "indice": 5,
+      "hacer": "diligenciar",
+      "matriz": [
+        5
+      ],
+      "estado": "PASS",
+      "detalle": "Diligenciado y confirmado: Tipo de Radicación=Masiva | ✔ \"Descripción de la Solicitud (Masiva/Múltiple)\" visible (1)",
+      "ms": 53,
+      "evidencia": "HU06-CP04_p05_diligenciar"
+    },
+    {
+      "indice": 6,
+      "hacer": "verificar",
+      "matriz": [
+        6
+      ],
+      "estado": "PASS",
+      "detalle": "✔ línea de texto exacta “Masivo: Solicitud asociada a más de una póliza de cumplimiento y/o RCE.” (1)",
+      "ms": 1870,
+      "evidencia": "HU06-CP04_p06_verificar"
+    },
+    {
+      "indice": 7,
+      "hacer": "diligenciar",
+      "matriz": [
+        7
+      ],
+      "estado": "PASS",
+      "detalle": "Diligenciado y confirmado: ¿Su solicitud requiere cambio de intermediario?=No; Descripción de la Solicitud (Masiva/Múltiple)=Ref. QA 20261021-141827. Se solicita realizar la modificación de las pólizas 100245678, 1109876543, 9023456781 y 12012345678. El cambio corresponde a la actualización de información registrada en cada una de las pólizas, de acuerdo con las condiciones definidas para la solicitud. Se requiere validar que la modificación sea aplicada correctamente a todas las pólizas relacionadas, manteniendo sin cambios la información que no haga parte del ajuste solicitado.",
+      "ms": 101,
+      "evidencia": "HU06-CP04_p07_diligenciar"
+    },
+    {
+      "indice": 8,
+      "hacer": "adjuntar_en_grilla",
+      "matriz": [
+        7
+      ],
+      "estado": "PASS",
+      "detalle": "\"Documentos Anexos\": sin evidencia de documentos obligatorios (la grilla no está marcada como obligatoria; 5 fila(s) parametrizada(s) con tipo y control de carga reconocidos); se continúa SIN adjuntar (si la parametrización exigiera un documento, Bizagi rechazará «Crear» sin crear el caso).",
+      "ms": 51,
+      "evidencia": "HU06-CP04_p08_adjuntar_en_grilla"
+    },
+    {
+      "indice": 9,
+      "hacer": "pulsar",
+      "matriz": [
+        8
+      ],
+      "estado": "PASS",
+      "detalle": "Botón \"Crear\" pulsado; Bizagi respondió CREATENEWCASE con CaseNumber 783 y la UI muestra \"Caso 783\"",
+      "ms": 2554,
+      "evidencia": "HU06-CP04_p09_pulsar"
+    },
+    {
+      "indice": 10,
+      "hacer": "iniciar_sesion",
+      "matriz": [
+        10
+      ],
+      "estado": "PASS",
+      "detalle": "Sesión real iniciada como \"analista\".",
+      "ms": 6134,
+      "evidencia": "HU06-CP04_p10_iniciar_sesion"
+    },
+    {
+      "indice": 11,
+      "hacer": "verificar_ruta",
+      "matriz": [
+        9
+      ],
+      "estado": "PASS",
+      "detalle": "Caso 783: Bizagi lista como actividad actual \"Estructurar información\" (work items del caso en el buscador); actividades observadas Máximo tiempo de radicación → Estructurar información → Deshabilitar cancelación; \"Consultar Alertas Intermediario\", \"Completar información de solicitud\" no observada(s) en las 1 consulta(s) realizadas (el buscador solo muestra actividades actuales; no demuestra que nunca se ejecutaran). Estado: Máximo tiempo de radicación | Estructurar información | Deshabilitar cancelación",
+      "ms": 2426,
+      "evidencia": "HU06-CP04_p11_verificar_ruta"
+    },
+    {
+      "indice": 12,
+      "hacer": "verificar_recorrido_grafico",
+      "matriz": [
+        9
+      ],
+      "estado": "PASS",
+      "detalle": "Caso 783, recorrido (registro del servidor: 7 elementos; dibujo: 7 nodos marcados): ¿Masivo o correo? [exclusivegateway] → Máximo tiempo de radicación [timerintermediate intermediatecatch] (actual) → (sin nombre) [eventbasedgateway] → (sin nombre) [parallelgateway] → Deshabilitar cancelación [noneintermediate intermediatethrow] (actual) → Inicio Radicación [nonestart start] → Estructurar información [aiworkertask] (actual). Ruta positiva observada: coincide con lo esperado.",
+      "ms": 5611,
+      "evidencia": "HU06-CP04_p12_verificar_recorrido_grafico"
+    },
+    {
+      "indice": 13,
+      "hacer": "asegurar_asignacion",
+      "matriz": [
+        10
+      ],
+      "estado": "PASS",
+      "detalle": "\"Estructurar información\" del caso 783 estaba asignada a otro usuario; se reasignó al usuario de pruebas y la consulta posterior confirma el MISMO work item (1494173), único y asignado al usuario de pruebas.",
+      "ms": 10532,
+      "evidencia": "HU06-CP04_p13_asegurar_asignacion"
+    },
+    {
+      "indice": 14,
+      "hacer": "abrir_caso",
+      "matriz": [
+        10
+      ],
+      "estado": "PASS",
+      "detalle": "Caso 783 abierto por \"analista\" en \"Estructurar información\"",
+      "ms": 4406,
+      "evidencia": "HU06-CP04_p14_abrir_caso"
+    },
+    {
+      "indice": 15,
+      "hacer": "verificar",
+      "matriz": [
+        11
+      ],
+      "estado": "PASS",
+      "detalle": "✔ solo_lectura: Número de Caso, Línea, Ramo, Tipo de Solicitud, Sucursal, Tipo Radicación",
+      "ms": 136,
+      "evidencia": "HU06-CP04_p15_verificar"
+    },
+    {
+      "indice": 16,
+      "hacer": "verificar",
+      "matriz": [
+        23
+      ],
+      "estado": "PASS",
+      "detalle": "✔ [EST-ETIQUETA-OBSERVACIONES · fuente: Matriz HU06-CP01 P27 / HU06-CP03 P24 (\"campo Observaciones\")] etiquetas exactas presentes (1)",
+      "ms": 13,
+      "evidencia": "HU06-CP04_p16_verificar"
+    },
+    {
+      "indice": 17,
+      "hacer": "verificar",
+      "matriz": [
+        23
+      ],
+      "estado": "PASS",
+      "detalle": "✔ editable: Observaciones",
+      "ms": 33,
+      "evidencia": "HU06-CP04_p17_verificar"
+    },
+    {
+      "indice": 18,
+      "hacer": "abrir_pestana",
+      "matriz": [
+        23
+      ],
+      "estado": "PASS",
+      "detalle": "Pestaña \"Documentos de la solicitud\" activa con su panel visible",
+      "ms": 46,
+      "evidencia": "HU06-CP04_p18_abrir_pestana"
+    },
+    {
+      "indice": 19,
+      "hacer": "abrir_pestana",
+      "matriz": [
+        23
+      ],
+      "estado": "PASS",
+      "detalle": "Pestaña \"Seguimiento/Trazabilidad\" activa con su panel visible; muestra \"Estructurar información\"",
+      "ms": 44,
+      "evidencia": "HU06-CP04_p19_abrir_pestana"
+    },
+    {
+      "indice": 20,
+      "hacer": "abrir_caso",
+      "matriz": [
+        12
+      ],
+      "estado": "PASS",
+      "detalle": "Caso 783 abierto por \"analista\" en \"Estructurar información\"",
+      "ms": 3164,
+      "evidencia": "HU06-CP04_p20_abrir_caso"
+    },
+    {
+      "indice": 21,
+      "hacer": "tabla_abrir_fila",
+      "matriz": [
+        12
+      ],
+      "estado": "PASS",
+      "detalle": "Pop-up de edición abierto para la fila 1 de \"Detalle Polizas Asociadas\"",
+      "ms": 326,
+      "evidencia": "HU06-CP04_p21_tabla_abrir_fila"
+    },
+    {
+      "indice": 22,
+      "hacer": "verificar",
+      "matriz": [
+        13
+      ],
+      "estado": "PASS",
+      "detalle": "✔ \"Forma Consulta\" visible (1)",
+      "ms": 93,
+      "evidencia": "HU06-CP04_p22_verificar"
+    },
+    {
+      "indice": 23,
+      "hacer": "verificar",
+      "matriz": [
+        14
+      ],
+      "estado": "PASS",
+      "detalle": "✔ \"¿Requiere modificar RCE?\" no visible (encontrados 0)",
+      "ms": 8,
+      "evidencia": "HU06-CP04_p23_verificar"
+    },
+    {
+      "indice": 24,
+      "hacer": "no_automatizado",
+      "matriz": [
+        15
+      ],
+      "estado": "NOT_AUTOMATED",
+      "detalle": "La matriz no define el comportamiento esperado de Ramo RCE y Número de Póliza RCE cuando el Ramo tiene la propiedad Póliza RCE (FUNC-05); sin criterio no hay aserción objetiva.",
+      "causa": "NO_AUTOMATIZADO",
+      "ms": 0,
+      "evidencia": "HU06-CP04_p24_no_automatizado"
+    },
+    {
+      "indice": 25,
+      "hacer": "dialogo_confirmar",
+      "matriz": [
+        12
+      ],
+      "estado": "PASS",
+      "detalle": "Pop-up confirmado; \"Detalle Polizas Asociadas\" con 4 fila(s)",
+      "ms": 2153,
+      "evidencia": "HU06-CP04_p25_dialogo_confirmar"
+    },
+    {
+      "indice": 26,
+      "hacer": "tabla_agregar",
+      "matriz": [
+        20
+      ],
+      "estado": "PASS",
+      "detalle": "Pop-up de adición abierto en \"Detalle Polizas Asociadas\" (4 fila(s) antes) | ✔ \"¿Requiere modificar RCE?\" no visible (encontrados 0)",
+      "ms": 463,
+      "evidencia": "HU06-CP04_p26_tabla_agregar"
+    },
+    {
+      "indice": 27,
+      "hacer": "diligenciar",
+      "matriz": [
+        21
+      ],
+      "estado": "PASS",
+      "detalle": "Diligenciado y confirmado: Número Póliza=300789012",
+      "ms": 1892,
+      "evidencia": "HU06-CP04_p27_diligenciar"
+    },
+    {
+      "indice": 28,
+      "hacer": "dialogo_confirmar",
+      "matriz": [
+        21
+      ],
+      "estado": "PASS",
+      "detalle": "Pop-up confirmado; \"Detalle Polizas Asociadas\" con 5 fila(s); fila verificada: Número Póliza=300789012",
+      "ms": 1777,
+      "evidencia": "HU06-CP04_p28_dialogo_confirmar"
+    },
+    {
+      "indice": 29,
+      "hacer": "tabla_eliminar_fila",
+      "matriz": [
+        22
+      ],
+      "estado": "PASS",
+      "detalle": "Fila 5 eliminada de \"Detalle Polizas Asociadas\" (5 → 4)",
+      "ms": 1110,
+      "evidencia": "HU06-CP04_p29_tabla_eliminar_fila"
+    },
+    {
+      "indice": 30,
+      "hacer": "tabla_abrir_fila",
+      "matriz": [
+        16,
+        17
+      ],
+      "estado": "PASS",
+      "detalle": "Pop-up de edición abierto para la fila 1 de \"Detalle Polizas Asociadas\"",
+      "ms": 274,
+      "evidencia": "HU06-CP04_p30_tabla_abrir_fila"
+    },
+    {
+      "indice": 31,
+      "hacer": "intentar_diligenciar",
+      "matriz": [
+        16,
+        17
+      ],
+      "estado": "FAIL",
+      "detalle": "\"Número Póliza\": se tecleó ABCDEFGHI; el formulario muestra \"ABCDEFGHI\"; se esperaba \"\" (la restricción del campo no se aplicó). | No bloqueante: el recorrido continúa (el CP queda FAIL).",
+      "causa": "PRODUCTO_POR_CONFIRMAR",
+      "ms": 2127,
+      "evidencia": "HU06-CP04_p31_intentar_diligenciar"
+    },
+    {
+      "indice": 32,
+      "hacer": "intentar_diligenciar",
+      "matriz": [
+        18
+      ],
+      "estado": "PASS",
+      "detalle": "\"Número Póliza\": se tecleó 12345678; el formulario muestra \"12345678\"; coincide con lo esperado",
+      "ms": 54,
+      "evidencia": "HU06-CP04_p32_intentar_diligenciar"
+    },
+    {
+      "indice": 33,
+      "hacer": "dialogo_confirmar",
+      "matriz": [
+        18
+      ],
+      "estado": "PASS",
+      "detalle": "El pop-up permanece abierto: no permite confirmar sin obligatorios.",
+      "ms": 25,
+      "evidencia": "HU06-CP04_p33_dialogo_confirmar"
+    },
+    {
+      "indice": 34,
+      "hacer": "diligenciar",
+      "matriz": [
+        19
+      ],
+      "estado": "PASS",
+      "detalle": "Diligenciado y confirmado: Número Póliza=300654321",
+      "ms": 58,
+      "evidencia": "HU06-CP04_p34_diligenciar"
+    },
+    {
+      "indice": 35,
+      "hacer": "dialogo_confirmar",
+      "matriz": [
+        19
+      ],
+      "estado": "FAIL",
+      "detalle": "El pop-up no se cerró al confirmar. | El pop-up NO se pudo cerrar con \"Guardar\": el caso probablemente quedó inutilizable (BUG-03). Registrarlo.",
+      "causa": "NO_CLASIFICADO",
+      "ms": 30028,
+      "evidencia": "HU06-CP04_p35_dialogo_confirmar"
+    }
+  ],
+  "matriz": [
+    {
+      "n": 1,
+      "accion": "Objetivo:",
+      "esperado": "Validar la radicación Masiva de una solicitud de Cumplimiento cuyo Ramo tenga la propiedad Póliza RCE, verificando que la actividad Estructurar Información aplique correctamente la condición de los campos asociados a RCE.",
+      "estado": "FAIL",
+      "cubierto_por": []
+    },
+    {
+      "n": 2,
+      "accion": "Ingresar al ambiente Bizagi mediante la URL: «config:BIZAGI_BASE_URL»/",
+      "esperado": "El ambiente de pruebas se encuentra disponible.",
+      "estado": "PASS",
+      "cubierto_por": [
+        1,
+        2
+      ]
+    },
+    {
+      "n": 3,
+      "accion": "Crear un nuevo caso seleccionando Línea = Cumplimiento (Fianzas) y un Ramo con propiedad Póliza RCE.",
+      "esperado": "El formulario presenta la configuración correspondiente al Ramo seleccionado.",
+      "estado": "PASS",
+      "cubierto_por": [
+        2,
+        3
+      ]
+    },
+    {
+      "n": 4,
+      "accion": "Seleccionar una Sucursal válida.",
+      "esperado": "La Sucursal queda registrada correctamente.",
+      "estado": "PASS",
+      "cubierto_por": [
+        4
+      ]
+    },
+    {
+      "n": 5,
+      "accion": "Seleccionar Tipo de Radicación = Masivo.",
+      "esperado": "Se habilitan los campos correspondientes a la modalidad Masivo.",
+      "estado": "PASS",
+      "cubierto_por": [
+        5
+      ]
+    },
+    {
+      "n": 6,
+      "accion": "Validar el texto de ayuda.",
+      "esperado": "Se muestra “Masivo: Solicitud asociada a más de una póliza de cumplimiento y/o RCE.”, con ortografía y capitalización correctas.",
+      "estado": "PASS",
+      "cubierto_por": [
+        6
+      ]
+    },
+    {
+      "n": 7,
+      "accion": "Diligenciar la narrativa y documentos requeridos.",
+      "esperado": "La información queda registrada y permite crear el caso.",
+      "estado": "PASS",
+      "cubierto_por": [
+        7,
+        8
+      ]
+    },
+    {
+      "n": 8,
+      "accion": "Crear la solicitud.",
+      "esperado": "Se crea correctamente el caso de radicación Masiva.",
+      "estado": "PASS",
+      "cubierto_por": [
+        9
+      ]
+    },
+    {
+      "n": 9,
+      "accion": "Validar la compuerta ¿Masivo?.",
+      "esperado": "El caso toma la transición Masivo y continúa hacia el Worker AI.",
+      "estado": "PASS",
+      "cubierto_por": [
+        11,
+        12
+      ]
+    },
+    {
+      "n": 10,
+      "accion": "Ingresar a Estructurar Información.",
+      "esperado": "El caso se encuentra disponible para el Analista Centro de Expedición.",
+      "estado": "PASS",
+      "cubierto_por": [
+        10,
+        13,
+        14
+      ]
+    },
+    {
+      "n": 11,
+      "accion": "Validar el encabezado y la información de radicación.",
+      "esperado": "Los datos maestros, Tipo de Radicación y Sucursal se visualizan correctamente y permanecen en solo lectura.",
+      "estado": "PASS",
+      "cubierto_por": [
+        15
+      ]
+    },
+    {
+      "n": 12,
+      "accion": "Seleccionar un registro de la tabla para editarlo.",
+      "esperado": "Se presenta el formulario de edición con las reglas correspondientes al Ramo y Movimiento seleccionados.",
+      "estado": "PASS",
+      "cubierto_por": [
+        20,
+        21,
+        25
+      ]
+    },
+    {
+      "n": 13,
+      "accion": "Validar la Forma de Consulta.",
+      "esperado": "La Forma de Consulta se presenta de acuerdo con la regla correspondiente a Línea Cumplimiento y Tipo de Movimiento.",
+      "estado": "PASS",
+      "cubierto_por": [
+        22
+      ]
+    },
+    {
+      "n": 14,
+      "accion": "Validar la información relacionada con RCE.",
+      "esperado": "Al corresponder a un Ramo con propiedad Póliza RCE, no se presenta la pregunta ¿Requiere modificar RCE? como condición para habilitar los campos RCE.",
+      "estado": "PASS",
+      "cubierto_por": [
+        23
+      ]
+    },
+    {
+      "n": 15,
+      "accion": "Validar los campos Ramo RCE y Número de Póliza RCE.",
+      "esperado": "Los campos se comportan de acuerdo con la condición de propiedad Póliza RCE definida para el Ramo y no se habilita una pregunta de modificación RCE que no corresponda a la configuración.",
+      "estado": "NOT_AUTOMATED",
+      "cubierto_por": [
+        24
+      ]
+    },
+    {
+      "n": 16,
+      "accion": "Validar Número de Póliza, cuando la Forma de Consulta corresponda a Número de póliza.",
+      "esperado": "El campo acepta únicamente valores numéricos con longitud entre 9 y 12 caracteres.",
+      "estado": "FAIL",
+      "cubierto_por": [
+        30,
+        31
+      ]
+    },
+    {
+      "n": 17,
+      "accion": "Ingresar un valor no numérico en Número de Póliza.",
+      "esperado": "El sistema impide registrar el valor no numérico en el campo.",
+      "estado": "FAIL",
+      "cubierto_por": [
+        30,
+        31
+      ]
+    },
+    {
+      "n": 18,
+      "accion": "Ingresar un Número de Póliza con longitud inferior o superior al rango permitido.",
+      "esperado": "El sistema impide confirmar el registro mientras el valor no cumpla la longitud de 9 a 12 caracteres.",
+      "estado": "PASS",
+      "cubierto_por": [
+        32,
+        33
+      ]
+    },
+    {
+      "n": 19,
+      "accion": "Confirmar un registro válido.",
+      "esperado": "El registro queda almacenado correctamente en la tabla Pólizas asociadas a la solicitud.",
+      "estado": "FAIL",
+      "cubierto_por": [
+        34,
+        35
+      ]
+    },
+    {
+      "n": 20,
+      "accion": "Agregar un nuevo registro.",
+      "esperado": "El formulario de adición presenta las mismas reglas de visibilidad, obligatoriedad y validación correspondientes al caso.",
+      "estado": "PASS",
+      "cubierto_por": [
+        26
+      ]
+    },
+    {
+      "n": 21,
+      "accion": "Diligenciar un registro válido y confirmarlo.",
+      "esperado": "El nuevo registro queda incorporado a la colección de pólizas asociadas.",
+      "estado": "PASS",
+      "cubierto_por": [
+        27,
+        28
+      ]
+    },
+    {
+      "n": 22,
+      "accion": "Validar la opción de eliminar un registro.",
+      "esperado": "El registro seleccionado puede ser eliminado de la tabla.",
+      "estado": "PASS",
+      "cubierto_por": [
+        29
+      ]
+    },
+    {
+      "n": 23,
+      "accion": "Validar Observaciones, Documentos y Seguimiento.",
+      "esperado": "Las secciones se encuentran disponibles y presentan la información correspondiente al caso.",
+      "estado": "PASS",
+      "cubierto_por": [
+        16,
+        17,
+        18,
+        19
+      ]
+    }
+  ],
+  "bloqueos": [],
+  "causas": [
+    "NO_AUTOMATIZADO",
+    "PRODUCTO_POR_CONFIRMAR",
+    "NO_CLASIFICADO"
+  ],
+  "atribucion": "PRODUCTO_POR_CONFIRMAR"
+}

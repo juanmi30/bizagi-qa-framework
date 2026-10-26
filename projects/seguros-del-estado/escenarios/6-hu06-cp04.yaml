@@ -67,9 +67,20 @@ pasos:
     verificar:
       - solo_lectura: [Número de Caso, Línea, Ramo, Tipo de Solicitud, Sucursal, Tipo Radicación]
 
+  # Secciones independientes antes del bloque de riesgo BUG-03.
+  - incluir: estructurar-secciones
+    con: { p_pestanas: [23], p_observaciones: [23] }
+
   # Pop-up de la fila (P12–P22): requiere los datos de EST-FILA-CUMPL-CON-RCE (pólizas de QA). Sin ellos cada paso queda BLOCKED por
   # dato SIN abrir el pop-up y el recorrido sigue con las secciones (mismo patrón que HU06-CP01). Aunque lleguen los datos,
   # la barrera UI-10/BUG-03 impide abrirlo mientras su formulario siga sin calibrar.
+  # Seguimiento oculta la grilla: volver a abrir la MISMA actividad antes de editar (mismo patrón de CP02 P18).
+  - matriz: [12]
+    hacer: abrir_caso
+    actor: analista
+    actividad: Estructurar información
+    maximo_minutos: 3
+
   - matriz: [12]
     hacer: tabla_abrir_fila
     requiere: [EST-FILA-CUMPL-CON-RCE]
@@ -96,37 +107,11 @@ pasos:
       La matriz no define el comportamiento esperado de Ramo RCE y Número de Póliza RCE cuando el Ramo tiene la
       propiedad Póliza RCE (FUNC-05); sin criterio no hay aserción objetiva.
 
-  - matriz: [16, 17]
-    hacer: intentar_diligenciar
-    requiere: [EST-FILA-CUMPL-CON-RCE]
-    campo: Número Póliza
-    valor: ABCDEFGHI
-    esperado_mostrado: ""
-
-  - matriz: [18]
-    hacer: intentar_diligenciar
-    requiere: [EST-FILA-CUMPL-CON-RCE]
-    campo: Número Póliza
-    valor: "12345678"
-    esperado_mostrado: "12345678"
-
-  - matriz: [18]
-    hacer: dialogo_confirmar
-    requiere: [EST-FILA-CUMPL-CON-RCE]
-    espera: permanece_abierto
-
-  - matriz: [19]
-    hacer: diligenciar
-    requiere: [EST-FILA-CUMPL-CON-RCE]
-    campos:
-      - { campo: Número Póliza, valor: "${dato:EST-FILA-CUMPL-CON-RCE.poliza}", tipo: texto }
-
-  - matriz: [19]
+  # Cierre sin cambios antes de las operaciones independientes. Nunca Cancelar/Escape/X.
+  - matriz: [12]
     hacer: dialogo_confirmar
     requiere: [EST-FILA-CUMPL-CON-RCE]
     espera: cierra
-    fila_resultante:
-      Número Póliza: "${dato:EST-FILA-CUMPL-CON-RCE.poliza}"
 
   - matriz: [20]
     hacer: tabla_agregar
@@ -156,5 +141,44 @@ pasos:
     fila_con:
       Número Póliza: "${dato:EST-FILA-CUMPL-CON-RCE.poliza_nueva_fila}"
 
-  - incluir: estructurar-secciones
-    con: { p_pestanas: [23], p_observaciones: [23] }
+  # La prueba negativa y su recuperación van al final: si Guardar no cierra (P-21a), lo independiente ya quedó documentado.
+  - matriz: [16, 17]
+    hacer: tabla_abrir_fila
+    requiere: [EST-FILA-CUMPL-CON-RCE]
+    formulario: detalle-polizas-cumplimiento
+    tabla: Detalle Polizas Asociadas
+    fila: 1
+
+  - matriz: [16, 17]
+    hacer: intentar_diligenciar
+    no_bloqueante: true
+    requiere: [EST-FILA-CUMPL-CON-RCE]
+    campo: Número Póliza
+    valor: ABCDEFGHI
+    esperado_mostrado: ""
+
+  - matriz: [18]
+    hacer: intentar_diligenciar
+    no_bloqueante: true
+    requiere: [EST-FILA-CUMPL-CON-RCE]
+    campo: Número Póliza
+    valor: "12345678"
+    esperado_mostrado: "12345678"
+
+  - matriz: [18]
+    hacer: dialogo_confirmar
+    requiere: [EST-FILA-CUMPL-CON-RCE]
+    espera: permanece_abierto
+
+  - matriz: [19]
+    hacer: diligenciar
+    requiere: [EST-FILA-CUMPL-CON-RCE]
+    campos:
+      - { campo: Número Póliza, valor: "${dato:EST-FILA-CUMPL-CON-RCE.poliza}", tipo: texto }
+
+  - matriz: [19]
+    hacer: dialogo_confirmar
+    requiere: [EST-FILA-CUMPL-CON-RCE]
+    espera: cierra
+    fila_resultante:
+      Número Póliza: "${dato:EST-FILA-CUMPL-CON-RCE.poliza}"
